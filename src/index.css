@@ -1,0 +1,28 @@
+html {
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+}
+body {
+  margin: 0;
+  padding: 0;
+	width: 100vw;
+	height: 100vh;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
