@@ -6,7 +6,7 @@ ARG REACT_APP_PROTOCOL
 ARG REACT_APP_OAUTH_CLIENT_ID
 
 COPY . .
-RUN yarn install
+RUN yarn
 RUN yarn build
 
 FROM nginx:stable-alpine

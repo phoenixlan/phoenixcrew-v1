@@ -1638,10 +1638,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@phoenixlan/phoenix.js@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@phoenixlan/phoenix.js/-/phoenix.js-1.0.1.tgz#e603cfed3e286e06f911836c07c8027b0191e551"
-  integrity sha512-44ZV+La5exomEb3GnTpwOEOdhPA3ZV7XXj2WP4pLpsDYYuZd/arihSMcUYrN0dsz7iAMIq6pPF1EsycBp9v1QA==
+"@phoenixlan/phoenix.js@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@phoenixlan/phoenix.js/-/phoenix.js-1.1.0.tgz#9890088fffa431f26d94631efcea909f393a0281"
+  integrity sha512-9dfkA5JbrWpO5aaCrFPoEQoeHl0L5jVt4QrC6Y2O2n90OXxuYbbvax74PwwgkckEhdw9spLNC4yKKbCDiVxa1w==
   dependencies:
     jwt-decode "^3.1.2"
 
@@ -8989,7 +8989,7 @@ wbuf@^1.1.0, wbuf@^1.7.3:
   dependencies:
     minimalistic-assert "^1.0.0"
 
-web-vitals@^1.1.0:
+web-vitals@~1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-1.1.2.tgz#06535308168986096239aa84716e68b4c6ae6d1c"
   integrity sha512-PFMKIY+bRSXlMxVAQ+m2aw9c/ioUYfDgrYot0YUa+/xa0sakubWhSDyxAKwzymvXVdF4CZI71g06W+mqhzu6ig==
