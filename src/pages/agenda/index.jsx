@@ -8,6 +8,11 @@ import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 import { PageLoading } from "../../components/pageLoading"
 
 import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputDate, InputText } from '../../components/dashboard';
+import { faMinus, faMinusCircle, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { Column, IconContainer, SelectableRow, TableHeader } from '../../components/table';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Table } from '@material-ui/core';
 
 
 const S = {
@@ -27,16 +32,22 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
         }
         await reloadAgendaList();
     }
-    return (<S.AgendaEntryContainer>
-        <h1>{entry.title}</h1>
-        <p>{entry.description}</p>
-        <p>{new Date(entry.time*1000).toLocaleString()}</p>
-        <button onClick={deleteEntry}>Slett</button>
-    </S.AgendaEntryContainer>)
+
+    return (
+        <SelectableRow>
+            <Column flex="2">{ new Date(entry.time*1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
+            <Column flex="3">{ entry.title }</Column>
+            <Column flex="4">{ entry.description }</Column>
+            <Column flex="0 22px"><IconContainer><FontAwesomeIcon icon /></IconContainer></Column>
+            <Column flex="0 22px"><IconContainer><FontAwesomeIcon icon={faMinusCircle} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+        </SelectableRow>
+    )
 }
 
 
 export const AgendaList = (props) => {
+    const [activeContent, setActiveContent] = useState(1);
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [agendaList, setAgendaList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -73,36 +84,93 @@ export const AgendaList = (props) => {
         return (<PageLoading />)
     }
     //TODO not quite right, backend har ikke application state enda
-    return (<div>
-        <h1>Agenda</h1>
-        <S.AgendaContainer>
-        {
-            agendaList.map(entry => {
-                return (<AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>)
-            })
-        }
-        </S.AgendaContainer>
-        <h1>Ny agenda</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <FormContainer>
-                <FormEntry>
-                    <FormLabel>Tittel</FormLabel>
-                    <FormInput {...register("title")}></FormInput>
-                    {errors.description && <FormError>Beskrivelse er påkrevd</FormError>}
-                </FormEntry>
-                <FormEntry>
-                    <FormLabel>Beskrivelse</FormLabel>
-                    <FormInput {...register("description")}></FormInput>
-                </FormEntry>
-                <FormEntry>
-                    <FormLabel>Tidspunkt</FormLabel>
-                    <FormInput type="datetime-local" {...register("time")}></FormInput>
-                    {errors.time && <FormError>Tidspunkt er påkrevd</FormError>}
-                </FormEntry>
-                <FormEntry>
-                    <FormInput type="submit"></FormInput>
-                </FormEntry>
-            </FormContainer>
-        </form>
-    </div>)
+    return (
+        <>
+            <DashboardHeader>
+                <DashboardTitle>
+                    Agenda
+                </DashboardTitle>
+            </DashboardHeader>
+
+            <DashboardBarSelector border>
+                <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Oppsett</DashboardBarElement>
+                <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Infoskjerm visning</DashboardBarElement>
+            </DashboardBarSelector>
+
+            <DashboardContent visible={activeContent == 1}>
+                <InnerContainer>
+                    <InnerContainerTitle>
+                        Opprett et nytt element
+                    </InnerContainerTitle>
+
+                    <InnerContainerRow>
+                        <InnerContainer flex="1">
+                            <form onSubmit={handleSubmit(onSubmit)}>
+                                <InputText label="Tittel" {...register("title")} />
+                                <InputText label="Beskrivelse" {...register("description")} />
+                                <InputDate label="Tidspunkt" {...register("time")} />
+                                <FormInput type="submit"></FormInput>
+                                {/** THE FORM DOESNT WORK BECAUSE SOMETHING... */}
+                            </form>
+                        </InnerContainer>
+                        <InnerContainer flex="2" />
+                    </InnerContainerRow>
+                </InnerContainer>
+
+                <InnerContainer>
+                    <Table>
+                        <TableHeader border>
+                            <Column flex="2">Tidspunkt</Column>
+                            <Column flex="3">Tittel</Column>
+                            <Column flex="4">Beskrivelse</Column>
+                            <Column flex="0 22px" title="Elementet er synlig på infoskjermen"></Column>
+                            <Column flex="0 22px" title="Trykk for å fjerne elementet"></Column>
+                        </TableHeader>
+                    </Table>
+
+                    {
+                        agendaList.map(entry => {
+                            return (
+                                <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
+                            )
+                        })
+                    }
+                </InnerContainer>
+            </DashboardContent>
+
+            <DashboardContent visible={activeContent == 2}>
+                <InnerContainer>
+                    <IFrameContainer src="https://info.phoenixlan.no/" />
+                </InnerContainer>
+            </DashboardContent>
+
+            <S.AgendaContainer>
+
+            </S.AgendaContainer>
+            <h1>Ny agenda</h1>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <FormContainer>
+                    <FormEntry>
+                        <FormLabel>Tittel</FormLabel>
+                        <FormInput {...register("title")}></FormInput>
+                        {errors.description && <FormError>Beskrivelse er påkrevd</FormError>}
+                    </FormEntry>
+                    <FormEntry>
+                        <FormLabel>Beskrivelse</FormLabel>
+                        <FormInput {...register("description")}></FormInput>
+                    </FormEntry>
+                    <FormEntry>
+                        <FormLabel>Tidspunkt</FormLabel>
+                        <FormInput type="datetime-local" {...register("time")}></FormInput>
+                        {errors.time && <FormError>Tidspunkt er påkrevd</FormError>}
+                    </FormEntry>
+                    <FormEntry>
+                        <FormInput type="submit"></FormInput>
+                    </FormEntry>
+                </FormContainer>
+            </form>
+
+
+        </>
+    )
 };

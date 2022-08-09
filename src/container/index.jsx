@@ -2,30 +2,37 @@ import React from 'react';
 import styled from "styled-components";
 
 import { Sidebar } from "./sidebar"
+import { DashboardBlock } from "../components/dashboard";
 
 const S = {
-    OuterContainer: styled.div`
+    DocumentRoot: styled.div`
         display: flex;
+        flex-flow: row;
 
         width: 100%;
         height: 100%;
     `,
-    Content: styled.div`
-        /*padding: 1em;*/
-        width: 100%;
-        height: 100%;
-        overflow: scroll;
-    `
+        
+        SidebarRoot: styled.div`
+            width: 254px;
+        `,
+        DashboardRoot: styled.div`
+            width: calc(100% - 254px);
+        `
 }
 
 export const Container = ({ children }) => {
 
     return (
-        <S.OuterContainer>
-            <Sidebar />
-            <S.Content>
-                {children}
-            </S.Content>
-        </S.OuterContainer>
+        <S.DocumentRoot>
+            <S.SidebarRoot>
+                <Sidebar />
+            </S.SidebarRoot>
+            <S.DashboardRoot>
+                <DashboardBlock>
+                    {children}
+                </DashboardBlock>
+            </S.DashboardRoot>
+        </S.DocumentRoot>
     );
 }
