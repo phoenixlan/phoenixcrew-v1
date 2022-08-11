@@ -14,7 +14,10 @@ export const CrewList= () => {
 
     useEffect(async () => {
         const crews = await Crew.getCrews();
-        setCrews(crews);
+        const transformedCrews = await Promise.all(crews.map(async (crew) => {
+            return await Crew.getCrew(crew.uuid);
+        }))
+        setCrews(transformedCrews);
     }, []);
 
     return (<div>
