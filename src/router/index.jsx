@@ -22,6 +22,8 @@ import { SeatmapList } from '../pages/seatmap/listSeatmaps';
 import { SeatmapEditor } from '../pages/seatmap/seatmapEditor';
 import { FreeTicketManagement } from '../pages/ticket/freeTicketManagement';
 import { TicketList } from '../pages/ticket/tickets';
+import { EventList } from '../pages/event/list';
+import { EventViewer } from '../pages/event/view';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -56,6 +58,12 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/seatmap/">
                             <SeatmapList />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/event/:uuid">
+                            <EventViewer />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/event/">
+                            <EventList />
                         </PrivateRoute>
                         <PrivateRoute exact path="/users/">
                             <UserList/>

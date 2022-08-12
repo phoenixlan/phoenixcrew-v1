@@ -6,7 +6,6 @@ import { BASE_URL } from "../../"
 
 import { User, Crew, Team } from "@phoenixlan/phoenix.js";
 
-import { ChildTable, ChildTableRow, ChildTableColumn, ChildTableHeader } from "../../components/childTable";
 import { PageContainer } from "../../components/blocks"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

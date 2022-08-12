@@ -2,6 +2,7 @@ import React , { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { Crew } from "@phoenixlan/phoenix.js";
+import { PageLoading } from "../../components/pageLoading"
 
 const S = {
     Crew: styled.div`
@@ -11,14 +12,20 @@ const S = {
 
 export const CrewList= () => {
     const [crews, setCrews] = useState([]);
+    const [ loading, setLoading ] = useState(true);
 
     useEffect(async () => {
+        setLoading(true);
         const crews = await Crew.getCrews();
         const transformedCrews = await Promise.all(crews.map(async (crew) => {
             return await Crew.getCrew(crew.uuid);
         }))
         setCrews(transformedCrews);
+        setLoading(false)
     }, []);
+    if(loading) {
+        return (<PageLoading />)
+    }
 
     return (<div>
         <h1>Crew</h1>

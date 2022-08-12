@@ -67,6 +67,11 @@ const options = [
                 title: "Brukere",
                 icon: faCircle,
                 url: "/users/"
+            },
+            {
+                title: "Arrangementer",
+                icon: faCircle,
+                url: "/event/"
             }
         ]
     },

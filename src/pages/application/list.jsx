@@ -6,8 +6,7 @@ import { BASE_URL } from "../../"
 
 import { User, Crew, Team } from "@phoenixlan/phoenix.js";
 
-import { ChildTable, ChildTableRow, ChildTableColumn, ChildTableHeader } from "../../components/childTable";
-import { PageContainer } from "../../components/blocks"
+import { Table, SelectableRow, Column, TableHeader } from "../../components/table";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight }  from '@fortawesome/free-solid-svg-icons'
@@ -24,23 +23,23 @@ const ApplicationTableEntry = ({ application }) => {
     let history = useHistory();
     
     return (
-        <ChildTableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
-            <ChildTableColumn>{application.user.firstname} {application.user.lastname}</ChildTableColumn>
-            <ChildTableColumn>{application.crew.name}</ChildTableColumn>
-            <ChildTableColumn>{new Date(application.created*1000).toLocaleString()}</ChildTableColumn>
-            <ChildTableColumn>Les søknad <FontAwesomeIcon icon={faChevronRight}/></ChildTableColumn>
-        </ChildTableRow>
+        <SelectableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
+            <Column>{application.user.firstname} {application.user.lastname}</Column>
+            <Column>{application.crew.name}</Column>
+            <Column>{new Date(application.created*1000).toLocaleString()}</Column>
+            <Column>Les søknad <FontAwesomeIcon icon={faChevronRight}/></Column>
+        </SelectableRow>
     )
 }
 
 const ApplicationTable = ({ applications }) => {
-    return (<ChildTable>
+    return (<Table>
         <thead>
-            <ChildTableHeader>
-                <ChildTableColumn>Navn</ChildTableColumn>
-                <ChildTableColumn>Crew</ChildTableColumn>
-                <ChildTableColumn>Søknadstid</ChildTableColumn>
-            </ChildTableHeader>
+            <TableHeader>
+                <Column>Navn</Column>
+                <Column>Crew</Column>
+                <Column>Søknadstid</Column>
+            </TableHeader>
             
         </thead>
         <tbody>
@@ -48,7 +47,7 @@ const ApplicationTable = ({ applications }) => {
             applications.map((application) => <ApplicationTableEntry application={application}/>)
         }
         </tbody>
-    </ChildTable>)
+    </Table>)
 }
 
 export const ListApplications = (props) => {
@@ -79,7 +78,7 @@ export const ListApplications = (props) => {
         return (<PageLoading />)
     }
     //TODO not quite right, backend har ikke application state enda
-    return (<PageContainer>
+    return (<div>
         <h1>Søknader</h1>
         <h2>Åpne søknader</h2>
         <ApplicationTable applications={applicationList.filter(application => application.state === "ApplicationState.created")} />
@@ -87,5 +86,5 @@ export const ListApplications = (props) => {
         <ApplicationTable applications={applicationList.filter(application => application.state === "ApplicationState.rejected")} />
         <h2>Godkjente søknader</h2>
         <ApplicationTable applications={applicationList.filter(application => application.state === "ApplicationState.accepted")} />
-    </PageContainer>)
+    </div>)
 };

@@ -5,8 +5,6 @@ import styled from 'styled-components';
 
 import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 
-import { PageContainer } from "../../components/blocks"
-
 import { PageLoading } from "../../components/pageLoading"
 
 import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
@@ -75,7 +73,7 @@ export const AgendaList = (props) => {
         return (<PageLoading />)
     }
     //TODO not quite right, backend har ikke application state enda
-    return (<PageContainer>
+    return (<div>
         <h1>Agenda</h1>
         <S.AgendaContainer>
         {
@@ -106,5 +104,5 @@ export const AgendaList = (props) => {
                 </FormEntry>
             </FormContainer>
         </form>
-    </PageContainer>)
+    </div>)
 };

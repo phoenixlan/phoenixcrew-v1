@@ -19,8 +19,6 @@ const S = {
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: flex-start;
-
-		background-color: #fadeba;
     `,
     Avatar: styled.img`
         width: 10em;
@@ -65,7 +63,7 @@ export const ViewUser = (props) => {
         return (<p>loading...</p>)
     }
     return (<S.Container>
-        {user.avatar ? (<S.Avatar src={`${BASE_URL}${user.avatar.urls.sd}`} />) : null}
+        <S.Avatar src={user.avatar_urls.sd} />
         <h1>{user.firstname} {user.lastname}</h1>
         <p><i>{user.uuid}</i></p>
         <Table>
@@ -119,6 +117,7 @@ export const ViewUser = (props) => {
                 })
             }
         </ul>
+        <p>{user.positions.length} stillinger</p>
         <h1>Kjøpte billetter</h1>
         <Table>
             <thead>
