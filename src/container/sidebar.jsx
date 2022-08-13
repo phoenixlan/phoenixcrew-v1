@@ -13,7 +13,7 @@ import Logo from "../assets/logo.svg"
 
 // Icons
 
-import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faPortrait} from '@fortawesome/free-solid-svg-icons'
+import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faPortrait, faImage, faImages} from '@fortawesome/free-solid-svg-icons'
 
 
 const S = {
@@ -84,6 +84,11 @@ const options = [
                 title: "Crew",
                 icon: faCircle,
                 url: "/crews/"
+            },
+            {
+                title: "Godkjenning av avatarer",
+                icon: faImages,
+                url: "/avatar/approval"
             },
             {
                 title: "Søknader",
