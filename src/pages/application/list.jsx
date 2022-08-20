@@ -19,7 +19,7 @@ const S = {
     `
 }
 
-const ApplicationTableEntry = ({ application }) => {
+const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     let history = useHistory();
     
     return (
@@ -27,24 +27,32 @@ const ApplicationTableEntry = ({ application }) => {
             <Column>{application.user.firstname} {application.user.lastname}</Column>
             <Column>{application.crew.name}</Column>
             <Column>{new Date(application.created*1000).toLocaleString()}</Column>
+            {
+                showProcessedBy ? (
+                    <Column>{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</Column>
+                ) : null
+            }
             <Column>Les søknad <FontAwesomeIcon icon={faChevronRight}/></Column>
         </SelectableRow>
     )
 }
 
-const ApplicationTable = ({ applications }) => {
+const ApplicationTable = ({ applications, showProcessedBy }) => {
     return (<Table>
         <thead>
             <TableHeader>
                 <Column>Navn</Column>
                 <Column>Crew</Column>
                 <Column>Søknadstid</Column>
+                {
+                    showProcessedBy ? (<Column>Behandler</Column>) : null
+                }
             </TableHeader>
             
         </thead>
         <tbody>
         {
-            applications.map((application) => <ApplicationTableEntry application={application}/>)
+            applications.map((application) => <ApplicationTableEntry showProcessedBy={showProcessedBy} application={application}/>)
         }
         </tbody>
     </Table>)
@@ -83,8 +91,8 @@ export const ListApplications = (props) => {
         <h2>Åpne søknader</h2>
         <ApplicationTable applications={applicationList.filter(application => application.state === "ApplicationState.created")} />
         <h2>Avslåtte søknader</h2>
-        <ApplicationTable applications={applicationList.filter(application => application.state === "ApplicationState.rejected")} />
+        <ApplicationTable showProcessedBy={true} applications={applicationList.filter(application => application.state === "ApplicationState.rejected")} />
         <h2>Godkjente søknader</h2>
-        <ApplicationTable applications={applicationList.filter(application => application.state === "ApplicationState.accepted")} />
+        <ApplicationTable showProcessedBy={true} applications={applicationList.filter(application => application.state === "ApplicationState.accepted")} />
     </div>)
 };

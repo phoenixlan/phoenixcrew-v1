@@ -29,13 +29,13 @@ const AnswerApplication = (props) => {
 
     const accept = async () => {
         console.log("Accept")
-        await Crew.Applications.answerApplication(props.uuid, answer, "accepted")
+        await Crew.Applications.answerApplication(props.uuid, answer, 2)
         await props.reload();
     }
 
     const reject = async () => {
         console.log("deny")
-        await Crew.Applications.answerApplication(props.uuid, answer, "rejected")
+        await Crew.Applications.answerApplication(props.uuid, answer, 3)
         await props.reload();
     }
 

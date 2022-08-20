@@ -29,6 +29,11 @@ const S = {
 export const ViewUser = (props) => {
     const { uuid } = useParams();
     const [user, setUser] = useState(null);
+
+    const [ ownedTickets, setOwnedTickets ] = useState([]);
+    const [ purchasedTickets, setPurchasedTickets ] = useState([]);
+    const [ seatableTickets, setSeatableTickets] = useState([]);
+
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -38,13 +43,20 @@ export const ViewUser = (props) => {
                 console.log("Fetched user:")
                 console.log(user);
 
-                //Fetch more data on the positions.
-                await Promise.all(user.positions.map(async (position) => {
-                    if(position.crew) {
-                        position.crew = await Crew.getCrew(position.crew);
-                    }
-
-                }))
+                //Fetch more data on the user
+                const [_, owned, purchased, seatable] = await Promise.all([
+                    await Promise.all(user.positions.map(async (position) => {
+                        if(position.crew) {
+                            position.crew = await Crew.getCrew(position.crew);
+                        }
+                    })),
+                    await User.getOwnedTickets(uuid),
+                    await User.getPurchasedTickets(uuid),
+                    await User.getSeatableTickets(uuid)
+                ])
+                setOwnedTickets(owned)
+                setPurchasedTickets(purchased)
+                setSeatableTickets(seatable);
 
                 setUser(user)
                 setLoading(false);
@@ -131,13 +143,13 @@ export const ViewUser = (props) => {
             </thead>
             <tbody>
                 {
-                    user.purchased_tickets.map(ticket => (
-                        <Row>
+                    purchasedTickets.map(ticket => (
+                        <Row key={ticket.ticket_id}>
                             <Column>{ticket.ticket_id}</Column>
                             <Column>{ticket.event_uuid}</Column>
-                            <Column>{ticket.seater_uuid}</Column>
+                            <Column>{ticket.seater.firstname} {ticket.seater.lastname}</Column>
                             <Column>{ticket.seat}</Column>
-                            <Column>{ticket.owner_uuid}</Column>
+                            <Column>{ticket.owner.firstname} {ticket.seater.lastname}</Column>
                         </Row>
                     ))
                 }
@@ -156,13 +168,13 @@ export const ViewUser = (props) => {
             </thead>
             <tbody>
                 {
-                    user.owned_tickets.map(ticket => (
-                        <Row>
+                    ownedTickets.map(ticket => (
+                        <Row key={ticket.ticket_id}>
                             <Column>{ticket.ticket_id}</Column>
                             <Column>{ticket.event_uuid}</Column>
-                            <Column>{ticket.seater_uuid}</Column>
+                            <Column>{ticket.seater.firstname} {ticket.seater.lastname}</Column>
                             <Column>{ticket.seat}</Column>
-                            <Column>{ticket.buyer_uuid}</Column>
+                            <Column>{ticket.buyer.firstname} {ticket.buyer.lastname}</Column>
                         </Row>
                     ))
                 }

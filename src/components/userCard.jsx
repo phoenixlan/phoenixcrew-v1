@@ -31,7 +31,7 @@ export const UserCard = ({ user }) => {
             <h1>{user.firstname} {user.lastname}</h1>
             <p>Født: {user.birthdate} ({age} år)</p>
             <p>Kjønn: {user.gender === "Gender.male" ? "Mann" : "Kvinne"}</p>
-            <p>Dato registrert: {user.created}</p>
+            <p>Dato registrert: {new Date(user.created*1000).toLocaleString()}</p>
             <p>Telefonnummer: {user.phone}</p>
         </S.TextPart>
         
