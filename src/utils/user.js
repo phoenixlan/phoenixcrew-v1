@@ -1,7 +1,11 @@
-
 export const dateOfBirthToAge = (dob) => {
     const birthdateComponents = dob.split("-")
-    return calculateAge(birthdateComponents[1], birthdateComponents[2], birthdateComponents[0])
+
+    return calculateAge(
+        Number.parseInt(birthdateComponents[1], 10), 
+        Number.parseInt(birthdateComponents[2], 10), 
+        Number.parseInt(birthdateComponents[0], 10)
+    )
 }
 
 const calculateAge = (birthMonth, birthDay, birthYear) => {
