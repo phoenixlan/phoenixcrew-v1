@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import styled from "styled-components";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { AuthenticationContext } from '../components/authentication';
 import { Avatar } from "../components/avatar";
@@ -9,7 +9,7 @@ import { Avatar } from "../components/avatar";
 import { SidebarButton } from "./sidebarButton";
 import { SidebarCategory } from "./sidebarCategory";
 
-import Logo from "../assets/logo.svg"
+import Logo from "../assets/phoenixlan_square_logo.png";
 
 // Icons
 
@@ -216,9 +216,27 @@ const S = {
         background-color: rgb(225, 225, 225);
     `,
     LogoC: styled.div`
+        width: 48px;
+        height: 48px;
+        background-color: rgb(255, 122, 185);
     `,
-
-
+        Logo: styled.img`
+            width: calc(100% - 16px);
+            height: calc(100% - 16px);
+            padding: 8px;
+        `,
+    SearchC: styled.div`
+        position: relative;
+        display: flex;
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
+        
+    `,
+        SearchLogo: styled.div`
+            
+            margin: auto;
+        `,
 
     Buttons: styled.div`
         flex: 1;
@@ -227,29 +245,25 @@ const S = {
     Bottom: styled.div`
         height: 4em;
     `,
-
-
-    IconContainer: styled.div`
-        position: relative;
-        top: 2px;
-        margin-right: 8px;
-        font-size: 12px;
+    SearchBoxC: styled.div`
+        padding: 8px 16px;
+        height: 32px;
     `,
-    TitleContainer: styled.div``,
-    Title: styled.span`
-        margin: 0;
-        white-space: nowrap;
+    SearchBox: styled.input`
+        width: 100%;
+        height: 48px;
+        background-color: rgb(255, 170, 210);
+        padding-left: 16px;
     `,
-
-    SearchC: styled.div`
-        
-    `,
-        SearchLogo: styled.div`
-            
-            margin: auto;
+        PhoenixTitle: styled.span`
+            font-size: 18px;
+            font-family: PhoenixTitle, Calibri;
+            margin: auto auto 0 0;
         `,
-
-
+        PhoenixSiteTitle: styled.span`
+            font-size: 12px;
+            margin: 0 auto auto 0;
+        `,
 }
 
 const options = [
@@ -305,7 +319,7 @@ const options = [
     {
         title: "Billett administrasjon",
         icon: faTicketAlt,
-        roles: ["ticket-admin", "admin"],
+        roles: ["ticket_admin", "admin", "ticket_checkin"],
         entries: [
             {
                 title: "Alle billetter",
@@ -354,11 +368,13 @@ export const Sidebar = () => {
     const [searchText, setSearchText] = useState("");
     const searchTextLower = searchText.toLowerCase();
 
-    const onSearchUpdate = (event) => {
-        setSearchText(event.target.value);
-    }
+    let [ activeCategory, setActiveCategory ] = useState("Arrangement administrasjon"); 
 
     console.log(auth)
+
+    const onSearchUpdate =  (event) => {
+        setSearchText(event.target.value)
+    }
 
     //Search among menu options
     const availableOptions = options.map(option => {

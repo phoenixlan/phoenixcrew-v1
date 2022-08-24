@@ -24,7 +24,9 @@ const S = {
         :hover {
         }
     `,
-
+    CategoryWrapper: styled.div`
+        position: relative;
+    `,
     IconContainer: styled.div`
         font-size: 22px;
         margin: auto;
@@ -95,62 +97,6 @@ const S = {
             font-size: 12px;
             margin: 0 auto auto 0;
         `,
-
-    CategoryContentContainer: styled.div`
-        display: flex;
-        flex-flow: column;
-        height: 100vh;
-        width: 240px;
-        opacity: 1;
-        position: fixed;
-        top: 0;
-        left: 48px;
-        background-color: rgb(235, 235, 235);
-        overflow: hidden;
-    `,
-        CategoryContent: styled.div`
-            display: flex;
-            position: relative;
-            height: min-content;
-            width: 100%;
-        `,
-    PhoenixTitleC: styled.div`
-        display: flex;
-        flex-flow: column;
-        width: 100%;
-        height: 48px;
-        background-color: rgb(255, 170, 210);
-        padding-left: 16px;
-    `,
-        PhoenixTitle: styled.span`
-            font-size: 18px;
-            font-family: PhoenixTitle, Calibri;
-            margin: auto auto 0 0;
-        `,
-        PhoenixSiteTitle: styled.span`
-            font-size: 12px;
-            margin: 0 auto auto 0;
-        `,
-    SearchBoxC: styled.div`
-        padding: 8px 16px;
-        height: 32px;
-        border-bottom: 1px solid rgb(225, 225, 225);
-    `,
-    SearchBox: styled.input`
-        font-family: Calibri;
-        font-size: 16px;
-        background-color: rgb(215, 215, 215);
-        padding: 2px 16px;
-        margin: auto;
-        border: none;
-        width: calc(100% - 32px);
-        height: 28px;
-
-        &:active, &:focus {
-            outline: none;
-        }
-    `,
-
 }
 
 export const SidebarCategory = ({children, title, icon}) => {
