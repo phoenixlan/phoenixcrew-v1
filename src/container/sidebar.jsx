@@ -225,18 +225,7 @@ const S = {
             height: calc(100% - 16px);
             padding: 8px;
         `,
-    SearchC: styled.div`
-        position: relative;
-        display: flex;
-        width: 48px;
-        height: 48px;
-        font-size: 22px;
-        
-    `,
-        SearchLogo: styled.div`
-            
-            margin: auto;
-        `,
+
 
     Buttons: styled.div`
         flex: 1;
@@ -248,22 +237,33 @@ const S = {
     SearchBoxC: styled.div`
         padding: 8px 16px;
         height: 32px;
+        border-bottom: 1px solid rgb(225, 225, 225);
     `,
     SearchBox: styled.input`
-        width: 100%;
-        height: 48px;
-        background-color: rgb(255, 170, 210);
-        padding-left: 16px;
+        font-family: Calibri;
+        font-size: 16px;
+        background-color: rgb(215, 215, 215);
+        padding: 2px 16px;
+        margin: auto;
+        border: none;
+        width: calc(100% - 32px);
+        height: 28px;
+
+        &:active, &:focus {
+            outline: none;
+        }
     `,
-        PhoenixTitle: styled.span`
-            font-size: 18px;
-            font-family: PhoenixTitle, Calibri;
-            margin: auto auto 0 0;
-        `,
-        PhoenixSiteTitle: styled.span`
-            font-size: 12px;
-            margin: 0 auto auto 0;
-        `,
+
+    IconContainer: styled.div`
+        margin-right: 8px;
+    `,
+    TitleContainer: styled.div``,
+    Title: styled.span`
+        margin: 0;
+    `,
+
+
+
 }
 
 const options = [
