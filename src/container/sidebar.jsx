@@ -78,7 +78,7 @@ const options = [
     {
         title: "Chief",
         icon: faGavel,
-        roles: ["chief"],
+        roles: ["chief", "admin"],
         entries: [
             {
                 title: "Crew",

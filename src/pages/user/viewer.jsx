@@ -93,6 +93,10 @@ export const ViewUser = (props) => {
                     <Column>{user.phone}</Column>
                 </Row>
                 <Row>
+                    <Column>E-post addresse</Column>
+                    <Column>{user.email}</Column>
+                </Row>
+                <Row>
                     <Column>Addresse</Column>
                     <Column>
                         <p>{user.address}</p>
@@ -148,7 +152,7 @@ export const ViewUser = (props) => {
                             <Column>{ticket.ticket_id}</Column>
                             <Column>{ticket.event_uuid}</Column>
                             <Column>{ticket.seater.firstname} {ticket.seater.lastname}</Column>
-                            <Column>{ticket.seat}</Column>
+                            <Column>{ticket.seat?.number}</Column>
                             <Column>{ticket.owner.firstname} {ticket.seater.lastname}</Column>
                         </Row>
                     ))
@@ -173,7 +177,7 @@ export const ViewUser = (props) => {
                             <Column>{ticket.ticket_id}</Column>
                             <Column>{ticket.event_uuid}</Column>
                             <Column>{ticket.seater.firstname} {ticket.seater.lastname}</Column>
-                            <Column>{ticket.seat}</Column>
+                            <Column>{ticket.seat?.number}</Column>
                             <Column>{ticket.buyer.firstname} {ticket.buyer.lastname}</Column>
                         </Row>
                     ))
