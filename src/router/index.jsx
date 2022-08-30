@@ -25,6 +25,7 @@ import { TicketList } from '../pages/ticket/tickets';
 import { EventList } from '../pages/event/list';
 import { EventViewer } from '../pages/event/view';
 import { AvatarApproval } from '../pages/avatar/approval';
+import { StoreSessionList } from '../pages/ticket/storeSessions';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -80,6 +81,9 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/ticket/free/">
                             <FreeTicketManagement />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/store_sessions/">
+                            <StoreSessionList/>
                         </PrivateRoute>
                     </Container>
                 </PrivateRoute>

@@ -113,6 +113,11 @@ const options = [
                 url: "/ticket/free"
             },
             {
+                title: "Aktive kjøp",
+                icon: faTicketAlt,
+                url: "/store_sessions"
+            },
+            {
                 title: "Setekart",
                 icon: faTicketAlt,
                 url: "/seatmap/"
