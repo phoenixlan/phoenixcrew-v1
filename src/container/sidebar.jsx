@@ -216,15 +216,8 @@ const S = {
         background-color: rgb(225, 225, 225);
     `,
     LogoC: styled.div`
-        width: 48px;
-        height: 48px;
-        background-color: rgb(255, 122, 185);
     `,
-        Logo: styled.img`
-            width: calc(100% - 16px);
-            height: calc(100% - 16px);
-            padding: 8px;
-        `,
+
 
 
     Buttons: styled.div`
@@ -234,25 +227,7 @@ const S = {
     Bottom: styled.div`
         height: 4em;
     `,
-    SearchBoxC: styled.div`
-        padding: 8px 16px;
-        height: 32px;
-        border-bottom: 1px solid rgb(225, 225, 225);
-    `,
-    SearchBox: styled.input`
-        font-family: Calibri;
-        font-size: 16px;
-        background-color: rgb(215, 215, 215);
-        padding: 2px 16px;
-        margin: auto;
-        border: none;
-        width: calc(100% - 32px);
-        height: 28px;
 
-        &:active, &:focus {
-            outline: none;
-        }
-    `,
 
     IconContainer: styled.div`
         margin-right: 8px;
@@ -262,6 +237,13 @@ const S = {
         margin: 0;
     `,
 
+    SearchC: styled.div`
+        
+    `,
+        SearchLogo: styled.div`
+            
+            margin: auto;
+        `,
 
 
 }
@@ -368,13 +350,13 @@ export const Sidebar = () => {
     const [searchText, setSearchText] = useState("");
     const searchTextLower = searchText.toLowerCase();
 
-    let [ activeCategory, setActiveCategory ] = useState("Arrangement administrasjon"); 
+    const onSearchUpdate = (event) => {
+        setSearchText(event.target.value);
+    }
+
+    let [ expanded, setExpanded ] = useState("Arrangement administrasjon"); 
 
     console.log(auth)
-
-    const onSearchUpdate =  (event) => {
-        setSearchText(event.target.value)
-    }
 
     //Search among menu options
     const availableOptions = options.map(option => {
