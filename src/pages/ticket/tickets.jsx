@@ -42,7 +42,7 @@ export const TicketList = () => {
                                     <Column><Link to={`/user/${ticket.buyer.uuid}`}>{User.getFullName(ticket.buyer)}</Link></Column>
                                     <Column>{ticket.seater ? (<Link to={`/user/${ticket.seater.uuid}`}>{User.getFullName(ticket.seater)}</Link>) : "Ingen"}</Column>
                                     <Column>{ticket.ticket_type.name}</Column>
-                                    <Column>{(ticket.seat?.number)??"Ingen"}</Column>
+                                    <Column>{(ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ingen")}</Column>
                                     <Column>{new Date(ticket.created*1000).toLocaleString()}</Column>
                                 </Row>)
                             })
