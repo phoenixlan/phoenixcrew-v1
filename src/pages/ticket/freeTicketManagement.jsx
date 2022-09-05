@@ -34,7 +34,8 @@ export const FreeTicketManagement = () => {
         }
 
         // TODO filter
-        setTickets(tickets);
+        const validTypeUuids = validTypes.map(type => type.uuid)
+        setTickets(tickets.filter(ticket => validTypeUuids.indexOf(ticket.ticket_type.uuid) !== -1));
         setLoading(false);
     }
 
