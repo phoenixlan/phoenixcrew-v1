@@ -230,11 +230,15 @@ const S = {
 
 
     IconContainer: styled.div`
+        position: relative;
+        top: 2px;
         margin-right: 8px;
+        font-size: 12px;
     `,
     TitleContainer: styled.div``,
     Title: styled.span`
         margin: 0;
+        white-space: nowrap;
     `,
 
     SearchC: styled.div`
@@ -353,8 +357,6 @@ export const Sidebar = () => {
     const onSearchUpdate = (event) => {
         setSearchText(event.target.value);
     }
-
-    let [ expanded, setExpanded ] = useState("Arrangement administrasjon"); 
 
     console.log(auth)
 
@@ -492,7 +494,7 @@ export const Sidebar = () => {
                                     <S.CrewManagementElementsHeader>
                                         <S.ElementHeader>{entry.title}</S.ElementHeader>
                                     </S.CrewManagementElementsHeader>
-                                    <S.CrewManagementElementsContent expanded={expanded == entry.title}>
+                                    <S.CrewManagementElementsContent>
                                         {
                                             CrewManagementElementContent(entry)
                                         }
@@ -539,4 +541,13 @@ export const Sidebar = () => {
                     </SidebarButton>
                 </S.Bottom>
             </S.Container>
+        </S.SidebarRoot>
+    )
+}
+
+
+/*
+    Removed code, 
+    <
+
 */
