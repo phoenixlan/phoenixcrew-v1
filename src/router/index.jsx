@@ -22,6 +22,7 @@ import { SeatmapList } from '../pages/seatmap/listSeatmaps';
 import { SeatmapEditor } from '../pages/seatmap/seatmapEditor';
 import { FreeTicketManagement } from '../pages/ticket/freeTicketManagement';
 import { TicketList } from '../pages/ticket/tickets';
+import { MembershipList } from '../pages/ticket/membershipList';
 import { EventList } from '../pages/event/list';
 import { EventViewer } from '../pages/event/view';
 import { AvatarApproval } from '../pages/avatar/approval';
@@ -78,6 +79,9 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/ticket/">
                             <TicketList />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/ticket/memberships">
+                            <MembershipList/>
                         </PrivateRoute>
                         <PrivateRoute exact path="/ticket/free/">
                             <FreeTicketManagement />
