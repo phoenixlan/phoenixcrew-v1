@@ -13,7 +13,7 @@ import Logo from "../assets/logo.svg"
 
 // Icons
 
-import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faPortrait, faImage, faImages} from '@fortawesome/free-solid-svg-icons'
+import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faInfo, faImages} from '@fortawesome/free-solid-svg-icons'
 
 
 const S = {
@@ -70,7 +70,7 @@ const options = [
             },
             {
                 title: "Arrangementer",
-                icon: faCircle,
+                icon: faCalendar,
                 url: "/event/"
             }
         ]
@@ -130,9 +130,9 @@ const options = [
         ]
     },
     {
-        title: "Arrangementer",
-        icon: faCalendar,
-        roles: ["chief"],
+        title: "Informasjon",
+        icon: faInfo,
+        roles: ["chief", "info_admin", "admin", "event_admin", "compo_admin"],
         entries: [
             {
                 title: "Agenda",
