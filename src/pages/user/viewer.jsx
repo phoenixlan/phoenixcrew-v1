@@ -34,6 +34,9 @@ export const ViewUser = (props) => {
     const [ purchasedTickets, setPurchasedTickets ] = useState([]);
     const [ seatableTickets, setSeatableTickets] = useState([]);
 
+    const [ membershipState, setMembershipState ] = useState(null);
+    const [ activationState, setActivationState] = useState(null);
+
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -44,7 +47,7 @@ export const ViewUser = (props) => {
                 console.log(user);
 
                 //Fetch more data on the user
-                const [_, owned, purchased, seatable] = await Promise.all([
+                const [_, owned, purchased, seatable, membershipState, activationState] = await Promise.all([
                     await Promise.all(user.positions.map(async (position) => {
                         if(position.crew) {
                             position.crew = await Crew.getCrew(position.crew);
@@ -52,11 +55,15 @@ export const ViewUser = (props) => {
                     })),
                     await User.getOwnedTickets(uuid),
                     await User.getPurchasedTickets(uuid),
-                    await User.getSeatableTickets(uuid)
+                    await User.getSeatableTickets(uuid),
+                    await User.getUserMembershipStatus(uuid),
+                    await User.getUserActivationState(uuid)
                 ])
                 setOwnedTickets(owned)
                 setPurchasedTickets(purchased)
                 setSeatableTickets(seatable);
+                setMembershipState(membershipState);
+                setActivationState(activationState);
 
                 setUser(user)
                 setLoading(false);
@@ -111,6 +118,14 @@ export const ViewUser = (props) => {
                 <Row>
                     <Column>Brukernavn</Column>
                     <Column>{user.username}</Column>
+                </Row>
+                <Row>
+                    <Column>Radar-medlem i år?</Column>
+                    <Column>{membershipState !== null ? (membershipState ? "Ja" : "Nei") : "Laster"}</Column>
+                </Row>
+                <Row>
+                    <Column>Aktivert konto?</Column>
+                    <Column>{activationState !== null ? (activationState ? "Ja" : "Nei") : "Laster"}</Column>
                 </Row>
             </tbody>
         </Table>
