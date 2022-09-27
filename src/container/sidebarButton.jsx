@@ -15,5 +15,4 @@ export const SidebarButton = styled(Link)`
     text-decoration: none;
     padding: 4px 0;
     font-size: 14px;
-    font-family: Calibri;
 `
