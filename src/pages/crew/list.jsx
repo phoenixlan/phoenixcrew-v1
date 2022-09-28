@@ -3,10 +3,15 @@ import styled from "styled-components";
 
 import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
+import { SimpleUserCard } from "../../components/simpleUserCard";
 
 const S = {
     Crew: styled.div`
     
+    `,
+    UserContainer: styled.div`
+    display: flex;
+    flex-wrap: wrap;
     `
 }
 
@@ -16,11 +21,10 @@ export const CrewList= () => {
 
     useEffect(async () => {
         setLoading(true);
-        const crews = await Crew.getCrews();
-        const transformedCrews = await Promise.all(crews.map(async (crew) => {
+        const crews = await Promise.all((await Crew.getCrews()).map(async (crew) => {
             return await Crew.getCrew(crew.uuid);
         }))
-        setCrews(transformedCrews);
+        setCrews(crews);
         setLoading(false)
     }, []);
     if(loading) {
@@ -31,15 +35,27 @@ export const CrewList= () => {
         <h1>Crew</h1>
         {
             crews.map((crew) => {
-                const memberUuidList = [];
+                const memberMap = new Map();
                 crew.positions.forEach((position) => {
-                    position.users.forEach((userUuid) => {
-                        if(!memberUuidList.includes(userUuid)) {
-                            memberUuidList.push(userUuid);
+                    position.users.forEach((user) => {
+                        if(!memberMap.has(user.uuid)) {
+                            memberMap.set(user.uuid, user)
                         }
                     })
                 })
-                return (<S.Crew><h1>{crew.name}</h1><p>{crew.description}</p><p>{crew.teams.length} shift</p><p><i>{memberUuidList.length} medlemmer</i></p></S.Crew>)
+                const members = Array.from(memberMap.values());
+                console.log(members)
+                return (<S.Crew>
+                    <h1>{crew.name}</h1>
+                    <p>{crew.description}</p>
+                    <p>{crew.teams.length} shift</p>
+                    <S.UserContainer>
+                        {
+                            members.map(user => (<SimpleUserCard user={user} key={user.uuid}/>))
+                        }
+                    </S.UserContainer>
+                    <p><i>{members.length} medlemmer</i></p>
+                    </S.Crew>)
             })
         }
         </div>)
