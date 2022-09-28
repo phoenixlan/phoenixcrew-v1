@@ -100,6 +100,10 @@ export const ViewUser = (props) => {
                     <Column>{user.phone}</Column>
                 </Row>
                 <Row>
+                    <Column>Foresattes telefonnummer</Column>
+                    <Column>{user.guardian_phone??(<b>Ikke satt</b>)}</Column>
+                </Row>
+                <Row>
                     <Column>E-post addresse</Column>
                     <Column>{user.email}</Column>
                 </Row>
