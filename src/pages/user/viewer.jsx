@@ -171,7 +171,7 @@ export const ViewUser = (props) => {
                             <Column>{ticket.ticket_id}</Column>
                             <Column>{ticket.event_uuid}</Column>
                             <Column>{ticket.seater.firstname} {ticket.seater.lastname}</Column>
-                            <Column>{ticket.seat?.number}</Column>
+                            <Column>{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</Column>
                             <Column>{ticket.owner.firstname} {ticket.seater.lastname}</Column>
                         </Row>
                     ))
@@ -196,7 +196,7 @@ export const ViewUser = (props) => {
                             <Column>{ticket.ticket_id}</Column>
                             <Column>{ticket.event_uuid}</Column>
                             <Column>{ticket.seater.firstname} {ticket.seater.lastname}</Column>
-                            <Column>{ticket.seat?.number}</Column>
+                            <Column>{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</Column>
                             <Column>{ticket.buyer.firstname} {ticket.buyer.lastname}</Column>
                         </Row>
                     ))
