@@ -100,7 +100,7 @@ const options = [
     {
         title: "Billett-admin",
         icon: faGavel,
-        roles: ["ticket_admin", "admin"],
+        roles: ["ticket_admin", "admin", "ticket_checkin"],
         entries: [
             {
                 title: "Alle billetter",
