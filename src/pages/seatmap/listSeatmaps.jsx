@@ -1,4 +1,6 @@
-import React , { useEffect, useState } from "react";
+import React , { useEffect, useState, useRef } from "react";
+import { useReactToPrint } from 'react-to-print';
+
 import { useForm } from "react-hook-form";
 import { useHistory } from 'react-router-dom';
 
@@ -7,6 +9,7 @@ import styled from "styled-components";
 import { Seatmap } from "@phoenixlan/phoenix.js";
 
 import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
+import { TableLabels } from './tableLabels'
 
 const S = {
     Seatmap: styled.div`
@@ -16,8 +19,10 @@ const S = {
 
 export const SeatmapList = () => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const printRef = useRef();
     const [seatmaps, setSeatmaps] = useState([]);
     const history = useHistory();
+    const [printUuid, setPrintUuid] = useState(null)
 
     const loadSeatmaps = async () => {
         const seatmapList = await Seatmap.getSeatmaps();
@@ -35,7 +40,12 @@ export const SeatmapList = () => {
         await loadSeatmaps();
     }
 
+    const handlePrint = useReactToPrint({
+        content: () => printRef.current,
+    });
+
     return (<div>
+        <TableLabels ref={printRef} uuid={printUuid}/>
         <h1>Seatmaps</h1>
         {
             seatmaps.map((seatmap) => {
@@ -43,7 +53,9 @@ export const SeatmapList = () => {
                     <h1>{seatmap.name}</h1>
                     <p>{seatmap.description}</p>
                     <button onClick={() => {history.push(`/seatmap/${seatmap.uuid}`)}}>Rediger</button>
-                    </S.Seatmap>)
+                        <button onClick={() => { setPrintUuid(seatmap.uuid); handlePrint()}}>Print this out!</button>
+
+                </S.Seatmap>)
             })
         }
         <h1>Nytt seatmap</h1>

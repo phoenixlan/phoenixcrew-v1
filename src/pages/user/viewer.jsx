@@ -140,8 +140,8 @@ export const ViewUser = (props) => {
                     if(position.name) {
                         return <li>{position.name}</li>
                     } else if(position.crew) {
-                        if(position.team) {
-                            return <li>Medlem av {position.team} i {position.crew.name}</li>
+                        if(position.team_uuid) {
+                            return <li>Medlem av {position.team_uuid} i {position.crew.name}</li>
                         } else if(position.chief) {
                             return <li>Chief i {position.crew.name}</li>
                         } else {
