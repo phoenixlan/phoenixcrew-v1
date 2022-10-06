@@ -40,7 +40,7 @@ export const PositionAdmin = () => {
     }, []);
 
     return (<div>
-        <h1>Roller</h1>
+        <h1>Stillinger</h1>
         {
             loading ? (<PageLoading />) : roles.map((role) => {
                 const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
@@ -62,7 +62,7 @@ export const PositionAdmin = () => {
                 </S.Role>)
             })
         }
-        <h1>Hva er en rolle?</h1>
-        <p>Roller er hvordan brukere tilhører crew, og hvordan brukere har tilgang på nettsiden. Å ha en rolle trenger ikke å bety at du tilhører et crew.</p>
+        <h1>Hva er en stilling?</h1>
+        <p>Stillinger er hvordan brukere tilhører crew, og hvordan brukere har tilgang på nettsiden. Å ha en stilling trenger ikke å bety at du tilhører et crew.</p>
         </div>)
 }
