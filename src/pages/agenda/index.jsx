@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 
 import styled from 'styled-components';
 
-import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
+import { User, Agenda, getCurrentEvent, getEvent, getEvents } from '@phoenixlan/phoenix.js'
 
 import { PageLoading } from "../../components/pageLoading"
 
@@ -51,6 +51,8 @@ export const AgendaList = (props) => {
     const [agendaList, setAgendaList] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [inputDatetimeValue, setInputDatetimeValue ] = useState(  );
+
     const reloadAgendaList = async () => {
         const agendaList = await Agenda.getAgenda();
         if(agendaList) {
@@ -62,7 +64,9 @@ export const AgendaList = (props) => {
         }
     }
 
-    useEffect(() => {
+    
+
+    useEffect(async () => {
         reloadAgendaList().catch(e => {
             console.log(e);
         })
@@ -71,7 +75,6 @@ export const AgendaList = (props) => {
     const onSubmit = async (data) => {
         // Get current event so we can get its UUID
         const event = await getCurrentEvent();
-        debugger;
         const dateUnixTime = new Date(data.time);
         if(!await Agenda.createAgendaEntry(data.title, data.description, event.uuid, dateUnixTime.getTime()/1000)) {
             console.log("fucked up")
@@ -81,7 +84,7 @@ export const AgendaList = (props) => {
 
     if(loading) {
         return (<PageLoading />)
-    }
+    } else {
     //TODO not quite right, backend har ikke application state enda
     return (
         <>
@@ -106,18 +109,18 @@ export const AgendaList = (props) => {
                         <InnerContainer flex="1">
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <>
-                                <InputContainer column>
+                                <InputContainer column extramargin>
                                     <InputLabel small>Tittel</InputLabel>
                                     <InputElement type="text" {...register("title")} />
                                 </InputContainer>
                                 
-                                <InputContainer column>
+                                <InputContainer column extramargin>
                                     <InputLabel small>Beskrivelse</InputLabel>
                                     <InputElement type="text" {...register("description")} />
                                 </InputContainer>
-                                <InputContainer column>
+                                <InputContainer column extramargin>
                                     <InputLabel small>Tidspunkt</InputLabel>
-                                    <InputElement type="datetime-local" {...register("time")} />
+                                    <InputElement type="datetime-local" defaultValue={new Date().toISOString().slice(0, -8)} {...register("time")} />
                                 </InputContainer>
                                 </>
                                 <FormInput type="submit"></FormInput>
@@ -156,5 +159,6 @@ export const AgendaList = (props) => {
             </DashboardContent>
         </>
     )
+}
 };
 

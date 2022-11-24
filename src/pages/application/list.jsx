@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight, faChevronRight }  from '@fortawesome/free-solid-svg-icons'
 
 import { PageLoading } from "../../components/pageLoading"
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardElementSelector, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox, InputRadio } from '../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardElementSelector, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox, InputContainer, InputElement, InputLabel, InputRadio } from '../../components/dashboard';
 
 const S = {
     WideLink: styled(Link)`
@@ -136,8 +136,14 @@ export const ListApplications = (props) => {
             <DashboardContent visible={activeContent == 1}>
                 <InnerContainer>
                     Sorter søknader etter:
-                    <InputRadio label="Fornavn, Etternavn" value={sortingMethodActive == 1} onChange={() => setSortingMethodActive(1)} />
-                    <InputRadio label="Søknadstid" value={sortingMethodActive == 2} onChange={() => setSortingMethodActive(2)} />
+                    <InputContainer>
+                        <InputElement name="1" type="radio" checked={sortingMethodActive === 1} onClick={() => setSortingMethodActive(1)} />
+                        <InputLabel top="1px">Fornavn, Etternavn</InputLabel>
+                    </InputContainer>
+                    <InputContainer>
+                        <InputElement name="1" type="radio" checked={sortingMethodActive === 2} onClick={() => setSortingMethodActive(2)} />
+                        <InputLabel top="1px">Søknadstid</InputLabel>
+                    </InputContainer>
                 </InnerContainer>
 
                 <InnerContainer visible={sortingMethodActive == 1}>
@@ -158,9 +164,18 @@ export const ListApplications = (props) => {
             <DashboardContent visible={activeContent == 2}>
                 <InnerContainer>
                     Sorter søknader etter:
-                    <InputRadio label="Fornavn, Etternavn" value={sortingMethodArchive == 1} onChange={() => setSortingMethodArchive(1)} />
-                    <InputRadio label="Søknadstid" value={sortingMethodArchive == 2} onChange={() => setSortingMethodArchive(2)} />
-                    <InputRadio label="Status" value={sortingMethodArchive == 3} onChange={() => setSortingMethodArchive(3)} />
+                    <InputContainer>
+                        <InputElement name="2" type="radio" checked={sortingMethodArchive == 1} onClick={() => setSortingMethodArchive(1)} />
+                        <InputLabel top="1px">Fornavn, Etternavn</InputLabel>
+                    </InputContainer>
+                    <InputContainer>
+                        <InputElement name="2" type="radio" checked={sortingMethodArchive == 2} onClick={() => setSortingMethodArchive(2)} />
+                        <InputLabel top="1px">Søknadstid</InputLabel>
+                    </InputContainer>
+                    <InputContainer>
+                        <InputElement name="2" type="radio" checked={sortingMethodArchive == 3} onClick={() => setSortingMethodArchive(3)} />
+                        <InputLabel top="1px">Status</InputLabel>
+                    </InputContainer>
                 </InnerContainer>
 
                 <InnerContainer visible={sortingMethodArchive == 1}>

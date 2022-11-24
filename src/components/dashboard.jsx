@@ -93,6 +93,7 @@ export const InputLabel = styled.span`
 export const InputContainer = styled.div`
     display: flex;
     flex-flow: ${props => props.column ? "column" : "row"};
+    margin-bottom: ${props => props.extramargin ? "18px" : "1px"};
 `
 
 export const InputCheckbox = ({ label, value, onChange }) => {
@@ -105,22 +106,12 @@ export const InputCheckbox = ({ label, value, onChange }) => {
         </>
     )
 }
-export const InputRadio = ({ label, value, onChange }) => {
-    return (
-        <>
-            <InputContainer>
-                <input type="radio" checked={value} onChange={onChange} />
-                <InputLabel top="1px">{label}</InputLabel>
-            </InputContainer>
-        </>
-    )
-}
+
 export const InputElement = styled.input`
     font-family: "Segoe UI";
     border: 0;
     padding: 4px 0;
     border-bottom: 1px solid rgb(135, 135, 135);
-    margin-bottom: 16px;
     outline: none;
 
     &:focus {
