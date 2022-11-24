@@ -14,6 +14,45 @@ const S = {
     `
 }
 
+const TABS = {
+    USER_DETAILS: 1,
+    POSITIONS: 2,
+    TICKETS: 3
+}
+
+const PositionList = ({ position_mappings }) => {
+    return (
+        <>
+            {
+                position_mappings.map(position_mapping => {
+                    const position = position_mapping.position
+                    let positionName = JSON.stringify(position)
+
+                    if(position.name) {
+                        positionName = position.name
+                    } else if(position.crew) {
+                        if(position.team) {
+                            positionName = `Medlem av ${position.team.name} i ${position.crew.name}`
+                        } else if(position.chief) {
+                            positionName = `Chief i ${position.crew.name}`
+                        } else {
+                            positionName = `Medlem av ${position.crew.name}`
+                        }
+                    }
+
+                    return (
+                        <SelectableRow>
+                            <Column consolas flex="1" visible={!visibleUUIDPositions}>{ position.uuid }</Column>
+                            <Column flex="2" >{positionName}</Column>
+                            <Column flex="0 24px"><IconContainer><FontAwesomeIcon /></IconContainer></Column>
+                        </SelectableRow>
+                    )
+                })
+            }
+        </>
+    )
+}
+
 export const ViewUser = (props) => {
     const { uuid } = useParams();
     const [user, setUser] = useState(null);
@@ -22,6 +61,7 @@ export const ViewUser = (props) => {
     const [ purchasedTickets, setPurchasedTickets ] = useState([]);
     const [ seatableTickets, setSeatableTickets] = useState([]);
     const [ crews, setCrews ] = useState([]);
+    const [ currentEvent, setCurrentEvent ] = useState(null);
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState] = useState(null);
@@ -41,23 +81,29 @@ export const ViewUser = (props) => {
                 console.log(user);
 
                 //Fetch more data on the user
-                const [_, owned, purchased, seatable, membershipState, activationState] = await Promise.all([
-                    await Promise.all(user.positions.map(async (position) => {
-                        if(position.crew) {
-                            position.crew = await Crew.getCrew(position.crew);
+                const [_, owned, purchased, seatable, membershipState, activationState, currentEvent] = await Promise.all([
+                    await Promise.all(user.position_mappings.map(async (position_mapping) => {
+                        const position = position_mapping.position;
+                        if(position.crew_uuid) {
+                            position.crew = await Crew.getCrew(position.crew_uuid);
+                            if(position.team_uuid) {
+                                position.team = position.crew.teams.find((team) => team.uuid == position.team_uuid)
+                            }
                         }
                     })),
                     await User.getOwnedTickets(uuid),
                     await User.getPurchasedTickets(uuid),
                     await User.getSeatableTickets(uuid),
                     await User.getUserMembershipStatus(uuid),
-                    await User.getUserActivationState(uuid)
+                    await User.getUserActivationState(uuid),
+                    await getCurrentEvent()
                 ])
                 setOwnedTickets(owned)
                 setPurchasedTickets(purchased)
                 setSeatableTickets(seatable);
                 setMembershipState(membershipState);
                 setActivationState(activationState);
+                setCurrentEvent(currentEvent);
 
                 setUser(user)
                 setCrews(crews);
@@ -88,12 +134,12 @@ export const ViewUser = (props) => {
                 </DashboardHeader>
 
                 <DashboardBarSelector border>
-                    <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Brukerinformasjon</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Stillinger ({user.positions.length})</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Billetter</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
                 </DashboardBarSelector>
                 
-                <DashboardContent visible={activeContent == 1}>
+                <DashboardContent visible={activeContent == TABS.USER_DETAILS}>
                     <InnerContainer>
                         <form>
                             <InnerContainerRow>
@@ -193,47 +239,33 @@ export const ViewUser = (props) => {
                     </InnerContainer>
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == 2}>
+                <DashboardContent visible={activeContent == TABS.POSITIONS}>
                     <InnerContainer border extramargin>
                         <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
                     </InnerContainer>
+                    <h1>Nåværende Stillinger</h1>
                     <Table>
                         <TableHeader border>
                             <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
                             <Column flex="2">Navn</Column>
                             <Column flex="0 24px" />
                         </TableHeader>
+                        <h1>Nåværende Stillinger</h1>
+                        <PositionList position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
+                    </Table>
+                    <Table>
+                        <TableHeader border>
+                            <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
+                            <Column flex="2">Navn</Column>
+                            <Column flex="0 24px" />
+                        </TableHeader>
+                        <h1>Tidligere Stillinger</h1>
+                        <PositionList position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
                     </Table>
 
-                    {
-                    user.positions.map((position) => {
-                        let positionName;
-
-                        if(position.name) {
-                            positionName = position.name;
-                        } else if(position.crew_uuid) {
-                            if(position.team_uuid) {
-                                positionName = "Lag i crew";
-                            } else if(position.chief) {
-                                positionName = "Gruppeleder for " + "...";
-                            } else {
-                                positionName = "Medlemmer av " + "...";
-                            }
-                        } else {
-                            positionName = "Ukjent crew";
-                        }
-            
-                        return (
-                            <SelectableRow>
-                                <Column consolas flex="1" visible={!visibleUUIDPositions}>{ position.uuid }</Column>
-                                <Column flex="2" >{positionName}</Column>
-                                <Column flex="0 24px"><IconContainer><FontAwesomeIcon /></IconContainer></Column>
-                            </SelectableRow>
-                        )
-                    })}
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == 3}>
+                <DashboardContent visible={activeContent == TABS.TICKETS}>
                     <InnerContainer border extramargin>
                         <InnerContainerTitleS>Følgende billetter har blitt kjøpt av brukeren</InnerContainerTitleS>
                         <Table>
