@@ -81,20 +81,7 @@ export const InnerContainerMini = styled.div`
 /*
     HTML Input components
 */
-const StyledInput = styled.input`
-    font-family: "Segoe UI";
-    border: 0;
-    padding: 4px 0;
-    border-bottom: 1px solid rgb(135, 135, 135);
-    margin-bottom: 16px;
-    outline: none;
-
-    &:focus {
-        border-bottom: 1px solid rgb(255,75,157);
-    }
-`
-
-const InputLabel = styled.span`
+export const InputLabel = styled.span`
     position: relative;
     font-family: "Segoe UI";
     font-size: ${props => props.small ? "11px" : "14px"};
@@ -103,7 +90,7 @@ const InputLabel = styled.span`
     margin: ${props => props.small ? "0" : "0 6px"};
 `
 
-const InputContainer = styled.span`
+export const InputContainer = styled.div`
     display: flex;
     flex-flow: ${props => props.column ? "column" : "row"};
 `
@@ -128,26 +115,18 @@ export const InputRadio = ({ label, value, onChange }) => {
         </>
     )
 }
-export const InputText = ({ children, label, value, onChange }) => {
-    return (
-        <>
-            <InputContainer column>
-                <InputLabel small>{label}</InputLabel>
-                <StyledInput {...children} type="text" value={value} onChange={onChange} />
-            </InputContainer>
-        </>
-    )
-}
-export const InputDate = ({ children, label, value, onChange }) => {
-    return (
-        <>
-            <InputContainer column>
-                <InputLabel small>{label}</InputLabel>
-                <StyledInput {...children} type="datetime-local" value={value} onChange={onChange} />
-            </InputContainer>
-        </>
-    )
-}
+export const InputElement = styled.input`
+    font-family: "Segoe UI";
+    border: 0;
+    padding: 4px 0;
+    border-bottom: 1px solid rgb(135, 135, 135);
+    margin-bottom: 16px;
+    outline: none;
+
+    &:focus {
+        border-bottom: 1px solid rgb(255,75,157);
+    }
+`
 
 const IFrame = styled.iframe`
     border: 1px solid rgb(235, 235, 235);

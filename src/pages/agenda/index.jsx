@@ -8,11 +8,10 @@ import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 import { PageLoading } from "../../components/pageLoading"
 
 import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputDate, InputText } from '../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
 import { faMinus, faMinusCircle, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { Column, IconContainer, SelectableRow, TableHeader } from '../../components/table';
+import { Column, IconContainer, SelectableRow, Table, TableHeader } from '../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Table } from '@material-ui/core';
 
 
 const S = {
@@ -53,7 +52,6 @@ export const AgendaList = (props) => {
     const [loading, setLoading] = useState(true);
 
     const reloadAgendaList = async () => {
-        setLoading(true);
         const agendaList = await Agenda.getAgenda();
         if(agendaList) {
             console.log("Fetched applicationList:")
@@ -73,6 +71,7 @@ export const AgendaList = (props) => {
     const onSubmit = async (data) => {
         // Get current event so we can get its UUID
         const event = await getCurrentEvent();
+        debugger;
         const dateUnixTime = new Date(data.time);
         if(!await Agenda.createAgendaEntry(data.title, data.description, event.uuid, dateUnixTime.getTime()/1000)) {
             console.log("fucked up")
@@ -106,9 +105,21 @@ export const AgendaList = (props) => {
                     <InnerContainerRow>
                         <InnerContainer flex="1">
                             <form onSubmit={handleSubmit(onSubmit)}>
-                                <InputText label="Tittel" {...register("title")} />
-                                <InputText label="Beskrivelse" {...register("description")} />
-                                <InputDate label="Tidspunkt" {...register("time")} />
+                                <>
+                                <InputContainer column>
+                                    <InputLabel small>Tittel</InputLabel>
+                                    <InputElement type="text" {...register("title")} />
+                                </InputContainer>
+                                
+                                <InputContainer column>
+                                    <InputLabel small>Beskrivelse</InputLabel>
+                                    <InputElement type="text" {...register("description")} />
+                                </InputContainer>
+                                <InputContainer column>
+                                    <InputLabel small>Tidspunkt</InputLabel>
+                                    <InputElement type="datetime-local" {...register("time")} />
+                                </InputContainer>
+                                </>
                                 <FormInput type="submit"></FormInput>
                                 {/** THE FORM DOESNT WORK BECAUSE SOMETHING... */}
                             </form>
@@ -143,34 +154,7 @@ export const AgendaList = (props) => {
                     <IFrameContainer src="https://info.phoenixlan.no/" />
                 </InnerContainer>
             </DashboardContent>
-
-            <S.AgendaContainer>
-
-            </S.AgendaContainer>
-            <h1>Ny agenda</h1>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <FormContainer>
-                    <FormEntry>
-                        <FormLabel>Tittel</FormLabel>
-                        <FormInput {...register("title")}></FormInput>
-                        {errors.description && <FormError>Beskrivelse er påkrevd</FormError>}
-                    </FormEntry>
-                    <FormEntry>
-                        <FormLabel>Beskrivelse</FormLabel>
-                        <FormInput {...register("description")}></FormInput>
-                    </FormEntry>
-                    <FormEntry>
-                        <FormLabel>Tidspunkt</FormLabel>
-                        <FormInput type="datetime-local" {...register("time")}></FormInput>
-                        {errors.time && <FormError>Tidspunkt er påkrevd</FormError>}
-                    </FormEntry>
-                    <FormEntry>
-                        <FormInput type="submit"></FormInput>
-                    </FormEntry>
-                </FormContainer>
-            </form>
-
-
         </>
     )
 };
+
