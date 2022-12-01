@@ -19,11 +19,18 @@ export const Column = styled.div`
     position: relative;
     top: ${props => props.consolas ? "2px" : "0"};
     flex: ${props => props.flex ? props.flex : "1"};
+    color: ${props => props.color ? props.color : "black"};
+    text-align: ${props => props.center ? "center" : "normal"};
+`
+export const InnerColumnCenter = styled.span`
+    margin: auto;
+    text-align: auto
 `
 export const IconContainer = styled.span`
     color: rgb(40, 40, 40);
     position: relative;
     bottom: 1px;
+    margin: auto;
 `
 
 export const SelectableRow = styled.tr`

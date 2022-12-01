@@ -9,8 +9,8 @@ import { PageLoading } from "../../components/pageLoading"
 
 import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
-import { faMinus, faMinusCircle, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { Column, IconContainer, SelectableRow, Table, TableHeader } from '../../components/table';
+import { faEye, faEyeSlash, faMinus, faMinusCircle, faSlash, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { Column, IconContainer, InnerColumnCenter, SelectableRow, Table, TableHeader } from '../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -32,15 +32,27 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
         await reloadAgendaList();
     }
 
-    return (
-        <SelectableRow>
-            <Column flex="2">{ new Date(entry.time*1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
-            <Column flex="3">{ entry.title }</Column>
-            <Column flex="4">{ entry.description }</Column>
-            <Column flex="0 22px"><IconContainer><FontAwesomeIcon icon /></IconContainer></Column>
-            <Column flex="0 22px"><IconContainer><FontAwesomeIcon icon={faMinusCircle} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
-        </SelectableRow>
-    )
+    if (new Date(entry.time*1000) > (Date.now() - 5 * 60000)) {
+        return (
+            <SelectableRow>
+                <Column flex="2">{ new Date(entry.time*1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
+                <Column flex="3">{ entry.title }</Column>
+                <Column flex="4">{ entry.description }</Column>
+                <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
+                <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+            </SelectableRow>
+        )
+    } else {
+        return (
+            <SelectableRow>
+                <Column flex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
+                <Column flex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
+                <Column flex="4" color="rgb(150, 150, 150)">{ entry.description }</Column>
+                <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
+                <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+            </SelectableRow>
+        )
+    }
 }
 
 
@@ -137,8 +149,8 @@ export const AgendaList = (props) => {
                             <Column flex="2">Tidspunkt</Column>
                             <Column flex="3">Tittel</Column>
                             <Column flex="4">Beskrivelse</Column>
-                            <Column flex="0 22px" title="Elementet er synlig på infoskjermen"></Column>
-                            <Column flex="0 22px" title="Trykk for å fjerne elementet"></Column>
+                            <Column center flex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
+                            <Column center flex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
                         </TableHeader>
                     </Table>
 

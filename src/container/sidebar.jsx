@@ -13,7 +13,7 @@ import Logo from "../assets/phoenixlan_square_logo.png";
 
 // Icons
 
-import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faImage, faImages, faUserFriends, faSearch, faSignOutAlt, faInfo } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faImage, faImages, faUserFriends, faSearch, faSignOutAlt, faInfo, faKey } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link } from 'react-router-dom';
 /// Create authentication context
@@ -259,13 +259,13 @@ const options = [
         entries: []
     },
     {
-        title: "Arrangement administrasjon",
+        title: "Administrasjon",
         icon: faGavel,
         roles: ["admin"],
         entries: [
             {
-                title: "Stillinger",
-                icon: faCircle,
+                title: "Stillinger og rettigheter",
+                icon: faKey,
                 url: "/positions/"
             },
             {

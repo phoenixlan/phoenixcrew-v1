@@ -64,15 +64,10 @@ export const EventList = () => {
                             <Column flex="5">Slutt</Column>
                             <Column flex="4">Lokasjon</Column>
                             <Column flex="4">Seatmap</Column>
-                            <Column basis="0 14px"><IconContainer/></Column>
+                            <Column flex="0 24px"><IconContainer/></Column>
                         </TableHeader>
                         {
                             events.map((event) => {
-
-                                const booking_time    = new Date(event.booking_time * 1000);
-                                const start_time      = new Date(event.start_time * 1000);
-                                const end_time        = new Date(event.end_time * 1000);
-
                                 return (
                                 <SelectableRow onClick={e => {history.push(`/event/${event.uuid}`)}}>
                                     <Column consolas flex="12" visible={!visibleUUID}>{ event.uuid }</Column>
@@ -82,7 +77,7 @@ export const EventList = () => {
                                     <Column flex="5">{ new Date(event.end_time * 1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
                                     <Column flex="4">{ event.location?.name??"Ikke satt" }</Column>
                                     <Column flex="4">{ event.seatmap?.name??"Ikke satt" }</Column>
-                                    <Column basis="0 14px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                    <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                 </SelectableRow>)
                             })
                         }

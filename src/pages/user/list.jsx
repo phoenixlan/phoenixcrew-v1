@@ -63,7 +63,7 @@ export const UserList= () => {
                             <Column flex="1">Alder</Column>
                             <Column flex="2">Brukernavn</Column>
                             <Column flex="3">Registrert</Column>
-                            <Column flex="0 14px" />
+                            <Column flex="0 24px" />
                         </TableHeader>
                         {
                             users.map((user) => {
@@ -74,7 +74,7 @@ export const UserList= () => {
                                         <Column flex="1">{dateOfBirthToAge(user.birthdate)}</Column>
                                         <Column flex="2">{ user.username }</Column>
                                         <Column flex="3">{ new Date(user.created*1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'medium'}) }</Column>
-                                        <Column flex="0 14px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                     </SelectableRow>
                                 )
                             })

@@ -50,7 +50,7 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
                     </>
                     )
             }
-            <Column flex="0 20px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+            <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
         </SelectableRow>
     )
 }
@@ -76,7 +76,7 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
                     )
                 }
                 
-                <Column flex="0 20px"><IconContainer/></Column>
+                <Column flex="0 24px"><IconContainer/></Column>
     
             </TableHeader>
             <tbody>
