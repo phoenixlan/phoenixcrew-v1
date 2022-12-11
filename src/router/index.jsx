@@ -27,6 +27,7 @@ import { EventList } from '../pages/event/list';
 import { EventViewer } from '../pages/event/view';
 import { AvatarApproval } from '../pages/avatar/approval';
 import { StoreSessionList } from '../pages/ticket/storeSessions';
+import { ViewPosition } from '../pages/admin/view';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -52,6 +53,9 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/positions/">
                             <PositionAdmin />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/positions/:uuid">
+                            <ViewPosition />
                         </PrivateRoute>
                         <PrivateRoute exact path="/avatar/approval/">
                             <AvatarApproval />

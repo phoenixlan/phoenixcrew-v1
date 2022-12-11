@@ -13,6 +13,7 @@ import { Theme } from "../../theme";
 import { SimpleUserCard } from "../../components/simpleUserCard";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useHistory } from "react-router-dom";
 
 const S = {
     Role: styled.div`
@@ -29,6 +30,9 @@ export const PositionAdmin = () => {
     const [roles, setRoles] = useState([]);
     const [crews, setCrews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [visibleUUID, setVisibleUUID] = useState(false);
+
+    let history = useHistory();
 
     useEffect(() => {
         const initialise = async () => {
@@ -45,7 +49,7 @@ export const PositionAdmin = () => {
         }
     }, []);
 
-    /*useEffect(async () => {
+    useEffect(async () => {
         const [ positions, crews ] = await Promise.all([
             Promise.all(
                 (await Position.getPositions()).map(position => Position.getPosition(position.uuid))
@@ -59,14 +63,14 @@ export const PositionAdmin = () => {
         setRoles(positions);
 
         setLoading(false);
-    }, []);*/
+    }, []);
 
 
     return (
         <>
             <DashboardHeader border>
                 <DashboardTitle>
-                    Stillinger
+                    Stillinger og rettigheter
                 </DashboardTitle>
                 <DashboardSubtitle>
                     {roles.length} stillinger er aktive
@@ -74,13 +78,17 @@ export const PositionAdmin = () => {
             </DashboardHeader>
             <DashboardContent>
                 <InnerContainer>
-                    <InputCheckbox label="Vis stilling UUID" />
+                    Stillinger er hvordan brukere tilhører crew, og hvordan brukere får rettigheter på nettsidene til Phoenix.<br />
+                    En bruker kan ha flere stillinger og trenger ikke å bety at man tilhører et crew.
+                </InnerContainer>
+                <InnerContainer>
+                    <InputCheckbox label="Vis stilling UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                 </InnerContainer>
 
                 <InnerContainer>
                     <Table>
                         <TableHeader border>
-                            <Column flex="9">UUID</Column>
+                            <Column flex="9" visible={!visibleUUID}>UUID</Column>
                             <Column flex="4">Tilknyttet <br/>crew</Column>
                             <Column flex="9">Navn</Column>
                             <Column flex="2">Type</Column>
@@ -94,56 +102,32 @@ export const PositionAdmin = () => {
                                 const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
 
 
-                                let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? `${roleTeam.name}` : "") + (roleCrew?.name ?? "Ukjent crew");
+                                let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} ` : " ") + (roleCrew?.name ?? "Ukjent crew");
                                 if(role.name) {
                                     name = `${role.name}${roleCrew ? " (" + name + ")":""}`
                                 }
 
 
+                                if(loading) {
 
-                                return (
-                                    <SelectableRow title="Trykk for å åpne">
-                                        <Column consolas flex="9">{role.uuid}</Column>
-                                        <Column flex="4">{(roleCrew?.name ?? "-")}</Column>
-                                        <Column flex="9">{name}</Column>
-                                        <Column flex="2"></Column>
-                                        <Column flex="2">{role.users.length}</Column>
-                                        <Column flex="2">{role.permissions.length}</Column>
-                                        <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                    </SelectableRow>
-                                )
+                                } else {
+                                    return (
+                                        <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}}>
+                                            <Column consolas flex="9" visible={!visibleUUID}>{role.uuid}</Column>
+                                            <Column flex="4">{(roleCrew?.name ?? "-")}</Column>
+                                            <Column flex="9">{name}</Column>
+                                            <Column flex="2"></Column>
+                                            <Column flex="2">{role.users.length}</Column>
+                                            <Column flex="2">{role.permissions.length}</Column>
+                                            <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        </SelectableRow>
+                                    )
+                                }
                             })
                         }
                     </Table>
                 </InnerContainer>
             </DashboardContent>
-        
-        <div>
-            <h1>Stillinger</h1>
-            {
-                loading ? (<PageLoading />) : roles.map((role) => {
-                    const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
-                    const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
-                    let name = (role.chief ? "Leder av " : "Medlem av ") + (roleTeam ? `${roleTeam.name} i ` : "") + (roleCrew?.name ?? "Ukjent crew");
-                    if(role.name) {
-                        name = `${role.name}${roleCrew ? " (" + name + ")":""}`
-                    }
-
-                    return (<S.Role uuid={role.uuid}>
-                        <h2>{name}</h2>
-                        <S.UserContainer>
-                        {
-                            role.users.map(user => (<SimpleUserCard avatarSize={10} user={user}>
-                            </SimpleUserCard>))
-                        }
-                        </S.UserContainer>
-                        <i>{role.users.length} bruker{role.users.length > 1 ? "e" : ""}</i>
-                    </S.Role>)
-                })
-            }
-            <h1>Hva er en stilling?</h1>
-            <p>Stillinger er hvordan brukere tilhører crew, og hvordan brukere har tilgang på nettsiden. Å ha en stilling trenger ikke å bety at du tilhører et crew.</p>
-        </div>
-    </>
+        </>
     )
 }

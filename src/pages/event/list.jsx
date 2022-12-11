@@ -72,9 +72,9 @@ export const EventList = () => {
                                 <SelectableRow onClick={e => {history.push(`/event/${event.uuid}`)}}>
                                     <Column consolas flex="12" visible={!visibleUUID}>{ event.uuid }</Column>
                                     <Column flex="4">{ event.name}</Column>
-                                    <Column flex="5">{ new Date(event.booking_time * 1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
-                                    <Column flex="5">{ new Date(event.start_time * 1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
-                                    <Column flex="5">{ new Date(event.end_time * 1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
+                                    <Column flex="5">{ new Date(event.booking_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+                                    <Column flex="5">{ new Date(event.start_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+                                    <Column flex="5">{ new Date(event.end_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
                                     <Column flex="4">{ event.location?.name??"Ikke satt" }</Column>
                                     <Column flex="4">{ event.seatmap?.name??"Ikke satt" }</Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>

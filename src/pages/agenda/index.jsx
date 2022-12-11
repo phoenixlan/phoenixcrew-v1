@@ -35,7 +35,7 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
     if (new Date(entry.time*1000) > (Date.now() - 5 * 60000)) {
         return (
             <SelectableRow>
-                <Column flex="2">{ new Date(entry.time*1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
+                <Column flex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
                 <Column flex="3">{ entry.title }</Column>
                 <Column flex="4">{ entry.description }</Column>
                 <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
@@ -45,7 +45,7 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
     } else {
         return (
             <SelectableRow>
-                <Column flex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'short'}) }</Column>
+                <Column flex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
                 <Column flex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
                 <Column flex="4" color="rgb(150, 150, 150)">{ entry.description }</Column>
                 <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
@@ -132,11 +132,11 @@ export const AgendaList = (props) => {
                                 </InputContainer>
                                 <InputContainer column extramargin>
                                     <InputLabel small>Tidspunkt</InputLabel>
-                                    <InputElement type="datetime-local" defaultValue={new Date().toISOString().slice(0, -8)} {...register("time")} />
+                                    <InputElement type="datetime-local" {...register("time")} />
+                                    {/*<InputElement type="datetime-local" defaultValue={new Date().toISOString().slice(0, -8)} {...register("time")} />*/}
                                 </InputContainer>
                                 </>
                                 <FormInput type="submit"></FormInput>
-                                {/** THE FORM DOESNT WORK BECAUSE SOMETHING... */}
                             </form>
                         </InnerContainer>
                         <InnerContainer flex="2" />

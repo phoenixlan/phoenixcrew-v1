@@ -36,7 +36,7 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
         <SelectableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
             <Column flex="3">{application.user.firstname} {application.user.lastname}</Column>
             <Column flex="3">{application.crew.name}</Column>
-            <Column flex="3">{ new Date(application.created*1000).toLocaleString('default', {dateStyle: 'short', timeStyle: 'medium'}) }</Column>
+            <Column flex="3">{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
             {
                 showProcessedBy ? (
                     <>
