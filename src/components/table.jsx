@@ -12,7 +12,8 @@ export const TableHeader = styled.div`
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
     padding-bottom: 2px;
 `
-export const Column = styled.div`
+
+const StyledColumn = styled.div`
     display: ${props => props.visible ? "none" : "flex"};
     padding: 4px 0;
     font-family: ${props => props.consolas ? "Consolas" : "inherit"};
@@ -22,7 +23,28 @@ export const Column = styled.div`
     color: ${props => props.color ? props.color : "inherit"};
     text-align: ${props => props.center ? "center" : "left"};
     text-transform: ${props => props.uppercase ? "uppercase" : "inherit"};
+    min-width: 0;
+    flex-flow: 0%;
+    overflow: hidden;
 `
+const ColumnNowrap = styled.div`
+    margin: auto;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+`
+
+export const Column = (props) => {
+    return(
+        <StyledColumn {...props}>
+            <ColumnNowrap center={props.center}>
+                {props.children}
+            </ColumnNowrap>
+        </StyledColumn>
+    )
+}
+
 export const CrewColorBox = styled.div`
     background-color: ${props => props.hex ? props.hex : "black"};
     width: 20px;
@@ -37,11 +59,15 @@ export const IconContainer = styled.span`
     position: relative;
     bottom: 1px;
     margin: auto;
+    width: 100%;
+    text-align: center;
 `
 
 export const SelectableRow = styled.tr`
     display: flex;
+    flex-direction: row;
     flex-flow: row;
+    flex-wrap: wrap;
     height: 2em;
 
     cursor: pointer;

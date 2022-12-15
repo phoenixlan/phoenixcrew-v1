@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
-import { faArrowRight, faCheck, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCheck, faPen, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { Table } from "@material-ui/core";
 import { Column, CrewColorBox, IconContainer, SelectableRow, TableHeader } from "../../components/table";
@@ -46,7 +46,7 @@ export const CrewList= () => {
                     Crew
                 </DashboardTitle>
                 <DashboardSubtitle>
-                    {crews.length} crew registrert.
+                    {crews.length} crew registrert
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
@@ -63,7 +63,7 @@ export const CrewList= () => {
                             <Column flex="10">Beskrivelse</Column>
                             <Column flex="3">Antall<br/>brukere</Column>
                             <Column center flex="0 24px" title="Statusikon: Ikon vises om crewet kan søkes til eller ikke"><IconContainer>...</IconContainer></Column>
-                            <Column center flex="0 24px" title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>.</IconContainer></Column>
+                            <Column center flex="0 24px" title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>...</IconContainer></Column>
                             <Column center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
                         </TableHeader>
                         {
@@ -74,8 +74,8 @@ export const CrewList= () => {
                                     <Column flex="0 42px"><CrewColorBox hex={crew.hex_color} /></Column>
                                     <Column flex="6">{ crew.name }</Column>
                                     <Column flex="10">{ crew.description }</Column>
-                                    <Column flex="3">#</Column>
-                                    <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faPen : ""} /></IconContainer></Column>
+                                    <Column flex="3">...</Column>
+                                    <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                 </SelectableRow>)

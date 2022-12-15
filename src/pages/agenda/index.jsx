@@ -38,8 +38,8 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
                 <Column flex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
                 <Column flex="3">{ entry.title }</Column>
                 <Column flex="4">{ entry.description }</Column>
-                <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
-                <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
+                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
             </SelectableRow>
         )
     } else {
@@ -48,8 +48,8 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
                 <Column flex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
                 <Column flex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
                 <Column flex="4" color="rgb(150, 150, 150)">{ entry.description }</Column>
-                <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
-                <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
+                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
             </SelectableRow>
         )
     }
@@ -114,7 +114,7 @@ export const AgendaList = (props) => {
             <DashboardContent visible={activeContent == 1}>
                 <InnerContainer>
                     <InnerContainerTitle>
-                        Opprett et nytt element
+                        Opprett et nytt agenda element
                     </InnerContainerTitle>
 
                     <InnerContainerRow>
@@ -136,7 +136,7 @@ export const AgendaList = (props) => {
                                     {/*<InputElement type="datetime-local" defaultValue={new Date().toISOString().slice(0, -8)} {...register("time")} />*/}
                                 </InputContainer>
                                 </>
-                                <FormInput type="submit"></FormInput>
+                                <FormInput type="submit" name=''></FormInput>
                             </form>
                         </InnerContainer>
                         <InnerContainer flex="2" />

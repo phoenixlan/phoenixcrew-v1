@@ -66,68 +66,70 @@ export const PositionAdmin = () => {
     }, []);
 
 
-    return (
-        <>
-            <DashboardHeader border>
-                <DashboardTitle>
-                    Stillinger og rettigheter
-                </DashboardTitle>
-                <DashboardSubtitle>
-                    {roles.length} stillinger er aktive
-                </DashboardSubtitle>
-            </DashboardHeader>
-            <DashboardContent>
-                <InnerContainer>
-                    Stillinger er hvordan brukere tilhører crew, og hvordan brukere får rettigheter på nettsidene til Phoenix.<br />
-                    En bruker kan ha flere stillinger og trenger ikke å bety at man tilhører et crew.
-                </InnerContainer>
-                <InnerContainer>
-                    <InputCheckbox label="Vis stilling UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
-                </InnerContainer>
-
-                <InnerContainer>
-                    <Table>
-                        <TableHeader border>
-                            <Column flex="9" visible={!visibleUUID}>UUID</Column>
-                            <Column flex="4">Tilknyttet <br/>crew</Column>
-                            <Column flex="9">Navn</Column>
-                            <Column flex="2">Type</Column>
-                            <Column flex="2">Antall <br/>brukere</Column>
-                            <Column flex="2">Antall <br/>rettigheter</Column>
-                            <Column flex="0 24px" />
-                        </TableHeader>
-                        {
-                            roles.map((role) => {
-                                const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
-                                const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
-
-
-                                let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} ` : " ") + (roleCrew?.name ?? "Ukjent crew");
-                                if(role.name) {
-                                    name = `${role.name}${roleCrew ? " (" + name + ")":""}`
-                                }
-
-
-                                if(loading) {
-
-                                } else {
+    if(loading) {
+        return (
+            <PageLoading />
+        )
+    }
+    else {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Stillinger og rettigheter
+                    </DashboardTitle>
+                    <DashboardSubtitle>
+                        {roles.length} stillinger er aktive
+                    </DashboardSubtitle>
+                </DashboardHeader>
+                <DashboardContent>
+                    <InnerContainer>
+                        Stillinger er hvordan brukere tilhører crew, og hvordan brukere får rettigheter på nettsidene til Phoenix.<br />
+                        En bruker kan ha flere stillinger og trenger ikke å bety at man tilhører et crew.
+                    </InnerContainer>
+                    <InnerContainer>
+                        <InputCheckbox label="Vis stilling UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
+                    </InnerContainer>
+    
+                    <InnerContainer>
+                        <Table>
+                            <TableHeader border>
+                                <Column flex="9" visible={!visibleUUID}>UUID</Column>
+                                <Column flex="4">Tilknyttet <br/>crew</Column>
+                                <Column flex="9">Navn</Column>
+                                <Column flex="2">Type</Column>
+                                <Column flex="2">Antall <br/>brukere</Column>
+                                <Column flex="2">Antall <br/>rettigheter</Column>
+                                <Column flex="0 24px" />
+                            </TableHeader>
+                            {
+                                roles.map((role) => {
+                                    const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
+                                    const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
+    
+    
+                                    let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} ` : " ") + (roleCrew?.name ?? "Ukjent crew");
+                                    if(role.name) {
+                                        name = `${role.name}${roleCrew ? " (" + name + ")":""}`
+                                    }
+    
                                     return (
                                         <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}}>
                                             <Column consolas flex="9" visible={!visibleUUID}>{role.uuid}</Column>
                                             <Column flex="4">{(roleCrew?.name ?? "-")}</Column>
                                             <Column flex="9">{name}</Column>
-                                            <Column flex="2"></Column>
+                                            <Column flex="2">{role.name ? "Custom" : "System"}</Column>
                                             <Column flex="2">{role.users.length}</Column>
                                             <Column flex="2">{role.permissions.length}</Column>
                                             <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                         </SelectableRow>
                                     )
-                                }
-                            })
-                        }
-                    </Table>
-                </InnerContainer>
-            </DashboardContent>
-        </>
-    )
+                                })
+                            }
+                        </Table>
+                    </InnerContainer>
+                </DashboardContent>
+            </>
+        )
+    }
 }
