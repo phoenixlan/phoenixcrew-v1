@@ -119,6 +119,18 @@ export const InputElement = styled.input`
     }
 `
 
+export const InputSelect = styled.select`
+    font-family: "Segoe UI";
+    border: 0;
+    padding: 4px 0;
+    border-bottom: 1px solid rgb(135, 135, 135);
+    outline: none;
+
+    &:focus {
+        border-bottom: 1px solid rgb(255,75,157);
+    }
+`
+
 const IFrame = styled.iframe`
     border: 1px solid rgb(235, 235, 235);
     width: 100%;

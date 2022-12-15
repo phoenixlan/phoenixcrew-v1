@@ -29,6 +29,7 @@ import { AvatarApproval } from '../pages/avatar/approval';
 import { StoreSessionList } from '../pages/ticket/storeSessions';
 import { ViewPosition } from '../pages/admin/view';
 import { AgendaElementView } from '../pages/agenda/view';
+import { NotAvailable } from '../pages/notAvailable';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -71,7 +72,7 @@ export const CrewRouter = () => {
                             <SeatmapList />
                         </PrivateRoute>
                         <PrivateRoute exact path="/event/:uuid">
-                            <EventViewer />
+                            <NotAvailable />
                         </PrivateRoute>
                         <PrivateRoute exact path="/event/">
                             <EventList />
@@ -83,16 +84,18 @@ export const CrewRouter = () => {
                             <AgendaList />
                         </PrivateRoute>
                         <PrivateRoute exact path="/agenda/:uuid">
-                            <AgendaElementView />
+                            <NotAvailable />
                         </PrivateRoute>
                         <PrivateRoute exact path="/ticket/">
                             <TicketList />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/ticket/memberships">
+                        <PrivateRoute exact path="/ticket/memberships/">
                             <MembershipList/>
                         </PrivateRoute>
                         <PrivateRoute exact path="/ticket/free/">
                             <FreeTicketManagement />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/ticket/:uuid/">
                         </PrivateRoute>
                         <PrivateRoute exact path="/store_sessions/">
                             <StoreSessionList/>

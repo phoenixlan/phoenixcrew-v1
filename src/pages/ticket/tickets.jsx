@@ -8,7 +8,7 @@ import Spinner from "react-svg-spinner";
 import { PageLoading } from "../../components/pageLoading";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faUserCheck } from "@fortawesome/free-solid-svg-icons";
 
 export const TicketList = () => {
     const [ tickets, setTickets ] = useState([]);
@@ -80,7 +80,7 @@ export const TicketList = () => {
                                             <Column flex="4">{ User.getFullName(ticket.seater) }</Column>
                                             <Column flex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</Column>
                                             <Column flex="3">{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
-                                            <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                            <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={ticket.checkedin ? faUserCheck : null}/></IconContainer></Column>
                                             <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                         </SelectableRow>
                                     )
