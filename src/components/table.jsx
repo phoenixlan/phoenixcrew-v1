@@ -18,7 +18,7 @@ const StyledColumn = styled.div`
     padding: 4px 0;
     font-family: ${props => props.consolas ? "Consolas" : "inherit"};
     position: relative;
-    top: ${props => props.consolas ? "2px" : "0"};
+    top: ${props => props.consolas ? "1px" : "0"};
     flex: ${props => props.flex ? props.flex : "1"};
     color: ${props => props.color ? props.color : "inherit"};
     text-align: ${props => props.center ? "center" : "left"};
