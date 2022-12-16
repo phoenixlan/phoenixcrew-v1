@@ -101,6 +101,7 @@ export const FreeTicketManagement = () => {
 
                     <InnerContainerRow>
                         <InnerContainer flex="1">
+                            <>
                             <UserSearch onUserSelected={onUserSelected}/>
                             <InputContainer column extramargin>
                                 <InputLabel small>Billett-type</InputLabel>
@@ -112,7 +113,8 @@ export const FreeTicketManagement = () => {
                                     }
                                 </InputSelect>
                             </InputContainer>
-                            <FormButton type="submit" onClick={() => giveTicket}></FormButton>
+                            <FormButton type="submit" onClick={() => giveTicket()}>Gi ut gratisbillett</FormButton>
+                            </>
                         </InnerContainer>
                         <InnerContainer flex="2" />
                     </InnerContainerRow>

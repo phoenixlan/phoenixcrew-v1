@@ -65,6 +65,9 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/crews/">
                             <CrewList />
                         </PrivateRoute>
+                        <PrivateRoute exact path="/crew/:uuid">
+                            <NotAvailable />
+                        </PrivateRoute>
                         <PrivateRoute exact path="/seatmap/:uuid">
                             <SeatmapEditor />
                         </PrivateRoute>
@@ -86,16 +89,17 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/agenda/:uuid">
                             <NotAvailable />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/ticket/">
+                        <PrivateRoute exact path="/tickets/">
                             <TicketList />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/ticket/memberships/">
+                        <PrivateRoute exact path="/tickets/memberships/">
                             <MembershipList/>
                         </PrivateRoute>
-                        <PrivateRoute exact path="/ticket/free/">
+                        <PrivateRoute exact path="/tickets/free/">
                             <FreeTicketManagement />
                         </PrivateRoute>
                         <PrivateRoute exact path="/ticket/:uuid/">
+                            <NotAvailable />
                         </PrivateRoute>
                         <PrivateRoute exact path="/store_sessions/">
                             <StoreSessionList/>

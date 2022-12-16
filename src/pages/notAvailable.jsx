@@ -13,7 +13,7 @@ export const NotAvailable = () => {
                 <DashboardContent>
                     <InnerContainer>
                         Denne siden og/eller funksjonen er ikke ferdig utviklet og er derfor utilgjengelig.<br />
-                        <a href="" onClick={() => history.goBack()}>Ta meg tilbake til forrige side!</a>
+                        <a href="" onClick={() => history.push("/")}>Ta meg tilbake til hovedsiden!</a>
                     </InnerContainer>
                 </DashboardContent>
             </DashboardHeader>

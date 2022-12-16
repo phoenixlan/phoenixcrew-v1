@@ -310,17 +310,17 @@ const options = [
             {
                 title: "Alle billetter",
                 icon: faTicketAlt,
-                url: "/ticket/"
+                url: "/tickets/"
             },
             {
                 title: "Gratisbilletter",
                 icon: faTicketAlt,
-                url: "/ticket/free"
+                url: "/tickets/free"
             },
             {
                 title: "Medlemskap-info",
                 icon: faTicketAlt,
-                url: "/ticket/memberships"
+                url: "/tickets/memberships"
             },
             {
                 title: "Aktive kjøp",

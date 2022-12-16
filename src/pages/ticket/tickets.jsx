@@ -6,7 +6,7 @@ import { Table, Row, Column, TableHeader, IconContainer, SelectableRow } from ".
 
 import Spinner from "react-svg-spinner";
 import { PageLoading } from "../../components/pageLoading";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, DisplayControl, InnerContainer, InnerContainerRow, InputCheckbox, InputContainer, InputElement, InputLabel } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faUserCheck } from "@fortawesome/free-solid-svg-icons";
 
@@ -14,6 +14,7 @@ export const TicketList = () => {
     const [ tickets, setTickets ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
+    const [sortingMethodTicket, setSortingMethodTicket] = useState(1);
 
     let history = useHistory();
 
@@ -34,7 +35,6 @@ export const TicketList = () => {
         await reload();
     }
 
-
     if(loading) {
         return (
             <PageLoading />
@@ -52,8 +52,16 @@ export const TicketList = () => {
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
-                    <InnerContainer>
-                    </InnerContainer>
+                    <InnerContainerRow>
+                        <InnerContainer flex="1">
+                            Sortering av billetter kommer...
+                        </InnerContainer>
+                        <InnerContainer flex="1" />
+                        <InnerContainer flex="2">
+                            Graf over billetter kommer...
+                        </InnerContainer>
+                    </InnerContainerRow>
+                    
     
                     <InnerContainer>
                         <Table>
@@ -69,6 +77,7 @@ export const TicketList = () => {
                                 <Column center flex="0 24px" title="Statusikon: Ikon vises dersom billetten har blitt sjekket inn"><IconContainer>...</IconContainer></Column>
                                 <Column center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
                             </TableHeader>
+
                             {
                                 tickets.map((ticket) => {
                                     return (
@@ -85,6 +94,9 @@ export const TicketList = () => {
                                         </SelectableRow>
                                     )
                                 })
+                            }
+                           
+                            {
                             /*
                                 tickets.map(ticket => {
                                 return (<Row key={ticket.ticket_id}>
@@ -102,9 +114,8 @@ export const TicketList = () => {
                                 </Row>)
                             })
                             */
+                        }
                             
-                            
-                            }
                         </Table>
                     </InnerContainer>
                 </DashboardContent>

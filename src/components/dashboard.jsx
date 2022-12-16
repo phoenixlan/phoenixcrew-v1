@@ -76,6 +76,9 @@ export const InnerContainerTitle = styled.div`
 export const InnerContainerMini = styled.div`
     padding-bottom: 8px;
 `
+export const DisplayControl = styled.div`
+    display: ${props => props.visible ? "" : "none"};
+`
 
 
 /*
