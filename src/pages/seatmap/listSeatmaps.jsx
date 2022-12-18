@@ -8,8 +8,16 @@ import styled from "styled-components";
 
 import { Seatmap } from "@phoenixlan/phoenix.js";
 
-import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
+import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
+import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InnerContainerMini, InputCheckbox, InnerContainerRow, InnerContainerTitle, InputLabel, InputElement } from "../../components/dashboard";
+import { Checkbox } from "../../components/inputCheckbox";
+import { PageLoading } from "../../components/pageLoading";
+
+import { FormContainer, FormEntry, FormLabel, FormInput, FormError, FormButton } from '../../components/form';
 import { TableLabels } from './tableLabels'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight, faUserCheck } from "@fortawesome/free-solid-svg-icons";
+
 
 const S = {
     Seatmap: styled.div`
@@ -22,7 +30,9 @@ export const SeatmapList = () => {
     const printRef = useRef();
     const [seatmaps, setSeatmaps] = useState([]);
     const history = useHistory();
-    const [printUuid, setPrintUuid] = useState(null)
+    const [printUuid, setPrintUuid] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [visibleUUID, setVisibleUUID] = useState(false);
 
     const loadSeatmaps = async () => {
         const seatmapList = await Seatmap.getSeatmaps();
@@ -31,6 +41,7 @@ export const SeatmapList = () => {
 
     useEffect(async () => {
         await loadSeatmaps();
+        setLoading(false);
     }, []);
 
     const onSubmit = async (data) => {
@@ -44,6 +55,84 @@ export const SeatmapList = () => {
         content: () => printRef.current,
     });
 
+
+    if(loading) {
+        return (
+            <PageLoading />
+        )
+    }
+
+    else {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Setekart
+                    </DashboardTitle>
+                    <DashboardSubtitle>
+                        {seatmaps.length} setekart tilgjengelige
+                    </DashboardSubtitle>
+                </DashboardHeader>
+                <DashboardContent>
+                    <InnerContainer>
+                        Setekart er hvordan brukere med billett kan reservere en plass på arrangementet.<br/>
+                        Det inneholder en visuell/skjematisk plan av deltakerområdet med seteplasser som brukere kan reservere.
+                    </InnerContainer>
+                    <InnerContainerRow >
+                        <InnerContainer flex="2">
+                            <form onSubmit={handleSubmit(onSubmit)}>
+                                <InnerContainerTitle>
+                                    Opprett et nytt setekart
+                                </InnerContainerTitle>
+                                <InnerContainer column extramargin>
+                                    <InputLabel small>Setekart navn</InputLabel>
+                                    <InputElement type="text" {...register("name")} />
+                                </InnerContainer>
+                                <InnerContainer column extramargin>
+                                    <InputLabel small>Beskrivelse</InputLabel>
+                                    <InputElement type="text" {...register("description")} />
+                                </InnerContainer>
+                                <InnerContainer>
+                                    <FormButton type="submit">Opprett setekart</FormButton>
+                                </InnerContainer>
+                            </form>
+                        </InnerContainer>
+                        <InnerContainer flex="1" />
+                        <InnerContainer flex="4">
+                            { /* Eventuelle innstillinger kan legges her */}
+                        </InnerContainer>
+                    </InnerContainerRow>
+                    
+                    <InnerContainer>
+                        <Table>
+                            <TableHeader border>
+                                    <Column consolas flex="4" visible={!visibleUUID}>UUID</Column>
+                                    <Column flex="4">Navn</Column>
+                                    <Column flex="5">Beskrivelse</Column>
+                                    <Column center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
+                            </TableHeader>
+                            {
+                                seatmaps.map((seatmap) => {
+                                    return (
+                                        <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
+                                            <Column consolas flex="4" visible={!visibleUUID}>{ seatmap.uuid }</Column>
+                                            <Column flex="4">{ seatmap.name }</Column>
+                                            <Column flex="5">{ seatmap.description }</Column>
+                                            <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        </SelectableRow>
+                                    )
+                                })
+                            }
+                        </Table>
+                    </InnerContainer>
+                </DashboardContent>
+            </>
+        )
+    }
+}
+
+
+{/*
     return (<div>
         <TableLabels ref={printRef} uuid={printUuid}/>
         <h1>Seatmaps</h1>
@@ -77,4 +166,4 @@ export const SeatmapList = () => {
             </FormContainer>
         </form>
         </div>)
-}
+    */}

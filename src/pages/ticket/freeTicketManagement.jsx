@@ -95,13 +95,16 @@ export const FreeTicketManagement = () => {
 
             <DashboardContent>
                 <InnerContainer>
+                    Gratisbilletter er en egen billettype som kan gis ut til enkeltpersoner som f.eks. har vunnet konkurranser, eller til større grupper som har betalt en sum til organisasjonen på forhånd.<br/>
+                    Å gi ut gratisbilletter er ingen spøk og kan være tapte penger for arrangementet.
+                </InnerContainer>
+                <InnerContainer>
                     <InnerContainerTitle>
                         Opprett og gi ut en ny gratisbillett
                     </InnerContainerTitle>
 
                     <InnerContainerRow>
                         <InnerContainer flex="1">
-                            <>
                             <UserSearch onUserSelected={onUserSelected}/>
                             <InputContainer column extramargin>
                                 <InputLabel small>Billett-type</InputLabel>
@@ -114,7 +117,6 @@ export const FreeTicketManagement = () => {
                                 </InputSelect>
                             </InputContainer>
                             <FormButton type="submit" onClick={() => giveTicket()}>Gi ut gratisbillett</FormButton>
-                            </>
                         </InnerContainer>
                         <InnerContainer flex="2" />
                     </InnerContainerRow>
