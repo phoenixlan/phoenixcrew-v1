@@ -5,7 +5,7 @@ import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
 import { faArrowRight, faCheck, faPen, faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputCheckbox } from "../../components/dashboard";
 import { Table } from "@material-ui/core";
 import { Column, CrewColorBox, IconContainer, SelectableRow, TableHeader, TableRow } from "../../components/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -79,9 +79,11 @@ export const ViewCrew = () => {
                         </Table>
                     </InnerContainer>
                     <InnerContainer>
-                        {
-                            members.map(user => (<SimpleUserCard user={user} key={user.uuid}/>))
-                        }
+                        <InnerContainerRow>
+                            {
+                                members.map(user => (<SimpleUserCard user={user} key={user.uuid}/>))
+                            }
+                        </InnerContainerRow>
                     </InnerContainer>
                 </DashboardContent>
             </>

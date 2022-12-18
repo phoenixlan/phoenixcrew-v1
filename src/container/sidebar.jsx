@@ -13,7 +13,7 @@ import Logo from "../assets/phoenixlan_square_logo.png";
 
 // Icons
 
-import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faImage, faImages, faUserFriends, faSearch, faSignOutAlt, faInfo, faKey } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faImages, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link } from 'react-router-dom';
 /// Create authentication context
@@ -233,6 +233,7 @@ const S = {
         position: relative;
         top: 2px;
         margin-right: 8px;
+        min-width: 16px;
         font-size: 12px;
     `,
     TitleContainer: styled.div``,
@@ -292,12 +293,12 @@ const options = [
             },
             {
                 title: "Godkjenning av avatarer",
-                icon: faImages,
+                icon: faPortrait,
                 url: "/avatar/approval"
             },
             {
                 title: "Søknader",
-                icon: faCircle,
+                icon: faFileSignature,
                 url: "/application"
             }
         ]

@@ -66,6 +66,8 @@ export const InnerContainer = styled.div`
 export const InnerContainerRow = styled.div`
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
     flex-flow: row;
+    flex-wrap: wrap;
+    gap: 25px;
     padding-bottom: 20px;
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
 `
