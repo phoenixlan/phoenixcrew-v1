@@ -68,13 +68,21 @@ export const CrewList= () => {
                         </TableHeader>
                         {
                             crews.map((crew) => {
+                                // Count the amount of users in the specific crew
+                                let userCount = 0;
+                                crew.positions.forEach((position) => {
+                                    position.users.forEach(() => {
+                                        userCount++;
+                                    })
+                                })
+
                                 return (
                                 <SelectableRow onClick={e => {history.push(`/crew/${crew.uuid}`)}} active={!crew.active}>
                                     <Column consolas flex="10" visible={!visibleUUID}>{ crew.uuid }</Column>
                                     <Column flex="0 42px"><CrewColorBox hex={crew.hex_color} /></Column>
                                     <Column flex="6">{ crew.name }</Column>
                                     <Column flex="10">{ crew.description }</Column>
-                                    <Column flex="3">...</Column>
+                                    <Column flex="3">{userCount}</Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
