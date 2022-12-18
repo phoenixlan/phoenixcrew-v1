@@ -30,6 +30,7 @@ import { StoreSessionList } from '../pages/ticket/storeSessions';
 import { ViewPosition } from '../pages/admin/view';
 import { AgendaElementView } from '../pages/agenda/view';
 import { NotAvailable } from '../pages/notAvailable';
+import { ViewCrew } from '../pages/crew/view';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -66,7 +67,7 @@ export const CrewRouter = () => {
                             <CrewList />
                         </PrivateRoute>
                         <PrivateRoute exact path="/crew/:uuid">
-                            <NotAvailable />
+                            <ViewCrew />
                         </PrivateRoute>
                         <PrivateRoute exact path="/seatmap/:uuid">
                             <SeatmapEditor />

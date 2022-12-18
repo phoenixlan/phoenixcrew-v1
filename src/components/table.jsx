@@ -79,6 +79,16 @@ export const SelectableRow = styled.tr`
     }
 `
 
+export const TableRow = styled.tr`
+    display: flex;
+    flex-direction: row;
+    flex-flow: row;
+    flex-wrap: wrap;
+    height: 2em;
+
+    color: inherit;
+`
+
 export const Row = styled.tr`
     height: 2em;
 `
