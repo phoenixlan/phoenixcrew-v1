@@ -69,12 +69,22 @@ export const CrewList= () => {
                         {
                             crews.map((crew) => {
                                 // Count the amount of users in the specific crew
-                                let userCount = 0;
+                                /*let userCount = 0;
                                 crew.positions.forEach((position) => {
                                     position.users.forEach(() => {
                                         userCount++;
                                     })
+                                })*/
+
+                                const crewMembersMap = new Map();
+                                crew.positions.forEach((position) => {                                    position.users.forEach((user) => {
+                                        if(!crewMembersMap.has(user.uuid)) {
+                                            crewMembersMap.set(user.uuid, user);
+                                        }
+                                    })
                                 })
+
+                                const crewMembers = Array.from(crewMembersMap.values());
 
                                 return (
                                 <SelectableRow onClick={e => {history.push(`/crew/${crew.uuid}`)}} active={!crew.active}>
@@ -82,7 +92,7 @@ export const CrewList= () => {
                                     <Column flex="0 42px"><CrewColorBox hex={crew.hex_color} /></Column>
                                     <Column flex="6">{ crew.name }</Column>
                                     <Column flex="10">{ crew.description }</Column>
-                                    <Column flex="3">{userCount}</Column>
+                                    <Column flex="3">{ crewMembers.length }</Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></Column>
                                     <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
