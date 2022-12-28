@@ -63,7 +63,7 @@ export const ViewCrew = () => {
             <>
                 <DashboardHeader>
                     <DashboardTitle>
-                        Crew oversikt
+                        Crew
                     </DashboardTitle>
                     <DashboardSubtitle>
                         {crew.name}

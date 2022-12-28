@@ -11,30 +11,31 @@ const S = {
         position: relative;
     `,
     UserList: styled.div`
+        display: flex;
+        flex-flow: column-reverse;
         position: absolute;
-        bottom: 40px;
+        top: 40px;
 
         width: 100%;
 
-        border: 1px solid black;
-        border-radius: 0.3em;
+        border: 1px solid rgb(135, 135, 135);
         background-color: white;
         z-index: 1000;
     `,
     User: styled.div`
+        padding: 6px 8px;
         cursor: pointer;
         :hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgb(235, 235, 235);
         }
     `,
     UserName: styled.p`
-    margin: 0.5em;
-    overflow: none;
+        margin: 0;
+        overflow: none;
     `,
     UserEmail: styled.p`
-    margin: 0.5em;
-    font-size: 0.8em;
-    text-decoration: italic;
+        margin: 0;
+        font-size: 0.8em;
     `
 }
 
