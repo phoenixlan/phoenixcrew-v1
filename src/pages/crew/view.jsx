@@ -5,14 +5,14 @@ import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
 import { faArrowRight, faCheck, faPen, faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputCheckbox } from "../../components/dashboard";
-import { Table } from "@material-ui/core";
-import { Column, CrewColorBox, IconContainer, SelectableRow, TableHeader, TableRow } from "../../components/table";
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea } from "../../components/dashboard";
+import { Column, CrewColorBox, IconContainer, SelectableRow, Table, TableHeader, TableRow } from "../../components/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory, useParams } from "react-router-dom";
 
 export const ViewCrew = () => {
     const { uuid } = useParams();
+    const [activeContent, setActiveContent] = useState(1);
     const [ loading, setLoading ] = useState(true);
     const [ crew, setCrew ] = useState();
 
@@ -39,9 +39,14 @@ export const ViewCrew = () => {
     }
     else {
         const memberMap = new Map();
+        const chiefMap  = new Map();
         crew.positions.forEach((position) => {
             if(position.chief) {
-                // Hent ut gruppeledere
+                position.users.forEach((user) => {
+                    if(!chiefMap.has(user.uuid)) {
+                        chiefMap.set(user.uuid, user);
+                    }
+                })
             }
             position.users.forEach((user) => {
                 if(!memberMap.has(user.uuid)) {
@@ -49,13 +54,14 @@ export const ViewCrew = () => {
                 }
             })
         })
+        const leaders = Array.from(chiefMap.values());
         const members = Array.from(memberMap.values());
         console.log(members);
 
 
         return (
             <>
-                <DashboardHeader border>
+                <DashboardHeader>
                     <DashboardTitle>
                         Crew oversikt
                     </DashboardTitle>
@@ -63,27 +69,74 @@ export const ViewCrew = () => {
                         {crew.name}
                     </DashboardSubtitle>
                 </DashboardHeader>
-                <DashboardContent>
-                    <InnerContainer>
-                    </InnerContainer>
 
-                    <InnerContainer>
-                        <Table>
-                            <TableRow>
-                                <Column>Gruppeleder: </Column>
-                                <Column>{}</Column>
-                            </TableRow>
-                            <TableRow>
-                                <Column>{crew.description}</Column>
-                            </TableRow>
-                        </Table>
-                    </InnerContainer>
+                <DashboardBarSelector border>
+                    <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Generelt</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Medlemmer ({members.length})</DashboardBarElement>
+                </DashboardBarSelector>
+
+                <DashboardContent visible={activeContent == 1}>
                     <InnerContainer>
                         <InnerContainerRow>
-                            {
-                                members.map(user => (<SimpleUserCard user={user} key={user.uuid}/>))
-                            }
+                            <InnerContainer flex="1">
+                                <form>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Navn</InputLabel>
+                                        <InputElement type="text" value={crew.name} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Beskrivelse</InputLabel>
+                                        <InputTextArea type="text" value={crew.description} disabled />
+                                    </InputContainer>
+                                </form>
+                            </InnerContainer>
+                            <InnerContainer flex="1" />
                         </InnerContainerRow>
+                    </InnerContainer>
+                </DashboardContent>
+
+                <DashboardContent visible={activeContent == 2}>
+                    <InnerContainer>
+                        { leaders.length 
+                            ?
+                                <>
+                                    <Table>
+                                        <TableHeader>
+                                            <Column flex="1">Gruppeledere</Column>
+                                        </TableHeader>
+                                    </Table>
+                                    <InnerContainerRow>
+                                    
+                                    {
+                                        leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
+                                    }
+                                    </InnerContainerRow>
+                                </>
+                            :
+                                <>
+                                </>
+                        }
+                        { members.length
+                            ?
+                                <>
+                                    <Table>
+                                        <TableHeader>
+                                            <Column flex="1">Medlemmer</Column>
+                                        </TableHeader>
+                                    </Table>
+                                    <InnerContainerRow>
+                                        
+                                        {
+                                            members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
+                                        }
+                                    </InnerContainerRow>
+                                </>
+                            :
+                                <>
+                                    Ingen medlemmer registert.
+                                </>
+                        }
+                        
                     </InnerContainer>
                 </DashboardContent>
             </>
