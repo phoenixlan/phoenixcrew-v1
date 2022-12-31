@@ -71,9 +71,17 @@ export const InnerContainerRow = styled.div`
     padding-bottom: 20px;
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
 `
+export const InnerContainerTitleL = styled.div`    
+    font-size: 18px;
+    padding-bottom: ${props => props.nopadding ? "0px" : "8px"};
+`
 export const InnerContainerTitle = styled.div`    
     font-size: 16px;
     padding-bottom: 8px;
+`
+export const InnerContainerTitleS = styled.div`    
+    font-size: 14px;
+    padding-bottom: ${props => props.nopadding ? "0px" : "8px"};
 `
 export const InnerContainerMini = styled.div`
     padding-bottom: 8px;
