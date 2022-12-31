@@ -277,7 +277,7 @@ const options = [
             {
                 title: "Arrangementer",
                 icon: faCalendar,
-                url: "/event/"
+                url: "/events/"
             }
         ]
     },

@@ -65,10 +65,11 @@ export const InnerContainer = styled.div`
 `
 export const InnerContainerRow = styled.div`
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
+    flex: ${props => props.flex ? props.flex : "undefined"};
     flex-flow: row;
-    flex-wrap: wrap;
+    flex-wrap: ${props => props.nowrap ? "nowrap" : "wrap"};
     gap: 25px;
-    padding-bottom: 20px;
+    padding-bottom: ${props => props.nopadding ? "0" : "20px"};
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
 `
 export const InnerContainerTitleL = styled.div`    
@@ -105,6 +106,7 @@ export const InputLabel = styled.span`
 
 export const InputContainer = styled.div`
     display: flex;
+    flex: ${props => props.flex ? props.flex : "1"};
     flex-flow: ${props => props.column ? "column" : "row"};
     margin-bottom: ${props => props.extramargin ? "18px" : "1px"};
 `

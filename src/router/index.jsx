@@ -45,9 +45,6 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/">
                             <Dashboard />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/user/:uuid">
-                            <ViewUser />
-                        </PrivateRoute>
                         <PrivateRoute exact path="/application/:uuid">
                             <ViewApplication />
                         </PrivateRoute>
@@ -76,13 +73,16 @@ export const CrewRouter = () => {
                             <SeatmapList />
                         </PrivateRoute>
                         <PrivateRoute exact path="/event/:uuid">
-                            <NotAvailable />
+                            <EventViewer />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/event/">
+                        <PrivateRoute exact path="/events/">
                             <EventList />
                         </PrivateRoute>
                         <PrivateRoute exact path="/users/">
                             <UserList/>
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/user/:uuid">
+                            <ViewUser />
                         </PrivateRoute>
                         <PrivateRoute exact path="/agenda/">
                             <AgendaList />
