@@ -69,7 +69,8 @@ export const CrewList= () => {
                         {
                             crews.map((crew) => {
                                 const crewMembersMap = new Map();
-                                crew.positions.forEach((position) => {                                    position.users.forEach((user) => {
+                                crew.positions.forEach((position) => {                                    
+                                    position.users.forEach((user) => {
                                         if(!crewMembersMap.has(user.uuid)) {
                                             crewMembersMap.set(user.uuid, user);
                                         }

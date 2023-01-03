@@ -6,9 +6,10 @@ import { BASE_URL } from "../../"
 
 import { User, Crew, Team } from "@phoenixlan/phoenix.js";
 
-import { Table, Row, Column } from "../../components/table";
+import { Table, Row, Column, TableHeader, SelectableRow, IconContainer } from "../../components/table";
 import { PageLoading } from '../../components/pageLoading';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const S = {
 	Container: styled.div`
@@ -23,8 +24,8 @@ const S = {
 		justify-content: flex-start;
     `,
     Avatar: styled.img`
-        width: 10em;
-
+        width: 256px;
+        border: 1px solid rgb(235, 235, 235);
     `
 }
 
@@ -35,16 +36,20 @@ export const ViewUser = (props) => {
     const [ ownedTickets, setOwnedTickets ] = useState([]);
     const [ purchasedTickets, setPurchasedTickets ] = useState([]);
     const [ seatableTickets, setSeatableTickets] = useState([]);
+    const [ crews, setCrews ] = useState([]);
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState] = useState(null);
     const [activeContent, setActiveContent] = useState(1);
+
+    const [visibleUUIDPositions, setVisibleUUIDPositions] = useState(false);
 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const asyncInner = async () => {
             const user = await User.getUser(uuid);
+            
             if(user) {
                 console.log("Fetched user:")
                 console.log(user);
@@ -92,7 +97,7 @@ export const ViewUser = (props) => {
                     Bruker
                 </DashboardTitle>
                 <DashboardSubtitle>
-                    {user.username} - {user.lastname}, {user.firstname}
+                    {user.lastname}, {user.firstname}
                 </DashboardSubtitle>
             </DashboardHeader>
 
@@ -200,6 +205,62 @@ export const ViewUser = (props) => {
                         
                     </form>
                 </InnerContainer>
+            </DashboardContent>
+
+            <DashboardContent visible={activeContent == 2}>
+                <InnerContainer border extramargin>
+                    <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
+                </InnerContainer>
+                <Table>
+                    <TableHeader border>
+                        <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
+                        <Column flex="2">Navn</Column>
+                        <Column flex="0 24px" />
+                    </TableHeader>
+                </Table>
+
+                {
+                user.positions.map((position) => {
+                    let positionName;
+
+                    if(position.name) {
+                        positionName = position.name;
+                    } else if(position.crew_uuid) {
+                        if(position.team_uuid) {
+                            positionName = "1";
+                        } else if(position.chief) {
+                            positionName = "Gruppeleder for " + "";
+                        } else {
+                            positionName = "Medlemmer av " + "";
+                        }
+                    } else {
+                        positionName = "<i>Udefinert stilling</i>";
+                    }
+        
+                    return (
+                        <SelectableRow>
+                            <Column consolas flex="1" visible={!visibleUUIDPositions}>{ position.uuid }</Column>
+                            <Column flex="2" >{positionName}</Column>
+                            <Column flex="0 24px"><IconContainer><FontAwesomeIcon /></IconContainer></Column>
+                        </SelectableRow>
+                    )
+                })}
+            {/*
+                user.positions.map(position => {
+                    if(position.name) {
+                        return <li>{position.name}</li>
+                    } else if(position.crew) {
+                        if(position.team_uuid) {
+                            return <li>Medlem av {position.team_uuid} i {position.crew.name}</li>
+                        } else if(position.chief) {
+                            return <li>Chief i {position.crew.name}</li>
+                        } else {
+                            return <li>Medlem av {position.crew.name}</li>
+                        }
+
+                    }
+                })
+            */}
             </DashboardContent>
         </>
     )
