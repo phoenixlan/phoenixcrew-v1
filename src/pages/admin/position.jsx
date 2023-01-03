@@ -108,7 +108,7 @@ export const PositionAdmin = () => {
                                     const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
     
     
-                                    let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} ` : " ") + (roleCrew?.name ?? "Ukjent crew");
+                                    let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} i ` : " ") + (roleCrew?.name ?? "Ukjent crew");
                                     if(role.name) {
                                         name = `${role.name}${roleCrew ? " (" + name + ")":""}`
                                     }
