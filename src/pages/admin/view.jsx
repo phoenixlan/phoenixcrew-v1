@@ -77,8 +77,8 @@ export const ViewPosition = (props) => {
                     <>
                         <DashboardBarSelector border>
                             <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Generelt</DashboardBarElement>
-                            <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Rettigheter</DashboardBarElement>
-                            <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Medlemmer</DashboardBarElement>
+                            <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Rettigheter ({positionPermissions.length})</DashboardBarElement>
+                            <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Medlemmer ({positionMembers.length})</DashboardBarElement>
                         </DashboardBarSelector>
 
                         <DashboardContent visible={activeContent == 1}>

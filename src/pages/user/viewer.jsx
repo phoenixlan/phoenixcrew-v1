@@ -104,7 +104,7 @@ export const ViewUser = (props) => {
 
                 <DashboardBarSelector border>
                     <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Brukerinformasjon</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Stillinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Stillinger ({user.positions.length})</DashboardBarElement>
                     <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Billetter</DashboardBarElement>
                 </DashboardBarSelector>
                 
