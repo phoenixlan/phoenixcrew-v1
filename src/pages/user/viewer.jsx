@@ -7,6 +7,8 @@ import { BASE_URL } from "../../"
 import { User, Crew, Team } from "@phoenixlan/phoenix.js";
 
 import { Table, Row, Column } from "../../components/table";
+import { PageLoading } from '../../components/pageLoading';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
 
 const S = {
 	Container: styled.div`
@@ -36,6 +38,7 @@ export const ViewUser = (props) => {
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState] = useState(null);
+    const [activeContent, setActiveContent] = useState(1);
 
     const [loading, setLoading] = useState(true);
 
@@ -79,8 +82,118 @@ export const ViewUser = (props) => {
 
 
     if(loading) {
-        return (<p>loading...</p>)
+        return (<PageLoading />)
     }
+
+    return (
+        <>
+            <DashboardHeader>
+                <DashboardTitle>
+                    Bruker
+                </DashboardTitle>
+                <DashboardSubtitle>
+                    {user.username} - {user.lastname}, {user.firstname}
+                </DashboardSubtitle>
+            </DashboardHeader>
+
+            <DashboardBarSelector border>
+                <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Brukerinformasjon</DashboardBarElement>
+                <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Stillinger</DashboardBarElement>
+                <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Billetter</DashboardBarElement>
+            </DashboardBarSelector>
+            
+            <DashboardContent visible={activeContent == 1}>
+                <InnerContainer>
+                    <form>
+                        <InnerContainerRow>
+                            <InnerContainer flex="1">
+                                <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
+                                <InnerContainerRow nopadding nowrap>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Fornavn</InputLabel>
+                                        <InputElement type="text" value={user.firstname} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Etternavn</InputLabel>
+                                        <InputElement type="text" value={user.lastname} disabled />
+                                    </InputContainer>
+                                </InnerContainerRow>
+                                <InnerContainerRow nopadding nowrap>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Telefon</InputLabel>
+                                        <InputElement type="text" value={user.phone} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Foresattes telefon</InputLabel>
+                                        <InputElement type="text" value={user.guardian_phone} disabled />
+                                    </InputContainer>
+                                </InnerContainerRow>
+                                <InnerContainerRow nopadding nowrap>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Epost</InputLabel>
+                                        <InputElement type="text" value={user.email} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin />
+                                </InnerContainerRow>
+                                <InnerContainerRow nopadding nowrap>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Fødselsdato</InputLabel>
+                                        <InputElement type="date" value={user.birthdate} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Kjønn</InputLabel>
+                                        <InputElement type="text" value={user.gender == "Gender.male" ? "Mann" : "Kvinne"} disabled />
+                                    </InputContainer>
+                                </InnerContainerRow>
+                                <InnerContainerRow nowrap>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Addresse</InputLabel>
+                                        <InputElement type="text" value={user.address} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Postkode</InputLabel>
+                                        <InputElement type="text" value={user.postal_code} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Landskode</InputLabel>
+                                        <InputElement type="text" value={user.country_code} disabled />
+                                    </InputContainer>
+                                </InnerContainerRow>
+
+                                <InnerContainerTitle>Medlemsskap informasjon</InnerContainerTitle>
+                                <InnerContainerRow nowrap>
+                                    <InputContainer column extramargin>
+                                        <InputCheckbox label="Radar Event medlemsskap i år?" value={membershipState !== null ?? membershipState} disabled />
+                                    </InputContainer>
+                                </InnerContainerRow>
+
+                                <InnerContainerTitle>Konto informasjon</InnerContainerTitle>
+                                <InnerContainerRow nopadding nowrap>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Brukernavn</InputLabel>
+                                        <InputElement type="text" value={user.username} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>TOS nivå</InputLabel>
+                                        <InputElement type="text" value={user.tos_level} disabled />
+                                    </InputContainer>
+                                </InnerContainerRow>
+                                <InnerContainerRow nowrap>
+                                    <InputContainer column extramargin>
+                                        <InputCheckbox label="Konto aktivert" value={activationState !== null ?? activationState} disabled />
+                                    </InputContainer>
+                                </InnerContainerRow>
+                            </InnerContainer>
+                            <InnerContainer flex="1" />
+                        </InnerContainerRow>
+                        
+                    </form>
+                </InnerContainer>
+            </DashboardContent>
+        </>
+    )
+
+
     return (<S.Container>
         <S.Avatar src={user.avatar_urls.sd} />
         <h1>{user.firstname} {user.lastname}</h1>

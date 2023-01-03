@@ -50,7 +50,7 @@ export const EventViewer = () => {
             </DashboardHeader>
 
             <DashboardBarSelector border>
-                <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Innstillinger</DashboardBarElement>
+                <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Innstillinger (Kun visning)</DashboardBarElement>
             </DashboardBarSelector>
 
             <DashboardContent visible={activeContent == 1}>

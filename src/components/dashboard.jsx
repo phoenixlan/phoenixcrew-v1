@@ -111,11 +111,11 @@ export const InputContainer = styled.div`
     margin-bottom: ${props => props.extramargin ? "18px" : "1px"};
 `
 
-export const InputCheckbox = ({ label, value, onChange }) => {
+export const InputCheckbox = ({ label, value, onChange, disabled }) => {
     return (
         <>
             <InputContainer>
-                <input type="checkbox" checked={value} onChange={onChange} />
+                <input type="checkbox" checked={value} onChange={onChange} disabled={disabled} />
                 <InputLabel bottom="1px">{label}</InputLabel>
             </InputContainer>
         </>
