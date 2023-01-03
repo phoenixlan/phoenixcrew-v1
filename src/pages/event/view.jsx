@@ -1,28 +1,22 @@
 import React , { useEffect, useState } from "react";
 import { useHistory, useParams } from 'react-router-dom';
-import styled from "styled-components";
 
 import { getEvent } from "@phoenixlan/phoenix.js";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight }  from '@fortawesome/free-solid-svg-icons'
+import { faExclamationTriangle }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 
-import { Table, SelectableRow, Column, TableHeader } from "../../components/table";
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputSelect, LabelWarning } from "../../components/dashboard";
 
-import { dateOfBirthToAge } from '../../utils/user';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleL, InputContainer, InputElement, InputLabel, InputSelect } from "../../components/dashboard";
-
-const S = {
-    User: styled.div`
-    
-    `
-}
 
 export const EventViewer = () => {
     const [event, setEvent] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeContent, setActiveContent] = useState(1);
+    const [cancelEventCheck, setCancelEventCheck] = useState(false);
+    const [cancelEventReason, setCancelEventReason] = useState(null);
+
     const { uuid } = useParams();
     let history = useHistory();
 
@@ -30,14 +24,33 @@ export const EventViewer = () => {
         setLoading(true);
         const event = await getEvent(uuid);
         setEvent(event);
+
+        if(event.cancellation_reason) {
+            setCancelEventCheck(true);
+            setCancelEventReason(event.cancellation_reason);
+        }
+
         setLoading(false);
     }, []);
 
+    // Function to handle when the checkbox for cancelling the event is clicked.
+    const changeCancelEventCheck = () => {
+        if(cancelEventCheck) {
+            setCancelEventCheck(false);
+            setCancelEventReason(null);
+        } else {
+            setCancelEventCheck(true);
+            setCancelEventReason("");
+        }
+
+        
+    }
+    
+    // View loading page if loading is true
     if(loading) {
         return (<PageLoading />)
     }
-
-    console.log(event);
+    
     return (
         <>
             <DashboardHeader>
@@ -50,10 +63,14 @@ export const EventViewer = () => {
             </DashboardHeader>
 
             <DashboardBarSelector border>
-                <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Innstillinger (Kun visning)</DashboardBarElement>
+                <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Innstillinger</DashboardBarElement>
             </DashboardBarSelector>
 
             <DashboardContent visible={activeContent == 1}>
+                <InnerContainer border extramargin>
+                    <InputCheckbox label="Kanseller arrangementet" value={cancelEventCheck} onChange={() => changeCancelEventCheck()} disabled />
+                </InnerContainer>
+
                 <InnerContainer>
                     <form>
                         <InnerContainerRow>
@@ -132,8 +149,10 @@ export const EventViewer = () => {
                                 <InnerContainerTitle>Kansellering av arrangementet</InnerContainerTitle>
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
-                                        <InputLabel small>Begrunnelse for kansellering</InputLabel>
-                                        <InputElement type="text" value={event.cancellation_reason} disabled />
+                                        <InputLabel small>Begrunnelse for kansellering <LabelWarning 
+                                            title="'Kansellering av arrangementet' er huket av!&#10;Dersom du lagrer vil arrangementet vises som kansellert." 
+                                            visible={cancelEventCheck}><FontAwesomeIcon icon={faExclamationTriangle} /></LabelWarning></InputLabel>
+                                        <InputElement type="text" defaultValue={cancelEventReason} disabled={!cancelEventCheck} />
                                     </InputContainer>
                                 </InnerContainerRow>
                             </InnerContainer>

@@ -61,6 +61,7 @@ export const InnerContainer = styled.div`
     flex-flow: column;
     flex: ${props => props.flex ? props.flex : "undefined"};
     padding-bottom: 20px;
+    margin-bottom: ${props => props.extramargin ? "20px" : "0"};
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
 `
 export const InnerContainerRow = styled.div`
@@ -102,6 +103,15 @@ export const InputLabel = styled.span`
     bottom: ${props => props.bottom ? props.bottom : "0"};
     top: ${props => props.top ? props.top : "0"};
     margin: ${props => props.small ? "0" : "0 6px"};
+    color: ${props => props.color ? props.color : "inherit"};
+`
+
+export const LabelWarning = styled.span`
+    display: ${props => props.visible ? "inline-block" : "none"};
+    position: relative;
+    left: 2px;
+    font-size: inherit;
+    color: orange;
 `
 
 export const InputContainer = styled.div`
