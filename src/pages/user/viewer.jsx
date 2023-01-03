@@ -111,80 +111,91 @@ export const ViewUser = (props) => {
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Fornavn</InputLabel>
-                                        <InputElement type="text" value={user.firstname} disabled />
+                                        <>{user.firstname}</>
                                     </InputContainer>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Etternavn</InputLabel>
-                                        <InputElement type="text" value={user.lastname} disabled />
+                                        <>{user.lastname}</>
                                     </InputContainer>
                                 </InnerContainerRow>
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Telefon</InputLabel>
-                                        <InputElement type="text" value={user.phone} disabled />
+                                        <>{user.phone}</>
                                     </InputContainer>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Foresattes telefon</InputLabel>
-                                        <InputElement type="text" value={user.guardian_phone} disabled />
+                                        <>{user.guardian_phone??"Ikke satt"}</>
                                     </InputContainer>
                                 </InnerContainerRow>
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Epost</InputLabel>
-                                        <InputElement type="text" value={user.email} disabled />
+                                        <>{user.email}</>
                                     </InputContainer>
                                     <InputContainer column extramargin />
                                 </InnerContainerRow>
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Fødselsdato</InputLabel>
-                                        <InputElement type="date" value={user.birthdate} disabled />
+                                        <>{user.birthdate}</>
                                     </InputContainer>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Kjønn</InputLabel>
-                                        <InputElement type="text" value={user.gender == "Gender.male" ? "Mann" : "Kvinne"} disabled />
+                                        <>{user.gender == "Gender.male" ? "Mann" : "Kvinne"}</>
                                     </InputContainer>
                                 </InnerContainerRow>
                                 <InnerContainerRow nowrap>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Addresse</InputLabel>
-                                        <InputElement type="text" value={user.address} disabled />
+                                        <>{user.address}</>
                                     </InputContainer>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Postkode</InputLabel>
-                                        <InputElement type="text" value={user.postal_code} disabled />
+                                        <>{user.postal_code}</>
                                     </InputContainer>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Landskode</InputLabel>
-                                        <InputElement type="text" value={user.country_code} disabled />
+                                        <>{user.country_code}</>
                                     </InputContainer>
                                 </InnerContainerRow>
 
                                 <InnerContainerTitle>Medlemsskap informasjon</InnerContainerTitle>
                                 <InnerContainerRow nowrap>
                                     <InputContainer column extramargin>
-                                        <InputCheckbox label="Radar Event medlemsskap i år?" value={membershipState !== null ?? membershipState} disabled />
+                                        <InputLabel small>Radar Event medlem i år</InputLabel>
+                                        <>{membershipState !== null ? (membershipState ? "Ja" : "Nei") : "..."}</>
                                     </InputContainer>
                                 </InnerContainerRow>
 
                                 <InnerContainerTitle>Konto informasjon</InnerContainerTitle>
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
-                                        <InputLabel small>Brukernavn</InputLabel>
-                                        <InputElement type="text" value={user.username} disabled />
-                                    </InputContainer>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>TOS nivå</InputLabel>
-                                        <InputElement type="text" value={user.tos_level} disabled />
+                                        <InputLabel small>Bruker-UUID</InputLabel>
+                                        <>{user.uuid}</>
                                     </InputContainer>
                                 </InnerContainerRow>
                                 <InnerContainerRow nowrap>
                                     <InputContainer column extramargin>
-                                        <InputCheckbox label="Konto aktivert" value={activationState !== null ?? activationState} disabled />
+                                        <InputLabel small>Brukernavn</InputLabel>
+                                        <>{user.username}</>
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>TOS nivå</InputLabel>
+                                        <>{user.tos_level}</>
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Bruker aktivert</InputLabel>
+                                        <>{activationState !== null ? (activationState ? "Ja" : "Nei") : "..."}</>
                                     </InputContainer>
                                 </InnerContainerRow>
                             </InnerContainer>
-                            <InnerContainer flex="1" />
+                            <InnerContainer flex="1">
+                                <InnerContainerTitle>Avatar</InnerContainerTitle>
+                                <InnerContainer>
+                                    <S.Avatar src={user.avatar_urls.sd} />
+                                </InnerContainer>
+                            </InnerContainer>
                         </InnerContainerRow>
                         
                     </form>
