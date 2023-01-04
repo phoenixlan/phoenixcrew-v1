@@ -24,9 +24,11 @@ const S = {
 }
 
 export const PageLoading = () => {
-    return (<S.Container>
-        <S.ContainerInner>
-            <Spinner />
-        </S.ContainerInner>
-    </S.Container>)
+    return (
+        <S.Container>
+            <S.ContainerInner>
+                <Spinner />
+            </S.ContainerInner>
+        </S.Container>
+    )
 }

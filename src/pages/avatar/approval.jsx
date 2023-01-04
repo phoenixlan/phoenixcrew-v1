@@ -1,18 +1,11 @@
-
 import React , { useEffect, useState } from "react";
 import styled from "styled-components";
-
 import { Avatar } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
-import { Button } from "../../components/button";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerMini, InnerContainerRow, InnerContainerTitle, InnerContainerTitleL, InnerContainerTitleS } from "../../components/dashboard";
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerMini, InnerContainerRow, InnerContainerTitleL, InnerContainerTitleS } from "../../components/dashboard";
 import { FormButton } from "../../components/form";
 
 const S = {
-    AvatarContainer: styled.div`
-
-    `,
-
     AvatarEntry: styled.div`
         display: flex;
         padding: 8px;
@@ -96,22 +89,4 @@ export const AvatarApproval = () => {
             </DashboardContent>
         </>
     )
-
-    return (<div>
-        <h1>Avatarer til godkjenning</h1>
-        <S.AvatarContainer>
-            {
-                avatars.map((avatar) => {
-                    return (<S.AvatarEntry key={avatar.uuid}>
-                        <S.AvatarImage src={avatar.urls.hd} />
-                        <h2>{`${avatar.user.firstname} ${avatar.user.lastname}`}</h2>
-                        <S.DecisionPanel>
-                            <Button color={"green"} onClick={() => setApproval(avatar.uuid, true)}>Godkjen</Button>
-                            <Button onClick={() => setApproval(avatar.uuid, false)}>Avslå</Button>
-                        </S.DecisionPanel>
-                    </S.AvatarEntry>)
-                })
-            }
-        </S.AvatarContainer>
-        </div>)
 }

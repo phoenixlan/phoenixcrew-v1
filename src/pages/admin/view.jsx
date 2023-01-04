@@ -30,9 +30,6 @@ export const ViewPosition = (props) => {
 
     let history = useHistory();
 
-    //const [crewName, setCrewName] = useState();
-    //const [teamName, setTeamName] = useState();
-
     const build = async () => {
         setLoading(true);
 
@@ -44,9 +41,7 @@ export const ViewPosition = (props) => {
             setPositionMembers(position.users);
             setPositionPermissions(position.permissions);
             setLoading(false);
-
-            // Set name of the position based on predefined name
-            setPositionName(position.name)
+            setPositionName(position.name);
         } catch(e) {
             setError(e);
         }

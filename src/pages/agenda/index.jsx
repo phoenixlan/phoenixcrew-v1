@@ -1,28 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 
-import styled from 'styled-components';
-
-import { User, Agenda, getCurrentEvent, getEvent, getEvents } from '@phoenixlan/phoenix.js'
+import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 
 import { PageLoading } from "../../components/pageLoading"
 
-import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
-import { faEye, faEyeSlash, faMinus, faMinusCircle, faSlash, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FormInput } from '../../components/form';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
+import { faEye, faEyeSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Column, IconContainer, InnerColumnCenter, SelectableRow, Table, TableHeader } from '../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-
-const S = {
-    AgendaEntryContainer: styled.div`
-        padding: 1em;
-        border: 1px solid black;
-    `,
-    AgendaContainer: styled.div`
-        display: flex;
-    `
-}
 
 const AgendaEntry = ({ entry, reloadAgendaList }) => {
     const deleteEntry = async () => {
@@ -95,82 +83,82 @@ export const AgendaList = (props) => {
     }
 
     if(loading) {
-        return (<PageLoading />)
+        return (
+            <PageLoading />
+        )
     } else {
-    //TODO not quite right, backend har ikke application state enda
-    return (
-        <>
-            <DashboardHeader>
-                <DashboardTitle>
-                    Agenda
-                </DashboardTitle>
-            </DashboardHeader>
+        return (
+            <>
+                <DashboardHeader>
+                    <DashboardTitle>
+                        Agenda
+                    </DashboardTitle>
+                </DashboardHeader>
 
-            <DashboardBarSelector border>
-                <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Oppsett</DashboardBarElement>
-                <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Infoskjerm visning</DashboardBarElement>
-            </DashboardBarSelector>
+                <DashboardBarSelector border>
+                    <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Oppsett</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Infoskjerm visning</DashboardBarElement>
+                </DashboardBarSelector>
 
-            <DashboardContent visible={activeContent == 1}>
-                <InnerContainer>
-                    <InnerContainerTitle>
-                        Opprett et nytt agenda element
-                    </InnerContainerTitle>
+                <DashboardContent visible={activeContent == 1}>
+                    <InnerContainer>
+                        <InnerContainerTitle>
+                            Opprett et nytt agenda element
+                        </InnerContainerTitle>
 
-                    <InnerContainerRow>
-                        <InnerContainer flex="1">
-                            <form onSubmit={handleSubmit(onSubmit)}>
-                                <>
-                                <InputContainer column extramargin>
-                                    <InputLabel small>Tittel</InputLabel>
-                                    <InputElement type="text" {...register("title")} />
-                                </InputContainer>
-                                
-                                <InputContainer column extramargin>
-                                    <InputLabel small>Beskrivelse</InputLabel>
-                                    <InputElement type="text" {...register("description")} />
-                                </InputContainer>
-                                <InputContainer column extramargin>
-                                    <InputLabel small>Tidspunkt</InputLabel>
-                                    <InputElement type="datetime-local" {...register("time")} />
-                                    {/*<InputElement type="datetime-local" defaultValue={new Date().toISOString().slice(0, -8)} {...register("time")} />*/}
-                                </InputContainer>
-                                </>
-                                <FormInput type="submit" name=''></FormInput>
-                            </form>
-                        </InnerContainer>
-                        <InnerContainer flex="2" />
-                    </InnerContainerRow>
-                </InnerContainer>
+                        <InnerContainerRow>
+                            <InnerContainer flex="1">
+                                <form onSubmit={handleSubmit(onSubmit)}>
+                                    <>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Tittel</InputLabel>
+                                            <InputElement type="text" {...register("title")} />
+                                        </InputContainer>
+                                        
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Beskrivelse</InputLabel>
+                                            <InputElement type="text" {...register("description")} />
+                                        </InputContainer>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Tidspunkt</InputLabel>
+                                            <InputElement type="datetime-local" {...register("time")} />
+                                        </InputContainer>
+                                    </>
+                                    <FormInput type="submit" name=''></FormInput>
+                                </form>
+                            </InnerContainer>
+                            <InnerContainer flex="2" />
+                        </InnerContainerRow>
+                    </InnerContainer>
 
-                <InnerContainer>
-                    <Table>
-                        <TableHeader border>
-                            <Column flex="2">Tidspunkt</Column>
-                            <Column flex="3">Tittel</Column>
-                            <Column flex="4">Beskrivelse</Column>
-                            <Column center flex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
-                            <Column center flex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
-                        </TableHeader>
-                    </Table>
+                    <InnerContainer>
+                        <Table>
+                            <TableHeader border>
+                                <Column flex="2">Tidspunkt</Column>
+                                <Column flex="3">Tittel</Column>
+                                <Column flex="4">Beskrivelse</Column>
+                                <Column center flex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
+                                <Column center flex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
+                            </TableHeader>
+                        </Table>
 
-                    {
-                        agendaList.map(entry => {
-                            return (
-                                <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
-                            )
-                        })
-                    }
-                </InnerContainer>
-            </DashboardContent>
+                        {
+                            agendaList.map(entry => {
+                                return (
+                                    <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
+                                )
+                            })
+                        }
+                    </InnerContainer>
+                </DashboardContent>
 
-            <DashboardContent visible={activeContent == 2}>
-                <InnerContainer>
-                    <IFrameContainer src="https://info.phoenixlan.no/" />
-                </InnerContainer>
-            </DashboardContent>
-        </>
-    )
-}
+                <DashboardContent visible={activeContent == 2}>
+                    <InnerContainer>
+                        <IFrameContainer src="https://info.phoenixlan.no/" />
+                    </InnerContainer>
+                </DashboardContent>
+            </>
+        )
+    }
 };
 

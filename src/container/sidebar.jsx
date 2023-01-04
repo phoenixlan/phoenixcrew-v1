@@ -1,24 +1,14 @@
 import React, { useContext, useState } from 'react';
 import styled from "styled-components";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { AuthenticationContext } from '../components/authentication';
-import { Avatar } from "../components/avatar";
-
 import { SidebarButton } from "./sidebarButton";
-import { SidebarCategory } from "./sidebarCategory";
-
 import Logo from "../assets/phoenixlan_square_logo.png";
 
-// Icons
-
-import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faImages, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link } from 'react-router-dom';
-/// Create authentication context
 export const CategoryContext = React.createContext({});
-
 
 const commonWidth   =   "44px";
 const commonHeight  =   "44px";
@@ -391,16 +381,6 @@ export const Sidebar = () => {
     
     })
 
-    const CrewManagementElementIcon = ({icon}) => {
-        return (
-            <S.ElementIconCont>
-                <S.ElementIcon>
-                    
-                </S.ElementIcon>
-            </S.ElementIconCont>
-        )
-    }
-
     const CrewManagementElementContent = (entry) => {
         return entry.entries.map(innerEntry => {
             return (
@@ -479,76 +459,3 @@ export const Sidebar = () => {
         </S.Sidebar>
     )
 }
-
-
-/*
-    Removed code, 
-
-<S.SidebarII id="sideBarII">
-                    
-                
-                <S.CrewManagementIICont>
-                    {
-                        availableOptions.map(entry => {
-                            return entry.entries.length == 0 ? null : (
-                                <S.CrewManagementElements key={entry.title} title={entry.title} >
-                                    <S.CrewManagementElementsHeader>
-                                        <S.ElementHeader>{entry.title}</S.ElementHeader>
-                                    </S.CrewManagementElementsHeader>
-                                    <S.CrewManagementElementsContent>
-                                        {
-                                            CrewManagementElementContent(entry)
-                                        }
-                                    </S.CrewManagementElementsContent>
-                                </S.CrewManagementElements>
-                                
-                            )
-                        })
-                    }
-                </S.CrewManagementIICont>
-            </S.SidebarII>
-
-
-
-
-
-    <S.Container id='AAAAAAAAAAAAAAAA'>
-                <S.LogoC href="https://phoenixlan.no">
-                    <S.Logo src={Logo} />
-                </S.LogoC>
-
-                <S.SearchC>
-                    
-                </S.SearchC>
-                
-                <S.Buttons>
-                    <S.CategoryWrapper>
-                        {
-                            availableOptions.map(entry => {
-                                return entry.entries.length == 0 ? null : (
-                                <SidebarCategory key={entry.title} title={entry.title} icon={entry.icon??"fa-circle"}>
-                                    {
-                                        CrewManagementElementContent(entry)
-                                    }
-                                </SidebarCategory>)
-                            })
-                        }
-                    </S.CategoryWrapper>
-                </S.Buttons>
-                <S.Bottom>
-                    <SidebarButton to={"/user/"+auth.authUser.uuid}>
-                        <Avatar user={auth.authUser} />
-                        <p>{auth.authUser.firstname} {auth.authUser.lastname}</p>
-                    </SidebarButton>
-                </S.Bottom>
-            </S.Container>
-        </S.SidebarRoot>
-    )
-}
-
-
-/*
-    Removed code, 
-    <
-
-*/

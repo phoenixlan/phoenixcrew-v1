@@ -10,16 +10,14 @@ export const AuthenticationContext = React.createContext({});
 export const Authentication = (props) => {
 
     /// States
-    const [errorMessage, setErrorMessage]         = useState(null);
-    const [shouldDisplayError, setShouldDisplayError]         = useState(false);
-
-    const [loadingFinished, setLoadingFinished]   = useState(false);
+    const [errorMessage, setErrorMessage]               = useState(null);
+    const [shouldDisplayError, setShouldDisplayError]   = useState(false);
+    const [loadingFinished, setLoadingFinished]         = useState(false);
     
 
     /// Check if url contains "code"
     const url = new URL(window.location.href);
     const code = url.searchParams.get("code");
-
 
     /// User Management
     let [authUser, setAuthUser] = useState(null);

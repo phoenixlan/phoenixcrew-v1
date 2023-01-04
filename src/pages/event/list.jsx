@@ -1,24 +1,11 @@
 import React , { useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom';
-import styled from "styled-components";
-
 import { getEvents } from "@phoenixlan/phoenix.js";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight, faChevronRight }  from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
-
 import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
-
-import { dateOfBirthToAge } from '../../utils/user';
-import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
-import { Checkbox } from "../../components/inputCheckbox";
-
-const S = {
-    User: styled.div`
-    
-    `
-}
+import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard"; 
 
 export const EventList = () => {
     const [events, setEvents] = useState([]);

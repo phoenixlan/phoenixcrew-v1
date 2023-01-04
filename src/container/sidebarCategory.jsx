@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import styled from "styled-components";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
-import { useContext } from 'react';
-import { CategoryContext } from './sidebar';
-
 
 const S = {
     CategoryWrapperHeader: styled.div`
@@ -165,53 +160,6 @@ export const SidebarCategory = ({children, title, icon}) => {
                 </S.IconContainer>
             </S.CategoryWrapperHeader>
             {children}
-        </>)
+        </>
+    )
 }
-
-/*
-    Removed code V2
-    <S.CategoryContentContainer>
-        <S.PhoenixTitleC>
-            <S.PhoenixTitle>Phoenix LAN</S.PhoenixTitle>
-            <S.PhoenixSiteTitle>Crew Management</S.PhoenixSiteTitle>
-        </S.PhoenixTitleC>
-        <S.SearchBoxC>
-            <S.SearchBox value={cctx.searchText} onChange={onSearchUpdate} placeholder="Søk..." type="text" />
-        </S.SearchBoxC>
-        <S.CategoryContent>
-
-        </S.CategoryContent>
-    </S.CategoryContentContainer>
-
-
-*/
-
-
-/*
-                <S.TitleContainer visible={visibleTitle && !isactive}>
-                    <S.TitleHandle />
-                    <S.Title>{title}</S.Title>
-                </S.TitleContainer>
-
-
-                        <S.ReturnButtonContainer>
-                            <S.ReturnIcon>
-                                <FontAwesomeIcon icon={faArrowLeft} />
-                            </S.ReturnIcon>
-                            <S.ReturnButton>
-                                Tilbake
-                            </S.ReturnButton>
-                        </S.ReturnButtonContainer>
-
-
-
-                <S.CategoryContentContainer isactive={cctx.activeCategory == title}>
-                    <S.PhoenixTitleC>
-                        <S.PhoenixTitle>Phoenix LAN</S.PhoenixTitle>
-                        <S.PhoenixSiteTitle>Crew Management</S.PhoenixSiteTitle>
-                    </S.PhoenixTitleC>
-                    <S.CategoryContent>
-                        { expanded ? children : null }
-                    </S.CategoryContent>
-                </S.CategoryContentContainer>
-*/

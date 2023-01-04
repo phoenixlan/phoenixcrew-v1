@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-import { FormInput } from './form';
-
 import { User } from "@phoenixlan/phoenix.js"
 import { InputContainer, InputElement, InputLabel } from "./dashboard";
 
@@ -75,9 +73,11 @@ export const UserSearch = ({ onUserSelected }) => {
                 : 
                     null
             }
-        <InputContainer column extramargin>
-            <InputLabel small>Bruker</InputLabel>
-            <InputElement value={query} onChange={(e) => setQuery(e.target.value)} onFocus={() => setShowSuggestions(true)} onBlur={() => setShowSuggestions(false)} />
-        </InputContainer>
-    </S.Container>);
+            
+            <InputContainer column extramargin>
+                <InputLabel small>Bruker</InputLabel>
+                <InputElement value={query} onChange={(e) => setQuery(e.target.value)} onFocus={() => setShowSuggestions(true)} onBlur={() => setShowSuggestions(false)} />
+            </InputContainer>
+        </S.Container>
+    );
 }

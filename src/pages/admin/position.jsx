@@ -1,29 +1,14 @@
 import React , { useEffect, useState } from "react";
-import styled from "styled-components";
 
 import { Position, Crew } from "@phoenixlan/phoenix.js";
 
-import { Column, IconContainer, InnerColumnCenter, SelectableRow, Table, TableHeader } from '../../components/table';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
+import { Column, IconContainer, SelectableRow, Table, TableHeader } from '../../components/table';
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from '../../components/dashboard';
 import { PageLoading } from "../../components/pageLoading"
 
-import { Button } from "../../components/button"
-
-import { Theme } from "../../theme";
-import { SimpleUserCard } from "../../components/simpleUserCard";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
-
-const S = {
-    Role: styled.div`
-    
-    `,
-    UserContainer: styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    `,
-}
 
 export const PositionAdmin = () => {
 

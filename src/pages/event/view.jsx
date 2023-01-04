@@ -1,14 +1,10 @@
 import React , { useEffect, useState } from "react";
-import { useHistory, useParams } from 'react-router-dom';
-
+import { useParams } from 'react-router-dom';
 import { getEvent } from "@phoenixlan/phoenix.js";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationTriangle }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
-
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputSelect, LabelWarning } from "../../components/dashboard";
-
 
 export const EventViewer = () => {
     const [event, setEvent] = useState([]);
@@ -18,7 +14,6 @@ export const EventViewer = () => {
     const [cancelEventReason, setCancelEventReason] = useState(null);
 
     const { uuid } = useParams();
-    let history = useHistory();
 
     useEffect(async () => {
         setLoading(true);

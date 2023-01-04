@@ -24,7 +24,9 @@ const S = {
 }
 
 export const Button = ({ children, color, onClick }) => {
-    return (<S.Button color={color} onClick={onClick}>
-            { children }
-    </S.Button>)
+    return (
+        <S.Button color={color} onClick={onClick}>
+                { children }
+        </S.Button>
+    )
 }

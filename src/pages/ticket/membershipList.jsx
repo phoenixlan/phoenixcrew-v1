@@ -1,17 +1,11 @@
 
 import React, { useState, useEffect } from "react"
 import { useHistory } from 'react-router-dom';
-
-import { getEventNewMembers, getCurrentEvent, User } from "@phoenixlan/phoenix.js";
-
+import { getEventNewMembers, getCurrentEvent } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight, faChevronRight }  from '@fortawesome/free-solid-svg-icons'
-
+import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { dateOfBirthToAge } from "../../utils/user";
-
 import { Table, SelectableRow, Row, Column, TableHeader, IconContainer } from "../../components/table";
-
-import Spinner from "react-svg-spinner";
 import { PageLoading } from "../../components/pageLoading";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 

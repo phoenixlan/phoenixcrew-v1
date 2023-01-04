@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { BASE_URL } from "../../"
-
-import { User, Crew, Team } from "@phoenixlan/phoenix.js";
+import { Crew } from "@phoenixlan/phoenix.js";
 
 import { PageContainer } from "../../components/blocks"
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight }  from '@fortawesome/free-solid-svg-icons'
 
 import { PageLoading } from "../../components/pageLoading"
 import { UserCard } from "../../components/userCard"

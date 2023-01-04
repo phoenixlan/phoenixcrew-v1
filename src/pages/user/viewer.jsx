@@ -1,28 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import styled from 'styled-components';
-
-import { BASE_URL } from "../../"
-
-import { User, Crew, Team } from "@phoenixlan/phoenix.js";
-
-import { Table, Row, Column, TableHeader, SelectableRow, IconContainer } from "../../components/table";
+import { User, Crew } from "@phoenixlan/phoenix.js";
+import { Table, Column, TableHeader, SelectableRow, IconContainer } from "../../components/table";
 import { PageLoading } from '../../components/pageLoading';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox, InputContainer, InputLabel } from '../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const S = {
-	Container: styled.div`
-		width: 100%;
-		height: 100%;
-		margin: 0;
-		padding: 1em;
-
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		justify-content: flex-start;
-    `,
     Avatar: styled.img`
         width: 256px;
         border: 1px solid rgb(235, 235, 235);
@@ -230,9 +215,9 @@ export const ViewUser = (props) => {
                             if(position.team_uuid) {
                                 positionName = "Lag i crew";
                             } else if(position.chief) {
-                                positionName = "Gruppeleder for " + "";
+                                positionName = "Gruppeleder for " + "...";
                             } else {
-                                positionName = "Medlemmer av " + "";
+                                positionName = "Medlemmer av " + "...";
                             }
                         } else {
                             positionName = "Ukjent crew";

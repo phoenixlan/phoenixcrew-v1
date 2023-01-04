@@ -1,18 +1,15 @@
 import React , { useEffect, useState } from "react";
-import styled from "styled-components";
 
 import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
-import { faArrowRight, faCheck, faPen, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea } from "../../components/dashboard";
-import { Column, CrewColorBox, IconContainer, SelectableRow, Table, TableHeader, TableRow } from "../../components/table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useHistory, useParams } from "react-router-dom";
+import { Column, Table, TableHeader } from "../../components/table";
+import { useParams } from "react-router-dom";
 
 export const ViewCrew = () => {
     const { uuid } = useParams();
-    const [activeContent, setActiveContent] = useState(1);
+    const [ activeContent, setActiveContent ] = useState(1);
     const [ loading, setLoading ] = useState(true);
     const [ crew, setCrew ] = useState();
 

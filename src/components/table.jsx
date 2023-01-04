@@ -92,6 +92,3 @@ export const TableRow = styled.tr`
 export const Row = styled.tr`
     height: 2em;
 `
-
-
-

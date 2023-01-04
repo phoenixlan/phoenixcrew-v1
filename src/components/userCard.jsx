@@ -22,29 +22,31 @@ const S = {
 
 
 export const UserCard = ({ user }) => {
-    const [ currentEvent, setCurrentEvent ] = useState(null)
+    const [ currentEvent, setCurrentEvent ] = useState(null);
     useEffect(async () => {
         setCurrentEvent(await getCurrentEvent());
     }, []);
 
-    const age = dateOfBirthToAge(user.birthdate)
-    return (<S.Container>
-        <S.AvatarPart>
-            <Avatar user={user}>
-            </Avatar>
-        </S.AvatarPart>
-        <S.TextPart>
-            <h1>{user.firstname} {user.lastname}</h1>
-            <p>Født: {user.birthdate} ({age} år) { currentEvent !== null ?  
-                (currentEvent.age_limit_inclusive !== -1 && currentEvent.age_limit_inclusive < age) 
-                ? (<b>For gammel!</b>) 
-                : null
-             : (<i>...</i>) }</p>
-            <p>Kjønn: {user.gender === "Gender.male" ? "Mann" : "Kvinne"}</p>
-            <p>Dato registrert: {new Date(user.created*1000).toLocaleString()}</p>
-            <p>Telefonnummer: {user.phone}</p>
-            <p>E-post addresse: {user.email}</p>
-        </S.TextPart>
-        
-    </S.Container>)
+    const age = dateOfBirthToAge(user.birthdate);
+    return (
+        <S.Container>
+            <S.AvatarPart>
+                <Avatar user={user}>
+                </Avatar>
+            </S.AvatarPart>
+            <S.TextPart>
+                <h1>{user.firstname} {user.lastname}</h1>
+                <p>Født: {user.birthdate} ({age} år) { currentEvent !== null ?  
+                    (currentEvent.age_limit_inclusive !== -1 && currentEvent.age_limit_inclusive < age) 
+                    ? (<b>For gammel!</b>) 
+                    : null
+                : (<i>...</i>) }</p>
+                <p>Kjønn: {user.gender === "Gender.male" ? "Mann" : "Kvinne"}</p>
+                <p>Dato registrert: {new Date(user.created*1000).toLocaleString()}</p>
+                <p>Telefonnummer: {user.phone}</p>
+                <p>E-post addresse: {user.email}</p>
+            </S.TextPart>
+            
+        </S.Container>
+    )
 }

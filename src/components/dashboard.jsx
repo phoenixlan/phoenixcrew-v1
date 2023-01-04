@@ -1,10 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-/*
-    HTML Input components
-*/
-
 export const DashboardBlock = styled.div`
     background: white;
     width: 980px;
@@ -30,9 +26,6 @@ export const DashboardBarElement = styled.div`
     border-bottom: ${props => props.active ? "2px solid rgb(255,170,210)" : ""};
     cursor: pointer;
 `
-
-
-
 
 export const DashboardSubtitle = styled.div`
     font-family: "Segoe UI";
@@ -92,10 +85,6 @@ export const DisplayControl = styled.div`
     display: ${props => props.visible ? "" : "none"};
 `
 
-
-/*
-    HTML Input components
-*/
 export const InputLabel = styled.span`
     position: relative;
     font-family: "Segoe UI";
@@ -145,6 +134,7 @@ export const InputElement = styled.input`
     &:disabled {
         background-color: inherit;
         color: rgb(130, 130, 130);
+        border-bottom: 1px solid rgb(170,170,170)!important;
     }
 `
 export const InputTextArea = styled.textarea`

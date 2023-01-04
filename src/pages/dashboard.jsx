@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
 
-import { User, Crew, Team } from "@phoenixlan/phoenix.js";
-
-import styled from 'styled-components';
-
+import { User } from "@phoenixlan/phoenix.js";
 
 export const Dashboard = () => {
     
@@ -14,8 +11,6 @@ export const Dashboard = () => {
         }
         asyncFunction();
     })
-    
-    console.log();
 
     return (
         <>

@@ -1,24 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams, useHistory } from 'react-router-dom';
-import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
-import { BASE_URL } from "../../"
-
-import { User, Crew, Team } from "@phoenixlan/phoenix.js";
+import { Crew } from "@phoenixlan/phoenix.js";
 
 import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight, faChevronRight }  from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 
 import { PageLoading } from "../../components/pageLoading"
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardElementSelector, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox, InputContainer, InputElement, InputLabel, InputRadio } from '../../components/dashboard';
-
-const S = {
-    WideLink: styled(Link)`
-    width: 100%
-    `
-}
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
 
 const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     let history = useHistory();
@@ -114,11 +105,10 @@ export const ListApplications = (props) => {
 
 
     if(loading) {
-        return (<PageLoading />)
+        return (
+            <PageLoading />
+        )
     }
-    //TODO not quite right, backend har ikke application state enda
-
-
 
     return (
         <>

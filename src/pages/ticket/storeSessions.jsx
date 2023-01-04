@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
-
-import { getActiveStoreSessions, User } from '@phoenixlan/phoenix.js';
-
+import { getActiveStoreSessions } from '@phoenixlan/phoenix.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
-import { Table, SelectableRow, Row, Column, TableHeader, IconContainer } from "../../components/table";
-import { faArrowRight, faUserCheck } from "@fortawesome/free-solid-svg-icons";
+import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 import { PageLoading } from "../../components/pageLoading";
-
 
 export const StoreSessionList = () => {
     const [ storeSessions, setStoreSessions ] = useState([]);
@@ -41,6 +38,7 @@ export const StoreSessionList = () => {
             <PageLoading />
         )
     }
+    
     else {
         return (
             <>

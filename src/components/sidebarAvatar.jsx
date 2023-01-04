@@ -14,6 +14,8 @@ const S = {
 export const SidebarAvatar = ({ user }) => {
     const avatarUrl = user.avatar_urls.sd;
 
-    return (<S.Avatar src={avatarUrl}>
-    </S.Avatar>)
+    return (
+        <S.Avatar src={avatarUrl}>
+        </S.Avatar>
+    )
 }
