@@ -55,7 +55,7 @@ export const UserList= () => {
                         {
                             users.map((user) => {
                                 return (
-                                    <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
+                                    <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne" key={user.uuid}>
                                         <Column consolas flex="5" visible={!visibleUUID}>{ user.uuid }</Column>
                                         <Column flex="3">{ user.lastname + ", " + user.firstname }</Column>
                                         <Column flex="1">{dateOfBirthToAge(user.birthdate)}</Column>

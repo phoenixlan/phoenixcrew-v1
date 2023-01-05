@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import styled from 'styled-components';
-import { User, Crew } from "@phoenixlan/phoenix.js";
+import { User, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 import { Table, Column, TableHeader, SelectableRow, IconContainer } from "../../components/table";
 import { PageLoading } from '../../components/pageLoading';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox, InputContainer, InputLabel } from '../../components/dashboard';
@@ -20,7 +20,7 @@ const TABS = {
     TICKETS: 3
 }
 
-const PositionList = ({ position_mappings }) => {
+const PositionList = ({ position_mappings, showUuid }) => {
     return (
         <>
             {
@@ -42,7 +42,7 @@ const PositionList = ({ position_mappings }) => {
 
                     return (
                         <SelectableRow>
-                            <Column consolas flex="1" visible={!visibleUUIDPositions}>{ position.uuid }</Column>
+                            <Column consolas flex="1" visible={!showUuid}>{ position.uuid }</Column>
                             <Column flex="2" >{positionName}</Column>
                             <Column flex="0 24px"><IconContainer><FontAwesomeIcon /></IconContainer></Column>
                         </SelectableRow>
@@ -240,29 +240,29 @@ export const ViewUser = (props) => {
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == TABS.POSITIONS}>
+                    <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
                     <InnerContainer border extramargin>
-                        <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
+                        <InnerContainerTitle>Nåværende Stillinger</InnerContainerTitle>
+                        <Table>
+                            <TableHeader border>
+                                <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
+                                <Column flex="2">Navn</Column>
+                                <Column flex="0 24px" />
+                            </TableHeader>
+                            <PositionList show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
+                        </Table>
                     </InnerContainer>
-                    <h1>Nåværende Stillinger</h1>
-                    <Table>
-                        <TableHeader border>
-                            <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
-                            <Column flex="2">Navn</Column>
-                            <Column flex="0 24px" />
-                        </TableHeader>
-                        <h1>Nåværende Stillinger</h1>
-                        <PositionList position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
-                    </Table>
-                    <Table>
-                        <TableHeader border>
-                            <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
-                            <Column flex="2">Navn</Column>
-                            <Column flex="0 24px" />
-                        </TableHeader>
-                        <h1>Tidligere Stillinger</h1>
-                        <PositionList position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
-                    </Table>
-
+                    <InnerContainer border extramargin>
+                        <InnerContainerTitle>Tidligere Stillinger</InnerContainerTitle>
+                        <Table>
+                            <TableHeader border>
+                                <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
+                                <Column flex="2">Navn</Column>
+                                <Column flex="0 24px" />
+                            </TableHeader>
+                            <PositionList show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
+                        </Table>
+                    </InnerContainer>
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == TABS.TICKETS}>

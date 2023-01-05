@@ -24,10 +24,6 @@ export const ViewPosition = (props) => {
     const [visibleUUID, setVisibleUUID] = useState(false);
     const [activeContent, setActiveContent] = useState(1);
 
-    const [positionName, setPositionName] = useState();
-    const [positionMembers, setPositionMembers] = useState();
-    const [positionPermissions, setPositionPermissions] = useState();
-
     let history = useHistory();
 
     const build = async () => {
@@ -36,12 +32,8 @@ export const ViewPosition = (props) => {
         // Get position based on UUID and return error if something fails.
         try {
             const position = await Position.getPosition(uuid);
-            console.log(position);
             setPosition(position);
-            setPositionMembers(position.users);
-            setPositionPermissions(position.permissions);
             setLoading(false);
-            setPositionName(position.name);
         } catch(e) {
             setError(e);
         }
@@ -60,7 +52,7 @@ export const ViewPosition = (props) => {
                     Stilling
                 </DashboardTitle>
                 <DashboardSubtitle>
-                    {positionName}
+                    {position.name}
                 </DashboardSubtitle>
             </DashboardHeader>
             {
@@ -72,8 +64,8 @@ export const ViewPosition = (props) => {
                     <>
                         <DashboardBarSelector border>
                             <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Generelt</DashboardBarElement>
-                            <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Rettigheter ({positionPermissions.length})</DashboardBarElement>
-                            <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Medlemmer ({positionMembers.length})</DashboardBarElement>
+                            <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Rettigheter ({position.permissions.length})</DashboardBarElement>
+                            <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Medlemmer ({position.position_mappings.length})</DashboardBarElement>
                         </DashboardBarSelector>
 
                         <DashboardContent visible={activeContent == 1}>
@@ -95,12 +87,12 @@ export const ViewPosition = (props) => {
                             </Table>
 
                             {
-                            positionPermissions.map((permission) => {
+                            position.permissions.map((permission) => {
                                 return (
                                     <SelectableRow>
                                         <Column consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</Column>
                                         <Column flex="6" uppercase>{ permission.permission }</Column>
-                                        <Column flex="0 24px"><IconContainer><FontAwesomeIcon /></IconContainer></Column>
+                                        <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                     </SelectableRow>
                                 )
                             })}
@@ -120,16 +112,18 @@ export const ViewPosition = (props) => {
                             </Table>
 
                             {
-                            positionMembers.map((user) => {
-                                return (
-                                    <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
-                                        <Column consolas flex="5" visible={!visibleUUID}>{ user.uuid }</Column>
-                                        <Column flex="3">{ user.lastname + ", " + user.firstname }</Column>
-                                        <Column flex="3">{ user.username }</Column>
-                                        <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                    </SelectableRow>
-                                )
-                            })}
+                                position.position_mappings.map((position_mapping) => {
+                                    const user = position_mapping.user
+                                    return (
+                                        <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
+                                            <Column consolas flex="5" visible={!visibleUUID}>{ user.uuid }</Column>
+                                            <Column flex="3">{ user.lastname + ", " + user.firstname }</Column>
+                                            <Column flex="3">{ user.username }</Column>
+                                            <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        </SelectableRow>
+                                    )
+                                })
+                            }
                         </DashboardContent>
                 </>
             }
