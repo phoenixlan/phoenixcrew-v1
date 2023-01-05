@@ -17,7 +17,8 @@ const S = {
 const TABS = {
     USER_DETAILS: 1,
     POSITIONS: 2,
-    TICKETS: 3
+    TICKETS: 3,
+    INTEGRATIONS: 4
 }
 
 const PositionList = ({ position_mappings, showUuid }) => {
@@ -62,6 +63,7 @@ export const ViewUser = (props) => {
     const [ seatableTickets, setSeatableTickets] = useState([]);
     const [ crews, setCrews ] = useState([]);
     const [ currentEvent, setCurrentEvent ] = useState(null);
+    const [ discordMapping, setDiscordMapping ] = useState(null);
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState] = useState(null);
@@ -81,7 +83,7 @@ export const ViewUser = (props) => {
                 console.log(user);
 
                 //Fetch more data on the user
-                const [_, owned, purchased, seatable, membershipState, activationState, currentEvent] = await Promise.all([
+                const [_, owned, purchased, seatable, membershipState, activationState, currentEvent, discordMapping] = await Promise.all([
                     await Promise.all(user.position_mappings.map(async (position_mapping) => {
                         const position = position_mapping.position;
                         if(position.crew_uuid) {
@@ -96,7 +98,8 @@ export const ViewUser = (props) => {
                     await User.getSeatableTickets(uuid),
                     await User.getUserMembershipStatus(uuid),
                     await User.getUserActivationState(uuid),
-                    await getCurrentEvent()
+                    await getCurrentEvent(),
+                    await User.getDiscordMapping(uuid)
                 ])
                 setOwnedTickets(owned)
                 setPurchasedTickets(purchased)
@@ -104,6 +107,7 @@ export const ViewUser = (props) => {
                 setMembershipState(membershipState);
                 setActivationState(activationState);
                 setCurrentEvent(currentEvent);
+                setDiscordMapping(discordMapping);
 
                 setUser(user)
                 setCrews(crews);
@@ -134,9 +138,10 @@ export const ViewUser = (props) => {
                 </DashboardHeader>
 
                 <DashboardBarSelector border>
-                    <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.USER_DETAILS} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Tilkoblinger til eksterne tjenester</DashboardBarElement>
                 </DashboardBarSelector>
                 
                 <DashboardContent visible={activeContent == TABS.USER_DETAILS}>
@@ -315,6 +320,19 @@ export const ViewUser = (props) => {
                             }
                         </Table>
                     </InnerContainer>
+                </DashboardContent>
+
+                <DashboardContent visible={activeContent == TABS.INTEGRATIONS}>
+                    <Table>
+                        <TableHeader border>
+                            <Column flex="2"></Column>
+                            <Column flex="0 24px" />
+                        </TableHeader>
+                        <Row>
+                            <Column>Discord</Column>
+                            <Column>{discordMapping ? (discordMapping.username) : (<b>Nei</b>)}</Column>
+                        </Row>
+                    </Table>
                 </DashboardContent>
             </>
         )
