@@ -25,4 +25,10 @@ code {
   display: flex;
   flex-flow: column;
   justify-content: center;
+  overflow-x: hidden;
+}
+
+@font-face {
+  font-family: "PhoenixTitle";
+  src: url("/public/no_continue.ttf") format("truetype");
 }

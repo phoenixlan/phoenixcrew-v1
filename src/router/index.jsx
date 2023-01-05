@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Router, Switch, Route } from 'react-router-dom'
+import { Router, Switch } from 'react-router-dom'
 import { createBrowserHistory } from 'history';
 
 import { Container } from "../container";
@@ -27,6 +27,10 @@ import { EventList } from '../pages/event/list';
 import { EventViewer } from '../pages/event/view';
 import { AvatarApproval } from '../pages/avatar/approval';
 import { StoreSessionList } from '../pages/ticket/storeSessions';
+import { ViewPosition } from '../pages/admin/view';
+import { AgendaElementView } from '../pages/agenda/view';
+import { NotAvailable } from '../pages/notAvailable';
+import { ViewCrew } from '../pages/crew/view';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -41,9 +45,6 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/">
                             <Dashboard />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/user/:uuid">
-                            <ViewUser />
-                        </PrivateRoute>
                         <PrivateRoute exact path="/application/:uuid">
                             <ViewApplication />
                         </PrivateRoute>
@@ -53,11 +54,17 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/positions/">
                             <PositionAdmin />
                         </PrivateRoute>
+                        <PrivateRoute exact path="/positions/:uuid">
+                            <ViewPosition />
+                        </PrivateRoute>
                         <PrivateRoute exact path="/avatar/approval/">
                             <AvatarApproval />
                         </PrivateRoute>
                         <PrivateRoute exact path="/crews/">
                             <CrewList />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/crew/:uuid">
+                            <ViewCrew />
                         </PrivateRoute>
                         <PrivateRoute exact path="/seatmap/:uuid">
                             <SeatmapEditor />
@@ -68,23 +75,32 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/event/:uuid">
                             <EventViewer />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/event/">
+                        <PrivateRoute exact path="/events/">
                             <EventList />
                         </PrivateRoute>
                         <PrivateRoute exact path="/users/">
                             <UserList/>
                         </PrivateRoute>
+                        <PrivateRoute exact path="/user/:uuid">
+                            <ViewUser />
+                        </PrivateRoute>
                         <PrivateRoute exact path="/agenda/">
                             <AgendaList />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/ticket/">
+                        <PrivateRoute exact path="/agenda/:uuid">
+                            <NotAvailable />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/tickets/">
                             <TicketList />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/ticket/memberships">
+                        <PrivateRoute exact path="/tickets/memberships/">
                             <MembershipList/>
                         </PrivateRoute>
-                        <PrivateRoute exact path="/ticket/free/">
+                        <PrivateRoute exact path="/tickets/free/">
                             <FreeTicketManagement />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/ticket/:uuid/">
+                            <NotAvailable />
                         </PrivateRoute>
                         <PrivateRoute exact path="/store_sessions/">
                             <StoreSessionList/>

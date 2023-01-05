@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-import styled from 'styled-components';
-
+import { User } from "@phoenixlan/phoenix.js";
 
 export const Dashboard = () => {
-    return (<h1>Hello</h1>)
+    
+    useEffect(async () => {
+        const asyncFunction = async () => {
+            const user = await User.getAuthenticatedUser();
+            console.log(user);
+        }
+        asyncFunction();
+    })
+
+    return (
+        <>
+
+        </>
+    )
 }

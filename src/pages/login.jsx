@@ -170,4 +170,3 @@ export const Login = () => {
         );
     }
 }
-// {(window.location.pathname == "/login") ? undefined : <Redirect to="/login" />}

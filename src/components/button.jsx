@@ -5,7 +5,6 @@ const S = {
     Button: styled.div`
         height: 1.2em;
         padding: 1em;
-        margin: 0.5em;
 
         display: flex;
         align-items: center;
@@ -25,7 +24,9 @@ const S = {
 }
 
 export const Button = ({ children, color, onClick }) => {
-    return (<S.Button color={color} onClick={onClick}>
-            { children }
-    </S.Button>)
+    return (
+        <S.Button color={color} onClick={onClick}>
+                { children }
+        </S.Button>
+    )
 }

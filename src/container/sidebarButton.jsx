@@ -9,10 +9,10 @@ export const SidebarButton = styled(Link)`
     cursor: pointer;
     user-select: none;
 
-    width: 100%;
-    height: 3em;
+    width: 48px;
 
-    :hover {
-        background-color: rgba(0,0,0,0.2);
-    }
+    color: black;
+    text-decoration: none;
+    padding: 4px 0;
+    font-size: 14px;
 `
