@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import styled from 'styled-components';
 import { User, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
-import { Table, Column, TableHeader, SelectableRow, IconContainer } from "../../components/table";
+import { Table, Column, TableHeader, SelectableRow, Row, IconContainer } from "../../components/table";
 import { PageLoading } from '../../components/pageLoading';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox, InputContainer, InputLabel } from '../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +11,16 @@ const S = {
     Avatar: styled.img`
         width: 256px;
         border: 1px solid rgb(235, 235, 235);
+    `,
+    DiscordAvatar: styled.img`
+        width: 3em;
+        border-radius: 50%;
+    `,
+    AlignBottom: styled.div`
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     `
 }
 
@@ -323,16 +333,23 @@ export const ViewUser = (props) => {
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == TABS.INTEGRATIONS}>
-                    <Table>
-                        <TableHeader border>
-                            <Column flex="2"></Column>
-                            <Column flex="0 24px" />
-                        </TableHeader>
-                        <Row>
-                            <Column>Discord</Column>
-                            <Column>{discordMapping ? (discordMapping.username) : (<b>Nei</b>)}</Column>
-                        </Row>
-                    </Table>
+                    <InnerContainer flex="1">
+                        <InnerContainerRow nopadding nowrap>
+                            <InputContainer column extramargin>
+                                <InputLabel small>Discord</InputLabel>
+                                {
+                                    discordMapping ? (
+                                        <InnerContainerRow>
+                                            <S.DiscordAvatar src={`https://cdn.discordapp.com/avatars/${discordMapping.discord_id}/${discordMapping.avatar}.png`} />
+                                            <S.AlignBottom>
+                                                {discordMapping.username}
+                                            </S.AlignBottom>                                        
+                                        </InnerContainerRow>
+                                    ) : (<b>Nei</b>)
+                                }
+                            </InputContainer>
+                        </InnerContainerRow>
+                    </InnerContainer>
                 </DashboardContent>
             </>
         )
