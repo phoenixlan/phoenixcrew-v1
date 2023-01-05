@@ -104,7 +104,7 @@ export const PositionAdmin = () => {
                                             <Column flex="4">{(roleCrew?.name ?? "-")}</Column>
                                             <Column flex="9">{name}</Column>
                                             <Column flex="2">{role.name ? "Custom" : "System"}</Column>
-                                            <Column flex="2">{role.users.length}</Column>
+                                            <Column flex="2">{role.position_mappings.length}</Column>
                                             <Column flex="2">{role.permissions.length}</Column>
                                             <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                         </SelectableRow>

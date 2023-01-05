@@ -16,7 +16,7 @@ export const DashboardBarSelector = styled.div`
     display: flex;
     flex-flow: row;
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
-    font-family: "Segoe UI";
+    font-family: "Roboto";
     font-size: 14px;
 `
 export const DashboardBarElement = styled.div`
@@ -28,7 +28,7 @@ export const DashboardBarElement = styled.div`
 `
 
 export const DashboardSubtitle = styled.div`
-    font-family: "Segoe UI";
+    font-family: "Roboto";
     font-size: 14px;
     font-weight: lighter;
     color: rgb(96, 94, 92);
@@ -36,7 +36,7 @@ export const DashboardSubtitle = styled.div`
 `
 
 export const DashboardTitle = styled.div`
-    font-family: "Segoe UI";
+    font-family: "Roboto";
     font-size: 28px;
     font-weight: lighter;
     color: black;
@@ -45,7 +45,7 @@ export const DashboardTitle = styled.div`
 export const DashboardContent = styled.div`
     display: ${props => props.visible == undefined ? "block" : props.visible ? "block" : "none"};
     padding: 20px 0;
-    font-family: "Segoe UI";
+    font-family: "Roboto";
     font-size: 14px;
 `
 
@@ -87,7 +87,7 @@ export const DisplayControl = styled.div`
 
 export const InputLabel = styled.span`
     position: relative;
-    font-family: "Segoe UI";
+    font-family: "Roboto";
     font-size: ${props => props.small ? "11px" : "14px"};
     bottom: ${props => props.bottom ? props.bottom : "0"};
     top: ${props => props.top ? props.top : "0"};
@@ -122,7 +122,7 @@ export const InputCheckbox = ({ label, value, onChange, disabled }) => {
 }
 
 export const InputElement = styled.input`
-    font-family: "Segoe UI";
+    font-family: "Roboto";
     border: 0;
     padding: 4px 0;
     border-bottom: 1px solid rgb(135, 135, 135);
@@ -138,7 +138,7 @@ export const InputElement = styled.input`
     }
 `
 export const InputTextArea = styled.textarea`
-    font-family: "Segoe UI";
+    font-family: "Roboto";
     border: 0;
     padding: 4px 0;
     border-bottom: 1px solid rgb(135, 135, 135);
@@ -156,7 +156,7 @@ export const InputTextArea = styled.textarea`
 `
 
 export const InputSelect = styled.select`
-    font-family: "Segoe UI";
+    font-family: "Roboto";
     border: 0;
     padding: 4px 0;
     border-bottom: 1px solid rgb(135, 135, 135);

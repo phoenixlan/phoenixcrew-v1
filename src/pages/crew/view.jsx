@@ -1,6 +1,6 @@
 import React , { useEffect, useState } from "react";
 
-import { Crew } from "@phoenixlan/phoenix.js";
+import { Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea } from "../../components/dashboard";
@@ -12,10 +12,16 @@ export const ViewCrew = () => {
     const [ activeContent, setActiveContent ] = useState(1);
     const [ loading, setLoading ] = useState(true);
     const [ crew, setCrew ] = useState();
+    const [ currentEvent, setCurrentEvent ] = useState();
 
     useEffect(async () => {
         try {
-            setCrew(await Crew.getCrew(uuid));
+            const [ crew, currentEvent ] = await Promise.all([
+                await Crew.getCrew(uuid),
+                await getCurrentEvent()
+            ])
+            setCrew(crew);
+            setCurrentEvent(currentEvent)
             setLoading(false);
         } catch(e) {
             return (
@@ -25,9 +31,7 @@ export const ViewCrew = () => {
         
     }, []);
 
-
-    
-
+    const currentEventFilter = (position_mapping) => !position_mapping.event || position_mapping.event.uuid == currentEvent.uuid;
 
     if(loading) {
         return (
@@ -39,13 +43,15 @@ export const ViewCrew = () => {
         const chiefMap  = new Map();
         crew.positions.forEach((position) => {
             if(position.chief) {
-                position.users.forEach((user) => {
+                position.position_mappings.filter(currentEventFilter).forEach((mapping) => {
+                    const user = mapping.user
                     if(!chiefMap.has(user.uuid)) {
                         chiefMap.set(user.uuid, user);
                     }
                 })
             }
-            position.users.forEach((user) => {
+            position.position_mappings.filter(currentEventFilter).forEach((mapping) => {
+                const user = mapping.user
                 if(!memberMap.has(user.uuid)) {
                     memberMap.set(user.uuid, user);
                 }
@@ -94,45 +100,28 @@ export const ViewCrew = () => {
 
                 <DashboardContent visible={activeContent == 2}>
                     <InnerContainer>
-                        { leaders.length 
-                            ?
-                                <>
-                                    <Table>
-                                        <TableHeader>
-                                            <Column flex="1">Gruppeledere</Column>
-                                        </TableHeader>
-                                    </Table>
-                                    <InnerContainerRow>
-                                    
-                                    {
-                                        leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
-                                    }
-                                    </InnerContainerRow>
-                                </>
-                            :
-                                <>
-                                </>
+                        <Table>
+                            <TableHeader>
+                                <Column flex="1">Gruppeledere{currentEvent.name}</Column>
+                            </TableHeader>
+                        </Table>
+                        <InnerContainerRow>
+                        {
+                            leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
                         }
-                        { members.length
-                            ?
-                                <>
-                                    <Table>
-                                        <TableHeader>
-                                            <Column flex="1">Medlemmer</Column>
-                                        </TableHeader>
-                                    </Table>
-                                    <InnerContainerRow>
-                                        
-                                        {
-                                            members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
-                                        }
-                                    </InnerContainerRow>
-                                </>
-                            :
-                                <>
-                                    Ingen medlemmer registert.
-                                </>
+                        </InnerContainerRow>
+                        <p><i>{leaders.length} gruppeledere</i></p>
+                        <Table>
+                            <TableHeader>
+                                <Column flex="1">Medlemmer({currentEvent.name})</Column>
+                            </TableHeader>
+                        </Table>
+                        <InnerContainerRow>
+                        {
+                            members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
                         }
+                        </InnerContainerRow>
+                        <p><i>{members.length} medlemmer</i></p>
                         
                     </InnerContainer>
                 </DashboardContent>

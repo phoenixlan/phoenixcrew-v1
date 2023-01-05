@@ -23,7 +23,6 @@ const S = {
         height: 100vh;
         background-color: rgb(242, 242, 242);
         border-right: 1px solid rgb(235, 235, 235);
-        font-family: "Segoe UI";
     `,
         SidebarLogoContainer: styled.div`
             display: flex;
@@ -49,7 +48,7 @@ const S = {
             `,
                 PhoenixTitle: styled.span`
                     font-size: 18px;
-                    font-family: PhoenixTitle, "Segoe UI";
+                    font-family: PhoenixTitle, "Roboto";
                     margin: auto auto 0 0;
                 `,
                 PhoenixSiteTitle: styled.span`
@@ -121,7 +120,6 @@ const S = {
             padding: 0 16px;
         `,
             SearchInput: styled.input`
-                font-family: "Segoe UI";
                 font-size: 14px;
                 background-color: rgb(235, 235, 235);
                 padding: 4px 16px;
@@ -395,6 +393,18 @@ export const Sidebar = () => {
         })
     }
 
+    const getFittingPosition = (mappings) => {
+        const named = mappings.filter(mapping => !!mapping.position.name)
+        if(named.length > 0) {
+            return named[0].position.name
+        }
+        else if(mappings.length == 0) {
+            return mappings[0].position.name
+        } else {
+            return `${mappings.length} stillinger`
+        }
+    }
+
     return (
 
         <S.Sidebar>
@@ -415,7 +425,7 @@ export const Sidebar = () => {
                     </S.AccountImageContainer>
                     <S.AccountInformation>
                         <S.AccountName>{auth.authUser.firstname} {auth.authUser.lastname}</S.AccountName>
-                        <S.AccountRole>{auth.authUser.positions[0].name}</S.AccountRole>
+                        <S.AccountRole>{getFittingPosition(auth.authUser.position_mappings)}</S.AccountRole>
                     </S.AccountInformation>
                 </S.AccountLink>
                 <S.AccountLogout onClick={() => auth.logout()} title="Logg ut">
