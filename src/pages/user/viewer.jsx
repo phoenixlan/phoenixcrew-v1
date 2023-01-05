@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import styled from 'styled-components';
 import { User, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
-import { Table, Column, TableHeader, SelectableRow, IconContainer } from "../../components/table";
+import { Table, Column, TableHeader, SelectableRow, Row, IconContainer } from "../../components/table";
 import { PageLoading } from '../../components/pageLoading';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox, InputContainer, InputLabel } from '../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,13 +11,24 @@ const S = {
     Avatar: styled.img`
         width: 256px;
         border: 1px solid rgb(235, 235, 235);
+    `,
+    DiscordAvatar: styled.img`
+        width: 3em;
+        border-radius: 50%;
+    `,
+    AlignBottom: styled.div`
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     `
 }
 
 const TABS = {
     USER_DETAILS: 1,
     POSITIONS: 2,
-    TICKETS: 3
+    TICKETS: 3,
+    INTEGRATIONS: 4
 }
 
 const PositionList = ({ position_mappings, showUuid }) => {
@@ -62,6 +73,7 @@ export const ViewUser = (props) => {
     const [ seatableTickets, setSeatableTickets] = useState([]);
     const [ crews, setCrews ] = useState([]);
     const [ currentEvent, setCurrentEvent ] = useState(null);
+    const [ discordMapping, setDiscordMapping ] = useState(null);
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState] = useState(null);
@@ -81,7 +93,7 @@ export const ViewUser = (props) => {
                 console.log(user);
 
                 //Fetch more data on the user
-                const [_, owned, purchased, seatable, membershipState, activationState, currentEvent] = await Promise.all([
+                const [_, owned, purchased, seatable, membershipState, activationState, currentEvent, discordMapping] = await Promise.all([
                     await Promise.all(user.position_mappings.map(async (position_mapping) => {
                         const position = position_mapping.position;
                         if(position.crew_uuid) {
@@ -96,7 +108,8 @@ export const ViewUser = (props) => {
                     await User.getSeatableTickets(uuid),
                     await User.getUserMembershipStatus(uuid),
                     await User.getUserActivationState(uuid),
-                    await getCurrentEvent()
+                    await getCurrentEvent(),
+                    await User.getDiscordMapping(uuid)
                 ])
                 setOwnedTickets(owned)
                 setPurchasedTickets(purchased)
@@ -104,6 +117,7 @@ export const ViewUser = (props) => {
                 setMembershipState(membershipState);
                 setActivationState(activationState);
                 setCurrentEvent(currentEvent);
+                setDiscordMapping(discordMapping);
 
                 setUser(user)
                 setCrews(crews);
@@ -134,9 +148,10 @@ export const ViewUser = (props) => {
                 </DashboardHeader>
 
                 <DashboardBarSelector border>
-                    <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.USER_DETAILS} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Tilkoblinger til eksterne tjenester</DashboardBarElement>
                 </DashboardBarSelector>
                 
                 <DashboardContent visible={activeContent == TABS.USER_DETAILS}>
@@ -314,6 +329,26 @@ export const ViewUser = (props) => {
                                 ))
                             }
                         </Table>
+                    </InnerContainer>
+                </DashboardContent>
+
+                <DashboardContent visible={activeContent == TABS.INTEGRATIONS}>
+                    <InnerContainer flex="1">
+                        <InnerContainerRow nopadding nowrap>
+                            <InputContainer column extramargin>
+                                <InputLabel small>Discord</InputLabel>
+                                {
+                                    discordMapping ? (
+                                        <InnerContainerRow>
+                                            <S.DiscordAvatar src={`https://cdn.discordapp.com/avatars/${discordMapping.discord_id}/${discordMapping.avatar}.png`} />
+                                            <S.AlignBottom>
+                                                {discordMapping.username}
+                                            </S.AlignBottom>                                        
+                                        </InnerContainerRow>
+                                    ) : (<b>Nei</b>)
+                                }
+                            </InputContainer>
+                        </InnerContainerRow>
                     </InnerContainer>
                 </DashboardContent>
             </>
