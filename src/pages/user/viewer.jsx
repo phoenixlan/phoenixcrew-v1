@@ -6,6 +6,7 @@ import { Table, Column, TableHeader, SelectableRow, Row, IconContainer } from ".
 import { PageLoading } from '../../components/pageLoading';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox, InputContainer, InputLabel } from '../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { position_mapping_to_string } from '../../utils/user';
 
 const S = {
     Avatar: styled.img`
@@ -36,24 +37,11 @@ const PositionList = ({ position_mappings, showUuid }) => {
         <>
             {
                 position_mappings.map(position_mapping => {
-                    const position = position_mapping.position
-                    let positionName = JSON.stringify(position)
-
-                    if(position.name) {
-                        positionName = position.name
-                    } else if(position.crew) {
-                        if(position.team) {
-                            positionName = `Medlem av ${position.team.name} i ${position.crew.name}`
-                        } else if(position.chief) {
-                            positionName = `Chief i ${position.crew.name}`
-                        } else {
-                            positionName = `Medlem av ${position.crew.name}`
-                        }
-                    }
+                    const positionName = position_mapping_to_string(position_mapping)
 
                     return (
                         <SelectableRow>
-                            <Column consolas flex="1" visible={!showUuid}>{ position.uuid }</Column>
+                            <Column consolas flex="1" visible={!showUuid}>{ position_mapping.position.uuid }</Column>
                             <Column flex="2" >{positionName}</Column>
                             <Column flex="0 24px"><IconContainer><FontAwesomeIcon /></IconContainer></Column>
                         </SelectableRow>
@@ -94,7 +82,7 @@ export const ViewUser = (props) => {
 
                 //Fetch more data on the user
                 const [_, owned, purchased, seatable, membershipState, activationState, currentEvent, discordMapping] = await Promise.all([
-                    await Promise.all(user.position_mappings.map(async (position_mapping) => {
+                    Promise.all(user.position_mappings.map(async (position_mapping) => {
                         const position = position_mapping.position;
                         if(position.crew_uuid) {
                             position.crew = await Crew.getCrew(position.crew_uuid);
@@ -103,13 +91,13 @@ export const ViewUser = (props) => {
                             }
                         }
                     })),
-                    await User.getOwnedTickets(uuid),
-                    await User.getPurchasedTickets(uuid),
-                    await User.getSeatableTickets(uuid),
-                    await User.getUserMembershipStatus(uuid),
-                    await User.getUserActivationState(uuid),
-                    await getCurrentEvent(),
-                    await User.getDiscordMapping(uuid)
+                    User.getOwnedTickets(uuid),
+                    User.getPurchasedTickets(uuid),
+                    User.getSeatableTickets(uuid),
+                    User.getUserMembershipStatus(uuid),
+                    User.getUserActivationState(uuid),
+                    getCurrentEvent(),
+                    User.getDiscordMapping(uuid)
                 ])
                 setOwnedTickets(owned)
                 setPurchasedTickets(purchased)

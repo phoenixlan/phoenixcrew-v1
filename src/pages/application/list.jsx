@@ -26,7 +26,9 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     return (
         <SelectableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
             <Column flex="3">{application.user.firstname} {application.user.lastname}</Column>
-            <Column flex="3">{application.crew.name}</Column>
+            <Column flex="3">{application.crews[0].crew.name}</Column>
+            <Column flex="3">{application.crews.length > 1 ? (application.crews[1].crew.name) : (<b>Ingen</b>)}</Column>
+            <Column flex="3">{application.crews.length > 2 ? (application.crews[2].crew.name) : (<b>Ingen</b>)}</Column>
             <Column flex="3">{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
             {
                 showProcessedBy ? (
@@ -51,7 +53,9 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
         <Table>
             <TableHeader border>
                 <Column flex="3">Navn</Column>
-                <Column flex="3">Crew</Column>
+                <Column flex="3">1. Valg</Column>
+                <Column flex="3">2. Valg</Column>
+                <Column flex="3">3. Valg</Column>
                 <Column flex="3">Søknadstid</Column>
                 {
                     showProcessedBy ? (
