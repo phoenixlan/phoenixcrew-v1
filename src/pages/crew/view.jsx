@@ -31,7 +31,7 @@ export const ViewCrew = () => {
         
     }, []);
 
-    const currentEventFilter = (position_mapping) => !position_mapping.event || position_mapping.event.uuid == currentEvent.uuid;
+    const currentEventFilter = (position_mapping) => !position_mapping.event_uuid || position_mapping.event_uuid == currentEvent.uuid;
 
     if(loading) {
         return (
