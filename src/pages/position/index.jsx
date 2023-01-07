@@ -1,4 +1,4 @@
-import React , { useEffect, useState } from "react";
+import React , { useEffect, useRef, useState } from "react";
 
 import { Position, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 
@@ -70,12 +70,13 @@ export const PositionList = () => {
                                 <Column flex="4">Tilknyttet <br/>crew</Column>
                                 <Column flex="9">Navn</Column>
                                 <Column flex="2">Type</Column>
-                                <Column flex="2">Antall <b>aktive</b><br/>brukere</Column>
+                                <Column flex="2">Aktive <br/>brukere</Column>
                                 <Column flex="2">Antall <br/>rettigheter</Column>
                                 <Column flex="0 24px" />
                             </TableHeader>
                             {
-                                roles.map((role) => {
+                                roles
+                                .map((role) => {
                                     const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
                                     const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
     
@@ -85,8 +86,9 @@ export const PositionList = () => {
                                         name = `${role.name}${roleCrew ? " (" + name + ")":""}`
                                     }
     
+                                    
                                     return (
-                                        <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}}>
+                                        <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}} key={role.uuid}>
                                             <Column consolas flex="9" visible={!visibleUUID}>{role.uuid}</Column>
                                             <Column flex="4">{(roleCrew?.name ?? "-")}</Column>
                                             <Column flex="9">{name}</Column>
@@ -96,6 +98,16 @@ export const PositionList = () => {
                                             <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                         </SelectableRow>
                                     )
+                                })
+                                .sort((a, b) => {
+                                    const crewNameA = a.props.children[1].props.children;
+                                    const crewNameB = b.props.children[1].props.children;
+                                    
+                                    if (crewNameA < crewNameB) {
+                                        return -1;
+                                    } else {
+                                        return 1;
+                                    }
                                 })
                             }
                         </Table>
