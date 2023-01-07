@@ -23,3 +23,21 @@ const calculateAge = (birthMonth, birthDay, birthYear) => {
     }
     return calculatedAge;
 }
+
+export const position_mapping_to_string = (position_mapping) => {
+    const position = position_mapping.position
+
+    if(position.name) {
+        return position.name
+    } else if(position.crew) {
+        if(position.team) {
+            return `Medlem av ${position.team.name} i ${position.crew.name}`
+        } else if(position.chief) {
+            return `Chief i ${position.crew.name}`
+        } else {
+            return `Medlem av ${position.crew.name}`
+        }
+    }
+
+    return JSON.stringify(position)
+}
