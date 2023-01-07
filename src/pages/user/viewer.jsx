@@ -139,7 +139,7 @@ export const ViewUser = (props) => {
                     <DashboardBarElement active={activeContent == TABS.USER_DETAILS} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
                     <DashboardBarElement active={activeContent == TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
                     <DashboardBarElement active={activeContent == TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Tilkoblinger til eksterne tjenester</DashboardBarElement>
+                    <DashboardBarElement active={activeContent == TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
                 </DashboardBarSelector>
                 
                 <DashboardContent visible={activeContent == TABS.USER_DETAILS}>
@@ -243,9 +243,12 @@ export const ViewUser = (props) => {
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == TABS.POSITIONS}>
-                    <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
-                    <InnerContainer border extramargin>
-                        <InnerContainerTitle>Nåværende Stillinger</InnerContainerTitle>
+                    <InnerContainer>
+                        <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
+                    </InnerContainer>
+
+                    <InnerContainer extramargin>
+                        <InnerContainerTitle>Nåværende stillinger</InnerContainerTitle>
                         <Table>
                             <TableHeader border>
                                 <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
@@ -255,8 +258,9 @@ export const ViewUser = (props) => {
                             <PositionList show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
                         </Table>
                     </InnerContainer>
-                    <InnerContainer border extramargin>
-                        <InnerContainerTitle>Tidligere Stillinger</InnerContainerTitle>
+
+                    <InnerContainer extramargin>
+                        <InnerContainerTitle>Tidligere stillinger</InnerContainerTitle>
                         <Table>
                             <TableHeader border>
                                 <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>

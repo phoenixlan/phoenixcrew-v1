@@ -29,21 +29,21 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     
     return (
         <SelectableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
-            <Column flex="3">{application.user.firstname} {application.user.lastname}</Column>
+            <Column flex="4">{application.user.firstname} {application.user.lastname}</Column>
             <Column flex="3"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></Column>
-            <Column flex="3">{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : (<b>Ingen</b>)}</Column>
-            <Column flex="3">{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : (<b>Ingen</b>)}</Column>
+            <Column flex="3">{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : ("Ingen")}</Column>
+            <Column flex="3">{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : ("Ingen")}</Column>
             <Column flex="3">{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
             {
                 showProcessedBy ? (
                     <>
-                        <Column flex="3">{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</Column>
-                        <Column flex="3">{stateToString(application.state)}</Column>
+                        <Column flex="4">{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</Column>
+                        <Column flex="2">{stateToString(application.state)}</Column>
                     </>
                     ) : (
                     <>
-                        <Column flex="3" />
-                        <Column flex="3" />
+                        <Column flex="4" />
+                        <Column flex="2" />
                     </>
                     )
             }
@@ -56,7 +56,7 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
     return (
         <Table>
             <TableHeader border>
-                <Column flex="3">Navn</Column>
+                <Column flex="4">Navn</Column>
                 <Column flex="3">1. Valg</Column>
                 <Column flex="3">2. Valg</Column>
                 <Column flex="3">3. Valg</Column>
@@ -64,13 +64,13 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
                 {
                     showProcessedBy ? (
                         <>
-                            <Column flex="3">Behandler</Column>
-                            <Column flex="3">Status</Column>
+                            <Column flex="4">Behandler</Column>
+                            <Column flex="2">Status</Column>
                         </>
                     ) : (
                         <>
-                            <Column flex="3" />
-                            <Column flex="3" />
+                            <Column flex="4" />
+                            <Column flex="2" />
                         </>
                     )
                 }

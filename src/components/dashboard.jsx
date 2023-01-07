@@ -89,8 +89,8 @@ export const InputLabel = styled.span`
     position: relative;
     font-family: "Roboto";
     font-size: ${props => props.small ? "11px" : "14px"};
-    bottom: ${props => props.bottom ? props.bottom : "0"};
-    top: ${props => props.top ? props.top : "0"};
+    bottom: ${props => props.bottom ? props.bottom : ""};
+    top: ${props => props.top ? props.top : ""};
     margin: ${props => props.small ? "0" : "0 6px"};
     color: ${props => props.color ? props.color : "inherit"};
 `
@@ -115,7 +115,7 @@ export const InputCheckbox = ({ label, value, onChange, disabled }) => {
         <>
             <InputContainer>
                 <input type="checkbox" checked={value} onChange={onChange} disabled={disabled} />
-                <InputLabel bottom="1px">{label}</InputLabel>
+                <InputLabel top="1px">{label}</InputLabel>
             </InputContainer>
         </>
     )
