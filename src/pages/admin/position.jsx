@@ -71,7 +71,6 @@ export const PositionAdmin = () => {
                                 <Column flex="4">Tilknyttet <br/>crew</Column>
                                 <Column flex="9">Navn</Column>
                                 <Column flex="2">Type</Column>
-                                <Column flex="2">Antall <br/>brukere</Column>
                                 <Column flex="2">Antall <b>aktive</b><br/>brukere</Column>
                                 <Column flex="2">Antall <br/>rettigheter</Column>
                                 <Column flex="0 24px" />
@@ -93,7 +92,6 @@ export const PositionAdmin = () => {
                                             <Column flex="4">{(roleCrew?.name ?? "-")}</Column>
                                             <Column flex="9">{name}</Column>
                                             <Column flex="2">{role.name ? "Custom" : "System"}</Column>
-                                            <Column flex="2">{role.position_mappings.length}</Column>
                                             <Column flex="2">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</Column>
                                             <Column flex="2">{role.permissions.length}</Column>
                                             <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
