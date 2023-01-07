@@ -3,8 +3,7 @@ import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { faArrowRight, faCheck, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
-import { Table } from "@material-ui/core";
-import { Column, CrewColorBox, IconContainer, SelectableRow, TableHeader } from "../../components/table";
+import { Table, Column, CrewColorBox, IconContainer, SelectableRow, TableHeader } from "../../components/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 
@@ -57,6 +56,7 @@ export const CrewList= () => {
                             <Column center flex="0 24px" title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>...</IconContainer></Column>
                             <Column center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
                         </TableHeader>
+                    
                         {
                             crews.map((crew) => {
                                 const crewMembersMap = new Map();
@@ -71,18 +71,19 @@ export const CrewList= () => {
                                 const crewMembers = Array.from(crewMembersMap.values());
 
                                 return (
-                                <SelectableRow onClick={e => {history.push(`/crew/${crew.uuid}`)}} active={!crew.active}>
-                                    <Column consolas flex="10" visible={!visibleUUID}>{ crew.uuid }</Column>
-                                    <Column flex="0 42px"><CrewColorBox hex={crew.hex_color} /></Column>
-                                    <Column flex="6">{ crew.name }</Column>
-                                    <Column flex="10">{ crew.description }</Column>
-                                    <Column flex="3">{ crewMembers.length }</Column>
-                                    <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></Column>
-                                    <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></Column>
-                                    <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                </SelectableRow>)
+                                    <SelectableRow onClick={e => {history.push(`/crew/${crew.uuid}`)}} active={!crew.active}>
+                                        <Column consolas flex="10" visible={!visibleUUID}>{ crew.uuid }</Column>
+                                        <Column flex="0 42px"><CrewColorBox hex={crew.hex_color} /></Column>
+                                        <Column flex="6">{ crew.name }</Column>
+                                        <Column flex="10">{ crew.description }</Column>
+                                        <Column flex="3">{ crewMembers.length }</Column>
+                                        <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></Column>
+                                        <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></Column>
+                                        <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                    </SelectableRow>
+                                )
                             })
-                        }
+                        } 
                     </Table>
                 </InnerContainer>
             </DashboardContent>
