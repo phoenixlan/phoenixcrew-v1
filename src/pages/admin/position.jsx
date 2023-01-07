@@ -1,6 +1,6 @@
 import React , { useEffect, useState } from "react";
 
-import { Position, Crew } from "@phoenixlan/phoenix.js";
+import { Position, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 
 import { Column, IconContainer, SelectableRow, Table, TableHeader } from '../../components/table';
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from '../../components/dashboard';
@@ -14,38 +14,26 @@ export const PositionAdmin = () => {
 
     const [roles, setRoles] = useState([]);
     const [crews, setCrews] = useState([]);
+    const [ currentEvent, setCurrentEvent ] = useState(null);
     const [loading, setLoading] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
 
     let history = useHistory();
 
-    useEffect(() => {
-        const initialise = async () => {
-            setLoading(true);
-
-            try {
-                const positions = Promise.all(await Position.getPositions()).map(position => Position.getPosition(position.uuid));
-                if(positions) {
-                    setRoles(positions);
-                }
-            } catch(e) {
-                console.error("404 ERROR!!!!!!!!!!!!!!");
-            }
-        }
-    }, []);
-
     useEffect(async () => {
-        const [ positions, crews ] = await Promise.all([
+        const [ positions, crews, currentEvent ] = await Promise.all([
             Promise.all(
                 (await Position.getPositions()).map(position => Position.getPosition(position.uuid))
             ),
             Promise.all(
                 (await Crew.getCrews()).map(crew => Crew.getCrew(crew.uuid))
-            )
+            ),
+            getCurrentEvent()
         ])
 
         setCrews(crews);
         setRoles(positions);
+        setCurrentEvent(currentEvent);
 
         setLoading(false);
     }, []);
@@ -84,6 +72,7 @@ export const PositionAdmin = () => {
                                 <Column flex="9">Navn</Column>
                                 <Column flex="2">Type</Column>
                                 <Column flex="2">Antall <br/>brukere</Column>
+                                <Column flex="2">Antall <b>aktive</b><br/>brukere</Column>
                                 <Column flex="2">Antall <br/>rettigheter</Column>
                                 <Column flex="0 24px" />
                             </TableHeader>
@@ -105,6 +94,7 @@ export const PositionAdmin = () => {
                                             <Column flex="9">{name}</Column>
                                             <Column flex="2">{role.name ? "Custom" : "System"}</Column>
                                             <Column flex="2">{role.position_mappings.length}</Column>
+                                            <Column flex="2">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</Column>
                                             <Column flex="2">{role.permissions.length}</Column>
                                             <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                         </SelectableRow>
