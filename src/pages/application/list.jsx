@@ -11,6 +11,10 @@ import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
 
+const ApplicationCrewLabel = ({ application_crew_mapping }) => {
+    return (<>{application_crew_mapping.crew.name} {application_crew_mapping.accepted ? (<b>Godkjent!</b>) : null}</>)
+}
+
 const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     let history = useHistory();
 
@@ -26,9 +30,9 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     return (
         <SelectableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
             <Column flex="3">{application.user.firstname} {application.user.lastname}</Column>
-            <Column flex="3">{application.crews[0].crew.name}</Column>
-            <Column flex="3">{application.crews.length > 1 ? (application.crews[1].crew.name) : (<b>Ingen</b>)}</Column>
-            <Column flex="3">{application.crews.length > 2 ? (application.crews[2].crew.name) : (<b>Ingen</b>)}</Column>
+            <Column flex="3"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></Column>
+            <Column flex="3">{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : (<b>Ingen</b>)}</Column>
+            <Column flex="3">{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : (<b>Ingen</b>)}</Column>
             <Column flex="3">{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
             {
                 showProcessedBy ? (
