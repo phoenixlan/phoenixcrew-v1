@@ -1,9 +1,9 @@
 import React , { useEffect, useState } from "react";
 
-import { Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
+import { Crew, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea } from "../../components/dashboard";
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea, InputSelect } from "../../components/dashboard";
 import { Column, Table, TableHeader } from "../../components/table";
 import { useParams } from "react-router-dom";
 
@@ -13,15 +13,25 @@ export const ViewCrew = () => {
     const [ loading, setLoading ] = useState(true);
     const [ crew, setCrew ] = useState();
     const [ currentEvent, setCurrentEvent ] = useState();
+    const [ events, setEvents ] = useState();
+
+    const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
+
+    const updateViewingEvent = (event) => {
+        setCurrentViewingEvent(event.target.value)
+    }
 
     useEffect(async () => {
         try {
-            const [ crew, currentEvent ] = await Promise.all([
-                await Crew.getCrew(uuid),
-                await getCurrentEvent()
+            const [ crew, currentEvent, events ] = await Promise.all([
+                Crew.getCrew(uuid),
+                getCurrentEvent(),
+                getEvents()
             ])
             setCrew(crew);
-            setCurrentEvent(currentEvent)
+            setCurrentEvent(currentEvent);
+            setCurrentViewingEvent(currentEvent.uuid);
+            setEvents(events)
             setLoading(false);
         } catch(e) {
             return (
@@ -31,7 +41,7 @@ export const ViewCrew = () => {
         
     }, []);
 
-    const currentEventFilter = (position_mapping) => !position_mapping.event_uuid || position_mapping.event_uuid == currentEvent.uuid;
+    const currentEventFilter = (position_mapping) => !position_mapping.event_uuid || position_mapping.event_uuid == currentViewingEvent;
 
     if(loading) {
         return (
@@ -99,10 +109,18 @@ export const ViewCrew = () => {
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == 2}>
+                    <InputContainer column extramargin>
+                        <InputLabel small>Arrangement</InputLabel>
+                        <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                            {
+                                events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
+                            }
+                        </InputSelect>
+                    </InputContainer>
                     <InnerContainer>
                         <Table>
                             <TableHeader>
-                                <Column flex="1">Gruppeledere{currentEvent.name}</Column>
+                                <Column flex="1">Gruppeledere</Column>
                             </TableHeader>
                         </Table>
                         <InnerContainerRow>
@@ -113,7 +131,7 @@ export const ViewCrew = () => {
                         <p><i>{leaders.length} gruppeledere</i></p>
                         <Table>
                             <TableHeader>
-                                <Column flex="1">Medlemmer({currentEvent.name})</Column>
+                                <Column flex="1">Medlemmer</Column>
                             </TableHeader>
                         </Table>
                         <InnerContainerRow>
