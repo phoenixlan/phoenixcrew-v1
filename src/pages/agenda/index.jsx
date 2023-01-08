@@ -163,7 +163,10 @@ export const AgendaList = (props) => {
 
                 <DashboardContent visible={activeContent == 2}>
                     <InnerContainer>
-                        <IFrameContainer src="https://info.phoenixlan.no/" />
+                        {/*
+                            <IFrameContainer src="https://info.phoenixlan.no/" />
+                    */}
+                        
                     </InnerContainer>
                 </DashboardContent>
             </>
