@@ -96,9 +96,15 @@ export const EventViewer = () => {
                                         <InputLabel small>Antall plasser</InputLabel>
                                         <InputElement type="number" value={event.max_participants} disabled />
                                     </InputContainer>
+                                </InnerContainerRow>
+                                <InnerContainerRow nowrap>
                                     <InputContainer column extramargin>
-                                        <InputLabel small>Øvre aldersgrense</InputLabel>
-                                        <InputElement type="number" value={event.age_limit_inclusive} disabled />
+                                        <InputLabel small>Øvre aldersgrense(Crew)</InputLabel>
+                                        <InputElement type="number" value={event.crew_age_limit_inclusive} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Øvre aldersgrense(Deltaker)</InputLabel>
+                                        <InputElement type="number" value={event.participant_age_limit_inclusive} disabled />
                                     </InputContainer>
                                 </InnerContainerRow>
                                 
