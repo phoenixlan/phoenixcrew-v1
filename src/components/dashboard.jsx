@@ -162,6 +162,7 @@ export const InputElement = styled.input`
     font-family: "Roboto";
     border: 0;
     padding: 4px 0;
+    background-color: rgb(255, 255, 255);
     border-bottom: 1px solid rgb(135, 135, 135);
     outline: none;
 
