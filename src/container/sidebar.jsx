@@ -8,6 +8,7 @@ import Logo from "../assets/phoenixlan_square_logo.png";
 import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link } from 'react-router-dom';
+import { MQContext } from './mq-bottomNavigation';
 export const CategoryContext = React.createContext({});
 
 const commonWidth   =   "44px";
@@ -420,7 +421,7 @@ export const Sidebar = () => {
     const CrewManagementElementContent = (entry) => {
         return entry.entries.map(innerEntry => {
             return (
-                <SidebarButton key={innerEntry.title} to={innerEntry.url}>
+                <SidebarButton key={innerEntry.title} to={innerEntry.url} >
                     <S.IconContainer>
                         <S.IconInnerContainer>
                             <FontAwesomeIcon icon={innerEntry.icon} />
