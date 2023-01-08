@@ -6,6 +6,11 @@ export const DashboardBlock = styled.div`
     width: 980px;
     margin: auto;
     padding: 8px;
+
+    @media screen and (max-width: 480px) {
+        width: 100%;
+        padding: 0;
+    }
 `
 
 export const DashboardHeader = styled.div`
@@ -18,13 +23,24 @@ export const DashboardBarSelector = styled.div`
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
     font-family: "Roboto";
     font-size: 14px;
+    column-gap: 24px;
+
+    @media screen and (max-width: 480px) {
+        overflow-x: auto;
+        width: 100%;
+        white-space: nowrap;
+        
+    }
 `
 export const DashboardBarElement = styled.div`
     padding: 4px 0;
-    margin-right: 24px;
     font-weight: ${props => props.active ? "600" : "400"};
     border-bottom: ${props => props.active ? "2px solid rgb(255,170,210)" : ""};
     cursor: pointer;
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mqhide ? "none" : ""};
+    }
 `
 
 export const DashboardSubtitle = styled.div`
@@ -56,7 +72,14 @@ export const InnerContainer = styled.div`
     padding-bottom: 20px;
     margin-bottom: ${props => props.extramargin ? "20px" : "0"};
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mqhide ? "none" : ""};
+        width: 100%;
+        row-gap: 12px;
+    }
 `
+
 export const InnerContainerRow = styled.div`
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
     flex: ${props => props.flex ? props.flex : "undefined"};
@@ -65,6 +88,14 @@ export const InnerContainerRow = styled.div`
     gap: 25px;
     padding-bottom: ${props => props.nopadding ? "0" : "20px"};
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mqhide ? "none" : ""};
+        flex-wrap: wrap;
+        flex-flow: column;
+        width: 100%;
+        row-gap: ${props => props.mqnogap ? "" : "12px"};
+    }
 `
 export const InnerContainerTitleL = styled.div`    
     font-size: 18px;
@@ -108,12 +139,18 @@ export const InputContainer = styled.div`
     flex: ${props => props.flex ? props.flex : "1"};
     flex-flow: ${props => props.column ? "column" : "row"};
     margin-bottom: ${props => props.extramargin ? "18px" : "1px"};
+
+    @media screen and (max-width: 480px) {
+        margin-bottom: ${props => props.mqmodify ? "0px" : "inherit"};
+        row-gap: 0px;
+        display: ${props => props.mqhide ? "none" : ""};
+    }
 `
 
 export const InputCheckbox = ({ label, value, onChange, disabled }) => {
     return (
         <>
-            <InputContainer>
+            <InputContainer mqmodify>
                 <input type="checkbox" checked={value} onChange={onChange} disabled={disabled} />
                 <InputLabel top="1px">{label}</InputLabel>
             </InputContainer>
@@ -135,6 +172,10 @@ export const InputElement = styled.input`
         background-color: inherit;
         color: rgb(130, 130, 130);
         border-bottom: 1px solid rgb(170,170,170)!important;
+    }
+
+    @media screen and (max-width: 480px) {
+        width: 100%;
     }
 `
 export const InputTextArea = styled.textarea`

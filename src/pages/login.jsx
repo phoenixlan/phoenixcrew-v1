@@ -16,6 +16,11 @@ const H = {
         width: autp;
         height: auto;
         align-self: center;
+
+        @media screen and (max-width: 480px) {
+            width: unset;
+            margin: auto 8px;
+        }
     `,
 }
 const E = {
@@ -70,6 +75,11 @@ const S = {
         box-shadow: 0px 2px 3px rgb(190, 190, 190);
         align-self: center;
         margin: 10px;
+
+        @media screen and (max-width: 480px) {
+            width: 100%;
+            margin: 0;
+        }
     `,
     TitleBox: styled.div`
         & h4 {

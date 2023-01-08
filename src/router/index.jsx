@@ -45,6 +45,9 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/">
                             <Dashboard />
                         </PrivateRoute>
+                        <PrivateRoute exact path="/logout" component={() => auth.logout()} />
+
+
                         <PrivateRoute exact path="/application/:uuid">
                             <ViewApplication />
                         </PrivateRoute>

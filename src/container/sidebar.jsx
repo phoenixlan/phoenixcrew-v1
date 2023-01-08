@@ -8,6 +8,7 @@ import Logo from "../assets/phoenixlan_square_logo.png";
 import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link } from 'react-router-dom';
+import { MQContext } from './mq-bottomNavigation';
 export const CategoryContext = React.createContext({});
 
 const commonWidth   =   "44px";
@@ -23,9 +24,23 @@ const S = {
         height: 100vh;
         background-color: rgb(242, 242, 242);
         border-right: 1px solid rgb(235, 235, 235);
+        z-index: 1000;
+    
+        @media screen and (max-width: 480px) {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: max-content;
+            margin-top: 60px;
+            border-bottom: 1px solid rgb(235, 235, 235);
+        }
     `,
         SidebarLogoContainer: styled.div`
             display: flex;
+            
+            @media screen and (max-width: 480px) {
+                display: none;
+            }
         `,
             LogoIcon: styled.div`
                 background-color: rgb(255, 170, 210);
@@ -59,6 +74,10 @@ const S = {
         SidebarAccountInfo: styled.div`
             display: flex;
             border-bottom: 1px solid rgb(235, 235, 235);
+
+            @media screen and (max-width: 480px) {
+                display: none;
+            }
         `,
             AccountLink: styled(Link)`
                 display: flex;
@@ -118,6 +137,10 @@ const S = {
             display: flex;
             height: ${commonHeight};
             padding: 0 16px;
+
+            @media screen and (max-width: 480px) {
+                border-top: 1px solid rgb(235, 235, 235);
+            }
         `,
             SearchInput: styled.input`
                 font-size: 14px;
@@ -241,7 +264,7 @@ const S = {
 
 }
 
-const options = [
+export const options = [
     {
         title: "My crew",
         icon: faUser,
@@ -382,7 +405,7 @@ export const Sidebar = () => {
     const CrewManagementElementContent = (entry) => {
         return entry.entries.map(innerEntry => {
             return (
-                <SidebarButton key={innerEntry.title} to={innerEntry.url}>
+                <SidebarButton key={innerEntry.title} to={innerEntry.url} >
                     <S.IconContainer>
                         <FontAwesomeIcon icon={innerEntry.icon} />
                     </S.IconContainer>
