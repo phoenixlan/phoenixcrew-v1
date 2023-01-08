@@ -11,6 +11,7 @@ export const TableHeader = styled.div`
     font-weight: 500;
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
     padding-bottom: 2px;
+    gap: 4px;
 `
 
 const StyledColumn = styled.div`
@@ -18,7 +19,7 @@ const StyledColumn = styled.div`
     padding: 4px 0;
     font-family: ${props => props.consolas ? "Consolas" : "inherit"};
     position: relative;
-    top: ${props => props.consolas ? "1px" : "0"};
+    top: ${props => props.consolas ? "0" : "0"};
     flex: ${props => props.flex ? props.flex : "1"};
     color: ${props => props.color ? props.color : "inherit"};
     text-align: ${props => props.center ? "center" : "left"};
@@ -26,6 +27,11 @@ const StyledColumn = styled.div`
     min-width: 0;
     flex-flow: 0%;
     overflow: hidden;
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mqhide ? "none" : ""};
+        flex: ${props => props.mqflex ? props.mqflex : "1"};
+    }
 `
 const ColumnNowrap = styled.div`
     margin: auto;
@@ -57,7 +63,6 @@ export const InnerColumnCenter = styled.span`
 export const IconContainer = styled.span`
     color: rgb(40, 40, 40);
     position: relative;
-    bottom: 1px;
     margin: auto;
     width: 100%;
     text-align: center;
@@ -69,6 +74,7 @@ export const SelectableRow = styled.tr`
     flex-flow: row;
     flex-wrap: wrap;
     height: 2em;
+    gap: 4px;
 
     cursor: pointer;
     user-select: none;
