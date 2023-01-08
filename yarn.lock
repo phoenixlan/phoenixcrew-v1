@@ -1697,10 +1697,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@phoenixlan/phoenix.js@^2.22.0":
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/@phoenixlan/phoenix.js/-/phoenix.js-2.22.0.tgz#e2c1a92f2c12e968a2455303cbb88bcde8d02eee"
-  integrity sha512-Upz9DOqKVBwDbRsOoLUlNifgFx/EREehIJ6Q5eESdpVK73jlXijavhcoATcRk4tUWsVK5gl0QwmExm/epspoPA==
+"@phoenixlan/phoenix.js@^2.23.0":
+  version "2.23.0"
+  resolved "https://registry.yarnpkg.com/@phoenixlan/phoenix.js/-/phoenix.js-2.23.0.tgz#d0d9253e7034ca76c48453dff6c712ba3b290496"
+  integrity sha512-huo70+Wg9e7x4xZ2Wdl+fGtZJwVXaej2+WLcAMVXW1pTrazMecmvV67LO7QgPAg2nIC/DtBlWnwcQOQHuucjFw==
   dependencies:
     jwt-decode "^3.1.2"
 
