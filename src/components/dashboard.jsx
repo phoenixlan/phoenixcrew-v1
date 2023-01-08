@@ -92,9 +92,9 @@ export const InnerContainerRow = styled.div`
     @media screen and (max-width: 480px) {
         display: ${props => props.mqhide ? "none" : ""};
         flex-wrap: wrap;
-        flex-flow: column;
+        flex-flow: ${props => props.mqflow ? props.mqflow : "column"};
         width: 100%;
-        row-gap: ${props => props.mqnogap ? "" : "12px"};
+        row-gap: ${props => props.mqnogap ? "" : "16px"};
     }
 `
 export const InnerContainerTitleL = styled.div`    
