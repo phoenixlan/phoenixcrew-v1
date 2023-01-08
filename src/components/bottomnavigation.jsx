@@ -8,6 +8,7 @@ export const NavigationContainer = styled.div`
     width: 100%;
     background-color: rgb(242, 242, 242);
     display: none;
+    z-index: 1000;
 
     @media screen and (max-width: 480px) {
         display: block;
@@ -37,6 +38,7 @@ export const ElementContainer = styled.div`
     text-align: center;
     height: 100%;
     margin: auto 0;
+    user-select: none;
 `
 export const ElementIcon = styled.div`
     font-size: 18px;

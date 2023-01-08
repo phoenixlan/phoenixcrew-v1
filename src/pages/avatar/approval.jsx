@@ -14,6 +14,11 @@ const S = {
         height: min-content;
         max-width: 292px;
         flex-flow: column;
+
+        @media screen and (max-width: 480px) {
+            flex: 1;
+            max-width: unset;
+        }
     `,
     AvatarImage: styled.img`
         width: 100%;

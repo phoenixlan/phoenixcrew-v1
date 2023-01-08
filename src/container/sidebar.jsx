@@ -8,7 +8,7 @@ import Logo from "../assets/phoenixlan_square_logo.png";
 import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link } from 'react-router-dom';
-import { MQContext } from './mq-bottomNavigation';
+import { MQContext } from './mq-topNavigation';
 export const CategoryContext = React.createContext({});
 
 const commonWidth   =   "44px";
@@ -165,6 +165,7 @@ const S = {
                 flex-flow: row;
                 margin-bottom: 12px;
                 cursor: pointer; 
+                -webkit-tap-highlight-color: transparent;
             `,
                 SidebarCrewManagementMenuIcon: styled.div`
                     display: flex;
@@ -241,13 +242,18 @@ const S = {
 
 
     IconContainer: styled.div`
+        width: 36px;
         position: relative;
-        top: 2px;
-        margin-right: 8px;
-        min-width: 16px;
+        top: 1px;
         font-size: 12px;
     `,
-    TitleContainer: styled.div``,
+    IconInnerContainer: styled.div`
+        width: 18px;
+        margin: 0 auto;
+    `,
+    TitleContainer: styled.div`
+        width: 100%;
+    `,
     Title: styled.span`
         margin: 0;
         white-space: nowrap;
@@ -405,9 +411,11 @@ export const Sidebar = () => {
     const CrewManagementElementContent = (entry) => {
         return entry.entries.map(innerEntry => {
             return (
-                <SidebarButton key={innerEntry.title} to={innerEntry.url} >
+                <SidebarButton key={innerEntry.title} to={innerEntry.url}>
                     <S.IconContainer>
-                        <FontAwesomeIcon icon={innerEntry.icon} />
+                        <S.IconInnerContainer>
+                            <FontAwesomeIcon icon={innerEntry.icon} />
+                        </S.IconInnerContainer>
                     </S.IconContainer>
                     <S.TitleContainer>
                         <S.Title>{innerEntry.title}</S.Title>

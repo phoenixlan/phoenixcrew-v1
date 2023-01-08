@@ -6,7 +6,7 @@ import { AuthenticationContext } from "../components/authentication";
 import { Sidebar } from "./sidebar";
 
 export const MQContext = React.createContext({})
-export const MQBottomNavigation = () => {
+export const MQTopNavigation = () => {
 
     const [ showSidebar, setShowSidebar ] = useState(false);
 
