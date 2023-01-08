@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { Sidebar } from "./sidebar"
 import { DashboardBlock } from "../components/dashboard";
-import { MQBottomNavigation } from './mq-bottomNavigation';
+import { MQTopNavigation } from './mq-topNavigation';
 
 const S = {
     DocumentRoot: styled.div`
@@ -34,6 +34,7 @@ const S = {
                 margin-top: 60px;
                 width: 100%;
                 padding: 0px;
+                height: calc(100% + 180px);
             }
         `
 }
@@ -41,7 +42,7 @@ const S = {
 export const Container = ({ children }) => {
     return (
         <>
-            <MQBottomNavigation />
+            <MQTopNavigation />
             <S.DocumentRoot>
                 <S.SidebarRoot>
                     <Sidebar />

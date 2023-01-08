@@ -3,7 +3,7 @@ import React , { useEffect, useState } from "react";
 import { Crew, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea, InputSelect } from "../../components/dashboard";
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea, InputSelect, InnerContainerTitleS } from "../../components/dashboard";
 import { Column, Table, TableHeader } from "../../components/table";
 import { useParams } from "react-router-dom";
 
@@ -90,57 +90,55 @@ export const ViewCrew = () => {
 
                 <DashboardContent visible={activeContent == 1}>
                     <InnerContainer>
-                        <InnerContainerRow>
-                            <InnerContainer flex="1">
-                                <form>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Navn</InputLabel>
-                                        <InputElement type="text" value={crew.name} disabled />
-                                    </InputContainer>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Beskrivelse</InputLabel>
-                                        <InputTextArea type="text" value={crew.description} disabled />
-                                    </InputContainer>
-                                </form>
-                            </InnerContainer>
-                            <InnerContainer flex="1" />
-                        </InnerContainerRow>
+                        <form>
+                            <InnerContainerRow>
+                                <InnerContainer flex="1">
+                                    
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Navn</InputLabel>
+                                            <InputElement type="text" value={crew.name} disabled />
+                                        </InputContainer>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Beskrivelse</InputLabel>
+                                            <InputTextArea type="text" value={crew.description} disabled />
+                                        </InputContainer>
+                                </InnerContainer>
+                                <InnerContainer flex="1" />
+                            </InnerContainerRow>
+                        </form>
                     </InnerContainer>
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == 2}>
-                    <InputContainer column extramargin>
-                        <InputLabel small>Arrangement</InputLabel>
-                        <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
-                            {
-                                events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
-                            }
-                        </InputSelect>
-                    </InputContainer>
                     <InnerContainer>
-                        <Table>
-                            <TableHeader>
-                                <Column flex="1">Gruppeledere</Column>
-                            </TableHeader>
-                        </Table>
                         <InnerContainerRow>
-                        {
-                            leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
-                        }
+                            <InnerContainer flex="1">
+                                <InputContainer column mqmodify>
+                                    <InputLabel small>Arrangement</InputLabel>
+                                    <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                                        {
+                                            events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
+                                        }
+                                    </InputSelect>
+                                </InputContainer>
+                            </InnerContainer>
+                            <InnerContainer flex="1" mqhide />
+                            <InnerContainer flex="1" mqhide />
                         </InnerContainerRow>
-                        <p><i>{leaders.length} gruppeledere</i></p>
-                        <Table>
-                            <TableHeader>
-                                <Column flex="1">Medlemmer</Column>
-                            </TableHeader>
-                        </Table>
+
+                        <InnerContainerTitleS>Gruppeledere ({leaders.length})</InnerContainerTitleS>
+                        <InnerContainerRow>
+                            {
+                                leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
+                            }
+                        </InnerContainerRow>
+
+                        <InnerContainerTitleS>Medlemmer ({members.length})</InnerContainerTitleS>
                         <InnerContainerRow>
                         {
                             members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
                         }
                         </InnerContainerRow>
-                        <p><i>{members.length} medlemmer</i></p>
-                        
                     </InnerContainer>
                 </DashboardContent>
             </>

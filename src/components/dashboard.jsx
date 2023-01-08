@@ -29,7 +29,6 @@ export const DashboardBarSelector = styled.div`
         overflow-x: auto;
         width: 100%;
         white-space: nowrap;
-        
     }
 `
 export const DashboardBarElement = styled.div`
@@ -76,7 +75,8 @@ export const InnerContainer = styled.div`
     @media screen and (max-width: 480px) {
         display: ${props => props.mqhide ? "none" : ""};
         width: 100%;
-        row-gap: 12px;
+        row-gap: ${props => props.mqrgap ? props.mqrgap : "12px"};
+        height: min-content;
     }
 `
 
@@ -175,6 +175,12 @@ export const InputElement = styled.input`
     }
 
     @media screen and (max-width: 480px) {
+        &[type="radio"] {
+            position: relative;
+            bottom: 1px;
+            height: 14px;
+            width: 14px;
+        }
         width: 100%;
     }
 `
@@ -185,7 +191,7 @@ export const InputTextArea = styled.textarea`
     border-bottom: 1px solid rgb(135, 135, 135);
     outline: none;
     resize: vertical;
-    min-height: ${props => props.height ? props.height : "40px"};
+    min-height: ${props => props.height ? props.height : "150px"};
 
     &:focus {
         border-bottom: 1px solid rgb(255,75,157);
@@ -201,6 +207,7 @@ export const InputSelect = styled.select`
     border: 0;
     padding: 4px 0;
     border-bottom: 1px solid rgb(135, 135, 135);
+    background-color: rgb(255, 255, 255);
     outline: none;
 
     &:focus {

@@ -78,7 +78,7 @@ export const EventViewer = () => {
                                     </InputContainer>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Sted</InputLabel>
-                                        <InputElement type="text" value={event.location.name} disabled />
+                                        <InputElement type="text" value={event.location ? event.location.name : ""} disabled />
                                     </InputContainer>
                                 </InnerContainerRow>
 

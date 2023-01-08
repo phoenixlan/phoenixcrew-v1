@@ -23,21 +23,21 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
     if (new Date(entry.time*1000) > (Date.now() - 5 * 60000)) {
         return (
             <SelectableRow>
-                <Column flex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3">{ entry.title }</Column>
-                <Column flex="4">{ entry.description }</Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+                <Column flex="2" mqflex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+                <Column flex="3" mqflex="3">{ entry.title }</Column>
+                <Column flex="4" mqhide>{ entry.description }</Column>
+                <Column flex="0 24px" mqflex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
+                <Column flex="0 24px" mqflex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
             </SelectableRow>
         )
     } else {
         return (
             <SelectableRow>
-                <Column flex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
-                <Column flex="4" color="rgb(150, 150, 150)">{ entry.description }</Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+                <Column flex="2" mqflex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+                <Column flex="3" mqflex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
+                <Column flex="4" mqhide color="rgb(150, 150, 150)">{ entry.description }</Column>
+                <Column flex="0 24px" mqflex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
+                <Column flex="0 24px" mqflex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
             </SelectableRow>
         )
     }
@@ -102,14 +102,21 @@ export const AgendaList = (props) => {
 
                 <DashboardContent visible={activeContent == 1}>
                     <InnerContainer>
-                        <InnerContainerTitle>
-                            Opprett et nytt agenda element
-                        </InnerContainerTitle>
+                        Agenda systemet er hvordan vi publiserer når ting skjer til deltakerne under arrangementet.<br />
+                        Under har du mulighet til å legge inn dato, tid, navn og beskrivelse for noe som skal skje iløpetav LANet.<br /><br />
 
-                        <InnerContainerRow>
-                            <InnerContainer flex="1">
-                                <form onSubmit={handleSubmit(onSubmit)}>
-                                    <>
+                        Denne informasjonen vises på infoskjermene som blir satt opp. Benytt "Infoskjerm visning" for å se hvordan infoskjermen ser ut nå.
+                    </InnerContainer>
+
+                    <InnerContainer>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <InnerContainerTitle>
+                                Opprett et nytt agenda element
+                            </InnerContainerTitle>
+
+                            <InnerContainerRow>
+                                <InnerContainer flex="1">
+                                    
                                         <InputContainer column extramargin>
                                             <InputLabel small>Tittel</InputLabel>
                                             <InputElement type="text" {...register("title")} />
@@ -119,42 +126,47 @@ export const AgendaList = (props) => {
                                             <InputLabel small>Beskrivelse</InputLabel>
                                             <InputElement type="text" {...register("description")} />
                                         </InputContainer>
+
                                         <InputContainer column extramargin>
                                             <InputLabel small>Tidspunkt</InputLabel>
                                             <InputElement type="datetime-local" {...register("time")} />
                                         </InputContainer>
-                                    </>
-                                    <FormInput type="submit" name=''></FormInput>
-                                </form>
-                            </InnerContainer>
-                            <InnerContainer flex="2" />
-                        </InnerContainerRow>
+                                        <FormInput type="submit" name='' />
+                                    
+                                </InnerContainer>
+                                <InnerContainer flex="1" mqhide />
+                                <InnerContainer flex="1" mqhide />
+                            </InnerContainerRow>
+                        </form>
                     </InnerContainer>
 
                     <InnerContainer>
                         <Table>
                             <TableHeader border>
-                                <Column flex="2">Tidspunkt</Column>
-                                <Column flex="3">Tittel</Column>
-                                <Column flex="4">Beskrivelse</Column>
-                                <Column center flex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
-                                <Column center flex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
+                                <Column flex="2" mqflex="2">Tidspunkt</Column>
+                                <Column flex="3" mqflex="3">Tittel</Column>
+                                <Column flex="4" mqhide>Beskrivelse</Column>
+                                <Column center flex="0 24px" mqflex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
+                                <Column center flex="0 24px" mqflex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
                             </TableHeader>
+                        
+                            {
+                                agendaList.map(entry => {
+                                    return (
+                                        <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
+                                    )
+                                })
+                            }
                         </Table>
-
-                        {
-                            agendaList.map(entry => {
-                                return (
-                                    <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
-                                )
-                            })
-                        }
                     </InnerContainer>
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == 2}>
                     <InnerContainer>
-                        <IFrameContainer src="https://info.phoenixlan.no/" />
+                        {/*
+                            <IFrameContainer src="https://info.phoenixlan.no/" />
+                    */}
+                        
                     </InnerContainer>
                 </DashboardContent>
             </>

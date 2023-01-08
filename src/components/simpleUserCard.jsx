@@ -11,6 +11,10 @@ const S = {
         height: 118px;
         gap: 28px;
         max-width: 292px;
+
+        @media screen and (max-width: 480px) {
+            max-width: unset;
+        }
     `,
     Avatar: styled.div`
         cursor: pointer;
