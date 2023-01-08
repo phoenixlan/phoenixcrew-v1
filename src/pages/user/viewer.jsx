@@ -148,7 +148,7 @@ export const ViewUser = (props) => {
                             <InnerContainerRow>
                                 <InnerContainer flex="1">
                                     <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
-                                    <InnerContainerRow nopadding nowrap>
+                                    <InnerContainerRow nopadding nowrap mqflow="row">
                                         <InputContainer column extramargin>
                                             <InputLabel small>Fornavn</InputLabel>
                                             <>{user.firstname}</>
@@ -158,7 +158,7 @@ export const ViewUser = (props) => {
                                             <>{user.lastname}</>
                                         </InputContainer>
                                     </InnerContainerRow>
-                                    <InnerContainerRow nopadding nowrap>
+                                    <InnerContainerRow nopadding nowrap mqflow="row">
                                         <InputContainer column extramargin>
                                             <InputLabel small>Telefon</InputLabel>
                                             <>{user.phone}</>
@@ -175,7 +175,7 @@ export const ViewUser = (props) => {
                                         </InputContainer>
                                         <InputContainer column extramargin />
                                     </InnerContainerRow>
-                                    <InnerContainerRow nopadding nowrap>
+                                    <InnerContainerRow nopadding nowrap mqflow="row">
                                         <InputContainer column extramargin>
                                             <InputLabel small>Fødselsdato</InputLabel>
                                             <>{user.birthdate}</>
@@ -185,7 +185,7 @@ export const ViewUser = (props) => {
                                             <>{user.gender == "Gender.male" ? "Mann" : "Kvinne"}</>
                                         </InputContainer>
                                     </InnerContainerRow>
-                                    <InnerContainerRow nowrap>
+                                    <InnerContainerRow nowrap mqflow="row">
                                         <InputContainer column extramargin>
                                             <InputLabel small>Addresse</InputLabel>
                                             <>{user.address}</>
@@ -209,13 +209,13 @@ export const ViewUser = (props) => {
                                     </InnerContainerRow>
 
                                     <InnerContainerTitle>Konto informasjon</InnerContainerTitle>
-                                    <InnerContainerRow nopadding nowrap>
+                                    <InnerContainerRow nopadding nowrap mqflow="row">
                                         <InputContainer column extramargin>
                                             <InputLabel small>Bruker-UUID</InputLabel>
                                             <>{user.uuid}</>
                                         </InputContainer>
                                     </InnerContainerRow>
-                                    <InnerContainerRow nowrap>
+                                    <InnerContainerRow nowrap mqflow="row">
                                         <InputContainer column extramargin>
                                             <InputLabel small>Brukernavn</InputLabel>
                                             <>{user.username}</>
