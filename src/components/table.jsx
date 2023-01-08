@@ -27,6 +27,11 @@ const StyledColumn = styled.div`
     min-width: 0;
     flex-flow: 0%;
     overflow: hidden;
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mqhide ? "none" : ""};
+        flex: ${props => props.mqflex ? props.mqflex : "1"};
+    }
 `
 const ColumnNowrap = styled.div`
     margin: auto;

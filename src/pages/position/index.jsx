@@ -59,20 +59,20 @@ export const PositionList = () => {
                         Stillinger er hvordan brukere tilhører crew, og hvordan brukere får rettigheter på nettsidene til Phoenix.<br />
                         En bruker kan ha flere stillinger og trenger ikke å bety at man tilhører et crew.
                     </InnerContainer>
-                    <InnerContainer>
+                    <InnerContainer mqhide>
                         <InputCheckbox label="Vis stilling UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                     </InnerContainer>
     
                     <InnerContainer>
                         <Table>
                             <TableHeader border>
-                                <Column flex="9" visible={!visibleUUID}>UUID</Column>
-                                <Column flex="4">Tilknyttet <br/>crew</Column>
-                                <Column flex="9">Navn</Column>
-                                <Column flex="2">Type</Column>
-                                <Column flex="2">Aktive <br/>brukere</Column>
-                                <Column flex="2">Antall <br/>rettigheter</Column>
-                                <Column flex="0 24px" />
+                                <Column flex="9" mqhide visible={!visibleUUID}>UUID</Column>
+                                <Column flex="4" mqhide>Tilknyttet <br/>crew</Column>
+                                <Column flex="9" mqflex="3">Navn</Column>
+                                <Column flex="2" mqhide>Type</Column>
+                                <Column flex="2" mqflex="1">Aktive <br/>brukere</Column>
+                                <Column flex="2" mqhide>Antall <br/>rettigheter</Column>
+                                <Column flex="0 24px" mqhide />
                             </TableHeader>
                             {
                                 roles
@@ -89,13 +89,13 @@ export const PositionList = () => {
                                     
                                     return (
                                         <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}} key={role.uuid}>
-                                            <Column consolas flex="9" visible={!visibleUUID}>{role.uuid}</Column>
-                                            <Column flex="4">{(roleCrew?.name ?? "-")}</Column>
-                                            <Column flex="9">{name}</Column>
-                                            <Column flex="2">{role.name ? "Custom" : "System"}</Column>
-                                            <Column flex="2">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</Column>
-                                            <Column flex="2">{role.permissions.length}</Column>
-                                            <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                            <Column mqhide consolas flex="9" visible={!visibleUUID}>{role.uuid}</Column>
+                                            <Column flex="4" mqhide>{(roleCrew?.name ?? "-")}</Column>
+                                            <Column flex="9" mqflex="3">{name}</Column>
+                                            <Column flex="2" mqhide>{role.name ? "Custom" : "System"}</Column>
+                                            <Column flex="2" mqflex="1">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</Column>
+                                            <Column flex="2" mqhide>{role.permissions.length}</Column>
+                                            <Column flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                         </SelectableRow>
                                     )
                                 })

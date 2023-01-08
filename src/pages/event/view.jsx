@@ -78,7 +78,7 @@ export const EventViewer = () => {
                                     </InputContainer>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Sted</InputLabel>
-                                        <InputElement type="text" value={event.location} disabled />
+                                        <InputElement type="text" value={event.location.name} disabled />
                                     </InputContainer>
                                 </InnerContainerRow>
 
@@ -87,7 +87,7 @@ export const EventViewer = () => {
                                         <InputLabel small>Tema</InputLabel>
                                         <InputElement type="text" value={event.theme} disabled />
                                     </InputContainer>
-                                    <InputContainer />
+                                    <InputContainer mqhide />
                                 </InnerContainerRow>
                                 
                                 <InnerContainerTitle>Billetter og øvre aldersgrense</InnerContainerTitle>
@@ -142,7 +142,7 @@ export const EventViewer = () => {
                                             <option>...</option>
                                         </InputSelect>
                                     </InputContainer>
-                                    <InputContainer />
+                                    <InputContainer mqhide />
                                 </InnerContainerRow>
                                 
                             </InnerContainer>
