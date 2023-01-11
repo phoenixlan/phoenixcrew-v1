@@ -124,6 +124,7 @@ export const ViewUser = (props) => {
     if(loading) {
         return (<PageLoading />)
     } else {
+        const emailConsent = user.consents.find(consent => consent.consent_type === "ConsentType.event_notification")
         return (
             <>
                 <DashboardHeader>
@@ -237,6 +238,24 @@ export const ViewUser = (props) => {
                                     </InnerContainer>
                                 </InnerContainer>
                             </InnerContainerRow>
+                            <InnerContainer>
+                                    <InnerContainerTitle>GDPR samtykker</InnerContainerTitle>
+                                    <Table>
+                                        <TableHeader border>
+                                            <Column flex="3">Type</Column>
+                                            <Column flex="1">Verdi</Column>
+                                            <Column flex="3">Når</Column>
+                                            <Column flex="3">Kilde</Column>
+                                        </TableHeader>
+                                        <SelectableRow>
+                                            <Column flex="3">Påminnelse om kommende arrangementer</Column>
+                                            <Column flex="1">{ emailConsent ? (<b>Ja</b>) : "Nei" }</Column>
+                                            <Column flex="3">{ emailConsent ? (new Date(emailConsent.created*1000).toLocaleString()) : "N/A" }</Column>
+                                            <Column flex="3">{ emailConsent ? emailConsent.source : "N/A" }</Column>
+                                        </SelectableRow>
+                                    </Table>
+                                
+                            </InnerContainer>
                             
                         </form>
                     </InnerContainer>
