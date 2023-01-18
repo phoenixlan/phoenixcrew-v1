@@ -38,7 +38,7 @@ export const DashboardBarElement = styled.div`
     cursor: pointer;
 
     @media screen and (max-width: 480px) {
-        display: ${props => props.mqhide ? "none" : ""};
+        display: ${props => props.mobileHide ? "none" : ""};
     }
 `
 
@@ -73,9 +73,9 @@ export const InnerContainer = styled.div`
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
 
     @media screen and (max-width: 480px) {
-        display: ${props => props.mqhide ? "none" : ""};
+        display: ${props => props.mobileHide ? "none" : ""};
         width: 100%;
-        row-gap: ${props => props.mqrgap ? props.mqrgap : "12px"};
+        row-gap: ${props => props.mobileRowGap ? props.mobileRowGap : "12px"};
         height: min-content;
     }
 `
@@ -90,11 +90,11 @@ export const InnerContainerRow = styled.div`
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
 
     @media screen and (max-width: 480px) {
-        display: ${props => props.mqhide ? "none" : ""};
+        display: ${props => props.mobileHide ? "none" : ""};
         flex-wrap: wrap;
-        flex-flow: ${props => props.mqflow ? props.mqflow : "column"};
+        flex-flow: ${props => props.mobileFlow ? props.mobileFlow : "column"};
         width: 100%;
-        row-gap: ${props => props.mqnogap ? "" : "16px"};
+        row-gap: ${props => props.mobileNoGap ? "" : "16px"};
     }
 `
 export const InnerContainerTitleL = styled.div`    
@@ -143,7 +143,7 @@ export const InputContainer = styled.div`
     @media screen and (max-width: 480px) {
         margin-bottom: ${props => props.mqmodify ? "0px" : "inherit"};
         row-gap: 0px;
-        display: ${props => props.mqhide ? "none" : ""};
+        display: ${props => props.mobileHide ? "none" : ""};
     }
 `
 

@@ -38,7 +38,7 @@ export const UserList= () => {
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainer mqhide>
+                <InnerContainer mobileHide>
                     <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                 </InnerContainer>
 
@@ -46,22 +46,22 @@ export const UserList= () => {
                     <Table>
                         <TableHeader border>
                             <Column flex="5" visible={!visibleUUID}>UUID</Column>
-                            <Column flex="3" mqflex="3">Navn</Column>
-                            <Column flex="1" mqflex="1">Alder</Column>
-                            <Column flex="2" mqhide>Brukernavn</Column>
-                            <Column flex="3" mqhide>Registrert</Column>
-                            <Column flex="0 24px" mqhide/>
+                            <Column flex="3" mobileFlex="3">Navn</Column>
+                            <Column flex="1" mobileFlex="1">Alder</Column>
+                            <Column flex="2" mobileHide>Brukernavn</Column>
+                            <Column flex="3" mobileHide>Registrert</Column>
+                            <Column flex="0 24px" mobileHide/>
                         </TableHeader>
                         {
                             users.map((user) => {
                                 return (
                                     <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne" key={user.uuid}>
-                                        <Column consolas flex="5" visible={!visibleUUID} mqhide>{ user.uuid }</Column>
-                                        <Column flex="3" mqflex="3">{ user.lastname + ", " + user.firstname }</Column>
-                                        <Column flex="1" mqflex="1">{dateOfBirthToAge(user.birthdate)}</Column>
-                                        <Column flex="2" mqhide>{ user.username }</Column>
-                                        <Column flex="3" mqhide>{ new Date(user.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                                        <Column flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        <Column consolas flex="5" visible={!visibleUUID} mobileHide>{ user.uuid }</Column>
+                                        <Column flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</Column>
+                                        <Column flex="1" mobileFlex="1">{dateOfBirthToAge(user.birthdate)}</Column>
+                                        <Column flex="2" mobileHide>{ user.username }</Column>
+                                        <Column flex="3" mobileHide>{ new Date(user.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+                                        <Column flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                     </SelectableRow>
                                 )
                             })

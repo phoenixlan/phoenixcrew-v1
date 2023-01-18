@@ -75,14 +75,14 @@ export const ViewPosition = (props) => {
                         </DashboardContent>
 
                         <DashboardContent visible={activeContent == 2}>
-                            <InnerContainer mqhide>
+                            <InnerContainer mobileHide>
                                 <InputCheckbox label="Vis UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                             </InnerContainer>
                             <Table>
                                 <TableHeader border>
-                                    <Column flex="5" mqhide visible={!visibleUUID}>UUID</Column>
+                                    <Column flex="5" mobileHide visible={!visibleUUID}>UUID</Column>
                                     <Column flex="6">Rettighet</Column>
-                                    <Column flex="0 24px" mqhide />
+                                    <Column flex="0 24px" mobileHide />
                                 </TableHeader>
                             </Table>
 
@@ -92,22 +92,22 @@ export const ViewPosition = (props) => {
                                     <SelectableRow>
                                         <Column consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</Column>
                                         <Column flex="6" uppercase>{ permission.permission }</Column>
-                                        <Column flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        <Column flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                     </SelectableRow>
                                 )
                             })}
                         </DashboardContent>
 
                         <DashboardContent visible={activeContent == 3}>
-                            <InnerContainer mqhide>
+                            <InnerContainer mobileHide>
                                 <InputCheckbox label="Vis UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                             </InnerContainer>
                             <Table>
                                 <TableHeader border>
-                                    <Column flex="5" mqhide visible={!visibleUUID}>UUID</Column>
-                                    <Column flex="3" mqflex="3">Navn</Column>
-                                    <Column flex="3" mqflex="2">Brukernavn</Column>
-                                    <Column flex="0 24px" mqhide />
+                                    <Column flex="5" mobileHide visible={!visibleUUID}>UUID</Column>
+                                    <Column flex="3" mobileFlex="3">Navn</Column>
+                                    <Column flex="3" mobileFlex="2">Brukernavn</Column>
+                                    <Column flex="0 24px" mobileHide />
                                 </TableHeader>
                             </Table>
 
@@ -117,9 +117,9 @@ export const ViewPosition = (props) => {
                                     return (
                                         <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
                                             <Column consolas flex="5" visible={!visibleUUID}>{ user.uuid }</Column>
-                                            <Column flex="3" mqflex="3">{ user.lastname + ", " + user.firstname }</Column>
-                                            <Column flex="3" mqflex="2">{ user.username }</Column>
-                                            <Column flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                            <Column flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</Column>
+                                            <Column flex="3" mobileFlex="2">{ user.username }</Column>
+                                            <Column flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                         </SelectableRow>
                                     )
                                 })

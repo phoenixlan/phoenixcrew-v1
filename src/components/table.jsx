@@ -29,8 +29,8 @@ const StyledColumn = styled.div`
     overflow: hidden;
 
     @media screen and (max-width: 480px) {
-        display: ${props => props.mqhide ? "none" : ""};
-        flex: ${props => props.mqflex ? props.mqflex : "1"};
+        display: ${props => props.mobileHide ? "none" : ""};
+        flex: ${props => props.mobileFlex ? props.mobileFlex : "1"};
     }
 `
 const ColumnNowrap = styled.div`

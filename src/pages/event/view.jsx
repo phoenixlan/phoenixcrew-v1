@@ -87,7 +87,7 @@ export const EventViewer = () => {
                                         <InputLabel small>Tema</InputLabel>
                                         <InputElement type="text" value={event.theme} disabled />
                                     </InputContainer>
-                                    <InputContainer mqhide />
+                                    <InputContainer mobileHide />
                                 </InnerContainerRow>
                                 
                                 <InnerContainerTitle>Billetter og øvre aldersgrense</InnerContainerTitle>
@@ -142,7 +142,7 @@ export const EventViewer = () => {
                                             <option>...</option>
                                         </InputSelect>
                                     </InputContainer>
-                                    <InputContainer mqhide />
+                                    <InputContainer mobileHide />
                                 </InnerContainerRow>
                                 
                             </InnerContainer>

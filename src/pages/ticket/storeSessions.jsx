@@ -51,31 +51,31 @@ export const StoreSessionList = () => {
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
-                    <InnerContainer mqhide>
+                    <InnerContainer mobileHide>
                         <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                     </InnerContainer>
                     <InnerContainer>
                         <Table>
                             <TableHeader border>
-                                <Column flex="10" mqhide visible={!visibleUUID}>UUID</Column>
-                                <Column flex="6" mqflex="3">Bruker</Column>
-                                <Column flex="4" mqhide>Kjøp påbegynt</Column>
-                                <Column flex="4" mqflex="3">Kjøp utløper</Column>
-                                <Column flex="3" mqflex="1">Antall billetter</Column>
-                                <Column flex="2" mqhide>Pris</Column>
-                                <Column center flex="0 24px" mqhide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
+                                <Column flex="10" mobileHide visible={!visibleUUID}>UUID</Column>
+                                <Column flex="6" mobileFlex="3">Bruker</Column>
+                                <Column flex="4" mobileHide>Kjøp påbegynt</Column>
+                                <Column flex="4" mobileFlex="3">Kjøp utløper</Column>
+                                <Column flex="3" mobileFlex="1">Antall billetter</Column>
+                                <Column flex="2" mobileHide>Pris</Column>
+                                <Column center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
                             </TableHeader>
                         
                             {
                                 storeSessions.map((session) => (
                                     <SelectableRow onClick={e => {history.push(`/user/${session.user_uuid}`)}}>
-                                        <Column flex="10" mqhide consolas visible={!visibleUUID}>{session.uuid}</Column>
-                                        <Column flex="6" mqflex="3">...</Column>
-                                        <Column flex="4" mqhide>{new Date(session.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
-                                        <Column flex="4" mqflex="3">{new Date(session.expires*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
-                                        <Column flex="3" mqflex="1">{session.entries.reduce((prev, cur) => prev+cur.amount, 0)}</Column>
-                                        <Column flex="2" mqhide>{session.total} ,-</Column>
-                                        <Column flex="0 24px" mqhide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        <Column flex="10" mobileHide consolas visible={!visibleUUID}>{session.uuid}</Column>
+                                        <Column flex="6" mobileFlex="3">...</Column>
+                                        <Column flex="4" mobileHide>{new Date(session.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
+                                        <Column flex="4" mobileFlex="3">{new Date(session.expires*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
+                                        <Column flex="3" mobileFlex="1">{session.entries.reduce((prev, cur) => prev+cur.amount, 0)}</Column>
+                                        <Column flex="2" mobileHide>{session.total} ,-</Column>
+                                        <Column flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                     </SelectableRow>
                                 ))
                             }

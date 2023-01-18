@@ -115,35 +115,35 @@ export const FreeTicketManagement = () => {
                             </InputContainer>
                             <FormButton type="submit" onClick={() => giveTicket()}>Gi ut gratisbillett</FormButton>
                         </InnerContainer>
-                        <InnerContainer flex="1" mqhide />
-                        <InnerContainer flex="1" mqhide />
+                        <InnerContainer flex="1" mobileHide />
+                        <InnerContainer flex="1" mobileHide />
                     </InnerContainerRow>
                 </InnerContainer>
 
                 <InnerContainer>
                     <Table>
                         <TableHeader border>
-                                <Column flex="1" mqflex="2">ID</Column>
-                                <Column flex="2" mqflex="3">Billett type</Column>
-                                <Column flex="4" mqflex="7">Nåværende eier</Column>
-                                <Column flex="4" mqhide>Opprinnelig eier</Column>
-                                <Column flex="4" mqhide>Seates av bruker</Column>
-                                <Column flex="2" mqflex="2">Sete</Column>
-                                <Column flex="3" mqhide>Utsendelsestid</Column>
-                                <Column center flex="0 24px" mqhide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
+                                <Column flex="1" mobileFlex="2">ID</Column>
+                                <Column flex="2" mobileFlex="3">Billett type</Column>
+                                <Column flex="4" mobileFlex="7">Nåværende eier</Column>
+                                <Column flex="4" mobileHide>Opprinnelig eier</Column>
+                                <Column flex="4" mobileHide>Seates av bruker</Column>
+                                <Column flex="2" mobileFlex="2">Sete</Column>
+                                <Column flex="3" mobileHide>Utsendelsestid</Column>
+                                <Column center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
                         </TableHeader>
                         {
                             tickets.map((ticket) => {
                                 return (
                                     <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
-                                        <Column consolas flex="1" mqflex="2">#{ ticket.ticket_id }</Column>
-                                        <Column flex="2" mqflex="3">{ ticket.ticket_type.name }</Column>
-                                        <Column flex="4" mqflex="7">{ User.getFullName(ticket.owner) }</Column>
-                                        <Column flex="4" mqhide>{ User.getFullName(ticket.buyer) }</Column>
-                                        <Column flex="4" mqhide>{ User.getFullName(ticket.seater) }</Column>
-                                        <Column flex="2" mqflex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</Column>
-                                        <Column flex="3" mqhide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
-                                        <Column flex="0 24px" mqhide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        <Column consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</Column>
+                                        <Column flex="2" mobileFlex="3">{ ticket.ticket_type.name }</Column>
+                                        <Column flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</Column>
+                                        <Column flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</Column>
+                                        <Column flex="4" mobileHide>{ User.getFullName(ticket.seater) }</Column>
+                                        <Column flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</Column>
+                                        <Column flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
+                                        <Column flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                     </SelectableRow>
                                 )
                             })

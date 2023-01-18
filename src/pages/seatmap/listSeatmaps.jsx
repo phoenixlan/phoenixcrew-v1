@@ -83,8 +83,8 @@ export const SeatmapList = () => {
                                         <FormButton type="submit">Opprett setekart</FormButton>
                                     </InputContainer>
                                 </InnerContainer>
-                                <InnerContainer flex="1" mqhide />
-                                <InnerContainer flex="1" mqhide>
+                                <InnerContainer flex="1" mobileHide />
+                                <InnerContainer flex="1" mobileHide>
                                     { /* Eventuelle innstillinger kan legges her */ }
                                 </InnerContainer>
                             </InnerContainerRow>
@@ -94,20 +94,20 @@ export const SeatmapList = () => {
                     <InnerContainer>
                         <Table>
                             <TableHeader border>
-                                    <Column consolas flex="4" mqhide visible={!visibleUUID}>UUID</Column>
-                                    <Column flex="4" mqflex="4">Navn</Column>
-                                    <Column flex="5" mqflex="3">Beskrivelse</Column>
-                                    <Column center flex="0 24px" mqhide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
+                                    <Column consolas flex="4" mobileHide visible={!visibleUUID}>UUID</Column>
+                                    <Column flex="4" mobileFlex="4">Navn</Column>
+                                    <Column flex="5" mobileFlex="3">Beskrivelse</Column>
+                                    <Column center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
                             </TableHeader>
 
                             {
                                 seatmaps.map((seatmap) => {
                                     return (
                                         <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
-                                            <Column consolas flex="4" mqhide visible={!visibleUUID}>{ seatmap.uuid }</Column>
-                                            <Column flex="4" mqflex="4">{ seatmap.name }</Column>
-                                            <Column flex="5" mqflex="3">{ seatmap.description }</Column>
-                                            <Column flex="0 24px" mqhide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                            <Column consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</Column>
+                                            <Column flex="4" mobileFlex="4">{ seatmap.name }</Column>
+                                            <Column flex="5" mobileFlex="3">{ seatmap.description }</Column>
+                                            <Column flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                         </SelectableRow>
                                     )
                                 })

@@ -23,21 +23,21 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
     if (new Date(entry.time*1000) > (Date.now() - 5 * 60000)) {
         return (
             <SelectableRow>
-                <Column flex="2" mqflex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3" mqflex="3">{ entry.title }</Column>
-                <Column flex="4" mqhide>{ entry.description }</Column>
-                <Column flex="0 24px" mqflex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
-                <Column flex="0 24px" mqflex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+                <Column flex="2" mobileFlex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+                <Column flex="3" mobileFlex="3">{ entry.title }</Column>
+                <Column flex="4" mobileHide>{ entry.description }</Column>
+                <Column flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
+                <Column flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
             </SelectableRow>
         )
     } else {
         return (
             <SelectableRow>
-                <Column flex="2" mqflex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3" mqflex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
-                <Column flex="4" mqhide color="rgb(150, 150, 150)">{ entry.description }</Column>
-                <Column flex="0 24px" mqflex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
-                <Column flex="0 24px" mqflex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
+                <Column flex="2" mobileFlex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+                <Column flex="3" mobileFlex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
+                <Column flex="4" mobileHide color="rgb(150, 150, 150)">{ entry.description }</Column>
+                <Column flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
+                <Column flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
             </SelectableRow>
         )
     }
@@ -134,8 +134,8 @@ export const AgendaList = (props) => {
                                         <FormInput type="submit" name='' />
                                     
                                 </InnerContainer>
-                                <InnerContainer flex="1" mqhide />
-                                <InnerContainer flex="1" mqhide />
+                                <InnerContainer flex="1" mobileHide />
+                                <InnerContainer flex="1" mobileHide />
                             </InnerContainerRow>
                         </form>
                     </InnerContainer>
@@ -143,11 +143,11 @@ export const AgendaList = (props) => {
                     <InnerContainer>
                         <Table>
                             <TableHeader border>
-                                <Column flex="2" mqflex="2">Tidspunkt</Column>
-                                <Column flex="3" mqflex="3">Tittel</Column>
-                                <Column flex="4" mqhide>Beskrivelse</Column>
-                                <Column center flex="0 24px" mqflex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
-                                <Column center flex="0 24px" mqflex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
+                                <Column flex="2" mobileFlex="2">Tidspunkt</Column>
+                                <Column flex="3" mobileFlex="3">Tittel</Column>
+                                <Column flex="4" mobileHide>Beskrivelse</Column>
+                                <Column center flex="0 24px" mobileFlex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
+                                <Column center flex="0 24px" mobileFlex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
                             </TableHeader>
                         
                             {

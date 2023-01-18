@@ -40,21 +40,21 @@ export const CrewList= () => {
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainer mqhide>
+                <InnerContainer mobileHide>
                     <InputCheckbox label="Vis crew UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                 </InnerContainer>
 
                 <InnerContainer>
                     <Table>
                         <TableHeader border>
-                            <Column flex="10" mqhide visible={!visibleUUID}>UUID</Column>
-                            <Column flex="0 42px" mqhide>Farge</Column>
-                            <Column flex="6" mqflex="3">Navn</Column>
-                            <Column flex="10" mqhide>Beskrivelse</Column>
-                            <Column flex="3" mqflex="1">Antall<br/>brukere</Column>
-                            <Column center flex="0 24px" mqhide title="Statusikon: Ikon vises om crewet kan søkes til eller ikke"><IconContainer>...</IconContainer></Column>
-                            <Column center flex="0 24px" mqhide title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>...</IconContainer></Column>
-                            <Column center flex="0 24px" mqhide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
+                            <Column flex="10" mobileHide visible={!visibleUUID}>UUID</Column>
+                            <Column flex="0 42px" mobileHide>Farge</Column>
+                            <Column flex="6" mobileFlex="3">Navn</Column>
+                            <Column flex="10" mobileHide>Beskrivelse</Column>
+                            <Column flex="3" mobileFlex="1">Antall<br/>brukere</Column>
+                            <Column center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet kan søkes til eller ikke"><IconContainer>...</IconContainer></Column>
+                            <Column center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>...</IconContainer></Column>
+                            <Column center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
                         </TableHeader>
                     
                         {
@@ -72,14 +72,14 @@ export const CrewList= () => {
 
                                 return (
                                     <SelectableRow onClick={e => {history.push(`/crew/${crew.uuid}`)}} active={!crew.active}>
-                                        <Column consolas flex="10" mqhide visible={!visibleUUID}>{ crew.uuid }</Column>
-                                        <Column flex="0 42px" mqhide><CrewColorBox hex={crew.hex_color} /></Column>
-                                        <Column flex="6" mqflex="3">{ crew.name }</Column>
-                                        <Column flex="10" mqhide>{ crew.description }</Column>
-                                        <Column flex="3" mqflex="1">{ crewMembers.length }</Column>
-                                        <Column center flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></Column>
-                                        <Column center flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></Column>
-                                        <Column center flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        <Column consolas flex="10" mobileHide visible={!visibleUUID}>{ crew.uuid }</Column>
+                                        <Column flex="0 42px" mobileHide><CrewColorBox hex={crew.hex_color} /></Column>
+                                        <Column flex="6" mobileFlex="3">{ crew.name }</Column>
+                                        <Column flex="10" mobileHide>{ crew.description }</Column>
+                                        <Column flex="3" mobileFlex="1">{ crewMembers.length }</Column>
+                                        <Column center flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></Column>
+                                        <Column center flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></Column>
+                                        <Column center flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                     </SelectableRow>
                                 )
                             })

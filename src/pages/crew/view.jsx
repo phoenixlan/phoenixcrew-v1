@@ -122,8 +122,8 @@ export const ViewCrew = () => {
                                     </InputSelect>
                                 </InputContainer>
                             </InnerContainer>
-                            <InnerContainer flex="1" mqhide />
-                            <InnerContainer flex="1" mqhide />
+                            <InnerContainer flex="1" mobileHide />
+                            <InnerContainer flex="1" mobileHide />
                         </InnerContainerRow>
 
                         <InnerContainerTitleS>Gruppeledere ({leaders.length})</InnerContainerTitleS>

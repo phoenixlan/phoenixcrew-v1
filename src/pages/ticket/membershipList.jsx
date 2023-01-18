@@ -40,33 +40,33 @@ export const MembershipList = () => {
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
-                    <InnerContainer mqhide>
+                    <InnerContainer mobileHide>
                         <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                     </InnerContainer>
                     <InnerContainer>
                         <Table>
                             <TableHeader border>
-                                <Column flex="10" mqhide visible={!visibleUUID}>UUID</Column>
-                                <Column flex="6" mqflex="3">Navn</Column>
-                                <Column flex="2" mqflex="1">Alder</Column>
-                                <Column flex="4" mqhide>Fødselsdato</Column>
-                                <Column flex="4" mqhide>Telefonnummer</Column>
-                                <Column flex="5" mqhide>Addresse</Column>
-                                <Column flex="2" mqhide>Postnr.</Column>
-                                <Column center flex="0 24px" mqhide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
+                                <Column flex="10" mobileHide visible={!visibleUUID}>UUID</Column>
+                                <Column flex="6" mobileFlex="3">Navn</Column>
+                                <Column flex="2" mobileFlex="1">Alder</Column>
+                                <Column flex="4" mobileHide>Fødselsdato</Column>
+                                <Column flex="4" mobileHide>Telefonnummer</Column>
+                                <Column flex="5" mobileHide>Addresse</Column>
+                                <Column flex="2" mobileHide>Postnr.</Column>
+                                <Column center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
                             </TableHeader>
                         
                             {
                                 users.map((user) => (
                                     <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}}>
-                                        <Column flex="10" mqhide consolas visible={!visibleUUID}>{user.uuid}</Column>
-                                        <Column flex="6" mqflex="3">{user.firstname} {user.lastname}</Column>
-                                        <Column flex="2" mqflex="1">{dateOfBirthToAge(user.birthdate)}</Column>
-                                        <Column flex="4" mqhide>{ new Date(user.birthdate).toLocaleString('no-NO', {year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
-                                        <Column flex="4" mqhide>{user.phone}</Column>
-                                        <Column flex="5" mqhide>{user.address}</Column>
-                                        <Column flex="2" mqhide>{user.postal_code}</Column>
-                                        <Column center flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+                                        <Column flex="10" mobileHide consolas visible={!visibleUUID}>{user.uuid}</Column>
+                                        <Column flex="6" mobileFlex="3">{user.firstname} {user.lastname}</Column>
+                                        <Column flex="2" mobileFlex="1">{dateOfBirthToAge(user.birthdate)}</Column>
+                                        <Column flex="4" mobileHide>{ new Date(user.birthdate).toLocaleString('no-NO', {year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
+                                        <Column flex="4" mobileHide>{user.phone}</Column>
+                                        <Column flex="5" mobileHide>{user.address}</Column>
+                                        <Column flex="2" mobileHide>{user.postal_code}</Column>
+                                        <Column center flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
                                     </SelectableRow>
                                 ))
                             }

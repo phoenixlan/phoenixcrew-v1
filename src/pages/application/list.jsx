@@ -29,25 +29,25 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     
     return (
         <SelectableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
-            <Column flex="4" mqflex="3">{application.user.firstname} {application.user.lastname}</Column>
-            <Column flex="3" mqflex="2"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></Column>
-            <Column flex="3" mqhide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : ("Ingen")}</Column>
-            <Column flex="3" mqhide>{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : ("Ingen")}</Column>
-            <Column flex="3" mqhide>{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+            <Column flex="4" mobileFlex="3">{application.user.firstname} {application.user.lastname}</Column>
+            <Column flex="3" mobileFlex="2"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></Column>
+            <Column flex="3" mobileHide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : ("Ingen")}</Column>
+            <Column flex="3" mobileHide>{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : ("Ingen")}</Column>
+            <Column flex="3" mobileHide>{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
             {
                 showProcessedBy ? (
                     <>
-                        <Column flex="4" mqhide>{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</Column>
-                        <Column flex="2" mqhide>{stateToString(application.state)}</Column>
+                        <Column flex="4" mobileHide>{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</Column>
+                        <Column flex="2" mobileHide>{stateToString(application.state)}</Column>
                     </>
                     ) : (
                     <>
-                        <Column flex="4" mqhide />
-                        <Column flex="2" mqhide />
+                        <Column flex="4" mobileHide />
+                        <Column flex="2" mobileHide />
                     </>
                     )
             }
-            <Column flex="0 24px" mqhide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
+            <Column flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
         </SelectableRow>
     )
 }
@@ -56,26 +56,26 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
     return (
         <Table>
             <TableHeader border>
-                <Column flex="4" mqflex="3">Navn</Column>
-                <Column flex="3" mqflex="2">1. Valg</Column>
-                <Column flex="3" mqhide>2. Valg</Column>
-                <Column flex="3" mqhide>3. Valg</Column>
-                <Column flex="3" mqhide>Søknadstid</Column>
+                <Column flex="4" mobileFlex="3">Navn</Column>
+                <Column flex="3" mobileFlex="2">1. Valg</Column>
+                <Column flex="3" mobileHide>2. Valg</Column>
+                <Column flex="3" mobileHide>3. Valg</Column>
+                <Column flex="3" mobileHide>Søknadstid</Column>
                 {
                     showProcessedBy ? (
                         <>
-                            <Column flex="4" mqhide>Behandler</Column>
-                            <Column flex="2" mqhide>Status</Column>
+                            <Column flex="4" mobileHide>Behandler</Column>
+                            <Column flex="2" mobileHide>Status</Column>
                         </>
                     ) : (
                         <>
-                            <Column flex="4" mqhide />
-                            <Column flex="2" mqhide />
+                            <Column flex="4" mobileHide />
+                            <Column flex="2" mobileHide />
                         </>
                     )
                 }
                 
-                <Column flex="0 24px" mqhide><IconContainer/></Column>
+                <Column flex="0 24px" mobileHide><IconContainer/></Column>
     
             </TableHeader>
             <tbody>
@@ -132,7 +132,7 @@ export const ListApplications = (props) => {
             </DashboardBarSelector>
 
             <DashboardContent visible={activeContent == 1}>
-                <InnerContainer mqrgap="4px">
+                <InnerContainer mobileRowGap="4px">
                     Sorter søknader etter:
                     <InputContainer>
                         <InputElement name="1" type="radio" checked={sortingMethodActive === 1} onClick={() => setSortingMethodActive(1)} />
@@ -160,7 +160,7 @@ export const ListApplications = (props) => {
             </DashboardContent>
 
             <DashboardContent visible={activeContent == 2}>
-                <InnerContainer mqrgap="4px">
+                <InnerContainer mobileRowGap="4px">
                     Sorter søknader etter:
                     <InputContainer>
                         <InputElement name="2" type="radio" checked={sortingMethodArchive == 1} onClick={() => setSortingMethodArchive(1)} />
