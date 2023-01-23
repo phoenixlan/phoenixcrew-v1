@@ -2,42 +2,15 @@ name: build-library
 on: 
  - push
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-      - run: yarn
-      - run: yarn build
-  build_docker-prod:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to docker repo
-        uses: docker/login-action@v2
-        with:
-          registry: docker.infra.phoenixlan.no
-          username: ${{ secrets.REGISTRY_USERNAME}}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          build-args: |
-            REACT_APP_API_URL=https://api.phoenixlan.no
-            REACT_APP_HOST=crew.phoenixlan.no
-            REACT_APP_PROTOCOL=https
-            REACT_APP_OAUTH_CLIENT_ID=phoenix-crew
-          file: "docker/production/Dockerfile"
-          context: .
-          push: true
-          tags: |
-            docker.infra.phoenixlan.no/web/${{ github.event.repository.name }}-prod:latest
-            docker.infra.phoenixlan.no/web/${{ github.event.repository.name }}-prod:${{ github.sha }}
+#  build:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: actions/setup-node@v3
+#        with:
+#          node-version: '16'
+#      - run: yarn
+#      - run: yarn build
   build_docker-test:
     runs-on: ubuntu-latest
     steps:
@@ -59,6 +32,7 @@ jobs:
             REACT_APP_HOST=crew.test.phoenixlan.no
             REACT_APP_PROTOCOL=https
             REACT_APP_OAUTH_CLIENT_ID=phoenix-crew-test
+            REACT_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN_TEST }}
           file: "docker/production/Dockerfile"
           context: .
           push: true

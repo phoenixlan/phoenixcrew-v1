@@ -91,8 +91,8 @@ export const ListApplications = (props) => {
     const [applicationList, setApplicationList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeContent, setActiveContent] = useState(1);
-    const [sortingMethodArchive, setSortingMethodArchive] = useState(1);
-    const [sortingMethodActive, setSortingMethodActive] = useState(1);
+    const [sortingMethodArchive, setSortingMethodArchive] = useState(2);
+    const [sortingMethodActive, setSortingMethodActive] = useState(2);
 
     useEffect(() => {
         const asyncInner = async () => {
