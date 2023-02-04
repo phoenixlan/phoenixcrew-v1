@@ -15,7 +15,7 @@ import { PublicRoute } from "./publicRoute"
 import { AuthenticationContext } from '../components/authentication';
 import { ViewApplication } from '../pages/application/view';
 import { AgendaList } from '../pages/agenda';
-import { PositionAdmin } from '../pages/admin/position';
+import { PositionList } from '../pages/position';
 import { CrewList } from '../pages/crew/list';
 import { UserList } from '../pages/user/list';
 import { SeatmapList } from '../pages/seatmap/listSeatmaps';
@@ -27,7 +27,7 @@ import { EventList } from '../pages/event/list';
 import { EventViewer } from '../pages/event/view';
 import { AvatarApproval } from '../pages/avatar/approval';
 import { StoreSessionList } from '../pages/ticket/storeSessions';
-import { ViewPosition } from '../pages/admin/view';
+import { ViewPosition } from '../pages/position/view';
 import { AgendaElementView } from '../pages/agenda/view';
 import { NotAvailable } from '../pages/notAvailable';
 import { ViewCrew } from '../pages/crew/view';
@@ -52,7 +52,7 @@ export const CrewRouter = () => {
                             <ListApplications />
                         </PrivateRoute>
                         <PrivateRoute exact path="/positions/">
-                            <PositionAdmin />
+                            <PositionList />
                         </PrivateRoute>
                         <PrivateRoute exact path="/positions/:uuid">
                             <ViewPosition />

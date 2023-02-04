@@ -10,15 +10,14 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 
-export const PositionAdmin = () => {
-
+export const PositionList = () => {
     const [roles, setRoles] = useState([]);
     const [crews, setCrews] = useState([]);
     const [ currentEvent, setCurrentEvent ] = useState(null);
     const [loading, setLoading] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
 
-    let history = useHistory();
+    const history = useHistory();
 
     useEffect(async () => {
         const [ positions, crews, currentEvent ] = await Promise.all([
