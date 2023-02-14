@@ -93,15 +93,14 @@ export const ViewCrew = () => {
                         <form>
                             <InnerContainerRow>
                                 <InnerContainer flex="1">
-                                    
-                                        <InputContainer column extramargin>
-                                            <InputLabel small>Navn</InputLabel>
-                                            <InputElement type="text" value={crew.name} disabled />
-                                        </InputContainer>
-                                        <InputContainer column extramargin>
-                                            <InputLabel small>Beskrivelse</InputLabel>
-                                            <InputTextArea type="text" value={crew.description} disabled />
-                                        </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Navn</InputLabel>
+                                        <InputElement type="text" value={crew.name} disabled />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Beskrivelse</InputLabel>
+                                        <InputTextArea type="text" value={crew.description} disabled />
+                                    </InputContainer>
                                 </InnerContainer>
                                 <InnerContainer flex="1" />
                             </InnerContainerRow>
@@ -110,10 +109,9 @@ export const ViewCrew = () => {
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == 2}>
-                    <InnerContainer>
-                        <InnerContainerRow>
+                    <InnerContainer extramargin border>
+                        <InnerContainerRow nopadding>
                             <InnerContainer flex="1">
-                                <InnerContainerTitle>Velg aktuelt arrangement</InnerContainerTitle>
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column mobileNoMargin>
                                         <InputLabel small>Arrangement</InputLabel>
@@ -128,16 +126,18 @@ export const ViewCrew = () => {
                             <InnerContainer flex="1" mobileHide />
                             <InnerContainer flex="1" mobileHide />
                         </InnerContainerRow>
+                    </InnerContainer>
 
-                        <InnerContainerTitle>Medlemmer</InnerContainerTitle>
-                        <InnerContainerTitleS>Gruppeledere ({leaders.length})</InnerContainerTitleS>
+                    <InnerContainer>
+                        <InnerContainerTitle nopadding>Medlemmer</InnerContainerTitle>
+                        <InnerContainerTitleS nopadding>Gruppeledere ({leaders.length})</InnerContainerTitleS>
                         <InnerContainerRow>
                             {
                                 leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
                             }
                         </InnerContainerRow>
 
-                        <InnerContainerTitleS>Crew medlemmer ({members.length})</InnerContainerTitleS>
+                        <InnerContainerTitleS nopadding>Crew medlemmer ({members.length})</InnerContainerTitleS>
                         <InnerContainerRow>
                             {
                                 members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
