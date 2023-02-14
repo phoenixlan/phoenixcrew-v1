@@ -19,7 +19,7 @@ const H = {
 
         @media screen and (max-width: 480px) {
             width: unset;
-            margin: auto 8px;
+            margin: auto 0.6em;
         }
     `,
 }
@@ -71,7 +71,7 @@ const S = {
         height: auto;
         border: 1px solid rgb(230, 230, 230);
         font-family: Calibri;
-        font-size: 16px;
+        font-size: 1em;
         box-shadow: 0px 2px 3px rgb(190, 190, 190);
         align-self: center;
         margin: 10px;
@@ -87,7 +87,7 @@ const S = {
             margin: 0;
             text-transform: capitalized;
         }
-        padding: 12px 24px;
+        padding: 1em 1.5em;
         background-color: rgb(230, 230, 230);
         
     `,
@@ -95,9 +95,9 @@ const S = {
         & hr {
             border: 1px solid rgb(210, 210, 210);
             border-width: 0 0 1px 0;
-            margin: 24px 0;
+            margin: 1.5em 0;
         }
-        padding: 12px 24px;
+        padding: 1em 1.5em;
         background-color: rgb(255, 255, 255);
         
     `,
@@ -106,8 +106,8 @@ const S = {
         cursor: pointer;
         display: flex;
         flex-flow: row;
-        margin: 12px 0;
-        padding: 10px 16px;
+        margin: 1em 0;
+        padding: 1em 1.5em;
         border: 1px solid #81d4fa;
         background-color: #e1f5fe;
     `,
@@ -122,8 +122,9 @@ const S = {
     `,
     StyledArrowRightIcon: styled(KeyboardArrowRight)`
         position: relative;
-        width: 18px;
-        height: 18px!important;
+        width: 1.5em;
+        font-size: 1em;
+        height: 2em!important;
         vertical-align: middle;
     `
 }
@@ -163,9 +164,6 @@ export const Login = () => {
                                 <S.Left>
                                 Trykk her for å logge inn!
                                 </S.Left>
-                                <S.Right>
-                                    <S.StyledArrowRightIcon />
-                                </S.Right>
                             </S.ActionBox>
                         </S.ContentBox>
                     </S.Container>
