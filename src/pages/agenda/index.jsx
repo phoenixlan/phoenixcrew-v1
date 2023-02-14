@@ -8,7 +8,7 @@ import { PageLoading } from "../../components/pageLoading"
 import { FormInput } from '../../components/form';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
 import { faEye, faEyeSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead } from '../../components/table';
+import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead, TableRow, TableBody } from '../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -110,10 +110,7 @@ export const AgendaList = (props) => {
 
                     <InnerContainer>
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <InnerContainerTitle>
-                                Opprett et nytt agenda element
-                            </InnerContainerTitle>
-
+                            <InnerContainerTitle>Opprett et nytt agenda element</InnerContainerTitle>
                             <InnerContainerRow>
                                 <InnerContainer flex="1">
                                     
@@ -143,20 +140,23 @@ export const AgendaList = (props) => {
                     <InnerContainer>
                         <Table>
                             <TableHead border>
-                                <TableCell flex="2" mobileFlex="2">Tidspunkt</TableCell>
-                                <TableCell flex="3" mobileFlex="3">Tittel</TableCell>
-                                <TableCell flex="4" mobileHide>Beskrivelse</TableCell>
-                                <TableCell center flex="0 24px" mobileFlex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></TableCell>
-                                <TableCell center flex="0 24px" mobileFlex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></TableCell>
+                                <TableRow>
+                                    <TableCell flex="2" mobileFlex="2">Tidspunkt</TableCell>
+                                    <TableCell flex="3" mobileFlex="3">Tittel</TableCell>
+                                    <TableCell flex="4" mobileHide>Beskrivelse</TableCell>
+                                    <TableCell center flex="0 24px" mobileFlex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></TableCell>
+                                    <TableCell center flex="0 24px" mobileFlex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></TableCell>
+                                </TableRow>
                             </TableHead>
-                        
-                            {
-                                agendaList.map(entry => {
-                                    return (
-                                        <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
-                                    )
-                                })
-                            }
+                            <TableBody>
+                                {
+                                    agendaList.map(entry => {
+                                        return (
+                                            <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
+                                        )
+                                    })
+                                }
+                            </TableBody>
                         </Table>
                     </InnerContainer>
                 </DashboardContent>

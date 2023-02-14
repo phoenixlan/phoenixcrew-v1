@@ -3,7 +3,7 @@ import { useReactToPrint } from 'react-to-print';
 import { useForm } from "react-hook-form";
 import { useHistory } from 'react-router-dom';
 import { Seatmap } from "@phoenixlan/phoenix.js";
-import { Table, SelectableTableRow, TableCell, TableHead, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
 import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, InputElement, InputContainer } from "../../components/dashboard";
 import { PageLoading } from "../../components/pageLoading";
 import { FormButton } from '../../components/form';
@@ -94,24 +94,27 @@ export const SeatmapList = () => {
                     <InnerContainer>
                         <Table>
                             <TableHead border>
+                                <TableRow>
                                     <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>UUID</TableCell>
                                     <TableCell flex="4" mobileFlex="4">Navn</TableCell>
                                     <TableCell flex="5" mobileFlex="3">Beskrivelse</TableCell>
                                     <TableCell center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                </TableRow>
                             </TableHead>
-
-                            {
-                                seatmaps.map((seatmap) => {
-                                    return (
-                                        <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
-                                            <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</TableCell>
-                                            <TableCell flex="4" mobileFlex="4">{ seatmap.name }</TableCell>
-                                            <TableCell flex="5" mobileFlex="3">{ seatmap.description }</TableCell>
-                                            <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
-                                        </SelectableTableRow>
-                                    )
-                                })
-                            }
+                            <TableBody>
+                                {
+                                    seatmaps.map((seatmap) => {
+                                        return (
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
+                                                <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</TableCell>
+                                                <TableCell flex="4" mobileFlex="4">{ seatmap.name }</TableCell>
+                                                <TableCell flex="5" mobileFlex="3">{ seatmap.description }</TableCell>
+                                                <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                            </SelectableTableRow>
+                                        )
+                                    })
+                                }
+                            </TableBody>
                         </Table>
                     </InnerContainer>
                 </DashboardContent>

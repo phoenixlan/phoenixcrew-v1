@@ -8,7 +8,6 @@ import Logo from "../assets/phoenixlan_square_logo.png";
 import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link } from 'react-router-dom';
-import { MQContext } from './mq-topNavigation';
 export const CategoryContext = React.createContext({});
 
 const commonWidth   =   "44px";

@@ -97,17 +97,23 @@ export const InnerContainerRow = styled.div`
         row-gap: ${props => props.mobileNoGap ? "" : "16px"};
     }
 `
-export const InnerContainerTitleL = styled.div`    
+export const InnerContainerTitleL = styled.h1`    
     font-size: 18px;
-    padding-bottom: ${props => props.nopadding ? "0px" : "8px"};
+    padding-bottom: ${props => props.nopadding ? "0px" : "6px"};
+    font-weight: 500;
+    margin: 0;
 `
-export const InnerContainerTitle = styled.div`    
+export const InnerContainerTitle = styled.h3`    
     font-size: 16px;
-    padding-bottom: 8px;
+    padding-bottom: ${props => props.nopadding ? "0px" : "6px"};
+    font-weight: 500;
+    margin: 0;
 `
-export const InnerContainerTitleS = styled.div`    
+export const InnerContainerTitleS = styled.h5`    
     font-size: 14px;
-    padding-bottom: ${props => props.nopadding ? "0px" : "8px"};
+    padding-bottom: ${props => props.nopadding ? "0px" : "6px"};
+    font-weight: 500;
+    margin: 0;
 `
 export const InnerContainerMini = styled.div`
     padding-bottom: 8px;

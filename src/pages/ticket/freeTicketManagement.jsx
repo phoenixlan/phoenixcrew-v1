@@ -4,7 +4,7 @@ import { TicketType, getCurrentEvent, getEventTickets, Ticket, User } from "@pho
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, InputSelect } from "../../components/dashboard";
 import { FormContainer, FormEntry, FormLabel, FormSelect, FormButton } from '../../components/form';
 import { UserSearch } from '../../components/userSearch';
-import { Table, Row, TableCell, TableHead, IconContainer, SelectableTableRow } from "../../components/table";
+import { Table, Row, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -123,6 +123,7 @@ export const FreeTicketManagement = () => {
                 <InnerContainer>
                     <Table>
                         <TableHead border>
+                            <TableRow>
                                 <TableCell flex="1" mobileFlex="2">ID</TableCell>
                                 <TableCell flex="2" mobileFlex="3">Billett type</TableCell>
                                 <TableCell flex="4" mobileFlex="7">Nåværende eier</TableCell>
@@ -131,23 +132,26 @@ export const FreeTicketManagement = () => {
                                 <TableCell flex="2" mobileFlex="2">Sete</TableCell>
                                 <TableCell flex="3" mobileHide>Utsendelsestid</TableCell>
                                 <TableCell center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                            </TableRow>
                         </TableHead>
-                        {
-                            tickets.map((ticket) => {
-                                return (
-                                    <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
-                                        <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
-                                        <TableCell flex="2" mobileFlex="3">{ ticket.ticket_type.name }</TableCell>
-                                        <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
-                                        <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
-                                        <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
-                                        <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
-                                        <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-                                        <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
-                                    </SelectableTableRow>
-                                )
-                            })
-                        }
+                        <TableBody>
+                            {
+                                tickets.map((ticket) => {
+                                    return (
+                                        <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
+                                            <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
+                                            <TableCell flex="2" mobileFlex="3">{ ticket.ticket_type.name }</TableCell>
+                                            <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
+                                            <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
+                                            <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
+                                            <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
+                                            <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                            <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                        </SelectableTableRow>
+                                    )
+                                })
+                            }
+                        </TableBody>
                     </Table>
                 </InnerContainer>
             </DashboardContent>

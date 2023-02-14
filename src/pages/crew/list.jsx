@@ -3,7 +3,7 @@ import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { faArrowRight, faCheck, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
-import { Table, TableCell, CrewColorBox, IconContainer, SelectableTableRow, TableHead } from "../../components/table";
+import { Table, TableCell, CrewColorBox, IconContainer, SelectableTableRow, TableHead, TableRow } from "../../components/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 
@@ -47,14 +47,16 @@ export const CrewList= () => {
                 <InnerContainer>
                     <Table>
                         <TableHead border>
-                            <TableCell flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
-                            <TableCell flex="0 42px" mobileHide>Farge</TableCell>
-                            <TableCell flex="6" mobileFlex="3">Navn</TableCell>
-                            <TableCell flex="10" mobileHide>Beskrivelse</TableCell>
-                            <TableCell flex="3" mobileFlex="1">Antall<br/>brukere</TableCell>
-                            <TableCell center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet kan søkes til eller ikke"><IconContainer>...</IconContainer></TableCell>
-                            <TableCell center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>...</IconContainer></TableCell>
-                            <TableCell center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                            <TableRow>
+                                <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                <TableCell as="th" flex="0 42px" mobileHide>Farge</TableCell>
+                                <TableCell as="th" flex="6" mobileFlex="3">Navn</TableCell>
+                                <TableCell as="th" flex="10" mobileHide>Beskrivelse</TableCell>
+                                <TableCell as="th" flex="3" mobileFlex="1">Antall<br/>brukere</TableCell>
+                                <TableCell as="th" center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet kan søkes til eller ikke"><IconContainer>...</IconContainer></TableCell>
+                                <TableCell as="th" center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>...</IconContainer></TableCell>
+                                <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                            </TableRow>
                         </TableHead>
                     
                         {

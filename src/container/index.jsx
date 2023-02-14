@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { Sidebar } from "./sidebar"
 import { DashboardBlock } from "../components/dashboard";
-import { MQTopNavigation } from './mq-topNavigation';
+import { MobileNavigation } from './mobileNavigation';
 
 const S = {
     DocumentRoot: styled.div`
@@ -42,7 +42,7 @@ const S = {
 export const Container = ({ children }) => {
     return (
         <>
-            <MQTopNavigation />
+            <MobileNavigation />
             <S.DocumentRoot>
                 <S.SidebarRoot>
                     <Sidebar />

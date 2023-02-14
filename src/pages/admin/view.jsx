@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import { Position, Crew } from "@phoenixlan/phoenix.js";
 
-import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead } from '../../components/table';
+import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead, TableRow, TableBody } from '../../components/table';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
 import { PageLoading } from "../../components/pageLoading"
 
@@ -80,22 +80,26 @@ export const ViewPosition = (props) => {
                             </InnerContainer>
                             <Table>
                                 <TableHead border>
-                                    <TableCell flex="5" mobileHide visible={!visibleUUID}>UUID</TableCell>
-                                    <TableCell flex="6">Rettighet</TableCell>
-                                    <TableCell flex="0 24px" mobileHide />
+                                    <TableRow>
+                                        <TableCell as="th" flex="5" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                        <TableCell as="th" flex="6">Rettighet</TableCell>
+                                        <TableCell as="th" flex="0 24px" mobileHide />
+                                    </TableRow>
                                 </TableHead>
+                                <TableBody>
+                                    {
+                                        position.permissions.map((permission) => {
+                                            return (
+                                                <SelectableTableRow>
+                                                    <TableCell consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</TableCell>
+                                                    <TableCell flex="6" uppercase>{ permission.permission }</TableCell>
+                                                    <TableCell flex="0 24px" mobileHide><IconContainer></IconContainer></TableCell>
+                                                </SelectableTableRow>
+                                            )
+                                        })
+                                    }
+                                </TableBody>
                             </Table>
-
-                            {
-                            position.permissions.map((permission) => {
-                                return (
-                                    <SelectableTableRow>
-                                        <TableCell consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</TableCell>
-                                        <TableCell flex="6" uppercase>{ permission.permission }</TableCell>
-                                        <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
-                                    </SelectableTableRow>
-                                )
-                            })}
                         </DashboardContent>
 
                         <DashboardContent visible={activeContent == 3}>
@@ -104,26 +108,29 @@ export const ViewPosition = (props) => {
                             </InnerContainer>
                             <Table>
                                 <TableHead border>
-                                    <TableCell flex="5" mobileHide visible={!visibleUUID}>UUID</TableCell>
-                                    <TableCell flex="3" mobileFlex="3">Navn</TableCell>
-                                    <TableCell flex="3" mobileFlex="2">Brukernavn</TableCell>
-                                    <TableCell flex="0 24px" mobileHide />
+                                    <TableRow>
+                                        <TableCell flex="5" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                        <TableCell flex="3" mobileFlex="3">Navn</TableCell>
+                                        <TableCell flex="3" mobileFlex="2">Brukernavn</TableCell>
+                                        <TableCell flex="0 24px" mobileHide />
+                                    </TableRow>
                                 </TableHead>
+                                <TableBody>
+                                    {
+                                        position.position_mappings.map((position_mapping) => {
+                                            const user = position_mapping.user
+                                            return (
+                                                <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
+                                                    <TableCell consolas flex="5" visible={!visibleUUID}>{ user.uuid }</TableCell>
+                                                    <TableCell flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</TableCell>
+                                                    <TableCell flex="3" mobileFlex="2">{ user.username }</TableCell>
+                                                    <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                                </SelectableTableRow>
+                                            )
+                                        })
+                                    }
+                                </TableBody>
                             </Table>
-
-                            {
-                                position.position_mappings.map((position_mapping) => {
-                                    const user = position_mapping.user
-                                    return (
-                                        <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
-                                            <TableCell consolas flex="5" visible={!visibleUUID}>{ user.uuid }</TableCell>
-                                            <TableCell flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</TableCell>
-                                            <TableCell flex="3" mobileFlex="2">{ user.username }</TableCell>
-                                            <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
-                                        </SelectableTableRow>
-                                    )
-                                })
-                            }
                         </DashboardContent>
                 </>
             }

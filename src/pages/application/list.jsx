@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Crew } from "@phoenixlan/phoenix.js";
 
-import { Table, SelectableTableRow, TableCell, TableHead, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow } from "../../components/table";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
@@ -56,27 +56,28 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
     return (
         <Table>
             <TableHead border>
-                <TableCell flex="4" mobileFlex="3">Navn</TableCell>
-                <TableCell flex="3" mobileFlex="2">1. Valg</TableCell>
-                <TableCell flex="3" mobileHide>2. Valg</TableCell>
-                <TableCell flex="3" mobileHide>3. Valg</TableCell>
-                <TableCell flex="3" mobileHide>Søknadstid</TableCell>
-                {
-                    showProcessedBy ? (
-                        <>
-                            <TableCell flex="4" mobileHide>Behandler</TableCell>
-                            <TableCell flex="2" mobileHide>Status</TableCell>
-                        </>
-                    ) : (
-                        <>
-                            <TableCell flex="4" mobileHide />
-                            <TableCell flex="2" mobileHide />
-                        </>
-                    )
-                }
-                
-                <TableCell flex="0 24px" mobileHide><IconContainer/></TableCell>
-    
+                <TableRow>
+                    <TableCell flex="4" mobileFlex="3">Navn</TableCell>
+                    <TableCell flex="3" mobileFlex="2">1. Valg</TableCell>
+                    <TableCell flex="3" mobileHide>2. Valg</TableCell>
+                    <TableCell flex="3" mobileHide>3. Valg</TableCell>
+                    <TableCell flex="3" mobileHide>Søknadstid</TableCell>
+                    {
+                        showProcessedBy ? (
+                            <>
+                                <TableCell flex="4" mobileHide>Behandler</TableCell>
+                                <TableCell flex="2" mobileHide>Status</TableCell>
+                            </>
+                        ) : (
+                            <>
+                                <TableCell flex="4" mobileHide />
+                                <TableCell flex="2" mobileHide />
+                            </>
+                        )
+                    }
+                    
+                    <TableCell flex="0 24px" mobileHide><IconContainer/></TableCell>
+                </TableRow>
             </TableHead>
             <tbody>
             {

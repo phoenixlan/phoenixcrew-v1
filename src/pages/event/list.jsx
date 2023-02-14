@@ -45,14 +45,14 @@ export const EventList = () => {
                     <Table>
                         <TableHead border>
                             <TableRow>
-                                <TableCell flex="14" visible={!visibleUUID} mobileHide>UUID</TableCell>
-                                <TableCell flex="8">Tittel</TableCell>
-                                <TableCell flex="5" mobileHide>Billettsalg</TableCell>
-                                <TableCell flex="5" mobileHide>Start</TableCell>
-                                <TableCell flex="5" mobileHide>Slutt</TableCell>
-                                <TableCell flex="4" mobileHide>Lokasjon</TableCell>
-                                <TableCell flex="4" mobileHide>Seatmap</TableCell>
-                                <TableCell flex="0 24px" mobileHide><IconContainer/></TableCell>
+                                <TableCell as="th" flex="14" visible={!visibleUUID} mobileHide>UUID</TableCell>
+                                <TableCell as="th" flex="8">Tittel</TableCell>
+                                <TableCell as="th" flex="5" mobileHide>Billettsalg</TableCell>
+                                <TableCell as="th" flex="5" mobileHide>Start</TableCell>
+                                <TableCell as="th" flex="5" mobileHide>Slutt</TableCell>
+                                <TableCell as="th" flex="4" mobileHide>Lokasjon</TableCell>
+                                <TableCell as="th" flex="4" mobileHide>Seatmap</TableCell>
+                                <TableCell as="th" flex="0 24px" mobileHide><IconContainer/></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

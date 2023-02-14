@@ -113,19 +113,23 @@ export const ViewCrew = () => {
                     <InnerContainer>
                         <InnerContainerRow>
                             <InnerContainer flex="1">
-                                <InputContainer column mqmodify>
-                                    <InputLabel small>Arrangement</InputLabel>
-                                    <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
-                                        {
-                                            events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
-                                        }
-                                    </InputSelect>
-                                </InputContainer>
+                                <InnerContainerTitle>Velg aktuelt arrangement</InnerContainerTitle>
+                                <InnerContainerRow nopadding nowrap>
+                                    <InputContainer column mqmodify>
+                                        <InputLabel small>Arrangement</InputLabel>
+                                        <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                                            {
+                                                events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
+                                            }
+                                        </InputSelect>
+                                    </InputContainer>
+                                </InnerContainerRow>
                             </InnerContainer>
                             <InnerContainer flex="1" mobileHide />
                             <InnerContainer flex="1" mobileHide />
                         </InnerContainerRow>
 
+                        <InnerContainerTitle>Medlemmer</InnerContainerTitle>
                         <InnerContainerTitleS>Gruppeledere ({leaders.length})</InnerContainerTitleS>
                         <InnerContainerRow>
                             {
@@ -133,11 +137,11 @@ export const ViewCrew = () => {
                             }
                         </InnerContainerRow>
 
-                        <InnerContainerTitleS>Medlemmer ({members.length})</InnerContainerTitleS>
+                        <InnerContainerTitleS>Crew medlemmer ({members.length})</InnerContainerTitleS>
                         <InnerContainerRow>
-                        {
-                            members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
-                        }
+                            {
+                                members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
+                            }
                         </InnerContainerRow>
                     </InnerContainer>
                 </DashboardContent>
