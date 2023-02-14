@@ -4,7 +4,7 @@ import { Crew, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea, InputSelect, InnerContainerTitleS } from "../../components/dashboard";
-import { Column, Table, TableHeader } from "../../components/table";
+import { TableCell, Table, TableHead } from "../../components/table";
 import { useParams } from "react-router-dom";
 
 export const ViewCrew = () => {

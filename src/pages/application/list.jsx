@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Crew } from "@phoenixlan/phoenix.js";
 
-import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer } from "../../components/table";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
@@ -28,56 +28,56 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     }
     
     return (
-        <SelectableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
-            <Column flex="4" mobileFlex="3">{application.user.firstname} {application.user.lastname}</Column>
-            <Column flex="3" mobileFlex="2"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></Column>
-            <Column flex="3" mobileHide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : ("Ingen")}</Column>
-            <Column flex="3" mobileHide>{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : ("Ingen")}</Column>
-            <Column flex="3" mobileHide>{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+        <SelectableTableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
+            <TableCell flex="4" mobileFlex="3">{application.user.firstname} {application.user.lastname}</TableCell>
+            <TableCell flex="3" mobileFlex="2"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></TableCell>
+            <TableCell flex="3" mobileHide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : ("Ingen")}</TableCell>
+            <TableCell flex="3" mobileHide>{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : ("Ingen")}</TableCell>
+            <TableCell flex="3" mobileHide>{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
             {
                 showProcessedBy ? (
                     <>
-                        <Column flex="4" mobileHide>{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</Column>
-                        <Column flex="2" mobileHide>{stateToString(application.state)}</Column>
+                        <TableCell flex="4" mobileHide>{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</TableCell>
+                        <TableCell flex="2" mobileHide>{stateToString(application.state)}</TableCell>
                     </>
                     ) : (
                     <>
-                        <Column flex="4" mobileHide />
-                        <Column flex="2" mobileHide />
+                        <TableCell flex="4" mobileHide />
+                        <TableCell flex="2" mobileHide />
                     </>
                     )
             }
-            <Column flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-        </SelectableRow>
+            <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+        </SelectableTableRow>
     )
 }
 
 const ApplicationTable = ({ applications, showProcessedBy }) => {
     return (
         <Table>
-            <TableHeader border>
-                <Column flex="4" mobileFlex="3">Navn</Column>
-                <Column flex="3" mobileFlex="2">1. Valg</Column>
-                <Column flex="3" mobileHide>2. Valg</Column>
-                <Column flex="3" mobileHide>3. Valg</Column>
-                <Column flex="3" mobileHide>Søknadstid</Column>
+            <TableHead border>
+                <TableCell flex="4" mobileFlex="3">Navn</TableCell>
+                <TableCell flex="3" mobileFlex="2">1. Valg</TableCell>
+                <TableCell flex="3" mobileHide>2. Valg</TableCell>
+                <TableCell flex="3" mobileHide>3. Valg</TableCell>
+                <TableCell flex="3" mobileHide>Søknadstid</TableCell>
                 {
                     showProcessedBy ? (
                         <>
-                            <Column flex="4" mobileHide>Behandler</Column>
-                            <Column flex="2" mobileHide>Status</Column>
+                            <TableCell flex="4" mobileHide>Behandler</TableCell>
+                            <TableCell flex="2" mobileHide>Status</TableCell>
                         </>
                     ) : (
                         <>
-                            <Column flex="4" mobileHide />
-                            <Column flex="2" mobileHide />
+                            <TableCell flex="4" mobileHide />
+                            <TableCell flex="2" mobileHide />
                         </>
                     )
                 }
                 
-                <Column flex="0 24px" mobileHide><IconContainer/></Column>
+                <TableCell flex="0 24px" mobileHide><IconContainer/></TableCell>
     
-            </TableHeader>
+            </TableHead>
             <tbody>
             {
                 applications.map((application) => <ApplicationTableEntry showProcessedBy={showProcessedBy} application={application}/>)

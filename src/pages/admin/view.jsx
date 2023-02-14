@@ -4,8 +4,8 @@ import styled from "styled-components";
 
 import { Position, Crew } from "@phoenixlan/phoenix.js";
 
-import { Column, IconContainer, InnerColumnCenter, SelectableRow, Table, TableHeader } from '../../components/table';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
+import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead } from '../../components/table';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
 import { PageLoading } from "../../components/pageLoading"
 
 import { Theme } from "../../theme";
@@ -79,21 +79,21 @@ export const ViewPosition = (props) => {
                                 <InputCheckbox label="Vis UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                             </InnerContainer>
                             <Table>
-                                <TableHeader border>
-                                    <Column flex="5" mobileHide visible={!visibleUUID}>UUID</Column>
-                                    <Column flex="6">Rettighet</Column>
-                                    <Column flex="0 24px" mobileHide />
-                                </TableHeader>
+                                <TableHead border>
+                                    <TableCell flex="5" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell flex="6">Rettighet</TableCell>
+                                    <TableCell flex="0 24px" mobileHide />
+                                </TableHead>
                             </Table>
 
                             {
                             position.permissions.map((permission) => {
                                 return (
-                                    <SelectableRow>
-                                        <Column consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</Column>
-                                        <Column flex="6" uppercase>{ permission.permission }</Column>
-                                        <Column flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                    </SelectableRow>
+                                    <SelectableTableRow>
+                                        <TableCell consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</TableCell>
+                                        <TableCell flex="6" uppercase>{ permission.permission }</TableCell>
+                                        <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                    </SelectableTableRow>
                                 )
                             })}
                         </DashboardContent>
@@ -103,24 +103,24 @@ export const ViewPosition = (props) => {
                                 <InputCheckbox label="Vis UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                             </InnerContainer>
                             <Table>
-                                <TableHeader border>
-                                    <Column flex="5" mobileHide visible={!visibleUUID}>UUID</Column>
-                                    <Column flex="3" mobileFlex="3">Navn</Column>
-                                    <Column flex="3" mobileFlex="2">Brukernavn</Column>
-                                    <Column flex="0 24px" mobileHide />
-                                </TableHeader>
+                                <TableHead border>
+                                    <TableCell flex="5" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell flex="3" mobileFlex="3">Navn</TableCell>
+                                    <TableCell flex="3" mobileFlex="2">Brukernavn</TableCell>
+                                    <TableCell flex="0 24px" mobileHide />
+                                </TableHead>
                             </Table>
 
                             {
                                 position.position_mappings.map((position_mapping) => {
                                     const user = position_mapping.user
                                     return (
-                                        <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
-                                            <Column consolas flex="5" visible={!visibleUUID}>{ user.uuid }</Column>
-                                            <Column flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</Column>
-                                            <Column flex="3" mobileFlex="2">{ user.username }</Column>
-                                            <Column flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                        </SelectableRow>
+                                        <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
+                                            <TableCell consolas flex="5" visible={!visibleUUID}>{ user.uuid }</TableCell>
+                                            <TableCell flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</TableCell>
+                                            <TableCell flex="3" mobileFlex="2">{ user.username }</TableCell>
+                                            <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                        </SelectableTableRow>
                                     )
                                 })
                             }

@@ -4,7 +4,7 @@ import { getEvents } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
-import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
 import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard"; 
 
 export const EventList = () => {
@@ -43,31 +43,35 @@ export const EventList = () => {
 
                 <InnerContainer>
                     <Table>
-                        <TableHeader border>
-                            <Column flex="14" visible={!visibleUUID} mobileHide>UUID</Column>
-                            <Column flex="8">Tittel</Column>
-                            <Column flex="5" mobileHide>Billettsalg</Column>
-                            <Column flex="5" mobileHide>Start</Column>
-                            <Column flex="5" mobileHide>Slutt</Column>
-                            <Column flex="4" mobileHide>Lokasjon</Column>
-                            <Column flex="4" mobileHide>Seatmap</Column>
-                            <Column flex="0 24px" mobileHide><IconContainer/></Column>
-                        </TableHeader>
-                        {
-                            events.map((event) => {
-                                return (
-                                <SelectableRow onClick={e => {history.push(`/event/${event.uuid}`)}}>
-                                    <Column consolas flex="14" visible={!visibleUUID} mobileHide>{ event.uuid }</Column>
-                                    <Column flex="8">{ event.name}</Column>
-                                    <Column flex="5" mobileHide>{ new Date(event.booking_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                                    <Column flex="5" mobileHide>{ new Date(event.start_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                                    <Column flex="5" mobileHide>{ new Date(event.end_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                                    <Column flex="4" mobileHide>{ event.location?.name??"Ikke satt" }</Column>
-                                    <Column flex="4" mobileHide>{ event.seatmap?.name??"Ikke satt" }</Column>
-                                    <Column flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                </SelectableRow>)
-                            })
-                        }
+                        <TableHead border>
+                            <TableRow>
+                                <TableCell flex="14" visible={!visibleUUID} mobileHide>UUID</TableCell>
+                                <TableCell flex="8">Tittel</TableCell>
+                                <TableCell flex="5" mobileHide>Billettsalg</TableCell>
+                                <TableCell flex="5" mobileHide>Start</TableCell>
+                                <TableCell flex="5" mobileHide>Slutt</TableCell>
+                                <TableCell flex="4" mobileHide>Lokasjon</TableCell>
+                                <TableCell flex="4" mobileHide>Seatmap</TableCell>
+                                <TableCell flex="0 24px" mobileHide><IconContainer/></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                events.map((event) => {
+                                    return (
+                                    <SelectableTableRow onClick={e => {history.push(`/event/${event.uuid}`)}}>
+                                        <TableCell consolas flex="14" visible={!visibleUUID} mobileHide>{ event.uuid }</TableCell>
+                                        <TableCell flex="8">{ event.name}</TableCell>
+                                        <TableCell flex="5" mobileHide>{ new Date(event.booking_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                        <TableCell flex="5" mobileHide>{ new Date(event.start_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                        <TableCell flex="5" mobileHide>{ new Date(event.end_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                        <TableCell flex="4" mobileHide>{ event.location?.name??"Ikke satt" }</TableCell>
+                                        <TableCell flex="4" mobileHide>{ event.seatmap?.name??"Ikke satt" }</TableCell>
+                                        <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                    </SelectableTableRow>)
+                                })
+                            }
+                        </TableBody>
                     </Table>
                 </InnerContainer>
             </DashboardContent>

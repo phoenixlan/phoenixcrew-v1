@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getActiveStoreSessions } from '@phoenixlan/phoenix.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
-import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer } from "../../components/table";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 import { PageLoading } from "../../components/pageLoading";
@@ -56,27 +56,27 @@ export const StoreSessionList = () => {
                     </InnerContainer>
                     <InnerContainer>
                         <Table>
-                            <TableHeader border>
-                                <Column flex="10" mobileHide visible={!visibleUUID}>UUID</Column>
-                                <Column flex="6" mobileFlex="3">Bruker</Column>
-                                <Column flex="4" mobileHide>Kjøp påbegynt</Column>
-                                <Column flex="4" mobileFlex="3">Kjøp utløper</Column>
-                                <Column flex="3" mobileFlex="1">Antall billetter</Column>
-                                <Column flex="2" mobileHide>Pris</Column>
-                                <Column center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
-                            </TableHeader>
+                            <TableHead border>
+                                <TableCell flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                <TableCell flex="6" mobileFlex="3">Bruker</TableCell>
+                                <TableCell flex="4" mobileHide>Kjøp påbegynt</TableCell>
+                                <TableCell flex="4" mobileFlex="3">Kjøp utløper</TableCell>
+                                <TableCell flex="3" mobileFlex="1">Antall billetter</TableCell>
+                                <TableCell flex="2" mobileHide>Pris</TableCell>
+                                <TableCell center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                            </TableHead>
                         
                             {
                                 storeSessions.map((session) => (
-                                    <SelectableRow onClick={e => {history.push(`/user/${session.user_uuid}`)}}>
-                                        <Column flex="10" mobileHide consolas visible={!visibleUUID}>{session.uuid}</Column>
-                                        <Column flex="6" mobileFlex="3">...</Column>
-                                        <Column flex="4" mobileHide>{new Date(session.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
-                                        <Column flex="4" mobileFlex="3">{new Date(session.expires*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
-                                        <Column flex="3" mobileFlex="1">{session.entries.reduce((prev, cur) => prev+cur.amount, 0)}</Column>
-                                        <Column flex="2" mobileHide>{session.total} ,-</Column>
-                                        <Column flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                    </SelectableRow>
+                                    <SelectableTableRow onClick={e => {history.push(`/user/${session.user_uuid}`)}}>
+                                        <TableCell flex="10" mobileHide consolas visible={!visibleUUID}>{session.uuid}</TableCell>
+                                        <TableCell flex="6" mobileFlex="3">...</TableCell>
+                                        <TableCell flex="4" mobileHide>{new Date(session.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                        <TableCell flex="4" mobileFlex="3">{new Date(session.expires*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                        <TableCell flex="3" mobileFlex="1">{session.entries.reduce((prev, cur) => prev+cur.amount, 0)}</TableCell>
+                                        <TableCell flex="2" mobileHide>{session.total} ,-</TableCell>
+                                        <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                    </SelectableTableRow>
                                 ))
                             }
                         </Table>

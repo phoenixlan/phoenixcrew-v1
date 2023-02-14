@@ -8,7 +8,7 @@ import { PageLoading } from "../../components/pageLoading"
 import { FormInput } from '../../components/form';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
 import { faEye, faEyeSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Column, IconContainer, InnerColumnCenter, SelectableRow, Table, TableHeader } from '../../components/table';
+import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead } from '../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -22,23 +22,23 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
 
     if (new Date(entry.time*1000) > (Date.now() - 5 * 60000)) {
         return (
-            <SelectableRow>
-                <Column flex="2" mobileFlex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3" mobileFlex="3">{ entry.title }</Column>
-                <Column flex="4" mobileHide>{ entry.description }</Column>
-                <Column flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
-                <Column flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
-            </SelectableRow>
+            <SelectableTableRow>
+                <TableCell flex="2" mobileFlex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                <TableCell flex="3" mobileFlex="3">{ entry.title }</TableCell>
+                <TableCell flex="4" mobileHide>{ entry.description }</TableCell>
+                <TableCell flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></TableCell>
+                <TableCell flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></TableCell>
+            </SelectableTableRow>
         )
     } else {
         return (
-            <SelectableRow>
-                <Column flex="2" mobileFlex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3" mobileFlex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
-                <Column flex="4" mobileHide color="rgb(150, 150, 150)">{ entry.description }</Column>
-                <Column flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
-                <Column flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
-            </SelectableRow>
+            <SelectableTableRow>
+                <TableCell flex="2" mobileFlex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                <TableCell flex="3" mobileFlex="3" color="rgb(150, 150, 150)">{ entry.title }</TableCell>
+                <TableCell flex="4" mobileHide color="rgb(150, 150, 150)">{ entry.description }</TableCell>
+                <TableCell flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></TableCell>
+                <TableCell flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></TableCell>
+            </SelectableTableRow>
         )
     }
 }
@@ -142,13 +142,13 @@ export const AgendaList = (props) => {
 
                     <InnerContainer>
                         <Table>
-                            <TableHeader border>
-                                <Column flex="2" mobileFlex="2">Tidspunkt</Column>
-                                <Column flex="3" mobileFlex="3">Tittel</Column>
-                                <Column flex="4" mobileHide>Beskrivelse</Column>
-                                <Column center flex="0 24px" mobileFlex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
-                                <Column center flex="0 24px" mobileFlex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
-                            </TableHeader>
+                            <TableHead border>
+                                <TableCell flex="2" mobileFlex="2">Tidspunkt</TableCell>
+                                <TableCell flex="3" mobileFlex="3">Tittel</TableCell>
+                                <TableCell flex="4" mobileHide>Beskrivelse</TableCell>
+                                <TableCell center flex="0 24px" mobileFlex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></TableCell>
+                                <TableCell center flex="0 24px" mobileFlex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></TableCell>
+                            </TableHead>
                         
                             {
                                 agendaList.map(entry => {
