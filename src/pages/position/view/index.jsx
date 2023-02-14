@@ -2,7 +2,7 @@ import React , { useEffect, useState } from "react";
 
 import { Position} from "@phoenixlan/phoenix.js";
 
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
 
 import { useParams } from "react-router-dom";
 import { PositionMemberList } from "./memberList";

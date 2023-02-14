@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User} from "@phoenixlan/phoenix.js";
-import { Table, Column, TableHeader, SelectableRow, Row, IconContainer } from "../../../components/table";
+import { Table, TableCell, TableHead, SelectableTableRow, Row, IconContainer } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer, InnerContainerTitleS } from '../../../components/dashboard';
 
@@ -37,23 +37,23 @@ export const UserViewerTickets = ({ user }) => {
             <InnerContainer border extramargin>
                 <InnerContainerTitleS>Følgende billetter har blitt kjøpt av brukeren</InnerContainerTitleS>
                 <Table>
-                    <TableHeader border>
-                        <Column flex="1">ID</Column>
-                        <Column flex="5">Arrangement</Column>
-                        <Column flex="3">Eies av bruker</Column>
-                        <Column flex="3">Seates av bruker</Column>
-                        <Column flex="1">Seteplass</Column>
-                    </TableHeader>
+                    <TableHead border>
+                        <TableCell flex="1">ID</TableCell>
+                        <TableCell flex="5">Arrangement</TableCell>
+                        <TableCell flex="3">Eies av bruker</TableCell>
+                        <TableCell flex="3">Seates av bruker</TableCell>
+                        <TableCell flex="1">Seteplass</TableCell>
+                    </TableHead>
 
                     {
                         purchasedTickets.map(ticket => (
-                            <SelectableRow>
-                                <Column consolas flex="1">#{ ticket.ticket_id }</Column>
-                                <Column flex="5">{ticket.event_uuid}</Column>
-                                <Column flex="3">{ticket.owner.firstname} {ticket.seater.lastname}</Column>
-                                <Column flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</Column>
-                                <Column flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</Column>
-                            </SelectableRow>
+                            <SelectableTableRow>
+                                <TableCell consolas flex="1">#{ ticket.ticket_id }</TableCell>
+                                <TableCell flex="5">{ticket.event_uuid}</TableCell>
+                                <TableCell flex="3">{ticket.owner.firstname} {ticket.seater.lastname}</TableCell>
+                                <TableCell flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
+                                <TableCell flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
+                            </SelectableTableRow>
                         ))
                     }
                 </Table>
@@ -62,23 +62,23 @@ export const UserViewerTickets = ({ user }) => {
             <InnerContainer border extramargin>
                 <InnerContainerTitleS>Følgende billetter eies av brukeren</InnerContainerTitleS>
                 <Table>
-                    <TableHeader border>
-                        <Column flex="1">ID</Column>
-                        <Column flex="5">Arrangement</Column>
-                        <Column flex="3">Kjøpt av bruker</Column>
-                        <Column flex="3">Seates av bruker</Column>
-                        <Column flex="1">Seteplass</Column>
-                    </TableHeader>
+                    <TableHead border>
+                        <TableCell flex="1">ID</TableCell>
+                        <TableCell flex="5">Arrangement</TableCell>
+                        <TableCell flex="3">Kjøpt av bruker</TableCell>
+                        <TableCell flex="3">Seates av bruker</TableCell>
+                        <TableCell flex="1">Seteplass</TableCell>
+                    </TableHead>
 
                     {
                         ownedTickets.map(ticket => (
-                            <SelectableRow>
-                                <Column consolas flex="1">#{ ticket.ticket_id }</Column>
-                                <Column flex="5">{ticket.event_uuid}</Column>
-                                <Column flex="3">{ticket.buyer.firstname} {ticket.buyer.lastname}</Column>
-                                <Column flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</Column>
-                                <Column flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</Column>
-                            </SelectableRow>
+                            <SelectableTableRow>
+                                <TableCell consolas flex="1">#{ ticket.ticket_id }</TableCell>
+                                <TableCell flex="5">{ticket.event_uuid}</TableCell>
+                                <TableCell flex="3">{ticket.buyer.firstname} {ticket.buyer.lastname}</TableCell>
+                                <TableCell flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
+                                <TableCell flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
+                            </SelectableTableRow>
                         ))
                     }
                 </Table>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import styled from 'styled-components';
 import { User, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
-import { Table, Column, TableHeader, SelectableRow, Row, IconContainer } from "../../../components/table";
+import { Table, TableCell, TableHead, SelectableTableRow, Row, IconContainer } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox, InputContainer, InputLabel } from '../../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -137,18 +137,18 @@ export const UserViewerDetails = ({ user }) => {
                 <InnerContainer>
                         <InnerContainerTitle>GDPR samtykker</InnerContainerTitle>
                         <Table>
-                            <TableHeader border>
-                                <Column flex="3">Type</Column>
-                                <Column flex="1">Verdi</Column>
-                                <Column flex="3">Når</Column>
-                                <Column flex="3">Kilde</Column>
-                            </TableHeader>
-                            <SelectableRow>
-                                <Column flex="3">Påminnelse om kommende arrangementer</Column>
-                                <Column flex="1">{ emailConsent ? (<b>Ja</b>) : "Nei" }</Column>
-                                <Column flex="3">{ emailConsent ? (new Date(emailConsent.created*1000).toLocaleString()) : "N/A" }</Column>
-                                <Column flex="3">{ emailConsent ? emailConsent.source : "N/A" }</Column>
-                            </SelectableRow>
+                            <TableHead border>
+                                <TableCell flex="3">Type</TableCell>
+                                <TableCell flex="1">Verdi</TableCell>
+                                <TableCell flex="3">Når</TableCell>
+                                <TableCell flex="3">Kilde</TableCell>
+                            </TableHead>
+                            <SelectableTableRow>
+                                <TableCell flex="3">Påminnelse om kommende arrangementer</TableCell>
+                                <TableCell flex="1">{ emailConsent ? (<b>Ja</b>) : "Nei" }</TableCell>
+                                <TableCell flex="3">{ emailConsent ? (new Date(emailConsent.created*1000).toLocaleString()) : "N/A" }</TableCell>
+                                <TableCell flex="3">{ emailConsent ? emailConsent.source : "N/A" }</TableCell>
+                            </SelectableTableRow>
                         </Table>
                     
                 </InnerContainer>

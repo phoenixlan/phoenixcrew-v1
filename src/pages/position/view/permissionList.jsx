@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Column, IconContainer, SelectableRow, Table, TableHeader } from '../../../components/table';
+import { TableCell, IconContainer, SelectableTableRow, Table, TableHead } from '../../../components/table';
 import { InnerContainer, InputCheckbox } from '../../../components/dashboard';
 
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -15,21 +15,21 @@ export const PositionPermissionList = ({ position }) => {
                 <InputCheckbox label="Vis UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
             </InnerContainer>
             <Table>
-                <TableHeader border>
-                    <Column flex="5" visible={!visibleUUID}>UUID</Column>
-                    <Column flex="6">Navn</Column>
-                    <Column flex="0 24px" />
-                </TableHeader>
+                <TableHead border>
+                    <TableCell flex="5" visible={!visibleUUID}>UUID</TableCell>
+                    <TableCell flex="6">Navn</TableCell>
+                    <TableCell flex="0 24px" />
+                </TableHead>
             </Table>
 
             {
             position.permissions.map((permission) => {
                 return (
-                    <SelectableRow>
-                        <Column consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</Column>
-                        <Column flex="6" uppercase>{ permission.permission }</Column>
-                        <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                    </SelectableRow>
+                    <SelectableTableRow>
+                        <TableCell consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</TableCell>
+                        <TableCell flex="6" uppercase>{ permission.permission }</TableCell>
+                        <TableCell flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                    </SelectableTableRow>
                 )
             })}
         </>

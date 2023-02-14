@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PositionMapping, getCurrentEvent } from "@phoenixlan/phoenix.js";
-import { Table, Column, TableHeader, SelectableRow, IconContainer } from "../../../components/table";
+import { Table, TableCell, TableHead, SelectableTableRow, IconContainer } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer, InnerContainerTitle, InputCheckbox } from '../../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,15 +22,15 @@ const PositionList = ({ position_mappings, showUuid, reload }) => {
                     }
 
                     return (
-                        <SelectableRow onClick={demote}>
-                            <Column consolas flex="1" visible={!showUuid}>{ position_mapping.position.uuid }</Column>
-                            <Column flex="2" >{positionName}</Column>
-                            <Column flex="0 5em">
+                        <SelectableTableRow onClick={demote}>
+                            <TableCell consolas flex="1" visible={!showUuid}>{ position_mapping.position.uuid }</TableCell>
+                            <TableCell flex="2" >{positionName}</TableCell>
+                            <TableCell flex="0 5em">
                                 {
                                     position_mapping.event_uuid !== null && "Fjern"
                                 }
-                            </Column>
-                        </SelectableRow>
+                            </TableCell>
+                        </SelectableTableRow>
                     )
                 })
             }
@@ -65,22 +65,22 @@ export const UserViewerPositions = ({ user, reload: reloadUser }) => {
             <InnerContainer border extramargin>
                 <InnerContainerTitle>Nåværende Stillinger</InnerContainerTitle>
                 <Table>
-                    <TableHeader border>
-                        <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
-                        <Column flex="2">Navn</Column>
-                        <Column flex="0 24px" />
-                    </TableHeader>
+                    <TableHead border>
+                        <TableCell flex="1" visible={!visibleUUIDPositions}>UUID</TableCell>
+                        <TableCell flex="2">Navn</TableCell>
+                        <TableCell flex="0 24px" />
+                    </TableHead>
                     <PositionList reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
                 </Table>
             </InnerContainer>
             <InnerContainer border extramargin>
                 <InnerContainerTitle>Tidligere Stillinger</InnerContainerTitle>
                 <Table>
-                    <TableHeader border>
-                        <Column flex="1" visible={!visibleUUIDPositions}>UUID</Column>
-                        <Column flex="2">Navn</Column>
-                        <Column flex="0 24px" />
-                    </TableHeader>
+                    <TableHead border>
+                        <TableCell flex="1" visible={!visibleUUIDPositions}>UUID</TableCell>
+                        <TableCell flex="2">Navn</TableCell>
+                        <TableCell flex="0 24px" />
+                    </TableHead>
                     <PositionList reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
                 </Table>
             </InnerContainer>

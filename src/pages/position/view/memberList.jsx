@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Column, IconContainer, SelectableRow, Table, TableHeader } from '../../../components/table';
+import { TableCell, IconContainer, SelectableTableRow, Table, TableHead } from '../../../components/table';
 import { InnerContainer, InnerContainerTitle, InputCheckbox } from '../../../components/dashboard';
 import { UserSearch } from "../../../components/userSearch";
 import { FormButton } from '../../../components/form';
@@ -49,24 +49,24 @@ export const PositionMemberList = ({ position, refresh }) => {
                 <InputCheckbox label="Vis UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
             </InnerContainer>
             <Table>
-                <TableHeader border>
-                    <Column flex="5" visible={!visibleUUID}>UUID</Column>
-                    <Column flex="3">Navn</Column>
-                    <Column flex="3">Brukernavn</Column>
-                    <Column flex="0 24px" />
-                </TableHeader>
+                <TableHead border>
+                    <TableCell flex="5" visible={!visibleUUID}>UUID</TableCell>
+                    <TableCell flex="3">Navn</TableCell>
+                    <TableCell flex="3">Brukernavn</TableCell>
+                    <TableCell flex="0 24px" />
+                </TableHead>
             </Table>
 
             {
                 position.position_mappings.map((position_mapping) => {
                     const user = position_mapping.user
                     return (
-                        <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
-                            <Column consolas flex="5" visible={!visibleUUID}>{ user.uuid }</Column>
-                            <Column flex="3">{ user.lastname + ", " + user.firstname }</Column>
-                            <Column flex="3">{ user.username }</Column>
-                            <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                        </SelectableRow>
+                        <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
+                            <TableCell consolas flex="5" visible={!visibleUUID}>{ user.uuid }</TableCell>
+                            <TableCell flex="3">{ user.lastname + ", " + user.firstname }</TableCell>
+                            <TableCell flex="3">{ user.username }</TableCell>
+                            <TableCell flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                        </SelectableTableRow>
                     )
                 })
             }
