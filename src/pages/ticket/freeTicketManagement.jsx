@@ -124,14 +124,14 @@ export const FreeTicketManagement = () => {
                     <Table>
                         <TableHead border>
                             <TableRow>
-                                <TableCell flex="1" mobileFlex="2">ID</TableCell>
-                                <TableCell flex="2" mobileFlex="3">Billett type</TableCell>
-                                <TableCell flex="4" mobileFlex="7">Nåværende eier</TableCell>
-                                <TableCell flex="4" mobileHide>Opprinnelig eier</TableCell>
-                                <TableCell flex="4" mobileHide>Seates av bruker</TableCell>
-                                <TableCell flex="2" mobileFlex="2">Sete</TableCell>
-                                <TableCell flex="3" mobileHide>Utsendelsestid</TableCell>
-                                <TableCell center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                <TableCell as="th" flex="1" mobileFlex="2">ID</TableCell>
+                                <TableCell as="th" flex="2" mobileFlex="3">Billett type</TableCell>
+                                <TableCell as="th" flex="4" mobileFlex="7">Nåværende eier</TableCell>
+                                <TableCell as="th" flex="4" mobileHide>Opprinnelig eier</TableCell>
+                                <TableCell as="th" flex="4" mobileHide>Seates av bruker</TableCell>
+                                <TableCell as="th" flex="2" mobileFlex="2">Sete</TableCell>
+                                <TableCell as="th" flex="3" mobileHide>Utsendelsestid</TableCell>
+                                <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

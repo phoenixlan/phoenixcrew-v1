@@ -109,10 +109,10 @@ export const ViewPosition = (props) => {
                             <Table>
                                 <TableHead border>
                                     <TableRow>
-                                        <TableCell flex="5" mobileHide visible={!visibleUUID}>UUID</TableCell>
-                                        <TableCell flex="3" mobileFlex="3">Navn</TableCell>
-                                        <TableCell flex="3" mobileFlex="2">Brukernavn</TableCell>
-                                        <TableCell flex="0 24px" mobileHide />
+                                        <TableCell as="th" flex="5" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                        <TableCell as="th" flex="3" mobileFlex="3">Navn</TableCell>
+                                        <TableCell as="th" flex="3" mobileFlex="2">Brukernavn</TableCell>
+                                        <TableCell as="th" flex="0 24px" mobileHide />
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>

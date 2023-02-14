@@ -141,11 +141,11 @@ export const AgendaList = (props) => {
                         <Table>
                             <TableHead border>
                                 <TableRow>
-                                    <TableCell flex="2" mobileFlex="2">Tidspunkt</TableCell>
-                                    <TableCell flex="3" mobileFlex="3">Tittel</TableCell>
-                                    <TableCell flex="4" mobileHide>Beskrivelse</TableCell>
-                                    <TableCell center flex="0 24px" mobileFlex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></TableCell>
-                                    <TableCell center flex="0 24px" mobileFlex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></TableCell>
+                                    <TableCell as="th" flex="2" mobileFlex="2">Tidspunkt</TableCell>
+                                    <TableCell as="th" flex="3" mobileFlex="3">Tittel</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Beskrivelse</TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileFlex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileFlex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

@@ -47,14 +47,14 @@ export const MembershipList = () => {
                         <Table>
                             <TableHead border>
                                 <TableRow>
-                                    <TableCell flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
-                                    <TableCell flex="6" mobileFlex="3">Navn</TableCell>
-                                    <TableCell flex="2" mobileFlex="1">Alder</TableCell>
-                                    <TableCell flex="4" mobileHide>Fødselsdato</TableCell>
-                                    <TableCell flex="4" mobileHide>Telefonnummer</TableCell>
-                                    <TableCell flex="5" mobileHide>Addresse</TableCell>
-                                    <TableCell flex="2" mobileHide>Postnr.</TableCell>
-                                    <TableCell center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                    <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell as="th" flex="6" mobileFlex="3">Navn</TableCell>
+                                    <TableCell as="th" flex="2" mobileFlex="1">Alder</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Fødselsdato</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Telefonnummer</TableCell>
+                                    <TableCell as="th" flex="5" mobileHide>Addresse</TableCell>
+                                    <TableCell as="th" flex="2" mobileHide>Postnr.</TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

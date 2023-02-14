@@ -57,26 +57,26 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
         <Table>
             <TableHead border>
                 <TableRow>
-                    <TableCell flex="4" mobileFlex="3">Navn</TableCell>
-                    <TableCell flex="3" mobileFlex="2">1. Valg</TableCell>
-                    <TableCell flex="3" mobileHide>2. Valg</TableCell>
-                    <TableCell flex="3" mobileHide>3. Valg</TableCell>
-                    <TableCell flex="3" mobileHide>Søknadstid</TableCell>
+                    <TableCell as="th" flex="4" mobileFlex="3">Navn</TableCell>
+                    <TableCell as="th" flex="3" mobileFlex="2">1. Valg</TableCell>
+                    <TableCell as="th" flex="3" mobileHide>2. Valg</TableCell>
+                    <TableCell as="th" flex="3" mobileHide>3. Valg</TableCell>
+                    <TableCell as="th" flex="3" mobileHide>Søknadstid</TableCell>
                     {
                         showProcessedBy ? (
                             <>
-                                <TableCell flex="4" mobileHide>Behandler</TableCell>
-                                <TableCell flex="2" mobileHide>Status</TableCell>
+                                <TableCell as="th" flex="4" mobileHide>Behandler</TableCell>
+                                <TableCell as="th" flex="2" mobileHide>Status</TableCell>
                             </>
                         ) : (
                             <>
-                                <TableCell flex="4" mobileHide />
-                                <TableCell flex="2" mobileHide />
+                                <TableCell as="th" flex="4" mobileHide />
+                                <TableCell as="th" flex="2" mobileHide />
                             </>
                         )
                     }
                     
-                    <TableCell flex="0 24px" mobileHide><IconContainer/></TableCell>
+                    <TableCell as="th" flex="0 24px" mobileHide><IconContainer/></TableCell>
                 </TableRow>
             </TableHead>
             <tbody>

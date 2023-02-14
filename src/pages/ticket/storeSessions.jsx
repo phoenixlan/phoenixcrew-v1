@@ -58,13 +58,13 @@ export const StoreSessionList = () => {
                         <Table>
                             <TableHead border>
                                 <TableRow>
-                                    <TableCell flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
-                                    <TableCell flex="6" mobileFlex="3">Bruker</TableCell>
-                                    <TableCell flex="4" mobileHide>Kjøp påbegynt</TableCell>
-                                    <TableCell flex="4" mobileFlex="3">Kjøp utløper</TableCell>
-                                    <TableCell flex="3" mobileFlex="1">Antall billetter</TableCell>
-                                    <TableCell flex="2" mobileHide>Pris</TableCell>
-                                    <TableCell center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                    <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell as="th" flex="6" mobileFlex="3">Bruker</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Kjøp påbegynt</TableCell>
+                                    <TableCell as="th" flex="4" mobileFlex="3">Kjøp utløper</TableCell>
+                                    <TableCell as="th" flex="3" mobileFlex="1">Antall billetter</TableCell>
+                                    <TableCell as="th" flex="2" mobileHide>Pris</TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

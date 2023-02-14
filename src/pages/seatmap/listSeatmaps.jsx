@@ -95,10 +95,10 @@ export const SeatmapList = () => {
                         <Table>
                             <TableHead border>
                                 <TableRow>
-                                    <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>UUID</TableCell>
-                                    <TableCell flex="4" mobileFlex="4">Navn</TableCell>
-                                    <TableCell flex="5" mobileFlex="3">Beskrivelse</TableCell>
-                                    <TableCell center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                    <TableCell as="th" consolas flex="4" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell as="th" flex="4" mobileFlex="4">Navn</TableCell>
+                                    <TableCell as="th" flex="5" mobileFlex="3">Beskrivelse</TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
