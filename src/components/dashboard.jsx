@@ -147,7 +147,7 @@ export const InputContainer = styled.div`
     margin-bottom: ${props => props.extramargin ? "18px" : "1px"};
 
     @media screen and (max-width: 480px) {
-        margin-bottom: ${props => props.mqmodify ? "0px" : "inherit"};
+        margin-bottom: ${props => props.mobileNoMargin ? "0px" : "inherit"};
         row-gap: 0px;
         display: ${props => props.mobileHide ? "none" : ""};
     }
@@ -156,7 +156,7 @@ export const InputContainer = styled.div`
 export const InputCheckbox = ({ label, value, onChange, disabled }) => {
     return (
         <>
-            <InputContainer mqmodify>
+            <InputContainer mobileNoMargin>
                 <input type="checkbox" checked={value} onChange={onChange} disabled={disabled} />
                 <InputLabel top="1px">{label}</InputLabel>
             </InputContainer>

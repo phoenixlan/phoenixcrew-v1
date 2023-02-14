@@ -115,7 +115,7 @@ export const ViewCrew = () => {
                             <InnerContainer flex="1">
                                 <InnerContainerTitle>Velg aktuelt arrangement</InnerContainerTitle>
                                 <InnerContainerRow nopadding nowrap>
-                                    <InputContainer column mqmodify>
+                                    <InputContainer column mobileNoMargin>
                                         <InputLabel small>Arrangement</InputLabel>
                                         <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
                                             {
