@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { User} from "@phoenixlan/phoenix.js";
-import { Table, TableCell, TableHead, SelectableTableRow, Row, IconContainer } from "../../../components/table";
+import { Table, TableCell, TableHead, SelectableTableRow, Row, IconContainer, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
-import { InnerContainer, InnerContainerTitleS } from '../../../components/dashboard';
+import { InnerContainer, InnerContainerTitle, InnerContainerTitleS } from '../../../components/dashboard';
 
 export const UserViewerTickets = ({ user }) => {
     const [ loading, setLoading ] = useState(false);
@@ -34,53 +34,59 @@ export const UserViewerTickets = ({ user }) => {
     }
     return (
         <>
-            <InnerContainer border extramargin>
-                <InnerContainerTitleS>Følgende billetter har blitt kjøpt av brukeren</InnerContainerTitleS>
+            <InnerContainer extramargin>
+                <InnerContainerTitle>Følgende billetter har blitt kjøpt av brukeren</InnerContainerTitle>
                 <Table>
                     <TableHead border>
-                        <TableCell flex="1">ID</TableCell>
-                        <TableCell flex="5">Arrangement</TableCell>
-                        <TableCell flex="3">Eies av bruker</TableCell>
-                        <TableCell flex="3">Seates av bruker</TableCell>
-                        <TableCell flex="1">Seteplass</TableCell>
+                        <TableRow>
+                            <TableCell flex="1">ID</TableCell>
+                            <TableCell flex="4">Arrangement</TableCell>
+                            <TableCell flex="3">Eies av bruker</TableCell>
+                            <TableCell flex="3">Seates av bruker</TableCell>
+                            <TableCell flex="1">Seteplass</TableCell>
+                        </TableRow>
                     </TableHead>
-
-                    {
-                        purchasedTickets.map(ticket => (
-                            <SelectableTableRow>
-                                <TableCell consolas flex="1">#{ ticket.ticket_id }</TableCell>
-                                <TableCell flex="5">{ticket.event_uuid}</TableCell>
-                                <TableCell flex="3">{ticket.owner.firstname} {ticket.seater.lastname}</TableCell>
-                                <TableCell flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
-                                <TableCell flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
-                            </SelectableTableRow>
-                        ))
-                    }
+                    <TableBody>
+                        {
+                            purchasedTickets.map(ticket => (
+                                <SelectableTableRow>
+                                    <TableCell consolas flex="1">#{ ticket.ticket_id }</TableCell>
+                                    <TableCell flex="4">{ticket.event.name}</TableCell>
+                                    <TableCell flex="3">{ticket.owner.firstname} {ticket.seater.lastname}</TableCell>
+                                    <TableCell flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
+                                    <TableCell flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
+                                </SelectableTableRow>
+                            ))
+                        }
+                    </TableBody>
                 </Table>
             </InnerContainer>
-
-            <InnerContainer border extramargin>
-                <InnerContainerTitleS>Følgende billetter eies av brukeren</InnerContainerTitleS>
+            <InnerContainer extramargin mobileHide />
+            <InnerContainer extramargin>
+                <InnerContainerTitle>Følgende billetter eies av brukeren</InnerContainerTitle>
                 <Table>
                     <TableHead border>
-                        <TableCell flex="1">ID</TableCell>
-                        <TableCell flex="5">Arrangement</TableCell>
-                        <TableCell flex="3">Kjøpt av bruker</TableCell>
-                        <TableCell flex="3">Seates av bruker</TableCell>
-                        <TableCell flex="1">Seteplass</TableCell>
+                        <TableRow>
+                            <TableCell flex="1">ID</TableCell>
+                            <TableCell flex="4">Arrangement</TableCell>
+                            <TableCell flex="3">Kjøpt av bruker</TableCell>
+                            <TableCell flex="3">Seates av bruker</TableCell>
+                            <TableCell flex="1">Seteplass</TableCell>
+                        </TableRow>
                     </TableHead>
-
-                    {
-                        ownedTickets.map(ticket => (
-                            <SelectableTableRow>
-                                <TableCell consolas flex="1">#{ ticket.ticket_id }</TableCell>
-                                <TableCell flex="5">{ticket.event_uuid}</TableCell>
-                                <TableCell flex="3">{ticket.buyer.firstname} {ticket.buyer.lastname}</TableCell>
-                                <TableCell flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
-                                <TableCell flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
-                            </SelectableTableRow>
-                        ))
-                    }
+                    <TableBody>
+                        {
+                            ownedTickets.map(ticket => (
+                                <SelectableTableRow>
+                                    <TableCell consolas flex="1">#{ ticket.ticket_id }</TableCell>
+                                    <TableCell flex="4">{ticket.event.name}</TableCell>
+                                    <TableCell flex="3">{ticket.buyer.firstname} {ticket.buyer.lastname}</TableCell>
+                                    <TableCell flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
+                                    <TableCell flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
+                                </SelectableTableRow>
+                            ))
+                        }
+                    </TableBody>
                 </Table>
             </InnerContainer>
         </>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { PositionMapping, getCurrentEvent } from "@phoenixlan/phoenix.js";
-import { Table, TableCell, TableHead, SelectableTableRow, IconContainer } from "../../../components/table";
+import { Table, TableCell, TableHead, SelectableTableRow, IconContainer, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer, InnerContainerTitle, InputCheckbox } from '../../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { position_mapping_to_string } from '../../../utils/user';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const PositionList = ({ position_mappings, showUuid, reload }) => {
     return (
@@ -23,11 +24,11 @@ const PositionList = ({ position_mappings, showUuid, reload }) => {
 
                     return (
                         <SelectableTableRow onClick={demote}>
-                            <TableCell consolas flex="1" visible={!showUuid}>{ position_mapping.position.uuid }</TableCell>
-                            <TableCell flex="2" >{positionName}</TableCell>
-                            <TableCell flex="0 5em">
+                            <TableCell mobileHide consolas flex="1" visible={!showUuid}>{ position_mapping.position.uuid }</TableCell>
+                            <TableCell mobileFlex="1" flex="2" >{positionName}</TableCell>
+                            <TableCell mobileFlex="0 24px" flex="0 24px">
                                 {
-                                    position_mapping.event_uuid !== null && "Fjern"
+                                    position_mapping.event_uuid !== null && <IconContainer><FontAwesomeIcon icon={faTrash} title="Trykk for å slette elementet" /></IconContainer>
                                 }
                             </TableCell>
                         </SelectableTableRow>
@@ -61,27 +62,38 @@ export const UserViewerPositions = ({ user, reload: reloadUser }) => {
     }
     return (
         <>
-            <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
-            <InnerContainer border extramargin>
+            <InnerContainer mobileHide border extramargin>
+                <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
+            </InnerContainer>
+            <InnerContainer extramargin>
                 <InnerContainerTitle>Nåværende Stillinger</InnerContainerTitle>
                 <Table>
                     <TableHead border>
-                        <TableCell flex="1" visible={!visibleUUIDPositions}>UUID</TableCell>
-                        <TableCell flex="2">Navn</TableCell>
-                        <TableCell flex="0 24px" />
+                        <TableRow>
+                            <TableCell flex="1" visible={!visibleUUIDPositions}>UUID</TableCell>
+                            <TableCell flex="2">Navn</TableCell>
+                            <TableCell flex="0 24px" />
+                        </TableRow>
                     </TableHead>
-                    <PositionList reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
+                    <TableBody>
+                        <PositionList reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
+                    </TableBody>
                 </Table>
             </InnerContainer>
-            <InnerContainer border extramargin>
+            <InnerContainer extramargin mobileHide />
+            <InnerContainer extramargin>
                 <InnerContainerTitle>Tidligere Stillinger</InnerContainerTitle>
                 <Table>
                     <TableHead border>
-                        <TableCell flex="1" visible={!visibleUUIDPositions}>UUID</TableCell>
-                        <TableCell flex="2">Navn</TableCell>
-                        <TableCell flex="0 24px" />
+                        <TableRow>
+                            <TableCell flex="1" visible={!visibleUUIDPositions}>UUID</TableCell>
+                            <TableCell flex="2">Navn</TableCell>
+                            <TableCell flex="0 24px" />
+                        </TableRow>
                     </TableHead>
-                    <PositionList reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
+                    <TableBody>
+                        <PositionList reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
+                    </TableBody>
                 </Table>
             </InnerContainer>
         </>

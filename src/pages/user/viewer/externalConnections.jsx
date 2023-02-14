@@ -48,7 +48,7 @@ export const UserViewerExternalConnections = ({ user }) => {
                                     {discordMapping.username}
                                 </S.AlignBottom>                                        
                             </InnerContainerRow>
-                        ) : (<b>Nei</b>)
+                        ) : (<span>Nei</span>)
                     }
                 </InputContainer>
             </InnerContainerRow>
