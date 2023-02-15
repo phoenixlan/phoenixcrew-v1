@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { TableCell, IconContainer, SelectableTableRow, Table, TableHead, TableBody, TableRow } from '../../../components/table';
-import { InnerContainer, InnerContainerTitle, InputCheckbox } from '../../../components/dashboard';
+import { InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox } from '../../../components/dashboard';
 import { UserSearch } from "../../../components/userSearch";
 import { FormButton } from '../../../components/form';
 
@@ -33,17 +33,23 @@ export const PositionMemberList = ({ position, refresh }) => {
     return (
         <>
             <InnerContainer extramargin>
-                <InnerContainerTitle>Legg til nytt medlem</InnerContainerTitle>
-                <InnerContainer>Du kan bare gi ut stillingen for nåværende arrangement. Merk at de ikke vil få en e-post for å informere dem den nye stillingen.</InnerContainer>
-                
-                <UserSearch onUserSelected={setNewMember} onChange={() => setNewMember(null)}/>
-                {
-                    isAddingMember ? (
-                        <PageLoading />
-                    ) : (
-                        <FormButton disabled={!member} type="submit" onClick={() => addMember()}>Legg til medlem</FormButton>
-                    )
-                }
+                <InnerContainerRow>
+                    <InnerContainer flex="1">
+                        <InnerContainerTitle>Legg til nytt medlem</InnerContainerTitle>
+                        <InnerContainer>Du kan bare gi ut stillingen for nåværende arrangement. Merk at de ikke vil få en e-post for å informere dem den nye stillingen.</InnerContainer>
+                        
+                        <UserSearch onUserSelected={setNewMember} onChange={() => setNewMember(null)}/>
+                        {
+                            isAddingMember ? (
+                                <PageLoading />
+                            ) : (
+                                <FormButton disabled={!member} type="submit" onClick={() => addMember()}>Legg til medlem</FormButton>
+                            )
+                        }
+                    </InnerContainer>
+                    <InnerContainer mobileHide flex="1" />
+                    <InnerContainer mobileHide flex="1" />
+                </InnerContainerRow>
             </InnerContainer>
 
             <InnerContainer>
