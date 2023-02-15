@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export const NavigationContainer = styled.div`
     position: fixed;
     top: 0;
-    height: 60px!important;
+    height: 3.75em!important;
     width: 100%;
     background-color: rgb(242, 242, 242);
     display: none;
@@ -29,8 +29,8 @@ export const NavigationSpacer = styled.div`
 export const InnerContainer = styled.div`
     display: flex;
     flex-flow: column;
-    width: 60px;
-    row-gap: 8px;
+    width: 3.75em;
+    row-gap: .5em;
 `
 export const ElementContainer = styled.div`
     display: flex;
@@ -41,12 +41,12 @@ export const ElementContainer = styled.div`
     user-select: none;
 `
 export const ElementIcon = styled.div`
-    font-size: 18px;
+    font-size: 1em;
     
 `
 export const ElementTitle = styled.span`
     font-family: "Roboto";
-    font-size: 10px;
+    font-size: .65em;
     text-align: center;
 
 `
