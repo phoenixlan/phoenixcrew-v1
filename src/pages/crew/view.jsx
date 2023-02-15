@@ -3,8 +3,8 @@ import React , { useEffect, useState } from "react";
 import { Crew, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { SimpleUserCard } from "../../components/simpleUserCard";
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea, InputSelect } from "../../components/dashboard";
-import { Column, Table, TableHeader } from "../../components/table";
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea, InputSelect, InnerContainerTitleS } from "../../components/dashboard";
+import { TableCell, Table, TableHead } from "../../components/table";
 import { useParams } from "react-router-dom";
 
 export const ViewCrew = () => {
@@ -90,9 +90,9 @@ export const ViewCrew = () => {
 
                 <DashboardContent visible={activeContent == 1}>
                     <InnerContainer>
-                        <InnerContainerRow>
-                            <InnerContainer flex="1">
-                                <form>
+                        <form>
+                            <InnerContainerRow>
+                                <InnerContainer flex="1">
                                     <InputContainer column extramargin>
                                         <InputLabel small>Navn</InputLabel>
                                         <InputElement type="text" value={crew.name} disabled />
@@ -101,46 +101,48 @@ export const ViewCrew = () => {
                                         <InputLabel small>Beskrivelse</InputLabel>
                                         <InputTextArea type="text" value={crew.description} disabled />
                                     </InputContainer>
-                                </form>
-                            </InnerContainer>
-                            <InnerContainer flex="1" />
-                        </InnerContainerRow>
+                                </InnerContainer>
+                                <InnerContainer flex="1" />
+                            </InnerContainerRow>
+                        </form>
                     </InnerContainer>
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == 2}>
-                    <InputContainer column extramargin>
-                        <InputLabel small>Arrangement</InputLabel>
-                        <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
-                            {
-                                events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
-                            }
-                        </InputSelect>
-                    </InputContainer>
+                    <InnerContainer extramargin border>
+                        <InnerContainerRow nopadding>
+                            <InnerContainer flex="1">
+                                <InnerContainerRow nopadding nowrap>
+                                    <InputContainer column mobileNoMargin>
+                                        <InputLabel small>Arrangement</InputLabel>
+                                        <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                                            {
+                                                events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
+                                            }
+                                        </InputSelect>
+                                    </InputContainer>
+                                </InnerContainerRow>
+                            </InnerContainer>
+                            <InnerContainer flex="1" mobileHide />
+                            <InnerContainer flex="1" mobileHide />
+                        </InnerContainerRow>
+                    </InnerContainer>
+
                     <InnerContainer>
-                        <Table>
-                            <TableHeader>
-                                <Column flex="1">Gruppeledere</Column>
-                            </TableHeader>
-                        </Table>
+                        <InnerContainerTitle nopadding>Medlemmer</InnerContainerTitle>
+                        <InnerContainerTitleS nopadding>Gruppeledere ({leaders.length})</InnerContainerTitleS>
                         <InnerContainerRow>
-                        {
-                            leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
-                        }
+                            {
+                                leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
+                            }
                         </InnerContainerRow>
-                        <p><i>{leaders.length} gruppeledere</i></p>
-                        <Table>
-                            <TableHeader>
-                                <Column flex="1">Medlemmer</Column>
-                            </TableHeader>
-                        </Table>
+
+                        <InnerContainerTitleS nopadding>Crew medlemmer ({members.length})</InnerContainerTitleS>
                         <InnerContainerRow>
-                        {
-                            members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
-                        }
+                            {
+                                members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
+                            }
                         </InnerContainerRow>
-                        <p><i>{members.length} medlemmer</i></p>
-                        
                     </InnerContainer>
                 </DashboardContent>
             </>

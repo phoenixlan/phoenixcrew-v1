@@ -97,6 +97,8 @@ export const Authentication = (props) => {
                         setLoadingFinished(true);
                     }
                     catch (e) {
+                        /// If the attempt of authenticating with the existing token & refreshToken fails, remove auth from localstorage to clean up and let the user try again.
+                        window.localStorage.removeItem("auth");
                         console.error('[API] ' + e);
 
                         setError("Vi klarte ikke å logge deg inn med den eksisterende påloggingsinformasjonen som eksisterte på enheten din. Vennligst logg inn på nytt.");

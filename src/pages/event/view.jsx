@@ -78,7 +78,7 @@ export const EventViewer = () => {
                                     </InputContainer>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Sted</InputLabel>
-                                        <InputElement type="text" value={event.location} disabled />
+                                        <InputElement type="text" value={event.location ? event.location.name : ""} disabled />
                                     </InputContainer>
                                 </InnerContainerRow>
 
@@ -87,7 +87,7 @@ export const EventViewer = () => {
                                         <InputLabel small>Tema</InputLabel>
                                         <InputElement type="text" value={event.theme} disabled />
                                     </InputContainer>
-                                    <InputContainer />
+                                    <InputContainer mobileHide />
                                 </InnerContainerRow>
                                 
                                 <InnerContainerTitle>Billetter og øvre aldersgrense</InnerContainerTitle>
@@ -99,11 +99,11 @@ export const EventViewer = () => {
                                 </InnerContainerRow>
                                 <InnerContainerRow nowrap>
                                     <InputContainer column extramargin>
-                                        <InputLabel small>Øvre aldersgrense(Crew)</InputLabel>
+                                        <InputLabel small>Øvre aldersgrense for crew</InputLabel>
                                         <InputElement type="number" value={event.crew_age_limit_inclusive} disabled />
                                     </InputContainer>
                                     <InputContainer column extramargin>
-                                        <InputLabel small>Øvre aldersgrense(Deltaker)</InputLabel>
+                                        <InputLabel small>Øvre aldersgrense for deltakere</InputLabel>
                                         <InputElement type="number" value={event.participant_age_limit_inclusive} disabled />
                                     </InputContainer>
                                 </InnerContainerRow>
@@ -142,7 +142,7 @@ export const EventViewer = () => {
                                             <option>...</option>
                                         </InputSelect>
                                     </InputContainer>
-                                    <InputContainer />
+                                    <InputContainer mobileHide />
                                 </InnerContainerRow>
                                 
                             </InnerContainer>

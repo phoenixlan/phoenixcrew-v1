@@ -3,7 +3,7 @@ import { useReactToPrint } from 'react-to-print';
 import { useForm } from "react-hook-form";
 import { useHistory } from 'react-router-dom';
 import { Seatmap } from "@phoenixlan/phoenix.js";
-import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
 import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, InputElement, InputContainer } from "../../components/dashboard";
 import { PageLoading } from "../../components/pageLoading";
 import { FormButton } from '../../components/form';
@@ -62,51 +62,59 @@ export const SeatmapList = () => {
                         Setekart er hvordan brukere med billett kan reservere en plass på arrangementet.<br/>
                         Det inneholder en visuell/skjematisk plan av deltakerområdet med seteplasser som brukere kan reservere.
                     </InnerContainer>
-                    <InnerContainerRow >
-                        <InnerContainer flex="2">
-                            <form onSubmit={handleSubmit(onSubmit)}>
-                                <InnerContainerTitle>
-                                    Opprett et nytt setekart
-                                </InnerContainerTitle>
-                                <InputContainer column extramargin>
-                                    <InputLabel small>Setekart navn</InputLabel>
-                                    <InputElement type="text" {...register("name")} />
-                                </InputContainer>
-                                <InputContainer column extramargin>
-                                    <InputLabel small>Beskrivelse</InputLabel>
-                                    <InputElement type="text" {...register("description")} />
-                                </InputContainer>
-                                <InputContainer column extramargin>
-                                    <FormButton type="submit">Opprett setekart</FormButton>
-                                </InputContainer>
-                            </form>
-                        </InnerContainer>
-                        <InnerContainer flex="1" />
-                        <InnerContainer flex="4">
-                            { /* Eventuelle innstillinger kan legges her */ }
-                        </InnerContainer>
-                    </InnerContainerRow>
+
+                    <InnerContainer>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <InnerContainerTitle>
+                                Opprett et nytt setekart
+                            </InnerContainerTitle>
+
+                            <InnerContainerRow>
+                                <InnerContainer flex="1">
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Setekart navn</InputLabel>
+                                        <InputElement type="text" {...register("name")} />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <InputLabel small>Beskrivelse</InputLabel>
+                                        <InputElement type="text" {...register("description")} />
+                                    </InputContainer>
+                                    <InputContainer column extramargin>
+                                        <FormButton type="submit">Opprett setekart</FormButton>
+                                    </InputContainer>
+                                </InnerContainer>
+                                <InnerContainer flex="1" mobileHide />
+                                <InnerContainer flex="1" mobileHide>
+                                    { /* Eventuelle innstillinger kan legges her */ }
+                                </InnerContainer>
+                            </InnerContainerRow>
+                        </form>
+                    </InnerContainer>
                     
                     <InnerContainer>
                         <Table>
-                            <TableHeader border>
-                                    <Column consolas flex="4" visible={!visibleUUID}>UUID</Column>
-                                    <Column flex="4">Navn</Column>
-                                    <Column flex="5">Beskrivelse</Column>
-                                    <Column center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
-                            </TableHeader>
-                            {
-                                seatmaps.map((seatmap) => {
-                                    return (
-                                        <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
-                                            <Column consolas flex="4" visible={!visibleUUID}>{ seatmap.uuid }</Column>
-                                            <Column flex="4">{ seatmap.name }</Column>
-                                            <Column flex="5">{ seatmap.description }</Column>
-                                            <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                        </SelectableRow>
-                                    )
-                                })
-                            }
+                            <TableHead border>
+                                <TableRow>
+                                    <TableCell as="th" consolas flex="4" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell as="th" flex="4" mobileFlex="4">Navn</TableCell>
+                                    <TableCell as="th" flex="5" mobileFlex="3">Beskrivelse</TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    seatmaps.map((seatmap) => {
+                                        return (
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
+                                                <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</TableCell>
+                                                <TableCell flex="4" mobileFlex="4">{ seatmap.name }</TableCell>
+                                                <TableCell flex="5" mobileFlex="3">{ seatmap.description }</TableCell>
+                                                <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                            </SelectableTableRow>
+                                        )
+                                    })
+                                }
+                            </TableBody>
                         </Table>
                     </InnerContainer>
                 </DashboardContent>

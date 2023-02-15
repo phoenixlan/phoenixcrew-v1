@@ -8,9 +8,9 @@ import { User, Agenda, getCurrentEvent, getEvent, getEvents } from '@phoenixlan/
 import { PageLoading } from "../../components/pageLoading"
 
 import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerColumn, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
 import { faEye, faEyeSlash, faMinus, faMinusCircle, faSlash, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { Column, IconContainer, InnerColumnCenter, SelectableRow, Table, TableHeader } from '../../components/table';
+import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead } from '../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams } from 'react-router-dom';
 
@@ -35,23 +35,23 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
 
     if (new Date(entry.time*1000) > (Date.now() - 5 * 60000)) {
         return (
-            <SelectableRow>
-                <Column flex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3">{ entry.title }</Column>
-                <Column flex="4">{ entry.description }</Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
-            </SelectableRow>
+            <SelectableTableRow>
+                <TableCell flex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                <TableCell flex="3">{ entry.title }</TableCell>
+                <TableCell flex="4">{ entry.description }</TableCell>
+                <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></TableCell>
+                <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></TableCell>
+            </SelectableTableRow>
         )
     } else {
         return (
-            <SelectableRow>
-                <Column flex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
-                <Column flex="4" color="rgb(150, 150, 150)">{ entry.description }</Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
-            </SelectableRow>
+            <SelectableTableRow>
+                <TableCell flex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                <TableCell flex="3" color="rgb(150, 150, 150)">{ entry.title }</TableCell>
+                <TableCell flex="4" color="rgb(150, 150, 150)">{ entry.description }</TableCell>
+                <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></TableCell>
+                <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></TableCell>
+            </SelectableTableRow>
         )
     }
 }

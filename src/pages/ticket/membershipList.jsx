@@ -5,7 +5,7 @@ import { getEventNewMembers, getCurrentEvent } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { dateOfBirthToAge } from "../../utils/user";
-import { Table, SelectableRow, Row, Column, TableHeader, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, Row, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 
@@ -40,37 +40,40 @@ export const MembershipList = () => {
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
-                    <InnerContainer>
+                    <InnerContainer mobileHide>
                         <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                     </InnerContainer>
                     <InnerContainer>
                         <Table>
-                            <TableHeader border>
-                                <Column flex="10" visible={!visibleUUID}>UUID</Column>
-                                <Column flex="6">Navn</Column>
-                                <Column flex="2">Alder</Column>
-                                <Column flex="4">Fødselsdato</Column>
-                                <Column flex="4">Telefonnummer</Column>
-                                <Column flex="5">Addresse</Column>
-                                <Column flex="2">Postnr.</Column>
-                                <Column center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
-                            </TableHeader>
+                            <TableHead border>
+                                <TableRow>
+                                    <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell as="th" flex="6" mobileFlex="3">Navn</TableCell>
+                                    <TableCell as="th" flex="2" mobileFlex="1">Alder</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Fødselsdato</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Telefonnummer</TableCell>
+                                    <TableCell as="th" flex="5" mobileHide>Addresse</TableCell>
+                                    <TableCell as="th" flex="2" mobileHide>Postnr.</TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    users.map((user) => (
+                                        <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}}>
+                                            <TableCell flex="10" mobileHide consolas visible={!visibleUUID}>{user.uuid}</TableCell>
+                                            <TableCell flex="6" mobileFlex="3">{user.firstname} {user.lastname}</TableCell>
+                                            <TableCell flex="2" mobileFlex="1">{dateOfBirthToAge(user.birthdate)}</TableCell>
+                                            <TableCell flex="4" mobileHide>{ new Date(user.birthdate).toLocaleString('no-NO', {year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                            <TableCell flex="4" mobileHide>{user.phone}</TableCell>
+                                            <TableCell flex="5" mobileHide>{user.address}</TableCell>
+                                            <TableCell flex="2" mobileHide>{user.postal_code}</TableCell>
+                                            <TableCell center flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                        </SelectableTableRow>
+                                    ))
+                                }
+                            </TableBody>
                         </Table>
-                        
-                        {
-                            users.map((user) => (
-                                <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}}>
-                                    <Column flex="10" consolas visible={!visibleUUID}>{user.uuid}</Column>
-                                    <Column flex="6">{user.firstname} {user.lastname}</Column>
-                                    <Column flex="2">{dateOfBirthToAge(user.birthdate)}</Column>
-                                    <Column flex="4">{ new Date(user.birthdate).toLocaleString('no-NO', {year: 'numeric', month: '2-digit', day: '2-digit'}) }</Column>
-                                    <Column flex="4">{user.phone}</Column>
-                                    <Column flex="5">{user.address}</Column>
-                                    <Column flex="2">{user.postal_code}</Column>
-                                    <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                </SelectableRow>
-                            ))
-                        }
                     </InnerContainer>
                 </DashboardContent>
             </>

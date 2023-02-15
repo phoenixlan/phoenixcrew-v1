@@ -1,33 +1,48 @@
 import React from "react";
 import styled from "styled-components";
 
-export const Table = styled.div`
+export const Table = styled.table`
     display: flex;
     flex-flow: column;
 `
-export const TableHeader = styled.div`
+export const TableHead = styled.thead`
     display: flex;
     font-size: 12px;
     font-weight: 500;
+    flex-flow: column;
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
     padding-bottom: 2px;
+    gap: 4px;
+`
+export const TableBody = styled.tbody`
+    display: flex;
+    flex-flow: column;
 `
 
-const StyledColumn = styled.div`
+const TableCellHeader = styled.th`
+`
+const TableCellData = styled.th` 
+`
+
+const StyledCell = styled.td`
     display: ${props => props.visible ? "none" : "flex"};
     padding: 4px 0;
     font-family: ${props => props.consolas ? "Consolas" : "inherit"};
     position: relative;
-    top: ${props => props.consolas ? "1px" : "0"};
+    top: ${props => props.consolas ? "0" : "0"};
     flex: ${props => props.flex ? props.flex : "1"};
     color: ${props => props.color ? props.color : "inherit"};
     text-align: ${props => props.center ? "center" : "left"};
     text-transform: ${props => props.uppercase ? "uppercase" : "inherit"};
-    min-width: 0;
-    flex-flow: 0%;
+    font-weight: 500;
     overflow: hidden;
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mobileHide ? "none" : ""};
+        flex: ${props => props.mobileFlex ? props.mobileFlex : "1"};
+    }
 `
-const ColumnNowrap = styled.div`
+const CellNowrap = styled.div`
     margin: auto;
     width: 100%;
     text-overflow: ellipsis;
@@ -35,13 +50,13 @@ const ColumnNowrap = styled.div`
     white-space: nowrap;
 `
 
-export const Column = (props) => {
+export const TableCell = (props) => {
     return(
-        <StyledColumn {...props}>
-            <ColumnNowrap center={props.center}>
+        <StyledCell {...props}>
+            <CellNowrap center={props.center}>
                 {props.children}
-            </ColumnNowrap>
-        </StyledColumn>
+            </CellNowrap>
+        </StyledCell>
     )
 }
 
@@ -57,18 +72,18 @@ export const InnerColumnCenter = styled.span`
 export const IconContainer = styled.span`
     color: rgb(40, 40, 40);
     position: relative;
-    bottom: 1px;
     margin: auto;
     width: 100%;
     text-align: center;
 `
 
-export const SelectableRow = styled.tr`
+export const SelectableTableRow = styled.tr`
     display: flex;
     flex-direction: row;
     flex-flow: row;
     flex-wrap: wrap;
-    height: 2em;
+    min-height: 2em;
+    gap: 4px;
 
     cursor: pointer;
     user-select: none;
@@ -84,9 +99,10 @@ export const TableRow = styled.tr`
     flex-direction: row;
     flex-flow: row;
     flex-wrap: wrap;
-    height: 2em;
-
+    min-height: 2em;
+    gap: 4px;
     color: inherit;
+    width: 100%;
 `
 
 export const Row = styled.tr`

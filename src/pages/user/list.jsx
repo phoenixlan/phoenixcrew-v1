@@ -4,7 +4,7 @@ import { User } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
-import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableBody, TableRow } from "../../components/table";
 import { dateOfBirthToAge } from '../../utils/user';
 import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 
@@ -38,34 +38,38 @@ export const UserList= () => {
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainer>
+                <InnerContainer mobileHide>
                     <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                 </InnerContainer>
 
                 <InnerContainer>
                     <Table>
-                        <TableHeader border>
-                            <Column flex="5" visible={!visibleUUID}>UUID</Column>
-                            <Column flex="3">Navn</Column>
-                            <Column flex="1">Alder</Column>
-                            <Column flex="2">Brukernavn</Column>
-                            <Column flex="3">Registrert</Column>
-                            <Column flex="0 24px" />
-                        </TableHeader>
-                        {
-                            users.map((user) => {
-                                return (
-                                    <SelectableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne" key={user.uuid}>
-                                        <Column consolas flex="5" visible={!visibleUUID}>{ user.uuid }</Column>
-                                        <Column flex="3">{ user.lastname + ", " + user.firstname }</Column>
-                                        <Column flex="1">{dateOfBirthToAge(user.birthdate)}</Column>
-                                        <Column flex="2">{ user.username }</Column>
-                                        <Column flex="3">{ new Date(user.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                                        <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                    </SelectableRow>
-                                )
-                            })
-                        }
+                        <TableHead border>
+                            <TableRow>
+                                <TableCell as="th" flex="5" visible={!visibleUUID}>UUID</TableCell>
+                                <TableCell as="th" flex="3" mobileFlex="3">Navn</TableCell>
+                                <TableCell as="th" flex="1" mobileFlex="1">Alder</TableCell>
+                                <TableCell as="th" flex="2" mobileHide>Brukernavn</TableCell>
+                                <TableCell as="th" flex="3" mobileHide>Registrert</TableCell>
+                                <TableCell as="th" flex="0 24px" mobileHide/>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                users.map((user) => {
+                                    return (
+                                        <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne" key={user.uuid}>
+                                            <TableCell consolas flex="5" visible={!visibleUUID} mobileHide>{ user.uuid }</TableCell>
+                                            <TableCell flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</TableCell>
+                                            <TableCell flex="1" mobileFlex="1">{dateOfBirthToAge(user.birthdate)}</TableCell>
+                                            <TableCell flex="2" mobileHide>{ user.username }</TableCell>
+                                            <TableCell flex="3" mobileHide>{ new Date(user.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                            <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                        </SelectableTableRow>
+                                    )
+                                })
+                            }
+                        </TableBody>
                     </Table>
                 </InnerContainer>
             </DashboardContent>

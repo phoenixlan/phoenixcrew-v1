@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Crew } from "@phoenixlan/phoenix.js";
 
-import { Table, SelectableRow, Column, TableHeader, IconContainer } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow } from "../../components/table";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
@@ -28,56 +28,57 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     }
     
     return (
-        <SelectableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
-            <Column flex="3">{application.user.firstname} {application.user.lastname}</Column>
-            <Column flex="3"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></Column>
-            <Column flex="3">{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : (<b>Ingen</b>)}</Column>
-            <Column flex="3">{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : (<b>Ingen</b>)}</Column>
-            <Column flex="3">{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
+        <SelectableTableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
+            <TableCell flex="4" mobileFlex="3">{application.user.firstname} {application.user.lastname}</TableCell>
+            <TableCell flex="3" mobileFlex="2"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></TableCell>
+            <TableCell flex="3" mobileHide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : ("Ingen")}</TableCell>
+            <TableCell flex="3" mobileHide>{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : ("Ingen")}</TableCell>
+            <TableCell flex="3" mobileHide>{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
             {
                 showProcessedBy ? (
                     <>
-                        <Column flex="3">{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</Column>
-                        <Column flex="3">{stateToString(application.state)}</Column>
+                        <TableCell flex="4" mobileHide>{application.last_processed_by ? `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : "Ingen"}</TableCell>
+                        <TableCell flex="2" mobileHide>{stateToString(application.state)}</TableCell>
                     </>
                     ) : (
                     <>
-                        <Column flex="3" />
-                        <Column flex="3" />
+                        <TableCell flex="4" mobileHide />
+                        <TableCell flex="2" mobileHide />
                     </>
                     )
             }
-            <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-        </SelectableRow>
+            <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+        </SelectableTableRow>
     )
 }
 
 const ApplicationTable = ({ applications, showProcessedBy }) => {
     return (
         <Table>
-            <TableHeader border>
-                <Column flex="3">Navn</Column>
-                <Column flex="3">1. Valg</Column>
-                <Column flex="3">2. Valg</Column>
-                <Column flex="3">3. Valg</Column>
-                <Column flex="3">Søknadstid</Column>
-                {
-                    showProcessedBy ? (
-                        <>
-                            <Column flex="3">Behandler</Column>
-                            <Column flex="3">Status</Column>
-                        </>
-                    ) : (
-                        <>
-                            <Column flex="3" />
-                            <Column flex="3" />
-                        </>
-                    )
-                }
-                
-                <Column flex="0 24px"><IconContainer/></Column>
-    
-            </TableHeader>
+            <TableHead border>
+                <TableRow>
+                    <TableCell as="th" flex="4" mobileFlex="3">Navn</TableCell>
+                    <TableCell as="th" flex="3" mobileFlex="2">1. Valg</TableCell>
+                    <TableCell as="th" flex="3" mobileHide>2. Valg</TableCell>
+                    <TableCell as="th" flex="3" mobileHide>3. Valg</TableCell>
+                    <TableCell as="th" flex="3" mobileHide>Søknadstid</TableCell>
+                    {
+                        showProcessedBy ? (
+                            <>
+                                <TableCell as="th" flex="4" mobileHide>Behandler</TableCell>
+                                <TableCell as="th" flex="2" mobileHide>Status</TableCell>
+                            </>
+                        ) : (
+                            <>
+                                <TableCell as="th" flex="4" mobileHide />
+                                <TableCell as="th" flex="2" mobileHide />
+                            </>
+                        )
+                    }
+                    
+                    <TableCell as="th" flex="0 24px" mobileHide><IconContainer/></TableCell>
+                </TableRow>
+            </TableHead>
             <tbody>
             {
                 applications.map((application) => <ApplicationTableEntry showProcessedBy={showProcessedBy} application={application}/>)
@@ -132,7 +133,7 @@ export const ListApplications = (props) => {
             </DashboardBarSelector>
 
             <DashboardContent visible={activeContent == 1}>
-                <InnerContainer>
+                <InnerContainer mobileRowGap="4px">
                     Sorter søknader etter:
                     <InputContainer>
                         <InputElement name="1" type="radio" checked={sortingMethodActive === 1} onClick={() => setSortingMethodActive(1)} />
@@ -160,7 +161,7 @@ export const ListApplications = (props) => {
             </DashboardContent>
 
             <DashboardContent visible={activeContent == 2}>
-                <InnerContainer>
+                <InnerContainer mobileRowGap="4px">
                     Sorter søknader etter:
                     <InputContainer>
                         <InputElement name="2" type="radio" checked={sortingMethodArchive == 1} onClick={() => setSortingMethodArchive(1)} />

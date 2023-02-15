@@ -3,8 +3,7 @@ import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { faArrowRight, faCheck, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
-import { Table } from "@material-ui/core";
-import { Column, CrewColorBox, IconContainer, SelectableRow, TableHeader } from "../../components/table";
+import { Table, TableCell, CrewColorBox, IconContainer, SelectableTableRow, TableHead, TableRow } from "../../components/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 
@@ -41,22 +40,25 @@ export const CrewList= () => {
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainer>
+                <InnerContainer mobileHide>
                     <InputCheckbox label="Vis crew UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                 </InnerContainer>
 
                 <InnerContainer>
                     <Table>
-                        <TableHeader border>
-                            <Column flex="10" visible={!visibleUUID}>UUID</Column>
-                            <Column flex="0 42px">Farge</Column>
-                            <Column flex="6">Navn</Column>
-                            <Column flex="10">Beskrivelse</Column>
-                            <Column flex="3">Antall<br/>brukere</Column>
-                            <Column center flex="0 24px" title="Statusikon: Ikon vises om crewet kan søkes til eller ikke"><IconContainer>...</IconContainer></Column>
-                            <Column center flex="0 24px" title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>...</IconContainer></Column>
-                            <Column center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></Column>
-                        </TableHeader>
+                        <TableHead border>
+                            <TableRow>
+                                <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                <TableCell as="th" flex="0 42px" mobileHide>Farge</TableCell>
+                                <TableCell as="th" flex="6" mobileFlex="3">Navn</TableCell>
+                                <TableCell as="th" flex="10" mobileHide>Beskrivelse</TableCell>
+                                <TableCell as="th" flex="3" mobileFlex="1">Antall<br/>brukere</TableCell>
+                                <TableCell as="th" center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet kan søkes til eller ikke"><IconContainer>...</IconContainer></TableCell>
+                                <TableCell as="th" center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet er aktivt eller ikke."><IconContainer>...</IconContainer></TableCell>
+                                <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                            </TableRow>
+                        </TableHead>
+                    
                         {
                             crews.map((crew) => {
                                 const crewMembersMap = new Map();
@@ -71,18 +73,19 @@ export const CrewList= () => {
                                 const crewMembers = Array.from(crewMembersMap.values());
 
                                 return (
-                                <SelectableRow onClick={e => {history.push(`/crew/${crew.uuid}`)}} active={!crew.active}>
-                                    <Column consolas flex="10" visible={!visibleUUID}>{ crew.uuid }</Column>
-                                    <Column flex="0 42px"><CrewColorBox hex={crew.hex_color} /></Column>
-                                    <Column flex="6">{ crew.name }</Column>
-                                    <Column flex="10">{ crew.description }</Column>
-                                    <Column flex="3">{ crewMembers.length }</Column>
-                                    <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></Column>
-                                    <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></Column>
-                                    <Column center flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                </SelectableRow>)
+                                    <SelectableTableRow onClick={e => {history.push(`/crew/${crew.uuid}`)}} active={!crew.active}>
+                                        <TableCell consolas flex="10" mobileHide visible={!visibleUUID}>{ crew.uuid }</TableCell>
+                                        <TableCell flex="0 42px" mobileHide><CrewColorBox hex={crew.hex_color} /></TableCell>
+                                        <TableCell flex="6" mobileFlex="3">{ crew.name }</TableCell>
+                                        <TableCell flex="10" mobileHide>{ crew.description }</TableCell>
+                                        <TableCell flex="3" mobileFlex="1">{ crewMembers.length }</TableCell>
+                                        <TableCell center flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={crew.is_applyable ? faUserPlus : ""} /></IconContainer></TableCell>
+                                        <TableCell center flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={crew.active ? faCheck : ""}/></IconContainer></TableCell>
+                                        <TableCell center flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                    </SelectableTableRow>
+                                )
                             })
-                        }
+                        } 
                     </Table>
                 </InnerContainer>
             </DashboardContent>

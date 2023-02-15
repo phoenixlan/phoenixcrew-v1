@@ -1,8 +1,8 @@
-import React , { useEffect, useState } from "react";
+import React , { useEffect, useRef, useState } from "react";
 
 import { Position, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 
-import { Column, IconContainer, SelectableRow, Table, TableHeader } from '../../components/table';
+import { TableCell, IconContainer, SelectableTableRow, Table, TableBody, TableHead, TableRow } from '../../components/table';
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from '../../components/dashboard';
 import { PageLoading } from "../../components/pageLoading"
 
@@ -59,45 +59,61 @@ export const PositionList = () => {
                         Stillinger er hvordan brukere tilhører crew, og hvordan brukere får rettigheter på nettsidene til Phoenix.<br />
                         En bruker kan ha flere stillinger og trenger ikke å bety at man tilhører et crew.
                     </InnerContainer>
-                    <InnerContainer>
+                    <InnerContainer mobileHide>
                         <InputCheckbox label="Vis stilling UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                     </InnerContainer>
     
                     <InnerContainer>
                         <Table>
-                            <TableHeader border>
-                                <Column flex="9" visible={!visibleUUID}>UUID</Column>
-                                <Column flex="4">Tilknyttet <br/>crew</Column>
-                                <Column flex="9">Navn</Column>
-                                <Column flex="2">Type</Column>
-                                <Column flex="2">Antall <b>aktive</b><br/>brukere</Column>
-                                <Column flex="2">Antall <br/>rettigheter</Column>
-                                <Column flex="0 24px" />
-                            </TableHeader>
-                            {
-                                roles.map((role) => {
-                                    const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
-                                    const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
-    
-    
-                                    let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} i ` : " ") + (roleCrew?.name ?? "Ukjent crew");
-                                    if(role.name) {
-                                        name = `${role.name}${roleCrew ? " (" + name + ")":""}`
-                                    }
-    
-                                    return (
-                                        <SelectableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}}>
-                                            <Column consolas flex="9" visible={!visibleUUID}>{role.uuid}</Column>
-                                            <Column flex="4">{(roleCrew?.name ?? "-")}</Column>
-                                            <Column flex="9">{name}</Column>
-                                            <Column flex="2">{role.name ? "Custom" : "System"}</Column>
-                                            <Column flex="2">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</Column>
-                                            <Column flex="2">{role.permissions.length}</Column>
-                                            <Column flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></Column>
-                                        </SelectableRow>
-                                    )
-                                })
-                            }
+                            <TableHead border>
+                                <TableRow>
+                                    <TableCell as="th" flex="9" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Tilknyttet <br/>crew</TableCell>
+                                    <TableCell as="th" flex="9" mobileFlex="3">Navn</TableCell>
+                                    <TableCell as="th" flex="2" mobileHide>Type</TableCell>
+                                    <TableCell as="th" flex="2" mobileFlex="1">Aktive <br/>brukere</TableCell>
+                                    <TableCell as="th" flex="2" mobileHide>Antall <br/>rettigheter</TableCell>
+                                    <TableCell as="th" flex="0 24px" mobileHide />
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>            
+                                {
+                                    roles
+                                    .map((role) => {
+                                        const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
+                                        const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
+        
+        
+                                        let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} i ` : " ") + (roleCrew?.name ?? "Ukjent crew");
+                                        if(role.name) {
+                                            name = `${role.name}${roleCrew ? " (" + name + ")":""}`
+                                        }
+        
+                                        
+                                        return (
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}} key={role.uuid}>
+                                                <TableCell mobileHide consolas flex="9" visible={!visibleUUID}>{role.uuid}</TableCell>
+                                                <TableCell flex="4" mobileHide>{(roleCrew?.name ?? "-")}</TableCell>
+                                                <TableCell flex="9" mobileFlex="3">{name}</TableCell>
+                                                <TableCell flex="2" mobileHide>{role.name ? "Custom" : "System"}</TableCell>
+                                                <TableCell flex="2" mobileFlex="1">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</TableCell>
+                                                <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
+                                                <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                            </SelectableTableRow>
+                                        )
+                                    })
+                                    .sort((a, b) => {
+                                        const crewNameA = a.props.children[1].props.children;
+                                        const crewNameB = b.props.children[1].props.children;
+                                        
+                                        if (crewNameA < crewNameB) {
+                                            return -1;
+                                        } else {
+                                            return 1;
+                                        }
+                                    })
+                                }
+                            </TableBody>
                         </Table>
                     </InnerContainer>
                 </DashboardContent>

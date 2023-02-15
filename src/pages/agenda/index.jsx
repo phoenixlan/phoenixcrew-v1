@@ -8,7 +8,7 @@ import { PageLoading } from "../../components/pageLoading"
 import { FormInput } from '../../components/form';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
 import { faEye, faEyeSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Column, IconContainer, InnerColumnCenter, SelectableRow, Table, TableHeader } from '../../components/table';
+import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead, TableRow, TableBody } from '../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -22,23 +22,23 @@ const AgendaEntry = ({ entry, reloadAgendaList }) => {
 
     if (new Date(entry.time*1000) > (Date.now() - 5 * 60000)) {
         return (
-            <SelectableRow>
-                <Column flex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3">{ entry.title }</Column>
-                <Column flex="4">{ entry.description }</Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
-            </SelectableRow>
+            <SelectableTableRow>
+                <TableCell flex="2" mobileFlex="2">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                <TableCell flex="3" mobileFlex="3">{ entry.title }</TableCell>
+                <TableCell flex="4" mobileHide>{ entry.description }</TableCell>
+                <TableCell flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEye} title="Elementet er innenfor tidsrommet til hva skjermen skal vise, og vises" /></IconContainer></TableCell>
+                <TableCell flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></TableCell>
+            </SelectableTableRow>
         )
     } else {
         return (
-            <SelectableRow>
-                <Column flex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</Column>
-                <Column flex="3" color="rgb(150, 150, 150)">{ entry.title }</Column>
-                <Column flex="4" color="rgb(150, 150, 150)">{ entry.description }</Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></Column>
-                <Column flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></Column>
-            </SelectableRow>
+            <SelectableTableRow>
+                <TableCell flex="2" mobileFlex="2" color="rgb(150, 150, 150)">{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
+                <TableCell flex="3" mobileFlex="3" color="rgb(150, 150, 150)">{ entry.title }</TableCell>
+                <TableCell flex="4" mobileHide color="rgb(150, 150, 150)">{ entry.description }</TableCell>
+                <TableCell flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faEyeSlash} title="Elementet er utenfor tidsrommet til hva skjermen skal vise, og er skjult" /></IconContainer></TableCell>
+                <TableCell flex="0 24px" mobileFlex="0 24px" center><IconContainer><FontAwesomeIcon icon={faTrash} onClick={deleteEntry} title="Trykk for å slette elementet" /></IconContainer></TableCell>
+            </SelectableTableRow>
         )
     }
 }
@@ -102,14 +102,18 @@ export const AgendaList = (props) => {
 
                 <DashboardContent visible={activeContent == 1}>
                     <InnerContainer>
-                        <InnerContainerTitle>
-                            Opprett et nytt agenda element
-                        </InnerContainerTitle>
+                        Agenda systemet er hvordan vi publiserer når ting skjer til deltakerne under arrangementet.<br />
+                        Under har du mulighet til å legge inn dato, tid, navn og beskrivelse for noe som skal skje iløpetav LANet.<br /><br />
 
-                        <InnerContainerRow>
-                            <InnerContainer flex="1">
-                                <form onSubmit={handleSubmit(onSubmit)}>
-                                    <>
+                        Denne informasjonen vises på infoskjermene som blir satt opp. Benytt "Infoskjerm visning" for å se hvordan infoskjermen ser ut nå.
+                    </InnerContainer>
+
+                    <InnerContainer>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <InnerContainerTitle>Opprett et nytt agenda element</InnerContainerTitle>
+                            <InnerContainerRow>
+                                <InnerContainer flex="1">
+                                    
                                         <InputContainer column extramargin>
                                             <InputLabel small>Tittel</InputLabel>
                                             <InputElement type="text" {...register("title")} />
@@ -119,36 +123,41 @@ export const AgendaList = (props) => {
                                             <InputLabel small>Beskrivelse</InputLabel>
                                             <InputElement type="text" {...register("description")} />
                                         </InputContainer>
+
                                         <InputContainer column extramargin>
                                             <InputLabel small>Tidspunkt</InputLabel>
                                             <InputElement type="datetime-local" {...register("time")} />
                                         </InputContainer>
-                                    </>
-                                    <FormInput type="submit" name=''></FormInput>
-                                </form>
-                            </InnerContainer>
-                            <InnerContainer flex="2" />
-                        </InnerContainerRow>
+                                        <FormInput type="submit" name='' />
+                                    
+                                </InnerContainer>
+                                <InnerContainer flex="1" mobileHide />
+                                <InnerContainer flex="1" mobileHide />
+                            </InnerContainerRow>
+                        </form>
                     </InnerContainer>
 
                     <InnerContainer>
                         <Table>
-                            <TableHeader border>
-                                <Column flex="2">Tidspunkt</Column>
-                                <Column flex="3">Tittel</Column>
-                                <Column flex="4">Beskrivelse</Column>
-                                <Column center flex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></Column>
-                                <Column center flex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></Column>
-                            </TableHeader>
+                            <TableHead border>
+                                <TableRow>
+                                    <TableCell as="th" flex="2" mobileFlex="2">Tidspunkt</TableCell>
+                                    <TableCell as="th" flex="3" mobileFlex="3">Tittel</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Beskrivelse</TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileFlex="0 24px" title="Statusikon: Viser om elementet er synlig på infoskjermen eller ikke"><InnerColumnCenter>S</InnerColumnCenter></TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileFlex="0 24px" title="Funksjon: Fjerner elementet"><InnerColumnCenter>F</InnerColumnCenter></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    agendaList.map(entry => {
+                                        return (
+                                            <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
+                                        )
+                                    })
+                                }
+                            </TableBody>
                         </Table>
-
-                        {
-                            agendaList.map(entry => {
-                                return (
-                                    <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid}/>
-                                )
-                            })
-                        }
                     </InnerContainer>
                 </DashboardContent>
 
