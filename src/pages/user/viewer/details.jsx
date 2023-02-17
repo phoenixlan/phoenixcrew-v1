@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import styled from 'styled-components';
-import { User, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
-import { Table, TableCell, TableHead, SelectableTableRow, Row, IconContainer, TableRow, TableBody } from "../../../components/table";
+import { User } from "@phoenixlan/phoenix.js";
+import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox, InputContainer, InputLabel } from '../../../components/dashboard';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { position_mapping_to_string } from '../../../utils/user';
+import { InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel } from '../../../components/dashboard';
+
+import { Button } from "../../../components/button"
 
 const S = {
     Avatar: styled.img`
@@ -29,6 +29,18 @@ export const UserViewerDetails = ({ user }) => {
         setMembershipState(membershipState);
         setActivationState(activationState);
         setLoading(false);
+    }
+
+    const downloadCard = async () => {
+        const result = await User.getCrewCard(user.uuid);
+        const href = window.URL.createObjectURL(await result.blob());
+
+        const link = document.createElement('a');
+        link.href = href;
+        link.setAttribute('download', `card-${user.firstname}-${user.uuid}.png`); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     useEffect(() => {
@@ -131,6 +143,9 @@ export const UserViewerDetails = ({ user }) => {
                         <InnerContainerTitle>Avatar</InnerContainerTitle>
                         <InnerContainer>
                             <S.Avatar src={user.avatar_urls.sd} />
+                        </InnerContainer>
+                        <InnerContainer>
+                            <Button color="lightgray" onClick={downloadCard}>Generer crewkort</Button>
                         </InnerContainer>
                     </InnerContainer>
                 </InnerContainerRow>

@@ -300,7 +300,7 @@ export const options = [
     {
         title: "Gruppeleder",
         icon: faUserFriends,
-        roles: ["chief", "admin"],
+        roles: ["chief", "admin", "crew_card_printer"],
         entries: [
             {
                 title: "Crew",
