@@ -83,12 +83,10 @@ export const PositionList = () => {
                                         const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
                                         const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
         
-        
                                         let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} i ` : " ") + (roleCrew?.name ?? "Ukjent crew");
                                         if(role.name) {
                                             name = `${role.name}${roleCrew ? " (" + name + ")":""}`
                                         }
-        
                                         
                                         return (
                                             <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}} key={role.uuid}>

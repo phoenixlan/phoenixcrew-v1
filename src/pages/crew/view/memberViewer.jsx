@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { PageLoading } from "../../../components/pageLoading"
 import { SimpleUserCard } from "../../../components/simpleUserCard";
 
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea, InputSelect, InnerContainerTitleS } from "../../../components/dashboard";
-import { Crew, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
+import { InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputLabel, InputSelect, InnerContainerTitleS } from "../../../components/dashboard";
+import { getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
 
 export const CrewViewMemberViewer = ({ crew }) => {
     const [ currentEvent, setCurrentEvent ] = useState();

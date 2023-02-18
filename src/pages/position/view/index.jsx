@@ -10,7 +10,6 @@ import { PositionPermissionList } from "./permissionList";
 
 
 export const ViewPosition = (props) => {
-
     const { uuid } = useParams();
     const [error, setError] = useState(false);
     const [position, setPosition] = useState([]);
