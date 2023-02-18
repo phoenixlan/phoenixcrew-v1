@@ -9,6 +9,7 @@ import { PageLoading } from "../../components/pageLoading";
 import { FormButton } from '../../components/form';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { TableLabels } from "./tableLabels";
 
 export const SeatmapList = () => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -17,6 +18,7 @@ export const SeatmapList = () => {
     const history = useHistory();
     const [loading, setLoading] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
+    const [printUuid, setPrintUuid] = useState(null);
 
     const loadSeatmaps = async () => {
         const seatmapList = await Seatmap.getSeatmaps();
@@ -62,7 +64,9 @@ export const SeatmapList = () => {
                         Setekart er hvordan brukere med billett kan reservere en plass på arrangementet.<br/>
                         Det inneholder en visuell/skjematisk plan av deltakerområdet med seteplasser som brukere kan reservere.
                     </InnerContainer>
-
+                    { printUuid ? (
+                        <TableLabels ref={printRef} uuid={printUuid}/>
+                    ) : null}
                     <InnerContainer>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <InnerContainerTitle>
@@ -105,12 +109,24 @@ export const SeatmapList = () => {
                                 {
                                     seatmaps.map((seatmap) => {
                                         return (
-                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
-                                                <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</TableCell>
-                                                <TableCell flex="4" mobileFlex="4">{ seatmap.name }</TableCell>
-                                                <TableCell flex="5" mobileFlex="3">{ seatmap.description }</TableCell>
-                                                <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
-                                            </SelectableTableRow>
+                                            <>
+                                                <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
+                                                    <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</TableCell>
+                                                    <TableCell flex="4" mobileFlex="4">{ seatmap.name }</TableCell>
+                                                    <TableCell flex="5" mobileFlex="3">{ seatmap.description }</TableCell>
+                                                    <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                                </SelectableTableRow>
+                                                <SelectableTableRow title="Trykk for å printe" onClick={e => {
+                                                    setPrintUuid(seatmap.uuid); 
+                                                    handlePrint(); 
+                                                    }}
+                                                >
+                                                    <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</TableCell>
+                                                    <TableCell flex="4" mobileFlex="4">{ seatmap.name }(Printeknapp lol)</TableCell>
+                                                    <TableCell flex="5" mobileFlex="3">{ seatmap.description }</TableCell>
+                                                    <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                                </SelectableTableRow>
+                                            </>
                                         )
                                     })
                                 }
