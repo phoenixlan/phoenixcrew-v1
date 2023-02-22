@@ -9,6 +9,9 @@ export const mobileContext = React.createContext({})
 export const MobileNavigation = () => {
 
     const [ showSidebar, setShowSidebar ] = useState(false);
+    const toTop = () => {
+        window.scroll(0, 0);
+    }
 
     let history = useHistory();
     const auth = useContext(AuthenticationContext);
@@ -23,7 +26,7 @@ export const MobileNavigation = () => {
                 </InnerContainerRow>
             </NavigationContainer>
             <Navigation visible={showSidebar} >
-                <mobileContext.Provider value={{setShowSidebar}}>
+                <mobileContext.Provider value={{setShowSidebar, toTop}}>
                     <Sidebar />
                 </mobileContext.Provider>
             </Navigation>
