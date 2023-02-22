@@ -34,7 +34,6 @@ const S = {
                 margin-top: 60px;
                 width: 100%;
                 padding: 0px;
-                height: calc(100% + 180px);
             }
         `
 }
