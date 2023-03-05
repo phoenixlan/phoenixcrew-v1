@@ -7,7 +7,7 @@ import Logo from "../assets/phoenixlan_square_logo.png";
 
 import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
 export const CategoryContext = React.createContext({});
 
@@ -382,6 +382,8 @@ export const Sidebar = () => {
     const [searchText, setSearchText] = useState("");
     const searchTextLower = searchText.toLowerCase();
 
+    let history = useHistory();
+
     const onSearchUpdate = (event) => {
         setSearchText(event.target.value);
     }
@@ -422,7 +424,7 @@ export const Sidebar = () => {
         const menu = useContext(mobileContext);
         return entry.entries.map(innerEntry => {
             return (
-                <SidebarButton key={innerEntry.title} to={innerEntry.url} onClick={() => {menu.toTop(); menu.setShowSidebar(false)}}>
+                <SidebarButton key={innerEntry.title} onClick={() => {history.push(innerEntry.url); menu.setShowSidebar(false)}}>
                     <S.IconContainer>
                         <S.IconInnerContainer>
                             <FontAwesomeIcon icon={innerEntry.icon} />
