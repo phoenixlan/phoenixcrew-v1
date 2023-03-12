@@ -16,11 +16,39 @@ const colors = {
 
 const S = {
     FlexBarRootContainer: styled.div`
-        flex-flow: row;
+        flex-flow: column;
         display: flex;
         width: 100%;
-        height: 2em;
+        
     `,
+        BarElementContainer: styled.div`
+            display: flex;
+            width: 100%;
+            height: 2em;
+        `,
+        BarElementInfoContainer: styled.div`
+            display: flex;
+            flex-flow: column;
+            margin: 1em 0;
+            width: 100%;
+        `,
+            InfoContainer: styled.div`
+                display: flex;
+                flex-flow: row;
+                height: 1.35em;
+            `,
+                BarElementColorIcon: styled.div`
+                    border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
+                    background-color: ${props => colors[props.color]?.background || colors["gray"].background};
+                    width: 1em;
+                    height: 1em;
+                    margin: auto 1em auto 0;
+                `,
+                BarElementInfoTitle: styled.span`
+                    font-size: 1em;
+                    margin: auto 0;
+                    vertical-align: center;
+                `,
 
     ElementRootContainer: styled.div`
         background-color: ${props => colors[props.color]?.background || colors["gray"].background};
@@ -71,15 +99,14 @@ const S = {
 export const BarElement = (props) => {
     const [ toolTipState, setToolTipState ] = useState(false);
 
+    const tooltip = props.tooltip;
     const color = props.color;
     const width = props.width;
-    const tooltip = props.tooltip;
-
-
-
+    const title = props.title;
+    
     return (
         <>
-            <S.ElementRootContainer color={color} width={width} onMouseEnter={() => setToolTipState(true)} onMouseLeave={() => setToolTipState(false)}>
+            <S.ElementRootContainer color={color} width={width} title={title} onMouseEnter={() => setToolTipState(true)} onMouseLeave={() => setToolTipState(false)}>
                 <S.ToolTipRoot visible={toolTipState}>
                     <S.ToolTipContainer>
                         <S.ToolTipText>
@@ -93,11 +120,27 @@ export const BarElement = (props) => {
 }
 
 export const FlexBar = ({children}) => {
-
     return (
         <>
             <S.FlexBarRootContainer>
-                {children}
+                <S.BarElementContainer>
+                    {children}
+                </S.BarElementContainer>
+                <S.BarElementInfoContainer>
+                    {
+                        children.filter(element => element.props.title && element.props.width).map((element) => {
+                            return (
+                                <S.InfoContainer>
+                                    <S.BarElementColorIcon color={element.props.color} />
+                                    <S.BarElementInfoTitle>
+                                        {element.props.title}
+                                    </S.BarElementInfoTitle>
+                                </S.InfoContainer>
+                            )
+                        })
+                    }
+                    
+                </S.BarElementInfoContainer>
             </S.FlexBarRootContainer>
         </>
     )
