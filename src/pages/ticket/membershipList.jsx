@@ -1,27 +1,52 @@
 
 import React, { useState, useEffect } from "react"
 import { useHistory } from 'react-router-dom';
-import { getEventNewMembers, getCurrentEvent } from "@phoenixlan/phoenix.js";
+import { getEventNewMembers, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { dateOfBirthToAge } from "../../utils/user";
 import { Table, SelectableTableRow, Row, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { InnerContainerRow, InputContainer, InputLabel, InputSelect, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 
 export const MembershipList = () => {
     const [ users, setUsers] = useState([]);
+    const [ currentEvent, setCurrentEvent ] = useState();
+    const [ events, setEvents ] = useState();
     const [ loading, setLoading ] = useState(true);
-    const [visibleUUID, setVisibleUUID] = useState(false);
+    const [ visibleUUID, setVisibleUUID ] = useState(false);
     
     let history = useHistory();
 
-    useEffect(async () => {
-        const event = await getCurrentEvent();
-        const users = await getEventNewMembers(event.uuid);
+    const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
+
+    const updateViewingEvent = (event) => {
+        console.log("Viewing event update")
+        setCurrentViewingEvent(event.target.value)
+    }
+
+    const load = async () => {
+        setLoading(true);
+        const [ currentEvent, events ] = await Promise.all([
+            getCurrentEvent(),
+            getEvents()
+        ])
+        setCurrentEvent(currentEvent)
+        const lookupEvent = (currentViewingEvent) ?? currentEvent.uuid;
+        console.log("Lookup event: " + lookupEvent + `(${currentViewingEvent})`)
+
+        const users = await getEventNewMembers(lookupEvent);
         setUsers(users)
+        if(!currentViewingEvent) {
+            setCurrentViewingEvent(currentEvent.uuid);
+        }
+        setEvents(events)
         setLoading(false)
-    }, []);
+    }
+
+    useEffect(async () => {
+        await load();
+    }, [currentViewingEvent]);
 
     if(loading) {
         return (
@@ -40,6 +65,24 @@ export const MembershipList = () => {
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
+                    <InnerContainer extramargin border>
+                        <InnerContainerRow nopadding>
+                            <InnerContainer flex="1">
+                                <InnerContainerRow nopadding nowrap>
+                                    <InputContainer column mobileNoMargin>
+                                        <InputLabel small>Arrangement</InputLabel>
+                                        <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                                            {
+                                                events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
+                                            }
+                                        </InputSelect>
+                                    </InputContainer>
+                                </InnerContainerRow>
+                            </InnerContainer>
+                            <InnerContainer flex="1" mobileHide />
+                            <InnerContainer flex="1" mobileHide />
+                        </InnerContainerRow>
+                    </InnerContainer>
                     <InnerContainer mobileHide>
                         <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                     </InnerContainer>
