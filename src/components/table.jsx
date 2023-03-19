@@ -17,6 +17,7 @@ export const TableHead = styled.thead`
 export const TableBody = styled.tbody`
     display: flex;
     flex-flow: column;
+    flex: 1;
 `
 
 const TableCellHeader = styled.th`
@@ -26,7 +27,7 @@ const TableCellData = styled.th`
 
 const StyledCell = styled.td`
     display: ${props => props.visible ? "none" : "flex"};
-    padding: 4px 0;
+    padding: ${props => props.nopadding ? "0" : "4px 0"};
     font-family: ${props => props.consolas ? "Consolas" : "inherit"};
     position: relative;
     top: ${props => props.consolas ? "0" : "0"};
@@ -103,6 +104,10 @@ export const TableRow = styled.tr`
     gap: 4px;
     color: inherit;
     width: 100%;
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mobileHide ? "none" : ""};
+    }
 `
 
 export const Row = styled.tr`

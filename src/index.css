@@ -41,3 +41,7 @@ code {
   font-family: "PhoenixTitle";
   src: url("/public/no_continue.ttf") format("truetype");
 }
+
+td {
+  padding: 0;
+}

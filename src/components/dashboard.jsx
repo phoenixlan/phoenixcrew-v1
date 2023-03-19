@@ -97,6 +97,14 @@ export const InnerContainerRow = styled.div`
         row-gap: ${props => props.mobileNoGap ? "" : "16px"};
     }
 `
+
+export const InnerContainerTable = styled.table`
+    display: flex;
+`
+export const InnerContainerTableBody = styled.tbody`
+    margin: 0;
+    border-spacing: 0;
+`
 export const InnerContainerTitleL = styled.h1`    
     font-size: 18px;
     padding-bottom: ${props => props.nopadding ? "0px" : "6px"};
