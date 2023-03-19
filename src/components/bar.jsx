@@ -31,23 +31,22 @@ const S = {
             flex-flow: column;
             margin: 1em 0;
             width: 100%;
+            gap: .1em;
         `,
             InfoContainer: styled.div`
                 display: flex;
                 flex-flow: row;
-                height: 1.35em;
+                height: max-content;
+                gap: 1em;
             `,
                 BarElementColorIcon: styled.div`
                     border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
                     background-color: ${props => colors[props.color]?.background || colors["gray"].background};
                     width: 1em;
                     height: 1em;
-                    margin: auto 1em auto 0;
                 `,
                 BarElementInfoTitle: styled.span`
                     font-size: 1em;
-                    margin: auto 0;
-                    vertical-align: center;
                 `,
 
     ElementRootContainer: styled.div`
@@ -59,62 +58,16 @@ const S = {
             background-color: red;
         }
     `,
-
-    ToolTipRoot: styled.div`
-        display: ${props => props.visible ? "block" : "none"};
-        position: relative;
-        z-index: 1000;
-    `,
-        ToolTipContainer: styled.div`
-            display: block;
-            position: absolute;
-            top: 2.5em;
-            width: max-content;
-            padding: .5em 2em;
-            margin: 0 auto;
-            background-color: rgb(235, 235, 235);
-            border: 1px solid rgb(215, 215, 215);
-            text-align: left;
-            white-space: pre;
-            z-index: 1000;
-
-            @media screen and (max-width: 480px) {
-            }
-        `,
-        ToolTipArrow: styled.div`
-            height: 0!important;
-            width: 0!important;
-            position: absolute;
-            left: .1em;
-            top: 2.4em;
-            border-color: transparent transparent rgb(235, 235, 235) rgb(235, 235, 235);
-            border-width: .5em;
-            border-style: solid;
-            z-index: 1000;
-        `,
-            ToolTipText: styled.span`
-            `
 }
 
 export const BarElement = (props) => {
-    const [ toolTipState, setToolTipState ] = useState(false);
-
-    const tooltip = props.tooltip;
     const color = props.color;
     const width = props.width;
     const title = props.title;
     
     return (
         <>
-            <S.ElementRootContainer color={color} width={width} title={title} onMouseEnter={() => setToolTipState(true)} onMouseLeave={() => setToolTipState(false)}>
-                <S.ToolTipRoot visible={toolTipState}>
-                    <S.ToolTipContainer>
-                        <S.ToolTipText>
-                            {tooltip}
-                        </S.ToolTipText>
-                    </S.ToolTipContainer>
-                </S.ToolTipRoot>
-            </S.ElementRootContainer>
+            <S.ElementRootContainer color={color} width={width} title={title} />
         </>
     )
 }
@@ -139,7 +92,6 @@ export const FlexBar = ({children}) => {
                             )
                         })
                     }
-                    
                 </S.BarElementInfoContainer>
             </S.FlexBarRootContainer>
         </>
