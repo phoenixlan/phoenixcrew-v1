@@ -438,7 +438,7 @@ export const Sidebar = () => {
     }
 
     const getFittingPosition = (mappings) => {
-        const named = mappings.filter(mapping => !!mapping.position.name)
+        const named = mappings.filter(mapping => !!mapping.position.name);
         if(named.length > 0) {
             return named[0].position.name
         }
