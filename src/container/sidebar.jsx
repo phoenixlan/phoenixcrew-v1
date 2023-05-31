@@ -5,7 +5,7 @@ import { AuthenticationContext } from '../components/authentication';
 import { SidebarButton } from "./sidebarButton";
 import Logo from "../assets/phoenixlan_square_logo.png";
 
-import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
@@ -363,15 +363,15 @@ export const options = [
         roles: ["chief", "info_admin", "admin", "event_admin", "compo_admin"],
         entries: [
             {
-                title: "Agenda",
+                title: "Program",
                 icon: faCalendar,
-                url: "/agenda/"
+                url: "/information/agenda/"
             },
             {
                 title: "Send e-post",
                 icon: faEnvelope,
                 url: "/email/",
-            }
+            },
         ]
     }
 ]

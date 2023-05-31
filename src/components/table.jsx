@@ -11,12 +11,11 @@ export const TableHead = styled.thead`
     font-weight: 500;
     flex-flow: column;
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
-    padding-bottom: 2px;
     gap: 4px;
 `
 export const TableBody = styled.tbody`
     display: flex;
-    flex-flow: column;
+    flex-flow: ${props => props.columnReverse ? "column-reverse" : "column"};
     flex: 1;
 `
 
@@ -35,8 +34,9 @@ const StyledCell = styled.td`
     color: ${props => props.color ? props.color : "inherit"};
     text-align: ${props => props.center ? "center" : "left"};
     text-transform: ${props => props.uppercase ? "uppercase" : "inherit"};
-    font-weight: 500;
+    font-weight: 400;
     overflow: hidden;
+    background-color: ${props => props.fillGray ? "rgb(235, 235, 235)" : null};
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
@@ -71,20 +71,21 @@ export const InnerColumnCenter = styled.span`
     text-align: auto
 `
 export const IconContainer = styled.span`
-    color: rgb(40, 40, 40);
+    color: ${props => props.color ? props.color : "rgb(40, 40, 40)"};
     position: relative;
     margin: auto;
     width: 100%;
     text-align: center;
+    font-size: .75rem;
+    visibility: ${props => props.hidden ? "hidden" : "visible"};
 `
 
 export const SelectableTableRow = styled.tr`
     display: flex;
-    flex-direction: row;
     flex-flow: row;
     flex-wrap: wrap;
     min-height: 2em;
-    gap: 4px;
+    gap: .35rem;
 
     cursor: pointer;
     user-select: none;
@@ -100,8 +101,8 @@ export const TableRow = styled.tr`
     flex-direction: row;
     flex-flow: row;
     flex-wrap: wrap;
-    min-height: 2em;
-    gap: 4px;
+    min-height: 2.25em;
+    gap: .35rem;
     color: inherit;
     width: 100%;
 

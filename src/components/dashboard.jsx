@@ -65,6 +65,7 @@ export const DashboardContent = styled.div`
 `
 
 export const InnerContainer = styled.div`    
+    font-size: .85rem;
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
     flex-flow: column;
     flex: ${props => props.flex ? props.flex : "undefined"};
@@ -113,8 +114,8 @@ export const InnerContainerTitleL = styled.h1`
 `
 export const InnerContainerTitle = styled.h3`    
     font-size: 16px;
-    padding-bottom: ${props => props.nopadding ? "0px" : "6px"};
-    font-weight: 500;
+    padding-bottom: ${props => props.nopadding ? "0px" : ".55em"};
+    font-weight: 400;
     margin: 0;
 `
 export const InnerContainerTitleS = styled.h5`    

@@ -51,7 +51,6 @@ export const UserList= () => {
                                 <TableCell as="th" flex="1" mobileFlex="1">Alder</TableCell>
                                 <TableCell as="th" flex="2" mobileHide>Brukernavn</TableCell>
                                 <TableCell as="th" flex="3" mobileHide>Registrert</TableCell>
-                                <TableCell as="th" flex="0 24px" mobileHide/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -64,7 +63,6 @@ export const UserList= () => {
                                             <TableCell flex="1" mobileFlex="1">{dateOfBirthToAge(user.birthdate)}</TableCell>
                                             <TableCell flex="2" mobileHide>{ user.username }</TableCell>
                                             <TableCell flex="3" mobileHide>{ new Date(user.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
-                                            <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                         </SelectableTableRow>
                                     )
                                 })
