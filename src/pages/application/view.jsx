@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Crew } from "@phoenixlan/phoenix.js";
+import { Crew, getCurrentEvent, getEvent } from "@phoenixlan/phoenix.js";
+import { dateOfBirthToAge, position_mapping_to_string } from '../../utils/user';
 
 import { PageContainer } from "../../components/blocks"
 
@@ -61,10 +62,13 @@ const AnswerApplication = (props) => {
     </>)
 }
 
-export const ViewApplication = (props) => {
+export const ViewApplication = (props, {user}) => {
     const { uuid } = useParams();
     const [application, setApplication] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const [ currentEvent, setCurrentEvent ] = useState(null);
+    const [ positionMappings, setPositionMappings ] = useState([]);
 
     const reload = async () => {
         setLoading(true);
@@ -81,7 +85,7 @@ export const ViewApplication = (props) => {
         }
     }
 
-    useEffect(() => {
+    useEffect(async () => {
         reload().catch(e => {
             console.log(e);
         })
@@ -138,6 +142,12 @@ export const ViewApplication = (props) => {
                         </InnerContainer>
                         <InnerContainer flex="1">
                             <InnerContainerTitleL>Nåværende stillinger</InnerContainerTitleL>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <InnerContainerTitleL>Tidligere stillinger</InnerContainerTitleL>
                         </InnerContainer>
                     </InnerContainerRow>

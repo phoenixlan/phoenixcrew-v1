@@ -6,7 +6,7 @@ const S = {
         left: 0;
         top: 0;
         width: 100vw;
-        height: 80vh;
+        height: 100vh;
         z-index: 100000;
         display: flex;
     `,

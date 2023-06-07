@@ -154,6 +154,7 @@ export const InputContainer = styled.div`
     flex: ${props => props.flex ? props.flex : "1"};
     flex-flow: ${props => props.column ? "column" : "row"};
     margin-bottom: ${props => props.extramargin ? "18px" : "1px"};
+    column-gap: 1em;
 
     @media screen and (max-width: 480px) {
         margin-bottom: ${props => props.mobileNoMargin ? "0px" : "inherit"};
@@ -188,6 +189,12 @@ export const InputElement = styled.input`
         background-color: inherit;
         color: rgb(130, 130, 130);
         border-bottom: 1px solid rgb(170,170,170)!important;
+    }
+
+    &[type="checkbox"] {
+        position: relative;
+        bottom: 1px;
+        margin-right: .5em;
     }
 
     @media screen and (max-width: 480px) {
@@ -229,6 +236,11 @@ export const InputSelect = styled.select`
     &:focus {
         border-bottom: 1px solid rgb(255,75,157);
     }
+`
+
+export const InputButton = styled.button`
+    height: 2.5em;
+    width: 100%;
 `
 
 const IFrame = styled.iframe`

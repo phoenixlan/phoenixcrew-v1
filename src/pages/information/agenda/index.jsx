@@ -7,7 +7,7 @@ import { PageLoading } from "../../../components/pageLoading"
 
 import { FormInput } from '../../../components/form';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel } from '../../../components/dashboard';
-import { faEye, faEyeSlash, faTrash, faExternalLinkAlt, faThumbtack, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faTrash, faExternalLinkAlt, faThumbtack, faPlay, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead, TableRow, TableBody } from '../../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHistory } from 'react-router';
@@ -28,7 +28,7 @@ const AgendaEntry = ({ entry, reloadAgendaList, func}) => {
 
     return (
         <SelectableTableRow onClick={func}>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={new Date(entry.time*1000) < (Date.now() - 5 * 60000)} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer></TableCell>
+            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={new Date(entry.time*1000) < (Date.now() - 5 * 60000)} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={new Date(entry.time*1000) > (Date.now() - 5 * 60000)} color="#ef6c00"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
             <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!entry.sticky} color="#d32f2f"><FontAwesomeIcon icon={faThumbtack} title="Elementet er festet og vises øverst på infoskjermene." /></IconContainer></TableCell>
             <TableCell flex="0 1px"     mobileHide fillGray />
             <TableCell flex="2"         mobileFlex="3"      >{ entry.title }</TableCell>
