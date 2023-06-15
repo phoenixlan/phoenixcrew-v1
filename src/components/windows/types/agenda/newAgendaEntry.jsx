@@ -1,19 +1,23 @@
 import { useForm } from "react-hook-form";
-import { InnerContainer, InnerContainerRow, InputContainer, InputElement, InputLabel, LabelWarning } from "../../../dashboard"
-import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
+import { InnerContainer, InnerContainerRow, InputButton, InputContainer, InputElement, InputLabel, LabelWarning } from "../../../dashboard"
+import { Agenda, getCurrentEvent, User } from '@phoenixlan/phoenix.js'
 import { FormButton, FormInput } from "../../../form";
+import { useContext, useState } from "react";
+import { AuthenticationContext } from "../../../authentication";
 
 export const NewAgendaEntry = ({functions}) => {
 
-    console.log(functions);
+    const [ statePinned, setStatePinned ] 	= useState(false);
+
+    const user = useContext(AuthenticationContext);
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
-
     const onSubmit = async (data) => {
-        // Get current event so we can get its UUID
-        const event = await getCurrentEvent();
-        const dateUnixTime = new Date(data.time);
+        const currentUser = user.authUser.uuid;     // Get current user for logging
+        const dateUnixTime = new Date(data.time);   // 
+        const event = await getCurrentEvent();      // Get current event so we can get its UUID
 
-        if(!await Agenda.createAgendaEntry(data.title, data.description, event.uuid, dateUnixTime.getTime()/1000)) {
+        if(!await Agenda.createAgendaEntry(event.uuid, data.title, data.description, data.location, dateUnixTime.getTime()/1000, data.state_pinned, currentUser)) {
             console.log("fucked up")
         }
         functions.exitFunction();
@@ -33,22 +37,29 @@ export const NewAgendaEntry = ({functions}) => {
                         <InnerContainer flex="1">
                             <InputContainer column extramargin>
                                 <InputLabel small>Tittel</InputLabel>
-                                <InputElement type="text" {...register("title")} required />
+                                <InputElement {...register("title")} type="text" />
                             </InputContainer>
                             <InputContainer column extramargin>
                                 <InputLabel small>Beskrivelse</InputLabel>
-                                <InputElement type="text" {...register("description")} required />
+                                <InputElement {...register("description")} type="text" required />
                             </InputContainer>
                             <InputContainer column extramargin>
                                 <InputLabel small>Sted</InputLabel>
-                                <InputElement type="text" {...register("location")} />
+                                <InputElement {...register("location")} type="text"/>
                             </InputContainer>
                             <InputContainer column extramargin>
                                 <InputLabel small>Tidspunkt</InputLabel>
-                                <InputElement type="datetime-local" {...register("time")} required />
+                                <InputElement {...register("time")} type="datetime-local" required />
                             </InputContainer>
-
-                            <FormButton type="submit">Opprett!</FormButton>
+							<InputContainer>
+								<InputLabel small>Parametere</InputLabel>
+							</InputContainer>
+							<InputContainer extramargin>
+								<InputElement {...register("state_pinned")} type="checkbox" /> Festet oppføring
+							</InputContainer>
+							<InputContainer>
+								<InputButton type="submit" onClick={handleSubmit(onSubmit)}>Opprett oppføring</InputButton>
+							</InputContainer>
                         </InnerContainer>
                     </InnerContainer>
                 </InnerContainerRow>

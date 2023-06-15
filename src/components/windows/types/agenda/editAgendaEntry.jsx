@@ -9,31 +9,28 @@ export const EditAgendaEntry = ({functions, entries}) => {
     //const [ loading, setLoading ] = useState(false);
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
-    const [ title, setTitle ]						= useState(entries.title);
-    const [ description, setDescription ]			= useState(entries.description);
-    const [ location, setLocation ]					= useState(entries.newLocation);
-    const [ newLocation, setNewLocation ]			= useState(entries.newLocation);
-    const [ HTMLtime, setHTMLtime]					= useState(entries.time ? new Date(entries.time ? entries.time*1000+3600000 : null).toISOString().slice(0, 16) : null)
-    const [ newHTMLtime, setNewHTMLtime]			= useState(entries.newTime ? new Date(entries.newTime ? entries.newTime*1000+3600000 : null).toISOString().slice(0, 16) : null)
-    const [ modifyReason, setModifyReason ]			= useState(entries.modifyReason);
-    const [ sticky, setSticky ]						= useState(entries.sticky);
-    const [ noTime, setNoTime ]						= useState(entries.noTime);
-    const [ undefinedNewTime, setUndefinedNewTime ]	= useState(entries.undefinedNewTime);
-    const [ cancelled, setCancelled ]				= useState(entries.cancelled);
+    const [ title, setTitle ]											= useState(entries.title);
+    const [ description, setDescription ]								= useState(entries.description);
+    const [ time, setTime]												= useState(entries.time ? new Date(entries.time ? entries.time*1000+3600000 : null).toISOString().slice(0, 16) : null)
+    const [ location, setLocation ]										= useState(entries.location);
+	const [ deviatingTime, setDeviatingTime ]							= useState(entries.deviating_time ? new Date(entries.deviating_time ? entries.deviating_time*1000+3600000 : null).toISOString().slice(0, 16) : null);
+	const [ deviatingLocation, setDeviatingLocation ]					= useState(entries.deviating_location);
+	const [ deviatingInformation, setDeviatingInformation]				= useState(entries.deviating_information);
+	const [ statePinned, setStatePinned ] 								= useState(entries.state_pinned);
+	const [ stateDeviatingTimeUnknown, setStateDeviatingTimeUnknown ] 	= useState(entries.state_deviating_time_unknown);
+	const [ stateCancelled, setStateCancelled ] 						= useState(entries.state_cancelled);
 
     useEffect(() => {
     }, []);
 
-    
-
-    
-
     const onSubmit = async (data) => {
         // Get current event so we can get its UUID
-        const event = await getCurrentEvent();
-        const dateUnixTime = new Date(data.newTime);
+        const event = 					await getCurrentEvent();
 
-        if(!await Agenda.modifyAgendaEntry(data.uuid, data.title, data.description, event.uuid, data.newLocation, dateUnixTime.getTime()/1000, data.modifyReason, data.sticky)) {
+		const dateUnixTime 			= data.time ? new Date(data.time).getTime()/1000 : null;
+		const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : null;
+
+        if(!await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, data.location, dateUnixDeviatingTime, data.deviating_location, data.deviating_information, data.state_pinned, data.state_deviating_time_unknown, data.state_cancelled)) {
             console.log("fucked up")
         }
         
@@ -75,34 +72,34 @@ export const EditAgendaEntry = ({functions, entries}) => {
 								</InputContainer>
 								<InputContainer column extramargin>
 									<InputLabel small>Avvikende sted</InputLabel>
-									<InputElement {...register("newLocation")} type="text" value={newLocation} onChange={(e) => setNewLocation(e.target.value)} />
+									<InputElement {...register("deviating_location")} type="text" value={deviatingLocation} onChange={(e) => setDeviatingLocation(e.target.value)} />
 								</InputContainer>
 							</InnerContainerRow>
 							<InnerContainerRow nopadding nowrap>
 								<InputContainer column extramargin>
 									<InputLabel small>Tidspunkt</InputLabel>
-									<InputElement {...register("time")} type="datetime-local" value={HTMLtime??null} onChange={(e) => setHTMLtime(e.target.value)} />
+									<InputElement {...register("time")} type="datetime-local" value={time??null} onChange={(e) => setTime(e.target.value)} />
 								</InputContainer>
 								<InputContainer column extramargin>
 									<InputLabel small>Avvikende tidspunkt</InputLabel>
-									<InputElement {...register("newTime")} type="datetime-local" required value={newHTMLtime??null} onChange={(e) => setNewHTMLtime(e.target.value)} />
+									<InputElement {...register("deviating_time")} type="datetime-local" required value={deviatingTime??null} onChange={(e) => setDeviatingTime(e.target.value)} />
 								</InputContainer>
 							</InnerContainerRow>
 							<InputContainer column extramargin>
 								<InputLabel small>Informasjon om avvik</InputLabel>
-								<InputElement {...register("modifyReason")} type="text" value={modifyReason} onChange={(e) => setModifyReason(e.target.value)} />
+								<InputElement {...register("deviating_information")} type="text" value={deviatingInformation} onChange={(e) => setDeviatingInformation(e.target.value)} />
 							</InputContainer>
 							<InputContainer>
 								<InputLabel small>Parametere</InputLabel>
 							</InputContainer>
 							<InputContainer>
-								<InputElement {...register("sticky")} type="checkbox" checked={sticky} onChange={() => setSticky(!sticky)} /> Festet oppføring <span title="Fest oppføringen til toppen av infoskjermen">(?)</span>
+								<InputElement {...register("state_pinned")} type="checkbox" checked={statePinned} onChange={() => setStatePinned(!statePinned)} /> Festet oppføring <span title="Fest oppføringen til toppen av infoskjermen">(?)</span>
 							</InputContainer>
 							<InputContainer>
-								<InputElement {...register("undefinedNewTime")} type="checkbox" disabled={cancelled} checked={undefinedNewTime} onChange={() => setUndefinedNewTime(!undefinedNewTime)} /> Oppføring flyttet til ubestemt tidspunkt
+								<InputElement {...register("state_deviating_time_unknown")} type="checkbox" disabled={stateCancelled} checked={stateDeviatingTimeUnknown} onChange={() => setStateDeviatingTimeUnknown(!stateDeviatingTimeUnknown)} /> Oppføring flyttet til ubestemt tidspunkt
 							</InputContainer>
 							<InputContainer extramargin>
-								<InputElement {...register("cancelled")} type="checkbox" checked={cancelled} onChange={() => {setCancelled(!cancelled); setUndefinedNewTime(cancelled ? false : null)}} /> Avlys oppføring
+								<InputElement {...register("state_cancelled")} type="checkbox" checked={stateCancelled} onChange={() => {setStateCancelled(!stateCancelled); setStateDeviatingTimeUnknown(stateCancelled ? false : null)}} /> Avlys oppføring
 							</InputContainer>
 							<InputContainer>
 								<InputButton type="submit" onClick={handleSubmit(onSubmit)}>Endre</InputButton>

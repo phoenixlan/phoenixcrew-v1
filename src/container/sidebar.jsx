@@ -5,7 +5,7 @@ import { AuthenticationContext } from '../components/authentication';
 import { SidebarButton } from "./sidebarButton";
 import Logo from "../assets/phoenixlan_square_logo.png";
 
-import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote, faTicket } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
@@ -322,17 +322,17 @@ export const options = [
     },
     {
         title: "Billett administrasjon",
-        icon: faTicketAlt,
+        icon: faTicket,
         roles: ["ticket_admin", "admin", "ticket_checkin"],
         entries: [
             {
                 title: "Alle billetter",
-                icon: faTicketAlt,
+                icon: faTicket,
                 url: "/tickets/"
             },
             {
                 title: "Gratisbilletter",
-                icon: faTicketAlt,
+                icon: faTicket,
                 url: "/tickets/free"
             },
             {
@@ -342,12 +342,12 @@ export const options = [
             },
             {
                 title: "Medlemskap-info",
-                icon: faTicketAlt,
+                icon: faTicket,
                 url: "/tickets/memberships"
             },
             {
                 title: "Aktive kjøp",
-                icon: faTicketAlt,
+                icon: faTicket,
                 url: "/store_sessions"
             },
             {
@@ -424,7 +424,7 @@ export const Sidebar = () => {
         const menu = useContext(mobileContext);
         return entry.entries.map(innerEntry => {
             return (
-                <SidebarButton key={innerEntry.title} onClick={() => {history.push(innerEntry.url); menu.setShowSidebar(false)}}>
+                <SidebarButton key={innerEntry.title} onClick={() => {history.push(innerEntry.url);  menu.setShowSidebar(false)}}>
                     <S.IconContainer>
                         <S.IconInnerContainer>
                             <FontAwesomeIcon icon={innerEntry.icon} />
