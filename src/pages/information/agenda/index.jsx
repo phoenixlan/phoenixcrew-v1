@@ -40,47 +40,37 @@ const AgendaEntry = ({ entry, reloadAgendaList, func}) => {
 }
 
 
+
 export const AgendaList = (props) => {
+    const sortingMethods = {
+        TIME_ASC: (a, b) => a.time - b.time,
+        TIME_DESC: (a, b) => b.time - a.time,
+    }
+
     const [activeContent, setActiveContent] = useState(1);
     const [currentEvent, setCurrentEvent] = useState(undefined);
 
-    const [ window, setWindow ] = useState([]);
-
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const [sortingMethod, setSortingMethod] = useState(sortingMethods.TIME_ASC);
     const [agendaList, setAgendaList] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    const [inputDatetimeValue, setInputDatetimeValue ] = useState(  );
+    const [ window, setWindow ] = useState([]);    
+    const [loading, setLoading] = useState(true);
 
     const reloadAgendaList = async () => {
         setCurrentEvent(await getCurrentEvent());
-
-        const agendaList = await Agenda.getAgenda();
-        if(agendaList) {
-            console.log("Fetched applicationList:")
-            console.log(agendaList);
-
-            setAgendaList(agendaList);
+        const getAgendaList = await Agenda.getAgenda();
+        if(getAgendaList) {
+            const sortedList = [...getAgendaList].sort(sortingMethod);
+            setAgendaList(sortedList);
             setLoading(false);
         }
     }
-
     
     useEffect(async () => {
-        reloadAgendaList().catch(e => {
+        reloadAgendaList().catch((e) => {
             console.log(e);
         })
     }, []);
-
-    const onSubmit = async (data) => {
-        // Get current event so we can get its UUID
-        const event = await getCurrentEvent();
-        const dateUnixTime = new Date(data.time);
-        if(!await Agenda.createAgendaEntry(data.title, data.description, event.uuid, dateUnixTime.getTime()/1000)) {
-            console.log("fucked up")
-        }
-        await reloadAgendaList();
-    }
 
     const reload = async () => {
         await reloadAgendaList();
@@ -128,9 +118,9 @@ export const AgendaList = (props) => {
                                     <TableCell as="th" center   flex="0 1.3rem" mobileHide          title="Indikerer om elementet er synlig på infoskjermene eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
                                     <TableCell as="th" center   flex="0 1.3rem" mobileHide          title="Indikerer om elementet er festet øverst på infoskjermene eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
                                     <TableCell as="th"          flex="0 1px"    mobileHide fillGray />
-                                    <TableCell as="th"          flex="2"        mobileFlex="3"      >Tittel</TableCell>
+                                    <TableCell as="th"          flex="2"        mobileFlex="3"      onClick={() => setSortingMethod}>Tittel</TableCell>
                                     <TableCell as="th"          flex="3"        mobileHide          >Beskrivelse</TableCell>
-                                    <TableCell as="th"          flex="1"        mobileFlex="2"      >Tidspunkt</TableCell>
+                                    <TableCell as="th"          flex="1"        mobileFlex="2"      onClick={() => setSortingMethod(sortingMethods.TIME_DESC)}>Tidspunkt</TableCell>
                                     <TableCell as="th"          flex="1"        mobileFlex="2"      >Avvikende<br/>tidspunkt</TableCell>
                                 </TableRow>
                             </TableHead>
