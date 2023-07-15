@@ -161,6 +161,12 @@ export const InputContainer = styled.div`
         row-gap: 0px;
         display: ${props => props.mobileHide ? "none" : ""};
     }
+
+    ${props => props.disabled ? `
+        opacity: 0.6;
+        user-select: none;
+        pointer-events: none;
+    ` : null}
 `
 
 export const InputCheckbox = ({ label, value, onChange, disabled }) => {
