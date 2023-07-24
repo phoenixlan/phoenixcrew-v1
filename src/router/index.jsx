@@ -32,6 +32,7 @@ import { AgendaElementView } from '../pages/agenda/view';
 import { NotAvailable } from '../pages/notAvailable';
 import { ViewCrew } from '../pages/crew/view';
 import { EmailForm } from "../pages/utils/email";
+import { TicketVoucherManagement } from '../pages/ticket/ticketVoucherManagement';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -105,6 +106,9 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/tickets/free/">
                             <FreeTicketManagement />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/tickets/vouchers/">
+                            <TicketVoucherManagement/>
                         </PrivateRoute>
                         <PrivateRoute exact path="/ticket/:uuid/">
                             <NotAvailable />
