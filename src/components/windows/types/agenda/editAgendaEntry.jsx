@@ -31,7 +31,7 @@ export const EditAgendaEntry = ({functions, entries}) => {
 			the database has deviating information, if so, enable the fields on load.
 		*/
 		const onLoad_CheckDeviatingControl = () => {
-			if(deviatingTime || deviatingLocation || deviatingInformation) {
+			if(deviatingTime || deviatingLocation || deviatingInformation || stateDeviatingTimeUnknown) {
 				setStateDeviatingControl(true);
 			}
 		}
@@ -52,6 +52,21 @@ export const EditAgendaEntry = ({functions, entries}) => {
 			data.deviating_time = null;
 			data.deviating_location = null;
 			data.deviating_information = null;
+			data.state_deviating_time_unknown = false;
+		}
+
+		// If stateDeviatingTimeUnknown is set to true and no information has been set, set a default entry.
+		if(stateDeviatingTimeUnknown) {
+			if(!deviatingInformation) {
+				data.deviating_information = "Hendelsen har blitt forsinket, ny tid og informasjon kommer";
+			}
+		}
+
+		// If stateCancelled is set to true and no information has been set, set a default entry. 
+		if(stateCancelled) {
+			if(!deviatingInformation) {
+				data.deviating_information = "Hendelsen har blitt avlyst";
+			}
 		}
 
 		const currentUser 			= user.authUser.uuid; 
@@ -117,29 +132,29 @@ export const EditAgendaEntry = ({functions, entries}) => {
 									<InputLabel small>Tidspunkt</InputLabel>
 									<InputElement {...register("time")} type="datetime-local"value={time??null} onChange={(e) => setTime(e.target.value)} />
 								</InputContainer>
-								<InputContainer column extramargin disabled={!stateDeviatingControl}>
+								<InputContainer column extramargin disabled={!stateDeviatingControl || stateDeviatingTimeUnknown}>
 									<InputLabel small>Nytt tidspunkt</InputLabel>
 									<InputElement {...register("deviating_time")} type="datetime-local" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingTime??null} onChange={(e) => setDeviatingTime(e.target.value)} />
 								</InputContainer>
 							</InnerContainerRow>
 							<InputContainer column extramargin disabled={!stateDeviatingControl}> 
 								<InputLabel small>Begrunnelse for forsinkelse eller problem</InputLabel>
-								<InputElement {...register("deviating_information")} type="text" value={deviatingInformation} tabIndex={!stateDeviatingControl ? "-1" : undefined} onChange={(e) => setDeviatingInformation(e.target.value)} />
+								<InputElement {...register("deviating_information")} type="text" value={deviatingInformation} tabIndex={!stateDeviatingControl ? "-1" : undefined} onChange={(e) => setDeviatingInformation(e.target.value)} placeholder={stateCancelled ? "Hendelsen har blitt avlyst" : stateDeviatingTimeUnknown ? "Hendelsen har blitt forsinket, ny tid og informasjon kommer" : null}/>
 							</InputContainer>
 							<InputContainer>
 								<InputLabel small>Innstillinger</InputLabel>
 							</InputContainer>
 							<InputContainer>
-								<InputElement type="checkbox" checked={stateDeviatingControl} onChange={() => setStateDeviatingControl(!stateDeviatingControl)} /> Forsinket hendelse
-							</InputContainer>
-							<InputContainer>
 								<InputElement {...register("state_pinned")} type="checkbox" checked={statePinned} onChange={() => setStatePinned(!statePinned)} /> Festet hendelse <span title="Fest oppføringen til toppen av infoskjermen">(?)</span>
 							</InputContainer>
-							<InputContainer>
-								<InputElement {...register("state_deviating_time_unknown")} type="checkbox" disabled={stateCancelled} checked={stateDeviatingTimeUnknown} onChange={() => setStateDeviatingTimeUnknown(!stateDeviatingTimeUnknown)} />  Hendelse forsinket til ubestemt tidspunkt
+							<InputContainer disabled={stateCancelled}>
+								<InputElement type="checkbox" checked={stateDeviatingControl} onChange={() => setStateDeviatingControl(!stateDeviatingControl)} /> Forsinket hendelse
+							</InputContainer>
+							<InputContainer disabled={stateCancelled || !stateDeviatingControl}>
+								<InputElement {...register("state_deviating_time_unknown")} type="checkbox" tabIndex={stateCancelled ? "-1" : undefined} checked={stateDeviatingTimeUnknown} onChange={() => setStateDeviatingTimeUnknown(!stateDeviatingTimeUnknown)} />  Hendelse forsinket til ubestemt tidspunkt
 							</InputContainer>
 							<InputContainer extramargin>
-								<InputElement {...register("state_cancelled")} type="checkbox" checked={stateCancelled} onChange={() => {setStateCancelled(!stateCancelled); setStateDeviatingTimeUnknown(stateCancelled ? false : null)}} /> Avlys hendelse
+								<InputElement {...register("state_cancelled")} type="checkbox" checked={stateCancelled} onChange={() => {setStateCancelled(!stateCancelled); setStateDeviatingTimeUnknown(stateCancelled ? false : null); setDeviatingInformation("")}} /> Avlys hendelse
 							</InputContainer>
 							<InputContainer>
 								<InputButton type="submit" onClick={handleSubmit(onSubmit)}>Endre</InputButton>

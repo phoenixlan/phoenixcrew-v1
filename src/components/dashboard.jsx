@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
 
@@ -248,6 +249,46 @@ export const InputButton = styled.button`
     height: 2.5em;
     width: 100%;
 `
+
+const ButtonContainer = styled.button`
+    display: flex;
+    flex-flow: row;
+    height: 2rem;
+    width: fit-content;
+    font-size: .85rem;
+    padding: 0 1em;
+    border: 0;
+    cursor: pointer;
+    background-color: rgb(242, 242, 242);
+
+    &:active, :hover {
+        background-color: rgb(235, 235, 235);
+    }
+`
+const ButtonIcon = styled.span`
+    display: flex;
+    margin: auto;
+    position: relative;
+    bottom: 1px;
+    padding: 0 .5em;
+    font-size: 1rem;
+`
+const ButtonText = styled.span`
+    display: flex;
+    margin: auto;
+    padding: 0 .5em;
+`
+
+export const PanelButton = ({ onClick, icon, children }) => {
+    return (
+        <>
+            <ButtonContainer onClick={onClick}>
+                <ButtonIcon><FontAwesomeIcon icon={icon} /></ButtonIcon>
+                <ButtonText>{children}</ButtonText>
+            </ButtonContainer>
+        </>
+    )
+}
 
 const IFrame = styled.iframe`
     border: 1px solid rgb(235, 235, 235);

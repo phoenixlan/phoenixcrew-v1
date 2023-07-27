@@ -6,8 +6,8 @@ import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 import { PageLoading } from "../../../components/pageLoading"
 
 import { FormButton, FormInput } from '../../../components/form';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel } from '../../../components/dashboard';
-import { faEye, faEyeSlash, faTrash, faExternalLinkAlt, faThumbtack, faPlay, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { DashboardBarElement, DashboardBarSelector, DashboardButton, DashboardContent, DashboardHeader, DashboardTitle, IFrameContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, PanelButton } from '../../../components/dashboard';
+import { faEye, faEyeSlash, faTrash, faExternalLinkAlt, faThumbtack, faPlay, faMinus, faPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead, TableRow, TableBody, TableRowNewElement } from '../../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHistory } from 'react-router';
@@ -28,13 +28,15 @@ const AgendaEntry = ({ entry, reloadAgendaList, func}) => {
 
     return (
         <SelectableTableRow onClick={func}>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={(new Date(entry.time*1000) < (Date.now() - 5 * 60000)) && (new Date(entry.deviating_time*1000) < (Date.now() - 5 * 60000))} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={new Date(entry.time*1000) > (Date.now() - 5 * 60000) || new Date(entry.deviating_time*1000) > (Date.now() - 5 * 60000)} color="#ef6c00"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
+            { /* There is an issue in first tablecell. If deviating time is unset and the entry has passed its time, both icons will be shown. That is wrong. */}
+            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={new Date(entry.time*1000) < (Date.now() - 5 * 60000) || new Date(entry.deviating_time*1000) < (Date.now() - 5 * 60000)} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={(new Date(entry.time*1000) > (Date.now() - 5 * 60000)) || (new Date(entry.deviating_time*1000) > (Date.now() - 5 * 60000))} color="#ef6c00"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
             <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!entry.state_pinned} color="#d32f2f"><FontAwesomeIcon icon={faThumbtack} title="Elementet er festet og vises øverst på infoskjermene." /></IconContainer></TableCell>
+            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={(entry.state_cancelled || entry.state_deviating_time_unknown || entry.deviating_time || entry.deviating_location || entry.deviating_information) ? false : true} color="#ef6c00"><FontAwesomeIcon icon={faCircleExclamation} title="Elementet har et eller flere endringer, åpne elementet for å se." /></IconContainer></TableCell>
             <TableCell flex="0 1px"     mobileHide fillGray />
             <TableCell flex="2"         mobileFlex="3"      >{ entry.title }</TableCell>
             <TableCell flex="3"         mobileHide          >{ entry.description }</TableCell>
             <TableCell flex="1"         mobileFlex="2"      >{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-            <TableCell flex="1"         mobileFlex="2"      >{ entry.deviating_time ? new Date(entry.deviating_time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) : null}</TableCell>
+            <TableCell flex="1"         mobileFlex="2"      bold>{ entry.state_cancelled ? `Avlyst` : entry.state_deviating_time_unknown ? "Ubestemt tidspunkt" : entry.deviating_time ? new Date(entry.deviating_time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) : null}</TableCell>
         </SelectableTableRow>
     )
 }
@@ -86,7 +88,6 @@ export const AgendaList = (props) => {
 
                 <DashboardBarSelector border>
                     <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Oppsett</DashboardBarElement>
-                    <DashboardBarElement onClick={() => window.open("https://info.phoenixlan.no/")}>Infoskjerm visning <IconContainer><FontAwesomeIcon icon={faExternalLinkAlt} title="Trykk for å slette elementet" /></IconContainer></DashboardBarElement>
                 </DashboardBarSelector>
 
                 <DashboardContent visible={activeContent == 1}>
@@ -97,12 +98,13 @@ export const AgendaList = (props) => {
                         Informasjonen du legger inn vises på hovedsiden under tidsplan og på infosiden/infoskjermene som blir satt opp på lokasjonen.
                     </InnerContainer>
 
-                    <InnerContainer flex="1">
-                        <FormButton onClick={() => setWindow(newWindow({title: "Opprett nytt element", subtitle: currentEvent.name, Component: NewAgendaEntry, exitFunction: () => {setWindow(false); reload()}}))}>Opprett nytt element</FormButton>                        {/*<Button onClick={() => setWindow(newWindow({title: "Legg til oppføring i programmet", subtitle: "123123123123", }))}>Opprett nytt element</Button>*/}
-                    </InnerContainer>
-
-                    <InnerContainer>
-                    </InnerContainer>
+                    <InnerContainerRow nopadding>
+                        <InnerContainer flex="1">
+                            <PanelButton onClick={() => setWindow(newWindow({title: "Opprett nytt element", subtitle: currentEvent.name, Component: NewAgendaEntry, exitFunction: () => {setWindow(false); reload()}}))} icon={faPlus}>Legg til</PanelButton>
+                        </InnerContainer>
+                        <InnerContainer flex="1" />
+                        <InnerContainer flex="1" />
+                    </InnerContainerRow>
 
                     <InnerContainer>
                         <Table>
@@ -110,6 +112,7 @@ export const AgendaList = (props) => {
                                 <TableRow>
                                     <TableCell as="th" center   flex="0 1.3rem" mobileHide          title="Indikerer om elementet er synlig på infoskjermene eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
                                     <TableCell as="th" center   flex="0 1.3rem" mobileHide          title="Indikerer om elementet er festet øverst på infoskjermene eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+                                    <TableCell as="th" center   flex="0 1.3rem" mobileHide          title="Indikerer om elementet har et eller flere endringer."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
                                     <TableCell as="th"          flex="0 1px"    mobileHide fillGray />
                                     <TableCell as="th"          flex="2"        mobileFlex="3"      >Tittel</TableCell>
                                     <TableCell as="th"          flex="3"        mobileHide          >Beskrivelse</TableCell>
