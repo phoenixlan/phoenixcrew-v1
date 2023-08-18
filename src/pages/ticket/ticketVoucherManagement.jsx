@@ -124,7 +124,7 @@ export const TicketVoucherManagement = () => {
                                 <InputSelect value={selectedEvent} onChange={updateEvent}>
                                     {
                                         events.map(event => {
-                                            return (<option key={event.uuid}>{event.name} ( {new Date(event.start_time*1000).toLocaleString('no-NO', {year: 'numeric', month: '2-digit', day: '2-digit'})} )</option >)
+                                            return (<option key={event.uuid} value={event.uuid}>{event.name} ( {new Date(event.start_time*1000).toLocaleString('no-NO', {year: 'numeric', month: '2-digit', day: '2-digit'})} )</option >)
                                         })
                                     }
                                 </InputSelect>
