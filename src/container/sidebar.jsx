@@ -5,7 +5,7 @@ import { AuthenticationContext } from '../components/authentication';
 import { SidebarButton } from "./sidebarButton";
 import Logo from "../assets/phoenixlan_square_logo.png";
 
-import { faGavel, faUser, faTicketAlt, faCalendar, faCircle, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link } from 'react-router-dom';
 export const CategoryContext = React.createContext({});
@@ -346,7 +346,7 @@ export const options = [
             },
             {
                 title: "Setekart",
-                icon: faTicketAlt,
+                icon: faMap,
                 url: "/seatmap/"
             }
         ]
@@ -360,6 +360,11 @@ export const options = [
                 title: "Agenda",
                 icon: faCalendar,
                 url: "/agenda/"
+            },
+            {
+                title: "Send e-post",
+                icon: faEnvelope,
+                url: "/email/",
             }
         ]
     }

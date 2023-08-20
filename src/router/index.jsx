@@ -31,6 +31,7 @@ import { ViewPosition } from '../pages/position/view';
 import { AgendaElementView } from '../pages/agenda/view';
 import { NotAvailable } from '../pages/notAvailable';
 import { ViewCrew } from '../pages/crew/view';
+import { EmailForm } from "../pages/utils/email";
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -74,6 +75,9 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/seatmap/">
                             <SeatmapList />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/email/">
+                            <EmailForm/>
                         </PrivateRoute>
                         <PrivateRoute exact path="/event/:uuid">
                             <EventViewer />
