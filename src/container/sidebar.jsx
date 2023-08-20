@@ -335,6 +335,11 @@ export const options = [
                 url: "/tickets/free"
             },
             {
+                title: "Billett-gavekort",
+                icon: faTicketAlt,
+                url: "/tickets/vouchers"
+            },
+            {
                 title: "Medlemskap-info",
                 icon: faTicketAlt,
                 url: "/tickets/memberships"
