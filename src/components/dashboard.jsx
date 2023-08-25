@@ -181,6 +181,9 @@ export const InputCheckbox = ({ label, value, onChange, disabled }) => {
     )
 }
 
+export const InputElementDescription = styled.span`
+    font-size: .7rem;
+`
 export const InputElement = styled.input`
     font-family: "Roboto";
     border: 0;
@@ -202,18 +205,26 @@ export const InputElement = styled.input`
         position: relative;
         bottom: 1px;
         margin-right: .5em;
+        margin-bottom: auto;
     }
 
     @media screen and (max-width: 480px) {
         &[type="radio"] {
             position: relative;
             bottom: 1px;
-            height: 14px;
-            width: 14px;
+            height: 1em;
+            width: 1em;
+        }
+        &[type="checkbox"] {
+            position: relative;
+            bottom: 1px;
+            height: 1em;
+            width: 1em;
         }
         width: 100%;
     }
 `
+
 export const InputTextArea = styled.textarea`
     font-family: "Roboto";
     border: 0;

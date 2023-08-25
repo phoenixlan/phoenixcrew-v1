@@ -1,3 +1,5 @@
+import { faXmark } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import styled from "styled-components"
 
 const S = {
@@ -40,36 +42,36 @@ const S = {
     HeaderContainer: styled.div`
         padding: 1.2em 0;
         display: flex;
-        flex-flow: row;
+        flex-flow: column;
     `,
-        TitleContainer: styled.div`
+        TitleExitContainer: styled.div`
             display: flex;
-            flex-flow: column;
-            flex: 1;
+            flex-flow: row;
         `,
-            ContainerTitle: styled.h1`
-                font-size: 1.1em;
+            WindowTitle: styled.h1`
+                font-size: 1.1rem;
                 font-weight: 300;
                 margin: .2em 0;
+                flex: 1 100%;
             `,
-            ContainerSubTitle: styled.h2`
+            WindowSubtitle: styled.h2`
                 font-size: .75em;
                 font-weight: 200;
                 margin: .2em 0;
             `,
-        ExitContainer: styled.div`
-            display: flex;
-            flex: 0 0 fit-content;
-        `,
-            ExitButton: styled.span`
+
+            ExitContainer: styled.div`
+                position: relative;
+                margin: auto;
+            `,
+            ExitButton: styled(FontAwesomeIcon)`
+                cursor: pointer;
+                font-size: 1rem;
             `,
 
     ContentContainer: styled.div`
         padding: 1.2em 0 0 0;
     `,
-
-    ActionContainer: styled.div`
-    `
 }
 
 export const newWindow = ({title, subtitle, Component, exitFunction, entries}) => {
@@ -79,24 +81,17 @@ export const newWindow = ({title, subtitle, Component, exitFunction, entries}) =
                 <S.WindowFill />
                 <S.WindowContainer>
                     <S.HeaderContainer>
-                        <S.TitleContainer>
-                            <S.ContainerTitle>
+                        <S.TitleExitContainer>
+                            <S.WindowTitle>
                                 {title}
-                            </S.ContainerTitle>
-                            {subtitle
-                            ?
-                                <S.ContainerSubTitle>
-                                    {subtitle}
-                                </S.ContainerSubTitle>
-                            :
-                                null
-                            }
-                        </S.TitleContainer>
-                        <S.ExitContainer>
-                            <S.ExitButton onClick={exitFunction}>
-                                (Close)
-                            </S.ExitButton>
-                        </S.ExitContainer>
+                            </S.WindowTitle>
+                            <S.ExitContainer>
+                                <S.ExitButton onClick={exitFunction} icon={faXmark}></S.ExitButton>
+                            </S.ExitContainer>
+                        </S.TitleExitContainer>
+                        <S.WindowSubtitle hidden={!subtitle}>
+                            {subtitle}
+                        </S.WindowSubtitle>
                     </S.HeaderContainer>
 
                     <S.Line />

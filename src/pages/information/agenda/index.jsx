@@ -16,32 +16,45 @@ import { newWindow } from '../../../components/windows';
 import { NewAgendaEntry, newAgendaEntry } from '../../../components/windows/types/agenda/newAgendaEntry';
 import { EditAgendaEntry } from '../../../components/windows/types/agenda/editAgendaEntry';
 
-const AgendaEntry = ({ entry, reloadAgendaList, func}) => {
-    let history = useHistory();
+const AgendaEntry = ({ entry, func}) => {
+    const [ active, setActive ]         = useState(false);
+    const [ pinned, setPinned ]         = useState(undefined);
+    const [ deviating, setDeviating ]   = useState(undefined); 
 
-    const deleteEntry = async () => {
-        if(!await Agenda.deleteAgendaEntry(entry.uuid)) {
-            console.log("uwu fuckie wuckie");
-        }
-        await reloadAgendaList();
-    }
+    useEffect(() => {
+        // Set active state depending on these conditions:
+        setActive(
+            Date.now() - 5 * 60000 < new Date(entry.deviating_time * 1000) ||
+            Date.now() - 5 * 60000 < new Date(entry.time * 1000)
+        )
 
+        // Set pinned state depending on these conditions:
+        setPinned(
+            entry.pinned
+        )
+
+        // Set deviating state depending on these conditions:
+        setDeviating(
+            entry.deviating_time_unknown ||
+            entry.cancelled ||
+            entry.deviating_information ||
+            entry.deviating_location ||
+            entry.deviating_time
+        )
+    }, [entry]);
     return (
         <SelectableTableRow onClick={func}>
-            { /* There is an issue in first tablecell. If deviating time is unset and the entry has passed its time, both icons will be shown. That is wrong. */}
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={new Date(entry.time*1000) < (Date.now() - 5 * 60000) || new Date(entry.deviating_time*1000) < (Date.now() - 5 * 60000)} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={(new Date(entry.time*1000) > (Date.now() - 5 * 60000)) || (new Date(entry.deviating_time*1000) > (Date.now() - 5 * 60000))} color="#ef6c00"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!entry.state_pinned} color="#d32f2f"><FontAwesomeIcon icon={faThumbtack} title="Elementet er festet og vises øverst på infoskjermene." /></IconContainer></TableCell>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={(entry.state_cancelled || entry.state_deviating_time_unknown || entry.deviating_time || entry.deviating_location || entry.deviating_information) ? false : true} color="#ef6c00"><FontAwesomeIcon icon={faCircleExclamation} title="Elementet har et eller flere endringer, åpne elementet for å se." /></IconContainer></TableCell>
+            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!active} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={active} color="#ef6c00"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
+            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!pinned} color="#d32f2f"><FontAwesomeIcon icon={faThumbtack} title="Elementet er festet og vises øverst på infoskjermene." /></IconContainer></TableCell>
+            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!deviating} color="#ef6c00"><FontAwesomeIcon icon={faCircleExclamation} title="Elementet har et eller flere endringer, åpne elementet for å se." /></IconContainer></TableCell>
             <TableCell flex="0 1px"     mobileHide fillGray />
             <TableCell flex="2"         mobileFlex="3"      >{ entry.title }</TableCell>
             <TableCell flex="3"         mobileHide          >{ entry.description }</TableCell>
             <TableCell flex="1"         mobileFlex="2"      >{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-            <TableCell flex="1"         mobileFlex="2"      bold>{ entry.state_cancelled ? `Avlyst` : entry.state_deviating_time_unknown ? "Ubestemt tidspunkt" : entry.deviating_time ? new Date(entry.deviating_time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) : null}</TableCell>
+            <TableCell flex="1"         mobileFlex="2"      bold>{ entry.cancelled ? `Avlyst` : entry.deviating_time_unknown ? "Ubestemt tidspunkt" : entry.deviating_time ? new Date(entry.deviating_time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) : null}</TableCell>
         </SelectableTableRow>
     )
 }
-
-
 
 export const AgendaList = (props) => {
     const [activeContent, setActiveContent] = useState(1);

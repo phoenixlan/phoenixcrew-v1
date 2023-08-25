@@ -4,23 +4,24 @@ import { Agenda, getCurrentEvent, User } from '@phoenixlan/phoenix.js'
 import { FormButton, FormInput } from "../../../form";
 import { useContext, useState } from "react";
 import { AuthenticationContext } from "../../../authentication";
+import { useEffect } from "react";
 
 export const NewAgendaEntry = ({functions}) => {
-
-    const [ statePinned, setStatePinned ] 	= useState(false);
-
-    const user = useContext(AuthenticationContext);
-
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    
     const onSubmit = async (data) => {
-        const currentUser = user.authUser.uuid;     // Get current user for logging
-        const dateUnixTime = new Date(data.time);   // 
-        const event = await getCurrentEvent();      // Get current event so we can get its UUID
+        // Get current event so we can get its UUID
+        const event = await getCurrentEvent();      
 
-        if(!await Agenda.createAgendaEntry(event.uuid, data.title, data.description, data.location, dateUnixTime.getTime()/1000, data.state_pinned, currentUser)) {
-            console.log("fucked up")
+        const dateUnixTime = new Date(data.time);
+
+        try {
+            await Agenda.createAgendaEntry(event.uuid, data.title, data.description, data.location, dateUnixTime.getTime()/1000, data.pinned)
+        } catch(e) {
+            console.error("An error occured while attempting to create the agenda entry.\n" + e)
         }
         functions.exitFunction();
+        
     }
 
     return (
@@ -37,25 +38,25 @@ export const NewAgendaEntry = ({functions}) => {
                         <InnerContainer flex="1">
                             <InputContainer column extramargin>
                                 <InputLabel small>Tittel</InputLabel>
-                                <InputElement {...register("title")} type="text" />
+                                <InputElement {...register("title", {required: true})} type="text" placeholder="Eks. Minecraft: Battle Royale" />
                             </InputContainer>
                             <InputContainer column extramargin>
                                 <InputLabel small>Beskrivelse</InputLabel>
-                                <InputElement {...register("description")} type="text" required />
+                                <InputElement {...register("description")} type="text" placeholder="Eks. Runde 1 av 3 • FFA Konkurranse • Delta på mc.phoenixlan.no" />
                             </InputContainer>
                             <InputContainer column extramargin>
                                 <InputLabel small>Sted</InputLabel>
-                                <InputElement {...register("location")} type="text"/>
+                                <InputElement {...register("location")} type="text" />
                             </InputContainer>
                             <InputContainer column extramargin>
                                 <InputLabel small>Tidspunkt</InputLabel>
-                                <InputElement {...register("time")} type="datetime-local" required />
+                                <InputElement {...register("time", {required: true})} type="datetime-local" />
                             </InputContainer>
 							<InputContainer>
-								<InputLabel small>Parametere</InputLabel>
+								<InputLabel small>Innstillinger</InputLabel>
 							</InputContainer>
 							<InputContainer extramargin>
-								<InputElement {...register("state_pinned")} type="checkbox" /> Festet oppføring
+								<InputElement {...register("pinned")} type="checkbox" /> Festet oppføring
 							</InputContainer>
 							<InputContainer>
 								<InputButton type="submit" onClick={handleSubmit(onSubmit)}>Opprett oppføring</InputButton>

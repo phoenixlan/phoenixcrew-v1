@@ -7,7 +7,6 @@ import { Notice } from "../../../containers/notice";
 import { AuthenticationContext } from "../../../authentication";
 
 export const EditAgendaEntry = ({functions, entries}) => {
-    //const [ loading, setLoading ] = useState(false);
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
     const [ title, setTitle ]											= useState(entries.title);
@@ -16,10 +15,10 @@ export const EditAgendaEntry = ({functions, entries}) => {
     const [ location, setLocation ]										= useState(entries.location);
 	const [ deviatingTime, setDeviatingTime ]							= useState(entries.deviating_time ? new Date(entries.deviating_time ? entries.deviating_time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined);
 	const [ deviatingLocation, setDeviatingLocation ]					= useState(entries.deviating_location);
+	const [ deviatingTimeUnknown, setDeviatingTimeUnknown ] 	= useState(entries.deviating_time_unknown);
 	const [ deviatingInformation, setDeviatingInformation]				= useState(entries.deviating_information);
-	const [ statePinned, setStatePinned ] 								= useState(entries.state_pinned);
-	const [ stateDeviatingTimeUnknown, setStateDeviatingTimeUnknown ] 	= useState(entries.state_deviating_time_unknown);
-	const [ stateCancelled, setStateCancelled ] 						= useState(entries.state_cancelled);
+	const [ statePinned, setStatePinned ] 								= useState(entries.pinned);
+	const [ stateCancelled, setStateCancelled ] 						= useState(entries.cancelled);
 	const [ stateDeviatingControl, setStateDeviatingControl]			= useState(undefined);
 
 
@@ -31,7 +30,7 @@ export const EditAgendaEntry = ({functions, entries}) => {
 			the database has deviating information, if so, enable the fields on load.
 		*/
 		const onLoad_CheckDeviatingControl = () => {
-			if(deviatingTime || deviatingLocation || deviatingInformation || stateDeviatingTimeUnknown) {
+			if(deviatingTime || deviatingLocation || deviatingInformation || deviatingTimeUnknown) {
 				setStateDeviatingControl(true);
 			}
 		}
@@ -39,24 +38,20 @@ export const EditAgendaEntry = ({functions, entries}) => {
 		onLoad_CheckDeviatingControl();
     }, []);
 
-	const user = useContext(AuthenticationContext);
-
     const onSubmit = async (data) => {
         // Get current event so we can get its UUID
-        const event = 					await getCurrentEvent();
-
-
+        const event = await getCurrentEvent();
 
 		// If stateDeviatingControl is set to false, prevent the following variables to submit data.
 		if(!stateDeviatingControl) {
 			data.deviating_time = null;
 			data.deviating_location = null;
 			data.deviating_information = null;
-			data.state_deviating_time_unknown = false;
+			data.deviating_time_unknown = false;
 		}
 
-		// If stateDeviatingTimeUnknown is set to true and no information has been set, set a default entry.
-		if(stateDeviatingTimeUnknown) {
+		// If deviatingTimeUnknown is set to true and no information has been set, set a default entry.
+		if(deviatingTimeUnknown) {
 			if(!deviatingInformation) {
 				data.deviating_information = "Hendelsen har blitt forsinket, ny tid og informasjon kommer";
 			}
@@ -69,13 +64,12 @@ export const EditAgendaEntry = ({functions, entries}) => {
 			}
 		}
 
-		const currentUser 			= user.authUser.uuid; 
 		const dateUnixTime 			= data.time ? new Date(data.time).getTime()/1000 : null;
 		const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : "";
 
 		// Try to modify the agenda entry
 		try {
-			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, data.location, dateUnixDeviatingTime, data.deviating_location, data.deviating_information, data.state_pinned, data.state_deviating_time_unknown, data.state_cancelled, currentUser)
+			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, data.location, dateUnixDeviatingTime, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled)
         } catch(e) {
 			console.error("An error occured while attempting to update the agenda entry.\n" + e)
 		}
@@ -111,7 +105,7 @@ export const EditAgendaEntry = ({functions, entries}) => {
 							<InputElement type="hidden" value={entries.uuid} {...register("uuid")} />
 							<InputContainer column extramargin>
 								<InputLabel small>Tittel</InputLabel>
-								<InputElement {...register("title")} type="text" required value={title} onChange={(e) => setTitle(e.target.value)} />
+								<InputElement {...register("title", {required: true})} type="text" required value={title} onChange={(e) => setTitle(e.target.value)} />
 							</InputContainer>
 							<InputContainer column extramargin>
 								<InputLabel small>Beskrivelse</InputLabel>
@@ -130,32 +124,34 @@ export const EditAgendaEntry = ({functions, entries}) => {
 							<InnerContainerRow nopadding nowrap>
 								<InputContainer column extramargin>
 									<InputLabel small>Tidspunkt</InputLabel>
-									<InputElement {...register("time")} type="datetime-local"value={time??null} onChange={(e) => setTime(e.target.value)} />
+									<InputElement {...register("time", {required: true})} type="datetime-local"value={time??null} onChange={(e) => setTime(e.target.value)} />
 								</InputContainer>
-								<InputContainer column extramargin disabled={!stateDeviatingControl || stateDeviatingTimeUnknown}>
+								<InputContainer column extramargin disabled={!stateDeviatingControl || deviatingTimeUnknown}>
 									<InputLabel small>Nytt tidspunkt</InputLabel>
 									<InputElement {...register("deviating_time")} type="datetime-local" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingTime??null} onChange={(e) => setDeviatingTime(e.target.value)} />
 								</InputContainer>
 							</InnerContainerRow>
 							<InputContainer column extramargin disabled={!stateDeviatingControl}> 
-								<InputLabel small>Begrunnelse for forsinkelse eller problem</InputLabel>
-								<InputElement {...register("deviating_information")} type="text" value={deviatingInformation} tabIndex={!stateDeviatingControl ? "-1" : undefined} onChange={(e) => setDeviatingInformation(e.target.value)} placeholder={stateCancelled ? "Hendelsen har blitt avlyst" : stateDeviatingTimeUnknown ? "Hendelsen har blitt forsinket, ny tid og informasjon kommer" : null}/>
+								<InputLabel small>Beskrivelse for forsinkelse eller problem</InputLabel>
+								<InputElement {...register("deviating_information")} type="text" value={deviatingInformation} tabIndex={!stateDeviatingControl ? "-1" : undefined} onChange={(e) => setDeviatingInformation(e.target.value)} placeholder={stateCancelled ? "Hendelsen har blitt avlyst" : deviatingTimeUnknown ? "Hendelsen har blitt forsinket, ny tid og informasjon kommer" : null}/>
 							</InputContainer>
 							<InputContainer>
 								<InputLabel small>Innstillinger</InputLabel>
 							</InputContainer>
-							<InputContainer>
-								<InputElement {...register("state_pinned")} type="checkbox" checked={statePinned} onChange={() => setStatePinned(!statePinned)} /> Festet hendelse <span title="Fest oppføringen til toppen av infoskjermen">(?)</span>
-							</InputContainer>
-							<InputContainer disabled={stateCancelled}>
-								<InputElement type="checkbox" checked={stateDeviatingControl} onChange={() => setStateDeviatingControl(!stateDeviatingControl)} /> Forsinket hendelse
-							</InputContainer>
-							<InputContainer disabled={stateCancelled || !stateDeviatingControl}>
-								<InputElement {...register("state_deviating_time_unknown")} type="checkbox" tabIndex={stateCancelled ? "-1" : undefined} checked={stateDeviatingTimeUnknown} onChange={() => setStateDeviatingTimeUnknown(!stateDeviatingTimeUnknown)} />  Hendelse forsinket til ubestemt tidspunkt
-							</InputContainer>
-							<InputContainer extramargin>
-								<InputElement {...register("state_cancelled")} type="checkbox" checked={stateCancelled} onChange={() => {setStateCancelled(!stateCancelled); setStateDeviatingTimeUnknown(stateCancelled ? false : null); setDeviatingInformation("")}} /> Avlys hendelse
-							</InputContainer>
+							<div>
+								<InputContainer>
+									<InputElement {...register("pinned")} type="checkbox" checked={statePinned} onChange={() => setStatePinned(!statePinned)} /> Festet hendelse
+								</InputContainer>
+								<InputContainer disabled={stateCancelled}>
+									<InputElement type="checkbox" checked={stateDeviatingControl} onChange={() => setStateDeviatingControl(!stateDeviatingControl)} /> Forsinket hendelse
+								</InputContainer>
+								<InputContainer disabled={stateCancelled || !stateDeviatingControl}>
+									<InputElement {...register("deviating_time_unknown")} type="checkbox" tabIndex={stateCancelled ? "-1" : undefined} checked={deviatingTimeUnknown} onChange={() => setDeviatingTimeUnknown(!deviatingTimeUnknown)} />  Hendelse forsinket til ubestemt tidspunkt
+								</InputContainer>
+								<InputContainer extramargin>
+									<InputElement {...register("cancelled")} type="checkbox" checked={stateCancelled} onChange={() => {setStateCancelled(!stateCancelled); setDeviatingTimeUnknown(stateCancelled ? false : null); setDeviatingInformation("")}} /> Avlys hendelse
+								</InputContainer>
+							</div>
 							<InputContainer>
 								<InputButton type="submit" onClick={handleSubmit(onSubmit)}>Endre</InputButton>
 								<InputButton type="submit" onClick={handleSubmit(onDelete)}>Slett</InputButton>
