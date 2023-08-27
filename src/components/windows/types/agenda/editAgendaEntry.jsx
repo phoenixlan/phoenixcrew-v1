@@ -15,7 +15,7 @@ export const EditAgendaEntry = ({functions, entries}) => {
     const [ location, setLocation ]										= useState(entries.location);
 	const [ deviatingTime, setDeviatingTime ]							= useState(entries.deviating_time ? new Date(entries.deviating_time ? entries.deviating_time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined);
 	const [ deviatingLocation, setDeviatingLocation ]					= useState(entries.deviating_location);
-	const [ deviatingTimeUnknown, setDeviatingTimeUnknown ] 	= useState(entries.deviating_time_unknown);
+	const [ deviatingTimeUnknown, setDeviatingTimeUnknown ] 			= useState(entries.deviating_time_unknown);
 	const [ deviatingInformation, setDeviatingInformation]				= useState(entries.deviating_information);
 	const [ statePinned, setStatePinned ] 								= useState(entries.pinned);
 	const [ stateCancelled, setStateCancelled ] 						= useState(entries.cancelled);
@@ -65,7 +65,7 @@ export const EditAgendaEntry = ({functions, entries}) => {
 		}
 
 		const dateUnixTime 			= data.time ? new Date(data.time).getTime()/1000 : null;
-		const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : "";
+		const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : null;
 
 		// Try to modify the agenda entry
 		try {
