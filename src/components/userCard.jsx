@@ -14,12 +14,13 @@ import { Link } from 'react-router-dom';
 const S = {
     Container: styled.div`
         display: flex;
+        flex-direction: column;
     `,
     AvatarPart: styled.div`
-        width: 40%;
+    flex: 1;
     `,
     TextPart: styled.div`
-        width: 60%;
+    flex: 1;
     `
 }
 

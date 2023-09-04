@@ -81,7 +81,7 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
             </TableHead>
             <tbody>
             {
-                applications.map((application) => <ApplicationTableEntry showProcessedBy={showProcessedBy} application={application}/>)
+                applications.map((application) => <ApplicationTableEntry key={application.uuid} showProcessedBy={showProcessedBy} application={application}/>)
             }
             </tbody>
         </Table>
@@ -96,13 +96,20 @@ const SORTING_METHODS = {
 const CATEGORIES = {
     NO_ANSWER: 1,
     ACCEPTED: 2,
-    REJECTED: 3
+    REJECTED: 3,
+    HIDDEN: 4
 }
 
 const STATE_TO_PY_ENUM = {}
 STATE_TO_PY_ENUM[CATEGORIES.NO_ANSWER] = "ApplicationState.created"
 STATE_TO_PY_ENUM[CATEGORIES.ACCEPTED] = "ApplicationState.accepted"
 STATE_TO_PY_ENUM[CATEGORIES.REJECTED] = "ApplicationState.rejected"
+
+const FILTER_TYPES = {}
+FILTER_TYPES[CATEGORIES.NO_ANSWER] = (application) => application.state === STATE_TO_PY_ENUM[CATEGORIES.NO_ANSWER] && !application.hidden
+FILTER_TYPES[CATEGORIES.ACCEPTED] = (application) => application.state === STATE_TO_PY_ENUM[CATEGORIES.ACCEPTED] && !application.hidden
+FILTER_TYPES[CATEGORIES.REJECTED] = (application) => application.state === STATE_TO_PY_ENUM[CATEGORIES.REJECTED] && !application.hidden
+FILTER_TYPES[CATEGORIES.HIDDEN] = (application) => application.hidden
 
 const SORT_TYPES = {}
 SORT_TYPES[SORTING_METHODS.SURNAME] = (a, b) => a.user.lastname.localeCompare(b.user.lastname)
@@ -167,7 +174,7 @@ export const ListApplications = (props) => {
     }
 
     let processedApplicationList = applicationList
-        .filter(application => application.state === STATE_TO_PY_ENUM[activeCategory])
+        .filter(FILTER_TYPES[activeCategory])
         .sort(SORT_TYPES[activeSortingMethod])
 
     return (
@@ -217,6 +224,7 @@ export const ListApplications = (props) => {
                 <DashboardBarElement active={activeCategory == CATEGORIES.NO_ANSWER} onClick={() => setActiveCategory(CATEGORIES.NO_ANSWER)}>Ingen svar</DashboardBarElement>
                 <DashboardBarElement active={activeCategory == CATEGORIES.ACCEPTED} onClick={() => setActiveCategory(CATEGORIES.ACCEPTED)}>Godkjente</DashboardBarElement>
                 <DashboardBarElement active={activeCategory == CATEGORIES.REJECTED} onClick={() => setActiveCategory(CATEGORIES.REJECTED)}>Avslått</DashboardBarElement>
+                <DashboardBarElement active={activeCategory == CATEGORIES.HIDDEN} onClick={() => setActiveCategory(CATEGORIES.HIDDEN)}>Skjult</DashboardBarElement>
             </DashboardBarSelector>
 
             <DashboardContent >
