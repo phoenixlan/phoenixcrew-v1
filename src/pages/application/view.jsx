@@ -30,13 +30,17 @@ const AnswerApplication = (props) => {
     const [answer, setAnswer] = useState("");
 
     const accept = async (crew_uuid) => {
-        await Crew.Applications.answerApplication(props.application.uuid, crew_uuid, answer, 2)
-        await props.reload();
+        if(window.confirm("Er du sikker på at du vil godkjenne?")) {
+            await Crew.Applications.answerApplication(props.application.uuid, crew_uuid, answer, 2)
+            await props.reload();
+        }
     }
 
     const reject = async () => {
-        await Crew.Applications.answerApplication(props.application.uuid, null, answer, 3)
-        await props.reload();
+        if(window.confirm("Er du sikker på at du vil avslå?")) {
+            await Crew.Applications.answerApplication(props.application.uuid, null, answer, 3)
+            await props.reload();
+        }
     }
 
     const onAnswerUpdate =  (event) => {
@@ -94,9 +98,13 @@ export const ViewApplication = (props) => {
         })
     }, []);
 
-    const hide = () => {
-
+    const hide = async () => {
+        if(window.confirm("Er du sikker på at du vil skjule søknaden?")) {
+            await Crew.Applications.hideApplication(uuid);
+            await reload();
+        }
     }
+
 
 
     if(loading) {
