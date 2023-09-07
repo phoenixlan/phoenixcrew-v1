@@ -32,6 +32,7 @@ import { AgendaElementView } from '../pages/agenda/view';
 import { NotAvailable } from '../pages/notAvailable';
 import { ViewCrew } from '../pages/crew/view';
 import { EmailForm } from "../pages/utils/email";
+import { TicketSalesStats } from "../pages/stats/ticketSales";
 import { TicketVoucherManagement } from '../pages/ticket/ticketVoucherManagement';
 
 export const CrewRouter = () => {
@@ -97,6 +98,9 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/agenda/:uuid">
                             <NotAvailable />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/stats/ticket_sales">
+                            <TicketSalesStats />
                         </PrivateRoute>
                         <PrivateRoute exact path="/tickets/">
                             <TicketList />
