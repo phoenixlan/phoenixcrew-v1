@@ -119,8 +119,8 @@ export const ViewApplication = (props) => {
                     <InnerContainerRow>
                     {
                         application.crews.map((crew_mapping) => (
-                            <InnerContainerRow>
-                                <p>{crew_mapping.crew.name} {crew_mapping.accepted ? (<b>Godkjent!</b>) : null}</p>
+                            <InnerContainerRow key={crew_mapping.uuid}>
+                                <p>{crew_mapping.crew.name} {crew_mapping.accepted && (<b>Godkjent!</b>) }</p>
                             </InnerContainerRow>
                         ))
                     }
@@ -146,11 +146,11 @@ export const ViewApplication = (props) => {
                         ) : 
                         (
                             application.event.uuid == currentEvent.uuid ? (<>
-                                {application.state !== "ApplicationState.rejected" ? (
+                                {application.state !== "ApplicationState.rejected" && (
                                     <AnswerApplication application={application} reload={reload} />
-                                ) : null}
+                                )}
 
-                                {application.state !== "ApplicationState.created" ? (
+                                {application.state !== "ApplicationState.created" && (
                                     <InnerContainer>
                                         <InnerContainerTitle>Svar: {application.state === "ApplicationState.accepted" ? "Godkjent" : "Avslått"}</InnerContainerTitle>
                                         <p>Behandlet av: <b>{
@@ -160,7 +160,7 @@ export const ViewApplication = (props) => {
                                         }</b></p>
                                         <i>{application.answer}</i>
                                     </InnerContainer>
-                                ) : null}
+                                )}
 
                                 <InnerContainer>
                                     <InnerContainerTitle>Skjul søknaden fra søkeren?</InnerContainerTitle>

@@ -193,7 +193,7 @@ export const ListApplications = (props) => {
                                 <InputLabel small>Arrangement</InputLabel>
                                 <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
                                     {
-                                        events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
+                                        events.map((event) => (<option key={event.uuid} value={event.uuid}>{event.name} {event.uuid === currentEvent.uuid && "(Nåværende)" }</option>))
                                     }
                                 </InputSelect>
                             </InputContainer>
@@ -203,9 +203,9 @@ export const ListApplications = (props) => {
                     <InnerContainer flex="1" mobileHide />
                 </InnerContainerRow>
                 {
-                    currentViewingEvent !== currentEvent.uuid ? (<InnerContainerRow>
+                    currentViewingEvent !== currentEvent.uuid && (<InnerContainerRow>
                     <p><i>Du kan se på søknader for dette arrangementet, men du kan ikke modifisere de siden det ikke er det nåværende arrangementet</i></p>
-                    </InnerContainerRow>) : null
+                    </InnerContainerRow>)
                 }
             </InnerContainer>
             <InnerContainer mobileRowGap="4px">

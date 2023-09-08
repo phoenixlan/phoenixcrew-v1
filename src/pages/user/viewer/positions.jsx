@@ -9,10 +9,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const PositionList = ({ position_mappings, show_uuid , reload, canRemove }) => {
     const demote = async (position_mapping) => {
-        if(!canRemove) {
-            return;
-        }
-        if(!position_mapping.event_uuid) {
+        if(!canRemove || !position_mapping.event_uuid) {
             return;
         }
         if(window.confirm("Er du sikker på at du vil fjerne stillingen?")) {

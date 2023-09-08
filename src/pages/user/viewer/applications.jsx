@@ -9,22 +9,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { ApplicationCrewLabel } from '../../application/list';
 
+const stateToString = (state) => {
+    if(state == "ApplicationState.rejected") {
+        return "Avslått";
+    }
+    if(state == "ApplicationState.accepted") {
+        return "Akseptert";
+    }
+    if(state == "ApplicationState.created") {
+        return "Ingen svar";
+    }
+    return "Ukjent"
+}
+    
 const ApplicationTableEntry = ({ application }) => {
     let history = useHistory();
 
-    const stateToString = (state) => {
-        if(state == "ApplicationState.rejected") {
-            return "Avslått";
-        }
-        if(state == "ApplicationState.accepted") {
-            return "Akseptert";
-        }
-        if(state == "ApplicationState.created") {
-            return "Ingen svar";
-        }
-        return "Ukjent"
-    }
-    
     return (
         <SelectableTableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
             <TableCell flex="2" mobileHide>{application.event.name}</TableCell>
