@@ -70,9 +70,10 @@ export const InnerContainer = styled.div`
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
     flex-flow: column;
     flex: ${props => props.flex ? props.flex : "undefined"};
-    padding-bottom: 20px;
+    padding-bottom: ${props => props.nopadding ? "0" : "20px"};
     margin-bottom: ${props => props.extramargin ? "20px" : "0"};
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
+    align-items: ${props => props.alignItems ? props.alignItems : "left"};
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
@@ -87,7 +88,8 @@ export const InnerContainerRow = styled.div`
     flex: ${props => props.flex ? props.flex : "undefined"};
     flex-flow: row;
     flex-wrap: ${props => props.nowrap ? "nowrap" : "wrap"};
-    gap: 25px;
+    gap: 2em;
+    row-gap: .5em;
     padding-bottom: ${props => props.nopadding ? "0" : "20px"};
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
 
@@ -96,7 +98,7 @@ export const InnerContainerRow = styled.div`
         flex-wrap: wrap;
         flex-flow: ${props => props.mobileFlow ? props.mobileFlow : "column"};
         width: 100%;
-        row-gap: ${props => props.mobileNoGap ? "" : "16px"};
+        row-gap: ${props => props.mobileNoGap ? "0" : "16px"};
     }
 `
 
@@ -275,6 +277,11 @@ const ButtonContainer = styled.button`
     &:active, :hover {
         background-color: rgb(235, 235, 235);
     }
+
+    @media screen and (max-width: 480px) {
+        width: 100%;
+        margin-bottom: .5em;
+    }
 `
 const ButtonIcon = styled.span`
     display: flex;
@@ -283,11 +290,20 @@ const ButtonIcon = styled.span`
     bottom: 1px;
     padding: 0 .5em;
     font-size: 1rem;
+
+    @media screen and (max-width: 480px) {
+        margin: auto 0;
+        min-width: 2em;
+    }
 `
 const ButtonText = styled.span`
     display: flex;
     margin: auto;
     padding: 0 .5em;
+
+    @media screen and (max-width: 480px) {
+        margin: auto auto auto 0;
+    }
 `
 
 export const PanelButton = ({ onClick, icon, children }) => {
@@ -313,3 +329,36 @@ export const IFrameContainer = ({ src }) => {
         </>
     )
 }
+
+export const CardContainer = styled.div`
+    display: flex;
+    flex-flow: row;
+    flex: 1;
+    overflow: hidden;
+    min-height: 3em;
+`
+export const CardContainerIcon = styled.div`
+    display: flex;
+    margin: auto;
+    width: 3em;
+    text-align: center;
+    align-items: middle;
+`
+export const CardContainerInnerIcon = styled.div`
+    display: flex;
+    margin: auto;
+    font-size: 1em;
+`
+export const CardContainerText = styled.div`
+    display: flex;
+    flex-flow: column;
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+`
+export const CardContainerInnerText = styled.div`
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+`

@@ -8,6 +8,11 @@ import { useParams } from "react-router-dom";
 import { PositionMemberList } from "./memberList";
 import { PositionPermissionList } from "./permissionList";
 
+const TABS = {
+    SETTINGS: 1,
+    PERMISSIONS: 2,
+    USERS: 3
+}
 
 export const ViewPosition = (props) => {
     const { uuid } = useParams();
@@ -54,22 +59,22 @@ export const ViewPosition = (props) => {
                 : loading ? "vent... " :
                     <>
                         <DashboardBarSelector border>
-                            <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Generelt</DashboardBarElement>
-                            <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Rettigheter ({position.permissions.length})</DashboardBarElement>
-                            <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Medlemmer ({position.position_mappings.length})</DashboardBarElement>
+                            <DashboardBarElement active={activeContent == TABS.SETTINGS} onClick={() => setActiveContent(TABS.SETTINGS)}>Generelt</DashboardBarElement>
+                            <DashboardBarElement active={activeContent == TABS.PERMISSIONS} onClick={() => setActiveContent(TABS.PERMISSIONS)}>Rettigheter ({position.permissions.length})</DashboardBarElement>
+                            <DashboardBarElement active={activeContent == TABS.USERS} onClick={() => setActiveContent(TABS.USERS)}>Medlemmer ({position.position_mappings.length})</DashboardBarElement>
                         </DashboardBarSelector>
 
-                        <DashboardContent visible={activeContent == 1}>
+                        <DashboardContent visible={activeContent == TABS.SETTINGS}>
                             <InnerContainer>
                                 
                             </InnerContainer>
                         </DashboardContent>
 
-                        <DashboardContent visible={activeContent == 2}>
+                        <DashboardContent visible={activeContent == TABS.PERMISSIONS}>
                             <PositionPermissionList position={position} />
                         </DashboardContent>
 
-                        <DashboardContent visible={activeContent == 3}>
+                        <DashboardContent visible={activeContent == TABS.USERS}>
                             <PositionMemberList position={position} refresh={load}/>
                         </DashboardContent>
                 </>

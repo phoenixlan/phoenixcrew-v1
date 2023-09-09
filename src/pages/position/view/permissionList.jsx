@@ -29,7 +29,6 @@ export const PositionPermissionList = ({ position }) => {
                             <SelectableTableRow>
                                 <TableCell consolas flex="5" visible={!visibleUUID}>{ permission.uuid }</TableCell>
                                 <TableCell flex="6" uppercase>{ permission.permission }</TableCell>
-                                <TableCell mobileHide flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                             </SelectableTableRow>
                         )
                     })}
