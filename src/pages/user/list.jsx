@@ -70,7 +70,7 @@ export const UserList = () => {
                     Sorter brukere etter:
                     <InputContainer>
                         <InputElement name="1" type="radio" checked={sortingMethodActive === SORTING.FIRSTNAME} onClick={() => setSortingMethodActive(SORTING.FIRSTNAME)} />
-                        <InputLabel top="1px">Fornavn, Etternavn</InputLabel>
+                        <InputLabel top="1px">Fornavn, etternavn</InputLabel>
                     </InputContainer>
                     <InputContainer>
                         <InputElement name="1" type="radio" checked={sortingMethodActive === SORTING.USERNAME} onClick={() => setSortingMethodActive(SORTING.USERNAME)} />

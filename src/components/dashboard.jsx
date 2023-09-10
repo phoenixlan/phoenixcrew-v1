@@ -274,6 +274,13 @@ const ButtonContainer = styled.button`
     cursor: pointer;
     background-color: rgb(242, 242, 242);
 
+    &[disabled] {
+        cursor: not-allowed;
+    }
+    &[disabled], &[disabled]:active, &[disabled]:hover {
+        cursor: not-allowed;
+        background-color: rgb(242, 242, 242);
+    }
     &:active, :hover {
         background-color: rgb(235, 235, 235);
     }
@@ -306,10 +313,10 @@ const ButtonText = styled.span`
     }
 `
 
-export const PanelButton = ({ onClick, icon, children }) => {
+export const PanelButton = ({ onClick, icon, children, disabled }) => {
     return (
         <>
-            <ButtonContainer onClick={onClick}>
+            <ButtonContainer onClick={onClick} disabled={disabled}>
                 <ButtonIcon><FontAwesomeIcon icon={icon} /></ButtonIcon>
                 <ButtonText>{children}</ButtonText>
             </ButtonContainer>
@@ -335,7 +342,7 @@ export const CardContainer = styled.div`
     flex-flow: row;
     flex: 1;
     overflow: hidden;
-    min-height: 3em;
+    margin-bottom: 1em;
 `
 export const CardContainerIcon = styled.div`
     display: flex;
