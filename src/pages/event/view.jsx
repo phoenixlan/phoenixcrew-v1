@@ -189,8 +189,9 @@ export const EventViewer = () => {
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Begrunnelse for kansellering <LabelWarning 
-                                            title="'Kansellering av arrangementet' er huket av!&#10;Dersom du lagrer vil arrangementet vises som kansellert." 
-                                            visible={cancelEventCheck}><FontAwesomeIcon icon={faExclamationTriangle} /></LabelWarning></InputLabel>
+                                            title="'Kanseller arrangement' er huket av!&#10;Dersom du lagrer vil arrangementet vises som kansellert." 
+                                            visible={cancelEventCheck}><FontAwesomeIcon icon={faExclamationTriangle} /></LabelWarning>
+                                        </InputLabel>
                                         <InputElement type="text" defaultValue={cancelEventReason} disabled={!cancelEventCheck} />
                                     </InputContainer>
                                 </InnerContainerRow>

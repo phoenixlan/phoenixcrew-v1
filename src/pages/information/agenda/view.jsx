@@ -5,12 +5,12 @@ import styled from 'styled-components';
 
 import { User, Agenda, getCurrentEvent, getEvent, getEvents } from '@phoenixlan/phoenix.js'
 
-import { PageLoading } from "../../components/pageLoading"
+import { PageLoading } from "../../../components/pageLoading"
 
-import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../components/form';
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../components/dashboard';
+import { FormContainer, FormEntry, FormLabel, FormInput, FormError } from '../../../components/form';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
 import { faEye, faEyeSlash, faMinus, faMinusCircle, faSlash, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead } from '../../components/table';
+import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead } from '../../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams } from 'react-router-dom';
 

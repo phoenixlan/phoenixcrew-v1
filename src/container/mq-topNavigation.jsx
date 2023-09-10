@@ -5,19 +5,19 @@ import { useHistory } from "react-router-dom";
 import { AuthenticationContext } from "../components/authentication";
 import { Sidebar } from "./sidebar";
 
-export const mobileContext = React.createContext({})
-export const MobileNavigation = () => {
+export const MQContext = React.createContext({})
+export const MQTopNavigation = () => {
 
     const [ showSidebar, setShowSidebar ] = useState(false);
-    const toTop = () => {
-        window.scroll(0, 0);
-    }
 
     let history = useHistory();
     const auth = useContext(AuthenticationContext);
 
     return (
         <>
+            <Navigation visible={showSidebar} >
+                <Sidebar />
+            </Navigation>
             <NavigationContainer>
                 <InnerContainerRow>
                     <NavigationElement icon={faBars} title="Meny" onClick={() => setShowSidebar(!showSidebar)} />
@@ -25,11 +25,6 @@ export const MobileNavigation = () => {
                     <NavigationElement icon={faUser} title="Min bruker" onClick={() => history.push(`/user/${auth.authUser.uuid}`)} />
                 </InnerContainerRow>
             </NavigationContainer>
-            <Navigation visible={showSidebar} >
-                <mobileContext.Provider value={{setShowSidebar, toTop}}>
-                    <Sidebar />
-                </mobileContext.Provider>
-            </Navigation>
         </>
     )
 }

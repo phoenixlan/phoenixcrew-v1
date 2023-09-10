@@ -5,9 +5,10 @@ import { AuthenticationContext } from '../components/authentication';
 import { SidebarButton } from "./sidebarButton";
 import Logo from "../assets/phoenixlan_square_logo.png";
 
-import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faCalendar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote, faTicket } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { mobileContext } from './mobileNavigation';
 export const CategoryContext = React.createContext({});
 
 const commonWidth   =   "44px";
@@ -321,17 +322,17 @@ export const options = [
     },
     {
         title: "Billett administrasjon",
-        icon: faTicketAlt,
+        icon: faTicket,
         roles: ["ticket_admin", "admin", "ticket_checkin"],
         entries: [
             {
                 title: "Alle billetter",
-                icon: faTicketAlt,
+                icon: faTicket,
                 url: "/tickets/"
             },
             {
                 title: "Gratisbilletter",
-                icon: faTicketAlt,
+                icon: faTicket,
                 url: "/tickets/free"
             },
             {
@@ -341,12 +342,12 @@ export const options = [
             },
             {
                 title: "Medlemskap-info",
-                icon: faTicketAlt,
+                icon: faTicket,
                 url: "/tickets/memberships"
             },
             {
                 title: "Aktive kjøp",
-                icon: faTicketAlt,
+                icon: faTicket,
                 url: "/store_sessions"
             },
             {
@@ -362,15 +363,15 @@ export const options = [
         roles: ["chief", "info_admin", "admin", "event_admin", "compo_admin"],
         entries: [
             {
-                title: "Agenda",
+                title: "Program",
                 icon: faCalendar,
-                url: "/agenda/"
+                url: "/information/agenda/"
             },
             {
                 title: "Send e-post",
                 icon: faEnvelope,
                 url: "/email/",
-            }
+            },
         ]
     }
 ]
@@ -380,6 +381,8 @@ export const Sidebar = () => {
     const auth = useContext(AuthenticationContext);
     const [searchText, setSearchText] = useState("");
     const searchTextLower = searchText.toLowerCase();
+
+    let history = useHistory();
 
     const onSearchUpdate = (event) => {
         setSearchText(event.target.value);
@@ -418,9 +421,10 @@ export const Sidebar = () => {
     })
 
     const CrewManagementElementContent = (entry) => {
+        const menu = useContext(mobileContext);
         return entry.entries.map(innerEntry => {
             return (
-                <SidebarButton key={innerEntry.title} to={innerEntry.url}>
+                <SidebarButton key={innerEntry.title} onClick={() => {history.push(innerEntry.url);  menu.setShowSidebar(false)}}>
                     <S.IconContainer>
                         <S.IconInnerContainer>
                             <FontAwesomeIcon icon={innerEntry.icon} />
@@ -434,7 +438,7 @@ export const Sidebar = () => {
     }
 
     const getFittingPosition = (mappings) => {
-        const named = mappings.filter(mapping => !!mapping.position.name)
+        const named = mappings.filter(mapping => !!mapping.position.name);
         if(named.length > 0) {
             return named[0].position.name
         }

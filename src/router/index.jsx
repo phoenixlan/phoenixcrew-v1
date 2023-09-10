@@ -14,7 +14,7 @@ import { PublicRoute } from "./publicRoute"
 
 import { AuthenticationContext } from '../components/authentication';
 import { ViewApplication } from '../pages/application/view';
-import { AgendaList } from '../pages/agenda';
+import { AgendaList } from '../pages/information/agenda';
 import { PositionList } from '../pages/position';
 import { CrewList } from '../pages/crew/list';
 import { UserList } from '../pages/user/list';
@@ -28,7 +28,7 @@ import { EventViewer } from '../pages/event/view';
 import { AvatarApproval } from '../pages/avatar/approval';
 import { StoreSessionList } from '../pages/ticket/storeSessions';
 import { ViewPosition } from '../pages/position/view';
-import { AgendaElementView } from '../pages/agenda/view';
+import { AgendaElementView } from '../pages/information/agenda/view';
 import { NotAvailable } from '../pages/notAvailable';
 import { ViewCrew } from '../pages/crew/view';
 import { EmailForm } from "../pages/utils/email";
@@ -92,10 +92,16 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/user/:uuid">
                             <ViewUser />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/agenda/">
+                        <PrivateRoute exact path="/information/agenda/">
                             <AgendaList />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/agenda/:uuid">
+                        <PrivateRoute exact path="/information/agenda/:uuid">
+                            <NotAvailable />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/information/messages/">
+                            <NotAvailable />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/information/messages/:uuid">
                             <NotAvailable />
                         </PrivateRoute>
                         <PrivateRoute exact path="/tickets/">

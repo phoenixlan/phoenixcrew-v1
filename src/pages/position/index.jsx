@@ -73,7 +73,6 @@ export const PositionList = () => {
                                     <TableCell as="th" flex="2" mobileHide>Type</TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="1">Aktive <br/>brukere</TableCell>
                                     <TableCell as="th" flex="2" mobileHide>Antall <br/>rettigheter</TableCell>
-                                    <TableCell as="th" flex="0 24px" mobileHide />
                                 </TableRow>
                             </TableHead>
                             <TableBody>            
@@ -96,7 +95,6 @@ export const PositionList = () => {
                                                 <TableCell flex="2" mobileHide>{role.name ? "Custom" : "System"}</TableCell>
                                                 <TableCell flex="2" mobileFlex="1">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
-                                                <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
                                     })
