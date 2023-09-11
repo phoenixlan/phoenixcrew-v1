@@ -221,7 +221,7 @@ export const ListApplications = (props) => {
             </InnerContainer>
 
             <DashboardBarSelector border>
-                <DashboardBarElement active={activeCategory == CATEGORIES.NO_ANSWER} onClick={() => setActiveCategory(CATEGORIES.NO_ANSWER)}>Ingen svar</DashboardBarElement>
+                <DashboardBarElement active={activeCategory == CATEGORIES.NO_ANSWER} onClick={() => setActiveCategory(CATEGORIES.NO_ANSWER)}>Ubehandlet</DashboardBarElement>
                 <DashboardBarElement active={activeCategory == CATEGORIES.ACCEPTED} onClick={() => setActiveCategory(CATEGORIES.ACCEPTED)}>Godkjente</DashboardBarElement>
                 <DashboardBarElement active={activeCategory == CATEGORIES.REJECTED} onClick={() => setActiveCategory(CATEGORIES.REJECTED)}>Avslått</DashboardBarElement>
                 <DashboardBarElement active={activeCategory == CATEGORIES.HIDDEN} onClick={() => setActiveCategory(CATEGORIES.HIDDEN)}>Skjult</DashboardBarElement>
