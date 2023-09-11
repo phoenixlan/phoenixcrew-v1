@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Crew } from "@phoenixlan/phoenix.js";
+import { getCurrentEvent, getEvents, getApplicationsByEvent } from "@phoenixlan/phoenix.js";
 
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow } from "../../components/table";
 
@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 
 import { PageLoading } from "../../components/pageLoading"
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputContainer, InputElement, InputLabel } from '../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InnerContainerRow, InputContainer, InputElement, InputSelect, InputLabel } from '../../components/dashboard';
 
-const ApplicationCrewLabel = ({ application_crew_mapping }) => {
+export const ApplicationCrewLabel = ({ application_crew_mapping }) => {
     return (<>{application_crew_mapping.crew.name} {application_crew_mapping.accepted ? (<b>Godkjent!</b>) : null}</>)
 }
 
@@ -31,8 +31,8 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
         <SelectableTableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
             <TableCell flex="4" mobileFlex="3">{application.user.firstname} {application.user.lastname}</TableCell>
             <TableCell flex="3" mobileFlex="2"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></TableCell>
-            <TableCell flex="3" mobileHide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : ("Ingen")}</TableCell>
-            <TableCell flex="3" mobileHide>{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : ("Ingen")}</TableCell>
+            <TableCell flex="3" mobileHide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : (<i>Ingen</i>)}</TableCell>
+            <TableCell flex="3" mobileHide>{application.crews.length > 2 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[2]} />) : (<i>Ingen</i>)}</TableCell>
             <TableCell flex="3" mobileHide>{ new Date(application.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
             {
                 showProcessedBy ? (
@@ -81,36 +81,90 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
             </TableHead>
             <tbody>
             {
-                applications.map((application) => <ApplicationTableEntry showProcessedBy={showProcessedBy} application={application}/>)
+                applications.map((application) => <ApplicationTableEntry key={application.uuid} showProcessedBy={showProcessedBy} application={application}/>)
             }
             </tbody>
         </Table>
     )
 }
 
+const SORTING_METHODS = {
+    SURNAME: 1,
+    DATE: 2
+}
+
+const CATEGORIES = {
+    NO_ANSWER: 1,
+    ACCEPTED: 2,
+    REJECTED: 3,
+    HIDDEN: 4
+}
+
+const STATE_TO_PY_ENUM = {}
+STATE_TO_PY_ENUM[CATEGORIES.NO_ANSWER] = "ApplicationState.created"
+STATE_TO_PY_ENUM[CATEGORIES.ACCEPTED] = "ApplicationState.accepted"
+STATE_TO_PY_ENUM[CATEGORIES.REJECTED] = "ApplicationState.rejected"
+
+const FILTER_TYPES = {}
+FILTER_TYPES[CATEGORIES.NO_ANSWER] = (application) => application.state === STATE_TO_PY_ENUM[CATEGORIES.NO_ANSWER] && !application.hidden
+FILTER_TYPES[CATEGORIES.ACCEPTED] = (application) => application.state === STATE_TO_PY_ENUM[CATEGORIES.ACCEPTED] && !application.hidden
+FILTER_TYPES[CATEGORIES.REJECTED] = (application) => application.state === STATE_TO_PY_ENUM[CATEGORIES.REJECTED] && !application.hidden
+FILTER_TYPES[CATEGORIES.HIDDEN] = (application) => application.hidden
+
+const SORT_TYPES = {}
+SORT_TYPES[SORTING_METHODS.SURNAME] = (a, b) => a.user.lastname.localeCompare(b.user.lastname)
+SORT_TYPES[SORTING_METHODS.DATE] = (a, b) => a.created - b.created
+
 export const ListApplications = (props) => {
     const [applicationList, setApplicationList] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [activeContent, setActiveContent] = useState(1);
-    const [sortingMethodArchive, setSortingMethodArchive] = useState(2);
-    const [sortingMethodActive, setSortingMethodActive] = useState(2);
+    const [activeCategory, setActiveCategory] = useState(1);
+    const [activeSortingMethod, setActiveSortingMethod] = useState(1);
+
+    // Used for the event selector
+    const [ currentEvent, setCurrentEvent ] = useState();
+    const [ events, setEvents ] = useState();
+    const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
+
+    const updateViewingEvent = (event) => {
+        setCurrentViewingEvent(event.target.value)
+    }
+
+    const refreshApplications = async () => {
+        const applicationList = await getApplicationsByEvent(currentViewingEvent ?? currentEvent.uuid)
+
+        if(applicationList) {
+            console.log("Fetched applicationList:")
+            console.log(applicationList);
+            setApplicationList(applicationList)
+            setLoading(false);
+        } else {
+            console.log("Fuck");
+        }
+    }
 
     useEffect(() => {
         const asyncInner = async () => {
-            const applicationList = await Crew.Applications.getAllApplications()
-            if(applicationList) {
-                console.log("Fetched applicationList:")
-                console.log(applicationList);
-                setApplicationList(applicationList)
-                setLoading(false);
-            } else {
-                console.log("Fuck");
-            }
+            const [ currentEvent, events ] = await Promise.all([
+                getCurrentEvent(),
+                getEvents()
+            ])
+            setCurrentEvent(currentEvent);
+            setCurrentViewingEvent(currentEvent.uuid);
+            setEvents(events)
+        }
+        asyncInner();
+    }, [])
+
+    useEffect(() => {
+        const asyncInner = async () => {
+            // Load events
+            await refreshApplications();
         }
         asyncInner().catch(e => {
             console.log(e);
         })
-    }, []);
+    }, [ currentViewingEvent ]);
 
 
     if(loading) {
@@ -118,6 +172,10 @@ export const ListApplications = (props) => {
             <PageLoading />
         )
     }
+
+    let processedApplicationList = applicationList
+        .filter(FILTER_TYPES[activeCategory])
+        .sort(SORT_TYPES[activeSortingMethod])
 
     return (
         <>
@@ -127,75 +185,51 @@ export const ListApplications = (props) => {
                 </DashboardTitle>
             </DashboardHeader>
 
+            <InnerContainer extramargin border>
+                <InnerContainerRow nopadding>
+                    <InnerContainer flex="1">
+                        <InnerContainerRow nopadding nowrap>
+                            <InputContainer column mobileNoMargin>
+                                <InputLabel small>Arrangement</InputLabel>
+                                <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                                    {
+                                        events.map((event) => (<option key={event.uuid} value={event.uuid}>{event.name} {event.uuid === currentEvent.uuid && "(Nåværende)" }</option>))
+                                    }
+                                </InputSelect>
+                            </InputContainer>
+                        </InnerContainerRow>
+                    </InnerContainer>
+                    <InnerContainer flex="1" mobileHide />
+                    <InnerContainer flex="1" mobileHide />
+                </InnerContainerRow>
+                {
+                    currentViewingEvent !== currentEvent.uuid && (<InnerContainerRow>
+                    <p><i>Du kan se på søknader for dette arrangementet, men du kan ikke modifisere de siden det ikke er det nåværende arrangementet</i></p>
+                    </InnerContainerRow>)
+                }
+            </InnerContainer>
+            <InnerContainer mobileRowGap="4px">
+                Sorter søknader etter:
+                <InputContainer>
+                    <InputElement name="1" type="radio" checked={activeSortingMethod === SORTING_METHODS.SURNAME} onClick={() => setActiveSortingMethod(SORTING_METHODS.SURNAME)} />
+                    <InputLabel top="1px">Etternavn</InputLabel>
+                </InputContainer>
+                <InputContainer>
+                    <InputElement name="1" type="radio" checked={activeSortingMethod === SORTING_METHODS.DATE} onClick={() => setActiveSortingMethod(SORTING_METHODS.DATE)} />
+                    <InputLabel top="1px">Søknadstid</InputLabel>
+                </InputContainer>
+            </InnerContainer>
+
             <DashboardBarSelector border>
-                <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Aktive</DashboardBarElement>
-                <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Arkiverte</DashboardBarElement>
+                <DashboardBarElement active={activeCategory == CATEGORIES.NO_ANSWER} onClick={() => setActiveCategory(CATEGORIES.NO_ANSWER)}>Ubehandlet</DashboardBarElement>
+                <DashboardBarElement active={activeCategory == CATEGORIES.ACCEPTED} onClick={() => setActiveCategory(CATEGORIES.ACCEPTED)}>Godkjente</DashboardBarElement>
+                <DashboardBarElement active={activeCategory == CATEGORIES.REJECTED} onClick={() => setActiveCategory(CATEGORIES.REJECTED)}>Avslått</DashboardBarElement>
+                <DashboardBarElement active={activeCategory == CATEGORIES.HIDDEN} onClick={() => setActiveCategory(CATEGORIES.HIDDEN)}>Skjult</DashboardBarElement>
             </DashboardBarSelector>
 
-            <DashboardContent visible={activeContent == 1}>
-                <InnerContainer mobileRowGap="4px">
-                    Sorter søknader etter:
-                    <InputContainer>
-                        <InputElement name="1" type="radio" checked={sortingMethodActive === 1} onClick={() => setSortingMethodActive(1)} />
-                        <InputLabel top="1px">Fornavn, Etternavn</InputLabel>
-                    </InputContainer>
-                    <InputContainer>
-                        <InputElement name="1" type="radio" checked={sortingMethodActive === 2} onClick={() => setSortingMethodActive(2)} />
-                        <InputLabel top="1px">Søknadstid</InputLabel>
-                    </InputContainer>
-                </InnerContainer>
-
-                <InnerContainer visible={sortingMethodActive == 1}>
-                    <ApplicationTable showProcessedBy applications={applicationList
-                        .filter(application => application.state === "ApplicationState.created")
-                        .sort((a, b) => a.user.lastname.localeCompare(b.user.lastname))} 
-                    />
-                </InnerContainer>
-
-                <InnerContainer visible={sortingMethodActive == 2}>
-                    <ApplicationTable showProcessedBy applications={applicationList
-                        .filter(application => application.state === "ApplicationState.created")
-                        .sort((a, b) => a.created - b.created)} 
-                    />
-                </InnerContainer>
-            </DashboardContent>
-
-            <DashboardContent visible={activeContent == 2}>
-                <InnerContainer mobileRowGap="4px">
-                    Sorter søknader etter:
-                    <InputContainer>
-                        <InputElement name="2" type="radio" checked={sortingMethodArchive == 1} onClick={() => setSortingMethodArchive(1)} />
-                        <InputLabel top="1px">Fornavn, Etternavn</InputLabel>
-                    </InputContainer>
-                    <InputContainer>
-                        <InputElement name="2" type="radio" checked={sortingMethodArchive == 2} onClick={() => setSortingMethodArchive(2)} />
-                        <InputLabel top="1px">Søknadstid</InputLabel>
-                    </InputContainer>
-                    <InputContainer>
-                        <InputElement name="2" type="radio" checked={sortingMethodArchive == 3} onClick={() => setSortingMethodArchive(3)} />
-                        <InputLabel top="1px">Status</InputLabel>
-                    </InputContainer>
-                </InnerContainer>
-
-                <InnerContainer visible={sortingMethodArchive == 1}>
-                    <ApplicationTable showProcessedBy applications={applicationList
-                        .filter(application => application.state !== "ApplicationState.created")
-                        .sort((a, b) => a.user.lastname.localeCompare(b.user.lastname))} 
-                    />
-                </InnerContainer>
-
-                <InnerContainer visible={sortingMethodArchive == 2}>
-                    <ApplicationTable showProcessedBy applications={applicationList
-                        .filter(application => application.state !== "ApplicationState.created")
-                        .sort((a, b) => a.created - b.created)} 
-                    />
-                </InnerContainer>
-
-                <InnerContainer visible={sortingMethodArchive == 3}>
-                    <ApplicationTable showProcessedBy applications={applicationList
-                        .filter(application => application.state !== "ApplicationState.created")
-                        .sort((a, b) => a.state.localeCompare(b.state))} 
-                    />
+            <DashboardContent >
+                <InnerContainer>
+                    <ApplicationTable showProcessedBy applications={processedApplicationList} />
                 </InnerContainer>
             </DashboardContent>
         </>

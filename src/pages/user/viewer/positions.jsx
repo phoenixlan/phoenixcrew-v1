@@ -7,24 +7,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { position_mapping_to_string } from '../../../utils/user';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const PositionList = ({ position_mappings, showUuid, reload }) => {
+const PositionList = ({ position_mappings, show_uuid , reload, canRemove }) => {
+    const demote = async (position_mapping) => {
+        if(!canRemove || !position_mapping.event_uuid) {
+            return;
+        }
+        if(window.confirm("Er du sikker på at du vil fjerne stillingen?")) {
+            await PositionMapping.deletePositionMapping(position_mapping.uuid);
+            await reload();
+        }
+    }
     return (
         <>
             {
                 position_mappings.map(position_mapping => {
                     const positionName = position_mapping_to_string(position_mapping)
 
-                    const demote = async () => {
-                        if(!position_mapping.event_uuid) {
-                            return;
-                        }
-                        await PositionMapping.deletePositionMapping(position_mapping.uuid);
-                        await reload();
-                    }
 
                     return (
-                        <SelectableTableRow onClick={demote}>
-                            <TableCell mobileHide consolas flex="1" visible={!showUuid}>{ position_mapping.position.uuid }</TableCell>
+                        <SelectableTableRow onClick={() => demote(position_mapping)} key={position_mapping.uuid}>
+                            <TableCell mobileHide consolas flex="1" visible={!show_uuid}>{ position_mapping.position.uuid }</TableCell>
                             <TableCell mobileFlex="1" flex="2" >{positionName}</TableCell>
                             <TableCell mobileFlex="0 24px" flex="0 24px">
                                 {
@@ -76,7 +78,7 @@ export const UserViewerPositions = ({ user, reload: reloadUser }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <PositionList reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
+                        <PositionList canRemove={true} reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
                     </TableBody>
                 </Table>
             </InnerContainer>
@@ -92,7 +94,7 @@ export const UserViewerPositions = ({ user, reload: reloadUser }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <PositionList reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
+                        <PositionList canRemove={false} reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
                     </TableBody>
                 </Table>
             </InnerContainer>
