@@ -69,7 +69,7 @@ export const EditAgendaEntry = ({functions, entries}) => {
 
 		// Try to modify the agenda entry
 		try {
-			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, data.location, dateUnixDeviatingTime, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled)
+			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, data.location, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled, dateUnixDeviatingTime)
         } catch(e) {
 			console.error("An error occured while attempting to update the agenda entry.\n" + e)
 		}
