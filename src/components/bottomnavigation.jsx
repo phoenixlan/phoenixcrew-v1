@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const NavigationContainer = styled.div`
+    overflow: hiddem;
     position: fixed;
     top: 0;
     height: 3.75em!important;

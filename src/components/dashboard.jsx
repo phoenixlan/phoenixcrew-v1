@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
 
@@ -65,12 +66,14 @@ export const DashboardContent = styled.div`
 `
 
 export const InnerContainer = styled.div`    
+    font-size: .85rem;
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
     flex-flow: column;
     flex: ${props => props.flex ? props.flex : "undefined"};
-    padding-bottom: 20px;
+    padding-bottom: ${props => props.nopadding ? "0" : "20px"};
     margin-bottom: ${props => props.extramargin ? "20px" : "0"};
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
+    align-items: ${props => props.alignItems ? props.alignItems : "left"};
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
@@ -85,7 +88,8 @@ export const InnerContainerRow = styled.div`
     flex: ${props => props.flex ? props.flex : "undefined"};
     flex-flow: row;
     flex-wrap: ${props => props.nowrap ? "nowrap" : "wrap"};
-    gap: 25px;
+    gap: 2em;
+    row-gap: .5em;
     padding-bottom: ${props => props.nopadding ? "0" : "20px"};
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
 
@@ -94,8 +98,16 @@ export const InnerContainerRow = styled.div`
         flex-wrap: wrap;
         flex-flow: ${props => props.mobileFlow ? props.mobileFlow : "column"};
         width: 100%;
-        row-gap: ${props => props.mobileNoGap ? "" : "16px"};
+        row-gap: ${props => props.mobileNoGap ? "0" : "16px"};
     }
+`
+
+export const InnerContainerTable = styled.table`
+    display: flex;
+`
+export const InnerContainerTableBody = styled.tbody`
+    margin: 0;
+    border-spacing: 0;
 `
 export const InnerContainerTitleL = styled.h1`    
     font-size: 18px;
@@ -105,8 +117,8 @@ export const InnerContainerTitleL = styled.h1`
 `
 export const InnerContainerTitle = styled.h3`    
     font-size: 16px;
-    padding-bottom: ${props => props.nopadding ? "0px" : "6px"};
-    font-weight: 500;
+    padding-bottom: ${props => props.nopadding ? "0px" : ".55em"};
+    font-weight: 400;
     margin: 0;
 `
 export const InnerContainerTitleS = styled.h5`    
@@ -145,12 +157,19 @@ export const InputContainer = styled.div`
     flex: ${props => props.flex ? props.flex : "1"};
     flex-flow: ${props => props.column ? "column" : "row"};
     margin-bottom: ${props => props.extramargin ? "18px" : "1px"};
+    column-gap: 1em;
 
     @media screen and (max-width: 480px) {
         margin-bottom: ${props => props.mobileNoMargin ? "0px" : "inherit"};
         row-gap: 0px;
         display: ${props => props.mobileHide ? "none" : ""};
     }
+
+    ${props => props.disabled ? `
+        opacity: 0.6;
+        user-select: none;
+        pointer-events: none;
+    ` : null}
 `
 
 export const InputCheckbox = ({ label, value, onChange, disabled }) => {
@@ -164,6 +183,9 @@ export const InputCheckbox = ({ label, value, onChange, disabled }) => {
     )
 }
 
+export const InputElementDescription = styled.span`
+    font-size: .7rem;
+`
 export const InputElement = styled.input`
     font-family: "Roboto";
     border: 0;
@@ -181,16 +203,30 @@ export const InputElement = styled.input`
         border-bottom: 1px solid rgb(170,170,170)!important;
     }
 
+    &[type="checkbox"] {
+        position: relative;
+        bottom: 1px;
+        margin-right: .5em;
+        margin-bottom: auto;
+    }
+
     @media screen and (max-width: 480px) {
         &[type="radio"] {
             position: relative;
             bottom: 1px;
-            height: 14px;
-            width: 14px;
+            height: 1em;
+            width: 1em;
+        }
+        &[type="checkbox"] {
+            position: relative;
+            bottom: 1px;
+            height: 1em;
+            width: 1em;
         }
         width: 100%;
     }
 `
+
 export const InputTextArea = styled.textarea`
     font-family: "Roboto";
     border: 0;
@@ -221,6 +257,73 @@ export const InputSelect = styled.select`
         border-bottom: 1px solid rgb(255,75,157);
     }
 `
+
+export const InputButton = styled.button`
+    height: 2.5em;
+    width: 100%;
+`
+
+const ButtonContainer = styled.button`
+    display: flex;
+    flex-flow: row;
+    min-height: 2rem;
+    width: fit-content;
+    font-size: .85rem;
+    padding: 0 1em;
+    border: 0;
+    cursor: pointer;
+    background-color: rgb(242, 242, 242);
+    flex: ${props => props.flex ? "1" : null};
+
+    &[disabled] {
+        cursor: not-allowed;
+    }
+    &[disabled], &[disabled]:active, &[disabled]:hover {
+        cursor: not-allowed;
+        background-color: rgb(242, 242, 242);
+    }
+    &:active, :hover {
+        background-color: rgb(235, 235, 235);
+    }
+
+    @media screen and (max-width: 480px) {
+        width: 100%;
+        margin-bottom: .5em;
+    }
+`
+const ButtonIcon = styled.span`
+    display: flex;
+    margin: auto;
+    position: relative;
+    bottom: 1px;
+    padding: 0 .5em;
+    font-size: 1rem;
+
+    @media screen and (max-width: 480px) {
+        margin: auto 0;
+        min-width: 2em;
+    }
+`
+const ButtonText = styled.span`
+    display: flex;
+    margin: auto;
+    padding: 0 .5em;
+
+    @media screen and (max-width: 480px) {
+        margin: ${props => props.center ? "auto " : "auto auto auto 0"};
+    }
+`
+
+export const PanelButton = ({ type, onClick, icon, flex, children, disabled }) => {
+    return (
+        <>
+            <ButtonContainer type={type} onClick={onClick} disabled={disabled} flex={flex}>
+                {icon ? <ButtonIcon><FontAwesomeIcon icon={icon} /></ButtonIcon> : null}
+                <ButtonText center={icon ? false : true}>{children}</ButtonText>
+            </ButtonContainer>
+        </>
+    )
+}
 
 const IFrame = styled.iframe`
     border: 1px solid rgb(235, 235, 235);
