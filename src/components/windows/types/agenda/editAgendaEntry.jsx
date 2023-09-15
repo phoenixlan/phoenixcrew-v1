@@ -1,41 +1,38 @@
 import { useForm } from "react-hook-form";
-import { InnerContainer, InnerContainerRow, InputButton, InputCheckbox, InputContainer, InputElement, InputLabel, LabelWarning, PanelButton } from "../../../dashboard"
+import { InnerContainer, InnerContainerRow, InputContainer, InputElement, InputLabel, PanelButton } from "../../../dashboard"
 import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
-import { FormButton, FormInput } from "../../../form";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Notice } from "../../../containers/notice";
-import { AuthenticationContext } from "../../../authentication";
 
 export const EditAgendaEntry = ({functions, entries}) => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
     const [ title, setTitle ]											= useState(entries.title);
     const [ description, setDescription ]								= useState(entries.description);
-    const [ time, setTime]												= useState(entries.time ? new Date(entries.time ? entries.time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined)
+    const [ time, setTime ]												= useState(entries.time ? new Date(entries.time ? entries.time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined)
     const [ location, setLocation ]										= useState(entries.location);
 	const [ deviatingTime, setDeviatingTime ]							= useState(entries.deviating_time ? new Date(entries.deviating_time ? entries.deviating_time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined);
 	const [ deviatingLocation, setDeviatingLocation ]					= useState(entries.deviating_location);
 	const [ deviatingTimeUnknown, setDeviatingTimeUnknown ] 			= useState(entries.deviating_time_unknown);
-	const [ deviatingInformation, setDeviatingInformation]				= useState(entries.deviating_information);
+	const [ deviatingInformation, setDeviatingInformation ]				= useState(entries.deviating_information);
 	const [ statePinned, setStatePinned ] 								= useState(entries.pinned);
 	const [ stateCancelled, setStateCancelled ] 						= useState(entries.cancelled);
-	const [ stateDeviatingControl, setStateDeviatingControl]			= useState(undefined);
-
+	const [ stateDeviatingControl, setStateDeviatingControl ]			= useState(undefined);
 
     useEffect(() => {
 		/*
-			onLoad_CheckDeviatingControl:
+			checkDeviatingControl:
 			Input fields like deviating location, deviating time and deviating information is normally
 			disabled to prevent the user from using the wrong fields. We use this function to check if
 			the database has deviating information, if so, enable the fields on load.
 		*/
-		const onLoad_CheckDeviatingControl = () => {
+		const checkDeviatingControl = () => {
 			if(deviatingTime || deviatingLocation || deviatingInformation || deviatingTimeUnknown) {
 				setStateDeviatingControl(true);
 			}
 		}
 
-		onLoad_CheckDeviatingControl();
+		checkDeviatingControl();
     }, []);
 
     const onSubmit = async (data) => {

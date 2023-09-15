@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
+import { Colors } from "../theme";
 
 export const DashboardBlock = styled.div`
     background: white;
@@ -272,18 +273,20 @@ const ButtonContainer = styled.button`
     padding: 0 1em;
     border: 0;
     cursor: pointer;
-    background-color: rgb(242, 242, 242);
+    background-color: ${Colors.Gray100};
     flex: ${props => props.flex ? "1" : null};
+    border: 1px solid ${Colors.Gray200};
 
     &[disabled] {
         cursor: not-allowed;
     }
     &[disabled], &[disabled]:active, &[disabled]:hover {
         cursor: not-allowed;
-        background-color: rgb(242, 242, 242);
+        background-color: ${Colors.Gray100};
     }
     &:active, :hover {
-        background-color: rgb(235, 235, 235);
+        background-color: ${Colors.Gray200};
+        border: 1px solid ${Colors.Gray300};
     }
 
     @media screen and (max-width: 480px) {

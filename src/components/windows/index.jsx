@@ -1,6 +1,7 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import styled from "styled-components"
+import { Colors } from "../../theme"
 
 const S = {
     RootContainer: styled.div`
@@ -18,7 +19,7 @@ const S = {
         width: 100vw;
         height: 100vh;
         opacity: .5;
-        background-color: rgb(0 0 0);
+        background-color: #000;
         z-index: 100;
         user-select: none;
     `,
@@ -35,7 +36,7 @@ const S = {
 
     Line: styled.hr `
         border: 0;
-        border-bottom: 1px solid rgb(235,235,235);
+        border-bottom: 1px solid ${Colors.Gray300};
         margin: 0;
     `,
 
