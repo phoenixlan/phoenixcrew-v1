@@ -1,56 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { PositionMapping, getCurrentEvent } from "@phoenixlan/phoenix.js";
-import { Table, TableCell, TableHead, SelectableTableRow, IconContainer, TableRow, TableBody } from "../../../components/table";
+import { PositionMapping, getCurrentEvent, getEvent } from "@phoenixlan/phoenix.js";
+import { Table, TableCell, TableHead, SelectableTableRow, IconContainer, TableRow, TableBody, InnerColumnCenter } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer, InnerContainerTitle, InputCheckbox } from '../../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { position_mapping_to_string } from '../../../utils/user';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-
-const PositionList = ({ position_mappings, show_uuid , reload, canRemove }) => {
-    const demote = async (position_mapping) => {
-        if(!canRemove || !position_mapping.event_uuid) {
-            return;
-        }
-        if(window.confirm("Er du sikker på at du vil fjerne stillingen?")) {
-            await PositionMapping.deletePositionMapping(position_mapping.uuid);
-            await reload();
-        }
-    }
-    return (
-        <>
-            {
-                position_mappings.map(position_mapping => {
-                    const positionName = position_mapping_to_string(position_mapping)
-
-
-                    return (
-                        <SelectableTableRow onClick={() => demote(position_mapping)} key={position_mapping.uuid}>
-                            <TableCell mobileHide consolas flex="1" visible={!show_uuid}>{ position_mapping.position.uuid }</TableCell>
-                            <TableCell mobileFlex="1" flex="2" >{positionName}</TableCell>
-                            <TableCell mobileFlex="0 24px" flex="0 24px">
-                                {
-                                    position_mapping.event_uuid !== null && <IconContainer><FontAwesomeIcon icon={faTrash} title="Trykk for å slette elementet" /></IconContainer>
-                                }
-                            </TableCell>
-                        </SelectableTableRow>
-                    )
-                })
-            }
-        </>
-    )
-}
-
+import { faCheck, faLock, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { newWindow } from '../../../components/windows';
+import { DeletePosition } from '../../../components/windows/types/user/deletePosition';
 
 export const UserViewerPositions = ({ user, reload: reloadUser }) => {
-    const [ loading, setLoading ] = useState(false);
-
     const [ currentEvent, setCurrentEvent ] = useState(null);
 
-    const [visibleUUIDPositions, setVisibleUUIDPositions] = useState(false);
+    const [ loading, setLoading ] = useState(true);
+    const [ window, setWindow ] = useState([]);    
+    
+    const Position = ({ position, reload }) => {
+        const [ positionEvent, setPositionEvent ]   = useState(null);
+
+        const [ active, setActive ]                 = useState(false);
+        const [ locked, setLocked ]                 = useState(false);
+        
+        let positionName        = position_mapping_to_string(position);
+        let positionEventName   = positionEvent?.name;
+
+        useEffect(async () => {
+            if(position.event_uuid) {
+                if(!positionEvent) {
+                    // Get event information based on event_uuid.
+                    setPositionEvent(await getEvent(position.event_uuid))
+                }
+            }
+
+            // Set the position as active if position event_uuid is unset, or if event_uuid matches current event_uuid.
+            setActive(
+                position.event_uuid == currentEvent?.uuid ||
+                !position.event_uuid
+            )
+    
+            // Set the position as locked if position event_uuid is not set.
+            setLocked(
+                !position.event_uuid
+            )
+        }, [])
+    
+        const demote = async () => {
+            if(position.event_uuid) {
+                return setWindow(newWindow({title: "Fjern stilling", subtitle: positionName, Component: DeletePosition, exitFunction: () => {setWindow(false); reload()}, entries: position}));
+            }
+        }
+
+        return (
+            <SelectableTableRow onClick={demote}>
+                <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!locked}    color="#ef6c00"><FontAwesomeIcon icon={faLock}  title="Stillingen er ikke knyttet til et arrangement, og kan ikke slettes." /></IconContainer></TableCell>
+                <TableCell flex="0 1px"     mobileHide fillGray />
+                <TableCell flex="3"                             >{positionName}</TableCell>
+                <TableCell flex="2"                             >{active ? <>Nåværende stilling</> : <>Tidligere stilling</>}</TableCell>
+                <TableCell flex="2"                             >{positionEventName??<><b>Permanent stilling</b></>}</TableCell>
+            </SelectableTableRow>
+        )
+    }
 
     const reload = async () => {
-        setLoading(true);
         setCurrentEvent(await getCurrentEvent());
         setLoading(false);
     }
@@ -64,37 +75,27 @@ export const UserViewerPositions = ({ user, reload: reloadUser }) => {
     }
     return (
         <>
-            <InnerContainer mobileHide border extramargin>
-                <InputCheckbox label="Vis UUID" value={visibleUUIDPositions} onChange={() => setVisibleUUIDPositions(!visibleUUIDPositions)} />
-            </InnerContainer>
+            {window}
             <InnerContainer extramargin>
-                <InnerContainerTitle>Nåværende Stillinger</InnerContainerTitle>
+                <InnerContainerTitle>Stillinger</InnerContainerTitle>
                 <Table>
                     <TableHead border>
                         <TableRow>
-                            <TableCell flex="1" visible={!visibleUUIDPositions}>UUID</TableCell>
-                            <TableCell flex="2">Navn</TableCell>
-                            <TableCell flex="0 24px" />
+                            <TableCell as="th" center   flex="0 1.3rem"     mobileHide  title="Indikerer om stillingen kan bli slettet, eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+                            <TableCell as="th"          flex="0 1px"        mobileHide fillGray />
+                            <TableCell as="th"          flex="3"                        >Navn</TableCell>
+                            <TableCell as="th"          flex="2"            mobileHide  >Status</TableCell>
+                            <TableCell as="th"          flex="2"            mobileHide  >Gjelder for arrangement</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <PositionList canRemove={true} reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid == currentEvent?.uuid )} />
-                    </TableBody>
-                </Table>
-            </InnerContainer>
-            <InnerContainer extramargin mobileHide />
-            <InnerContainer extramargin>
-                <InnerContainerTitle>Tidligere Stillinger</InnerContainerTitle>
-                <Table>
-                    <TableHead border>
-                        <TableRow>
-                            <TableCell flex="1" visible={!visibleUUIDPositions}>UUID</TableCell>
-                            <TableCell flex="2">Navn</TableCell>
-                            <TableCell flex="0 24px" />
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        <PositionList canRemove={false} reload={reloadUser} show_uuid={visibleUUIDPositions} position_mappings={user.position_mappings.filter(mapping => mapping.event_uuid && mapping.event_uuid != currentEvent?.uuid )} />
+                        {
+                            user.position_mappings.map(position => {
+                                return (
+                                    <Position key={position.uuid} reload={reloadUser} position={position} />
+                                )
+                            })
+                        }
                     </TableBody>
                 </Table>
             </InnerContainer>

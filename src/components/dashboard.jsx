@@ -340,3 +340,37 @@ export const IFrameContainer = ({ src }) => {
         </>
     )
 }
+
+
+export const CardContainer = styled.div`
+    display: flex;
+    flex-flow: row;
+    flex: 1;
+    overflow: hidden;
+    margin-bottom: 1em;
+`
+export const CardContainerIcon = styled.div`
+    display: flex;
+    margin: auto;
+    width: 3em;
+    text-align: center;
+    align-items: middle;
+`
+export const CardContainerInnerIcon = styled.div`
+    display: flex;
+    margin: auto;
+    font-size: 1em;
+`
+export const CardContainerText = styled.div`
+    display: flex;
+    flex-flow: column;
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+`
+export const CardContainerInnerText = styled.div`
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+`
