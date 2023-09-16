@@ -4,7 +4,7 @@ import styled from "styled-components";
 const S = {
     Button: styled.div`
         height: 1.2em;
-        padding: 0.5em;
+        padding: 1em;
 
         display: flex;
         align-items: center;
@@ -12,7 +12,7 @@ const S = {
         cursor: pointer;
         user-select: none;
 
-        border-radius: 0.2em;
+        border-radius: 0.4em;
         border: 1px solid white;
         
         background-color: ${(props) => props.color??"red"};

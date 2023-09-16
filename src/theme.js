@@ -12,7 +12,11 @@ export const Colors = {
 
     Gray300: "#E0E0E0",
 
-    Amber300: "#FFD54F"
+    Amber300: "#FFD54F",
+
+    Gray100: "#F5F5F5",
+    Gray200: "#EEEEEE",
+    Gray300: "#E0E0E0"
 }
 
 export const Theme = {
