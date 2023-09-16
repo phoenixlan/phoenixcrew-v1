@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getCurrentEvent, User, Crew, getEvents, PositionMapping } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, IconContainer, TableRow, TableBody, InnerColumnCenter } from "../../../components/table";
+
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer, InnerContainerTitle } from '../../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
