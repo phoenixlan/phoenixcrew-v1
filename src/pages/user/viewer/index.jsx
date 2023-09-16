@@ -15,8 +15,7 @@ const TABS = {
     USER_DETAILS: 1,
     POSITIONS: 2,
     TICKETS: 3,
-    INTEGRATIONS: 4,
-    APPLICATIONS: 5
+    INTEGRATIONS: 4
 }
 
 export const ViewUser = (props) => {
