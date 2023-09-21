@@ -7,7 +7,7 @@ import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardH
 import { UserViewerDetails } from './details';
 import { UserViewerExternalConnections } from './externalConnections';
 import { UserViewerTickets } from './tickets';
-import { UserViewerPositions } from './positions';
+import { UserPositions, UserViewerPositions } from './positions';
 
 const TABS = {
     USER_DETAILS: 1,
@@ -80,7 +80,7 @@ export const ViewUser = (props) => {
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == TABS.POSITIONS}>
-                    <UserViewerPositions user={user} reload={reload}/>
+                    <UserPositions />
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent == TABS.TICKETS}>
