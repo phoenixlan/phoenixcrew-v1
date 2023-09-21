@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
 import styled from 'styled-components';
 import { User } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, PanelButton } from '../../../components/dashboard';
 
-import { Button } from "../../../components/button"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAddressCard, faCalendar, faEnvelope, faStar, faUser } from '@fortawesome/free-regular-svg-icons';
-import { faCheck, faClipboardUser, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPlus, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
 
 const S = {
     Avatar: styled.img`
@@ -83,7 +81,7 @@ export const UserViewerDetails = ({ user }) => {
                             </CardContainerIcon>
                             <CardContainerText>
                             <InputLabel small>Bruker-UUID</InputLabel>
-                                <CardContainerInnerText>{user.uuid}</CardContainerInnerText>
+                                <CardContainerInnerText console>{user.uuid}</CardContainerInnerText>
                             </CardContainerText>
                         </CardContainer>
                     </InnerContainerRow>
@@ -106,7 +104,7 @@ export const UserViewerDetails = ({ user }) => {
                                 </CardContainerInnerIcon>
                             </CardContainerIcon>
                             <CardContainerText>
-                            <InputLabel small>Brukernavn</InputLabel>
+                            <InputLabel small>Brukernavn / visningsnavn</InputLabel>
                                 <CardContainerInnerText>{user.username}</CardContainerInnerText>
                             </CardContainerText>
                         </CardContainer>
@@ -166,7 +164,7 @@ export const UserViewerDetails = ({ user }) => {
                             </CardContainerIcon>
                             <CardContainerText>
                             <InputLabel small>Fødselsdato</InputLabel>
-                                <span>{user.birthdate}</span>
+                                <CardContainerInnerText>{new Date(user.birthdate).toLocaleDateString('no', {year: 'numeric', month: 'long', day: 'numeric'})}</CardContainerInnerText>
                             </CardContainerText>
                         </CardContainer>
                         <CardContainer>
@@ -186,8 +184,8 @@ export const UserViewerDetails = ({ user }) => {
                     <InnerContainerRow>
                         <CardContainer>
                             <CardContainerIcon>
-                                <CardContainerInnerIcon>
-                                    <FontAwesomeIcon icon={faStar} />
+                                <CardContainerInnerIcon animation1>
+                                    <FontAwesomeIcon icon={membershipState ? faStarSolid : faStarRegular } />
                                 </CardContainerInnerIcon>
                             </CardContainerIcon>
                             <CardContainerText>

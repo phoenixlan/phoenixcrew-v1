@@ -369,6 +369,7 @@ export const CardContainerText = styled.div`
     overflow: hidden;
 `
 export const CardContainerInnerText = styled.div`
+    font-family: ${props => props.console ? 'monospace' : 'inherit'};
     text-overflow: ellipsis;
     width: 100%;
     overflow: hidden;
