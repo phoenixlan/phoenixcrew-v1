@@ -13,7 +13,7 @@ import { newWindow } from '../../../components/windows';
 import { NewAgendaEntry } from '../../../components/windows/types/agenda/newAgendaEntry';
 import { EditAgendaEntry } from '../../../components/windows/types/agenda/editAgendaEntry';
 
-const AgendaEntry = ({ entry, func}) => {
+const AgendaEntry = ({ entry, func }) => {
     const [ active, setActive ]         = useState(false);
     const [ pinned, setPinned ]         = useState(undefined);
     const [ deviating, setDeviating ]   = useState(undefined); 
