@@ -53,7 +53,7 @@ const AgendaEntry = ({ entry, func }) => {
     )
 }
 
-export const AgendaList = (props) => {
+export const AgendaList = () => {
     const [activeContent, setActiveContent] = useState(1);
     const [currentEvent, setCurrentEvent] = useState(undefined);
 
