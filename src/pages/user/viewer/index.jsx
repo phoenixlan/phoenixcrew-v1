@@ -35,7 +35,7 @@ export const ViewUser = (props) => {
                 if(position.crew_uuid) {
                     position.crew = await Crew.getCrew(position.crew_uuid);
                     if(position.team_uuid) {
-                        position.team = position.crew.teams.find((team) => team.uuid == position.team_uuid)
+                        position.team = position.crew.teams.find((team) => team.uuid === position.team_uuid)
                     }
                 }
             }));
@@ -69,25 +69,25 @@ export const ViewUser = (props) => {
                 </DashboardHeader>
 
                 <DashboardBarSelector border>
-                    <DashboardBarElement active={activeContent == TABS.USER_DETAILS} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.USER_DETAILS} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
                 </DashboardBarSelector>
                 
-                <DashboardContent visible={activeContent == TABS.USER_DETAILS}>
+                <DashboardContent visible={activeContent === TABS.USER_DETAILS}>
                     <UserViewerDetails user={user} />
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == TABS.POSITIONS}>
+                <DashboardContent visible={activeContent === TABS.POSITIONS}>
                     <UserPositions />
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == TABS.TICKETS}>
+                <DashboardContent visible={activeContent === TABS.TICKETS}>
                     <UserViewerTickets user={user} />
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == TABS.INTEGRATIONS}>
+                <DashboardContent visible={activeContent === TABS.INTEGRATIONS}>
                     <UserViewerExternalConnections user={user} />
                 </DashboardContent>
             </>
