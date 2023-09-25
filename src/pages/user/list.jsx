@@ -6,11 +6,27 @@ import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableBody, TableRow } from "../../components/table";
 import { dateOfBirthToAge } from '../../utils/user';
-import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox, InputLabel, InputContainer, InputElement, InnerContainerRow, InputSelect } from "../../components/dashboard";
 
-export const UserList= () => {
+
+const SORTING_METHODS = {
+    FIRSTNAME: 1,
+    USERNAME: 2,
+    AGE: 3,
+    CREATED: 4
+}
+
+const SORTING_TYPES = {}
+SORTING_TYPES[SORTING_METHODS.FIRSTNAME] = (a, b) => a.firstname.localeCompare(b.firstname);
+SORTING_TYPES[SORTING_METHODS.USERNAME] = (a, b) => a.username.localeCompare(b.username);
+SORTING_TYPES[SORTING_METHODS.CREATED] = (a, b) => a.created - b.created;
+SORTING_TYPES[SORTING_METHODS.AGE] = (a, b) => dateOfBirthToAge(a.birthdate) - dateOfBirthToAge(b.birthdate);
+
+export const UserList = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeSortingMethod, setActiveSortingMethod] = useState(1);
+    const [search, setSearch] = useState("");
 
     const [visibleUUID, setVisibleUUID] = useState(false);
 
@@ -24,8 +40,18 @@ export const UserList= () => {
     }, []);
 
     if(loading) {
-        return (<PageLoading />)
+    return (<PageLoading />)
     }
+
+    let processedUserList = users
+        .filter((user) => 
+            user.uuid.toLowerCase().includes(search) ||
+            user.firstname.toLowerCase().includes(search) || 
+            user.lastname.toLowerCase().includes(search) ||
+            user.username.toLowerCase().includes(search) ||
+            user.email.toLowerCase().includes(search)
+        )
+        .sort(SORTING_TYPES[activeSortingMethod])
 
     return (
         <>
@@ -34,13 +60,35 @@ export const UserList= () => {
                     Brukeradministrasjon
                 </DashboardTitle>
                 <DashboardSubtitle>
-                    {users.length} brukere registrert
+                    {users.length} brukere registrert{search ? <> – Viser for øyeblikket {processedUserList.length} brukere</> : null}
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainer mobileHide>
-                    <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
-                </InnerContainer>
+                
+
+                <InnerContainerRow>
+                    <InnerContainer flex="1">
+                        <InputContainer column extramargin>
+                            <InputLabel small>Søk</InputLabel>
+                            <InputElement type="text" placeholder="Fornavn, etternavn ..." onChange={(e) => setSearch(e.target.value)}></InputElement>
+                        </InputContainer>
+                        <InputContainer column extramargin>
+                            <InputLabel small>Sortering</InputLabel>
+                            <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
+                                <option value={SORTING_METHODS.FIRSTNAME}>Fornavn</option>
+                                <option value={SORTING_METHODS.USERNAME}>Brukernavn</option>
+                                <option value={SORTING_METHODS.AGE}>Alder</option>
+                                <option value={SORTING_METHODS.CREATED}>Registrert</option>
+                            </InputSelect>
+                        </InputContainer>
+                        <InnerContainer mobileHide>
+                            <InputLabel small>Innstillinger</InputLabel>
+                            <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
+                        </InnerContainer>
+                    </InnerContainer>
+                    <InnerContainer flex="1" /> 
+                    <InnerContainer flex="1" /> 
+                </InnerContainerRow>
 
                 <InnerContainer>
                     <Table>
@@ -56,7 +104,7 @@ export const UserList= () => {
                         </TableHead>
                         <TableBody>
                             {
-                                users.map((user) => {
+                                processedUserList.map((user) => {
                                     return (
                                         <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne" key={user.uuid}>
                                             <TableCell consolas flex="5" visible={!visibleUUID} mobileHide>{ user.uuid }</TableCell>
