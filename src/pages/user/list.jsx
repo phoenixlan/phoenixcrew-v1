@@ -70,7 +70,7 @@ export const UserList = () => {
                     <InnerContainer flex="1">
                         <InputContainer column extramargin>
                             <InputLabel small>Søk</InputLabel>
-                            <InputElement type="text" placeholder="Fornavn, etternavn ..." onChange={(e) => setSearch(e.target.value)}></InputElement>
+                            <InputElement type="text" placeholder="Fornavn, etternavn ..." onChange={(e) => setSearch(e.target.value.toLowerCase())}></InputElement>
                         </InputContainer>
                         <InputContainer column extramargin>
                             <InputLabel small>Sortering</InputLabel>
