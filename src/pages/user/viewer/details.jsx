@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
 import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
 import { Colors } from '../../../theme';
+import { dateOfBirthToAge } from '../../../utils/user';
 
 const S = {
     Avatar: styled.img`
@@ -169,7 +170,7 @@ export const UserViewerDetails = ({ user }) => {
                             </CardContainerIcon>
                             <CardContainerText>
                             <InputLabel small>Fødselsdato</InputLabel>
-                                <CardContainerInnerText>{new Date(user.birthdate).toLocaleDateString('no', {year: 'numeric', month: 'long', day: 'numeric'})}</CardContainerInnerText>
+                                <CardContainerInnerText>{new Date(user.birthdate).toLocaleDateString('no', {year: 'numeric', month: 'long', day: 'numeric'})}, {dateOfBirthToAge(user.birthdate)} år</CardContainerInnerText>
                             </CardContainerText>
                         </CardContainer>
                         <CardContainer>

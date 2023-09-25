@@ -249,7 +249,7 @@ export const InputTextArea = styled.textarea`
 export const InputSelect = styled.select`
     font-family: "Roboto";
     border: 0;
-    padding: 4px 0;
+    padding: 3px 0;
     border-bottom: 1px solid rgb(135, 135, 135);
     background-color: rgb(255, 255, 255);
     outline: none;
