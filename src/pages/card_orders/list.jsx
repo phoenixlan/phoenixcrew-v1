@@ -1,19 +1,30 @@
 import React , { useEffect, useState } from "react";
-import { CardOrder } from "@phoenixlan/phoenix.js";
+import { CardOrder, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { faCheck, faPrint } from "@fortawesome/free-solid-svg-icons";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardContent, DashboardHeader, DashboardBarSelector, DashboardBarElement, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { Table, TableCell, CrewColorBox, IconContainer, SelectableTableRow, TableHead, TableRow } from "../../components/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const CardOrderList = () => {
     const [loading, setLoading] = useState(true);
-    const [orders, setOrders] = useState([]);
     const [showCompleted, setshowCompleted] = useState(false);  
+    const [unfilteredOrders, setunfilteredOrders] = useState([]);
+    const [orders, setOrders] = useState([]);
+    const [crews, setCrews] = useState([]);
+    const [activeContent, setActiveContent ] = useState(1);
+
 
     useEffect(async () => {
-        let orders = await CardOrder.getAllCardOrders()
-        setOrders(orders.filter(order => order.state !== "CANCELLED"))
+        let cardOrders = await CardOrder.getAllCardOrders()
+        cardOrders = cardOrders.filter(order => order.state !== "CANCELLED")
+        setunfilteredOrders(cardOrders)
+        setOrders(cardOrders.filter(order => order.state !== "FINISHED"))
+
+        const crews = await Promise.all((await Crew.getCrews()).map(async (crew) => {
+            return await Crew.getCrew(crew.uuid);
+        }))
+        setCrews(crews)
 
         setLoading(false);
     }, []);
@@ -27,7 +38,7 @@ export const CardOrderList = () => {
     const printOrder = async (order) => {
         const result = await CardOrder.generateCardFromOrder(order.uuid);
         if(result.ok) {
-            
+            //? Can we make a helper function for this?
             const href = window.URL.createObjectURL(await result.blob());
             const link = document.createElement('a');
             link.href = href;
@@ -35,7 +46,6 @@ export const CardOrderList = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
 
             const updatedOrder = await CardOrder.getCardOrder(order.uuid)
             updateOrdersState(updatedOrder)
@@ -50,10 +60,32 @@ export const CardOrderList = () => {
     }
 
     const updateOrdersState = (updatedOrder) => {
-        const updatedOrders = orders.map((order) => {
+        let updatedOrders = orders.map((order) => {
             return order.uuid === updatedOrder.uuid ? updatedOrder : order
         })
+        if (!showCompleted) {
+            updatedOrders = updatedOrders.filter(order => order.state !== "FINISHED")
+        }
         setOrders(updatedOrders)
+    }
+
+    const handleShowCompleted = () => {
+        setshowCompleted(!showCompleted)
+        if (!showCompleted) {
+            setOrders(unfilteredOrders)
+        } else {
+            setOrders(unfilteredOrders.filter(order => order.state !== "FINISHED"))
+        }
+    }
+
+    const placeCrewOrders = (crew) => {
+        crew.positions.forEach((position) => {
+            const currentEvent = getCurrentEvent()
+            position.position_mappings.filter((position_mapping) => position_mapping.event_uuid == currentEvent.event_uuid).forEach((mapping) => {
+                const user = mapping.user
+                CardOrder.createCardOrder(user.uuid)
+            })
+        })
     }
 
     return (<>
@@ -62,9 +94,14 @@ export const CardOrderList = () => {
             Crew-kort
         </DashboardTitle>
     </DashboardHeader>
-    <DashboardContent>
+    <DashboardBarSelector border>
+        <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Ordre</DashboardBarElement>
+        <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Crew</DashboardBarElement>
+    </DashboardBarSelector>
+    
+    <DashboardContent visible={activeContent == 1}>
         <InnerContainer mobileHide>
-            <InputCheckbox label="Vis ferdige ordre" value={showCompleted} onChange={() => setshowCompleted(!showCompleted)} />
+            <InputCheckbox label="Vis ferdige ordre" value={showCompleted} onChange={() => handleShowCompleted()}/>
         </InnerContainer>
 
         <InnerContainer>
@@ -89,5 +126,29 @@ export const CardOrderList = () => {
             </Table>
         </InnerContainer>
     </DashboardContent>
+
+    <DashboardContent visible={activeContent == 2}>
+        <InnerContainer>
+            <Table>
+                <TableHead border>
+                    <TableRow>
+                        <TableCell as="th" flex="0 42px" mobileHide>Farge</TableCell>
+                        <TableCell as="th" flex="6" mobileFlex="3">Navn</TableCell>
+                        <TableCell as="th" flex="10" mobileHide>Beskrivelse</TableCell>
+                        <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å bestille kort for crew"><IconContainer>...</IconContainer></TableCell>
+                    </TableRow>
+                </TableHead>
+            {crews.map(crew => { return (
+                <SelectableTableRow>
+                    <TableCell flex="0 42px" mobileHide><CrewColorBox hex={crew.hex_color} /></TableCell>
+                    <TableCell flex="6" mobileFlex="3">{ crew.name }</TableCell>
+                    <TableCell flex="10" mobileHide>{ crew.description }</TableCell>
+                    <TableCell center flex="0 24px" mobileHide title="Trykk for å bestille kort for crew" onClick={()=>{placeCrewOrders(crew)}}><IconContainer><FontAwesomeIcon icon={faPrint}/></IconContainer></TableCell>
+                </SelectableTableRow>
+            )})}
+            </Table>
+        </InnerContainer>
+    </DashboardContent>
+
     </>)
 }
