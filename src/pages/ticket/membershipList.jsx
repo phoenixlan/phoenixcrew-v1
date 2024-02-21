@@ -8,6 +8,7 @@ import { dateOfBirthToAge } from "../../utils/user";
 import { Table, SelectableTableRow, Row, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
 import { InnerContainerRow, InputContainer, InputLabel, InputSelect, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { FormButton } from '../../components/form';
 
 export const MembershipList = () => {
     const [ users, setUsers] = useState([]);
@@ -42,6 +43,35 @@ export const MembershipList = () => {
         }
         setEvents(events)
         setLoading(false)
+    }
+
+    const downloadTextFile = (filename, text) => {
+        console.log(text);
+
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
+
+    const makeCsvFromUsers = (csvUsers) => {
+        const csv = csvUsers.map(user => {
+            const birthdate = new Date(user.birthdate).toLocaleString('no-NO', {year: 'numeric', month: '2-digit', day: '2-digit'})
+            return `${user.firstname} ${user.lastname},${dateOfBirthToAge(user.birthdate)},${birthdate},${user.address},${user.postal_code}`
+        }).join("\n")
+        const header = "Navn,Alder,Fødselsdag,Addresse,Postnummer\n"
+        downloadTextFile(`lan-medlemmer-${currentEvent.name.replace(" ", "-")}.csv`, header+csv)
+    }
+
+    const makeCsv = () => {
+        makeCsvFromUsers(users)
     }
 
     useEffect(async () => {
@@ -79,7 +109,9 @@ export const MembershipList = () => {
                                     </InputContainer>
                                 </InnerContainerRow>
                             </InnerContainer>
-                            <InnerContainer flex="1" mobileHide />
+                            <InnerContainer flex="1" >
+                                <FormButton type="submit" onClick={() => makeCsv()}>Generer CSV</FormButton>
+                            </InnerContainer>
                             <InnerContainer flex="1" mobileHide />
                         </InnerContainerRow>
                     </InnerContainer>
