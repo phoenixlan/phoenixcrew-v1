@@ -190,11 +190,15 @@ export const InputElementDescription = styled.span`
 export const InputElement = styled.input`
     font-family: "Roboto";
     border: 0;
-    padding: 4px 0;
-    background-color: rgb(255, 255, 255);
-    border-bottom: 1px solid rgb(135, 135, 135);
+    padding: 2px 0;
+    color: ${props => props.error ? "#d32f2f" : "inherit"};
+    background-color: ${props => props.error ? "#ffebee" : "rgb(255, 255, 255)"};
+    border-bottom: 1px solid ${props => props.error ? "#d32f2f" : "rgb(135, 135, 135)"};
     outline: none;
-
+    min-height: 1.5em;
+    flex: ${props => props.flex ? props.flex : null};
+        
+    }
     &:focus {
         border-bottom: 1px solid rgb(255,75,157);
     }
@@ -209,6 +213,10 @@ export const InputElement = styled.input`
         bottom: 1px;
         margin-right: .5em;
         margin-bottom: auto;
+    }
+
+    &::after {
+        content: "${props => props.suffix}";
     }
 
     @media screen and (max-width: 480px) {

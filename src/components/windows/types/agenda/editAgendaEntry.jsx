@@ -5,12 +5,16 @@ import { useEffect, useState } from "react";
 import { Notice } from "../../../containers/notice";
 
 export const EditAgendaEntry = ({functions, entries}) => {
+
+	console.log(entries.time);
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
     const [ title, setTitle ]											= useState(entries.title);
     const [ description, setDescription ]								= useState(entries.description);
-    const [ time, setTime ]												= useState(entries.time ? new Date(entries.time ? entries.time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined)
-    const [ location, setLocation ]										= useState(entries.location);
+	const [ time, setTime ]												= useState(entries.time ? new Date(entries.time ? entries.time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined)
+	const [ duration, setDuration ]										= useState(entries.duration);
+	const [ location, setLocation ]										= useState(entries.location);
 	const [ deviatingTime, setDeviatingTime ]							= useState(entries.deviating_time ? new Date(entries.deviating_time ? entries.deviating_time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined);
 	const [ deviatingLocation, setDeviatingLocation ]					= useState(entries.deviating_location);
 	const [ deviatingTimeUnknown, setDeviatingTimeUnknown ] 			= useState(entries.deviating_time_unknown);
@@ -18,6 +22,12 @@ export const EditAgendaEntry = ({functions, entries}) => {
 	const [ statePinned, setStatePinned ] 								= useState(entries.pinned);
 	const [ stateCancelled, setStateCancelled ] 						= useState(entries.cancelled);
 	const [ stateDeviatingControl, setStateDeviatingControl ]			= useState(undefined);
+
+	//const [ timeISOstring, setTimeISOstring ] 							= useState(time ? new Date(time).toISOString().slice(0, 16) : undefined);
+	//const [ deviatingTimeISOstring, setDeviatingTimeISOstring ] 		= useState(deviatingTime ? new Date(deviatingTime).toISOString().slice(0, 16) : undefined);
+
+	//console.log(time);
+	//console.log(timeISOstring);
 
     useEffect(() => {
 		/*
@@ -65,12 +75,12 @@ export const EditAgendaEntry = ({functions, entries}) => {
 		const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : null;
 
 		// Try to modify the agenda entry
-		try {
-			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, data.location, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled, dateUnixDeviatingTime)
-        } catch(e) {
+		try { 
+			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, Number(data.duration), data.location, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled, data.deviating_date, dateUnixDeviatingTime);
+			functions.exitFunction();
+		} catch(e) {
 			console.error("An error occured while attempting to update the agenda entry.\n" + e)
 		}
-        functions.exitFunction();
     }
 
 	const onDelete = async (data) => {
@@ -111,25 +121,49 @@ export const EditAgendaEntry = ({functions, entries}) => {
 							<InnerContainerRow nopadding nowrap>
 								<InputContainer column extramargin>
 									<InputLabel small>Sted</InputLabel>
-									<InputElement {...register("location")} type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+									<InputElement {...register("location")} type="text" value={location} onChange={(e) => setLocation(e.target.value)} list="locations" />		
 								</InputContainer>
 								<InputContainer column extramargin disabled={!stateDeviatingControl}>
 									<InputLabel small>Nytt sted</InputLabel>
-									<InputElement {...register("deviating_location")} type="text" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingLocation} onChange={(e) => setDeviatingLocation(e.target.value)} />
+									<InputElement {...register("deviating_location")} type="text" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingLocation} onChange={(e) => setDeviatingLocation(e.target.value)} list="locations" />
 								</InputContainer>
+
+								<datalist id="locations">
+									<option value="Multisalen" />
+									<option value="Vestibylen" />
+									<option value="Radar Kafé" />
+									<option value="Radar Scene" />
+									<option value="Online" />
+								</datalist>
+							</InnerContainerRow>
+							<InnerContainerRow nopadding nowrap>
+								<InnerContainerRow nopadding nowrap flex="1">
+									<InputContainer column extramargin>
+										<InputLabel small>Tidspunkt</InputLabel>
+										<InputElement {...register("time", {required: true})} type="datetime-local"value={time??null} onChange={(e) => setTime(e.target.value)} />
+									</InputContainer>
+									<InputContainer column extramargin disabled={!stateDeviatingControl || deviatingTimeUnknown}>
+										<InputLabel small>Nytt tidspunkt</InputLabel>
+										<InputElement {...register("deviating_time")} type="datetime-local" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingTime??null} onChange={(e) => setDeviatingTime(e.target.value)} />
+									</InputContainer>
+								</InnerContainerRow>
 							</InnerContainerRow>
 							<InnerContainerRow nopadding nowrap>
 								<InputContainer column extramargin>
-									<InputLabel small>Tidspunkt</InputLabel>
-									<InputElement {...register("time", {required: true})} type="datetime-local"value={time??null} onChange={(e) => setTime(e.target.value)} />
+									<InputLabel small>Varighet, minutter</InputLabel>
+									<InputElement {...register("duration")} type="number" value={duration??null} onChange={(e) => setDuration(e.target.value)} list="duration" />
 								</InputContainer>
-								<InputContainer column extramargin disabled={!stateDeviatingControl || deviatingTimeUnknown}>
-									<InputLabel small>Nytt tidspunkt</InputLabel>
-									<InputElement {...register("deviating_time")} type="datetime-local" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingTime??null} onChange={(e) => setDeviatingTime(e.target.value)} />
-								</InputContainer>
+								<InputContainer column extramargin />
+
+								<datalist id="duration">
+									<option value="30" label="30 minutter" />
+									<option value="60" label="1 time" />
+									<option value="90" label="1 time, 30 minutter" />
+									<option value="120" label="2 timer" />
+								</datalist>
 							</InnerContainerRow>
 							<InputContainer column extramargin disabled={!stateDeviatingControl}> 
-								<InputLabel small>Beskrivelse for forsinkelse eller problem</InputLabel>
+								<InputLabel small>Beskrivelse av forsinkelse eller problem</InputLabel>
 								<InputElement {...register("deviating_information")} type="text" value={deviatingInformation} tabIndex={!stateDeviatingControl ? "-1" : undefined} onChange={(e) => setDeviatingInformation(e.target.value)} placeholder={stateCancelled ? "Hendelsen har blitt avlyst" : deviatingTimeUnknown ? "Hendelsen har blitt forsinket, ny tid og informasjon kommer" : null}/>
 							</InputContainer>
 							<InputContainer>
