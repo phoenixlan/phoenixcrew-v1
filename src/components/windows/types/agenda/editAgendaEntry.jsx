@@ -71,8 +71,8 @@ export const EditAgendaEntry = ({functions, entries}) => {
 			}
 		}
 
-		const dateUnixTime 			= data.time ? new Date(data.time).getTime()/1000 : null;
-		const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : null;
+		//const dateUnixTime 			= data.time ? new Date(data.time).getTime()/1000 : null;
+		//const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : null;
 
 		// Try to modify the agenda entry
 		try { 

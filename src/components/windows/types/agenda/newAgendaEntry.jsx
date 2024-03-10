@@ -51,6 +51,15 @@ export const NewAgendaEntry = ({functions}) => {
 									<option value="Radar Scene" />
 									<option value="Online" />
 								</datalist>
+                                <InputElement {...register("location")} type="text" list="locations" />
+
+                                <datalist id="locations">
+									<option value="Multisalen" />
+									<option value="Vestibylen" />
+									<option value="Radar Kafé" />
+									<option value="Radar Scene" />
+									<option value="Online" />
+								</datalist>
                             </InputContainer>
                             <InnerContainerRow nopadding nowrap>
                                 <InnerContainerRow nopadding nowrap flex="1">
