@@ -5,29 +5,28 @@ import { useEffect, useState } from "react";
 import { Notice } from "../../../containers/notice";
 
 export const EditAgendaEntry = ({functions, entries}) => {
-
-	console.log(entries.time);
-
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
-    const [ title, setTitle ]											= useState(entries.title);
-    const [ description, setDescription ]								= useState(entries.description);
-	const [ time, setTime ]												= useState(entries.time ? new Date(entries.time ? entries.time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined)
+	// Variables to keep track of changes in input components
+	const [ title, setTitle ]											= useState(entries.title);
+	const [ description, setDescription ]								= useState(entries.description);
 	const [ duration, setDuration ]										= useState(entries.duration);
 	const [ location, setLocation ]										= useState(entries.location);
-	const [ deviatingTime, setDeviatingTime ]							= useState(entries.deviating_time ? new Date(entries.deviating_time ? entries.deviating_time*1000+7200000 : undefined).toISOString().slice(0, 16) : undefined);
 	const [ deviatingLocation, setDeviatingLocation ]					= useState(entries.deviating_location);
-	const [ deviatingTimeUnknown, setDeviatingTimeUnknown ] 			= useState(entries.deviating_time_unknown);
+	const [ deviatingTimeUnknown, setDeviatingTimeUnknown ]				= useState(entries.deviating_time_unknown);
 	const [ deviatingInformation, setDeviatingInformation ]				= useState(entries.deviating_information);
-	const [ statePinned, setStatePinned ] 								= useState(entries.pinned);
-	const [ stateCancelled, setStateCancelled ] 						= useState(entries.cancelled);
+	const [ statePinned, setStatePinned ]								= useState(entries.pinned);
+	const [ stateCancelled, setStateCancelled ]							= useState(entries.cancelled);
 	const [ stateDeviatingControl, setStateDeviatingControl ]			= useState(undefined);
 
-	//const [ timeISOstring, setTimeISOstring ] 							= useState(time ? new Date(time).toISOString().slice(0, 16) : undefined);
-	//const [ deviatingTimeISOstring, setDeviatingTimeISOstring ] 		= useState(deviatingTime ? new Date(deviatingTime).toISOString().slice(0, 16) : undefined);
 
-	//console.log(time);
-	//console.log(timeISOstring);
+	// Variables to input components to fix timezone issue
+	const entryTimeTimezoneOffset = new Date(entries.time*1000).getTimezoneOffset();
+	const [ entryTimeISO, setEntryTimeISO ] = useState(new Date(entries.time*1000-(60000*entryTimeTimezoneOffset)).toISOString().slice(0, 16));
+
+	const entryDeviatingTimeTimezoneOffset = new Date(entries.deviating_time*1000).getTimezoneOffset();
+	const [ entryDeviatingTimeISO, setEntryDeviatingTimeISO ] = useState(entries.deviating_time ? new Date(entries.deviating_time*1000-(60000*entryDeviatingTimeTimezoneOffset)).toISOString().slice(0, 16) : undefined);
+
 
     useEffect(() => {
 		/*
@@ -37,7 +36,7 @@ export const EditAgendaEntry = ({functions, entries}) => {
 			the database has deviating information, if so, enable the fields on load.
 		*/
 		const checkDeviatingControl = () => {
-			if(deviatingTime || deviatingLocation || deviatingInformation || deviatingTimeUnknown) {
+			if(entryDeviatingTimeISO || deviatingLocation || deviatingInformation || deviatingTimeUnknown) {
 				setStateDeviatingControl(true);
 			}
 		}
@@ -71,21 +70,23 @@ export const EditAgendaEntry = ({functions, entries}) => {
 			}
 		}
 
-		//const dateUnixTime 			= data.time ? new Date(data.time).getTime()/1000 : null;
-		//const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : null;
+		const dateUnixTime 			= data.time ? new Date(data.time).getTime()/1000 : null;
+		const dateUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : null;
 
-		// Try to modify the agenda entry
+		// Try to modify the agenda entry, catch an error if the operation fails
 		try { 
-			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, Number(data.duration), data.location, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled, data.deviating_date, dateUnixDeviatingTime);
+			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, Number(data.duration), data.location, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled, dateUnixDeviatingTime);
 			functions.exitFunction();
 		} catch(e) {
-			console.error("An error occured while attempting to update the agenda entry.\n" + e)
+			console.error("An error occured while attempting to update the agenda entry.\n" + e);
 		}
     }
 
 	const onDelete = async (data) => {
-		if(!await Agenda.deleteAgendaEntry(data.uuid)) {
-			console.error("An error occured while attempting to delete agenda element " + data.uuid + ".")
+		try {
+			await Agenda.deleteAgendaEntry(data.uuid);
+		} catch(e) {
+			console.error("An error occured while attempting to delete agenda element " + data.uuid + ".\n" + e);
 		}
 		functions.exitFunction();
 	}
@@ -140,11 +141,11 @@ export const EditAgendaEntry = ({functions, entries}) => {
 								<InnerContainerRow nopadding nowrap flex="1">
 									<InputContainer column extramargin>
 										<InputLabel small>Tidspunkt</InputLabel>
-										<InputElement {...register("time", {required: true})} type="datetime-local"value={time??null} onChange={(e) => setTime(e.target.value)} />
+										<InputElement {...register("time", {required: true})} type="datetime-local" value={entryTimeISO??null} onChange={(e) => setEntryTimeISO(e.target.value)} />
 									</InputContainer>
 									<InputContainer column extramargin disabled={!stateDeviatingControl || deviatingTimeUnknown}>
 										<InputLabel small>Nytt tidspunkt</InputLabel>
-										<InputElement {...register("deviating_time")} type="datetime-local" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingTime??null} onChange={(e) => setDeviatingTime(e.target.value)} />
+										<InputElement {...register("deviating_time")} type="datetime-local" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={entryDeviatingTimeISO??null} onChange={(e) => setEntryDeviatingTimeISO(e.target.value)} />
 									</InputContainer>
 								</InnerContainerRow>
 							</InnerContainerRow>

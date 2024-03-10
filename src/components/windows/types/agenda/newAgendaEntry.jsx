@@ -10,8 +10,10 @@ export const NewAgendaEntry = ({functions}) => {
         // Get current event so we can get its UUID
         const event = await getCurrentEvent();   
 
+        // Convert time to UNIX time
         const dateUnixTime = new Date(data.time);
 
+        // Try to create the agenda entry, catch an error if the operation fails
         try {
             await Agenda.createAgendaEntry(event.uuid, data.title, data.description, data.location, dateUnixTime.getTime()/1000, Number(data.duration), data.pinned)
             functions.exitFunction();
@@ -30,7 +32,6 @@ export const NewAgendaEntry = ({functions}) => {
                             Elementet vises på hovedsiden under program og på infoskjermene som blir satt opp på arramgenentet.<br/><br/>
                         </InnerContainer>
 
-                
                         <InnerContainer flex="1" nopadding>
                             <InputContainer column extramargin>
                                 <InputLabel small>Tittel</InputLabel>
@@ -42,15 +43,6 @@ export const NewAgendaEntry = ({functions}) => {
                             </InputContainer>
                             <InputContainer column extramargin>
                                 <InputLabel small>Sted</InputLabel>
-                                <InputElement {...register("location")} type="text" list="locations" />
-
-                                <datalist id="locations">
-									<option value="Multisalen" />
-									<option value="Vestibylen" />
-									<option value="Radar Kafé" />
-									<option value="Radar Scene" />
-									<option value="Online" />
-								</datalist>
                                 <InputElement {...register("location")} type="text" list="locations" />
 
                                 <datalist id="locations">

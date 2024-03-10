@@ -139,8 +139,6 @@ export const AgendaList = () => {
 
                 <DashboardContent visible={activeContent == 1}>
                     <InnerContainer>
-                        
-
                         Programmet er hva som skal skje under arrangementet.<br />
                         Legg til dato og tid, tittel og beskrivelse for hva som skal skje.<br /><br />
 
