@@ -41,20 +41,12 @@ const AgendaEntry = ({ entry, func}) => {
           ? Date.now() > (entry.deviating_time * 1000 + (entry.duration + 10) * 60000)
           : Date.now() > (entry.time * 1000 + (entry.duration + 10) * 60000)
         : Date.now() > entry.time * 1000 + 10 * 60000
-          
-
-        /*entry.deviating_start_time 
-        ? Date.now() > entry.deviating_start_time * 1000 + 10 * 60000 && !entry.end_time && !entry.deviating_end_time
-        : Date.now() > entry.start_time * 1000 + 10 * 60000 && !entry.end_time && !entry.deviating_end_time ||
-        entry.deviating_start_time 
-        ? Date.now() > entry.deviating_start_time * 1000 
-        : Date.now() > entry.start_time * 1000*/
 
     const deviating = 
-        entry.deviating_start_time_unknown || 
+        entry.deviating_time_unknown || 
         entry.deviating_information || 
         entry.deviating_location || 
-        entry.deviating_start_time ||
+        entry.deviating_time ||
         entry.cancelled;
 
     return (
