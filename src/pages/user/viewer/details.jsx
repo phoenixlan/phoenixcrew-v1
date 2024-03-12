@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { User } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
@@ -10,6 +10,9 @@ import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser 
 import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
 import { Colors } from '../../../theme';
 import { dateOfBirthToAge } from '../../../utils/user';
+import { EditUserDetails } from '../../../components/windows/types/user/editUserDetails';
+import { WindowManagerContext } from '../../../components/windows/windowManager';
+import { ActivateUser } from '../../../components/windows/types/user/activateUser';
 
 const S = {
     Avatar: styled.img`
@@ -22,7 +25,10 @@ const S = {
     `,
 }
 
-export const UserViewerDetails = ({ user }) => {
+export const UserViewerDetails = ({ user, reloadFunction }) => {
+
+    const windowManager = useContext(WindowManagerContext);
+
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState] = useState(null);
     const [ loading, setLoading ] = useState(false);
@@ -62,9 +68,9 @@ export const UserViewerDetails = ({ user }) => {
         <>
             <InnerContainer border nopadding extramargin >
                 <InnerContainerRow mobileNoGap>
-                    <PanelButton disabled onClick={null} icon={faUserPen}>Endre brukeren</PanelButton>
+                    <PanelButton onClick={() => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: user.firstname + user.lastname, size: 0, component: EditUserDetails, entries: user })} icon={faUserPen}>Rediger konto</PanelButton>
+                    <PanelButton onClick={() => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: user.firstname + user.lastname, size: 1, component: ActivateUser, entries: user })} disabled={activationState} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "..."}</PanelButton>
                     <PanelButton onClick={downloadCard} icon={faPrint}>Print crewkort</PanelButton>
-                    <PanelButton disabled icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "..."}</PanelButton>
                 </InnerContainerRow>
             </InnerContainer>
             <InnerContainer>
@@ -200,7 +206,7 @@ export const UserViewerDetails = ({ user }) => {
                             </CardContainerText>
                         </CardContainer>
                     </InnerContainerRow>
-                    <InnerContainerTitle>Informasjon om terms-of-use</InnerContainerTitle>
+                    <InnerContainerTitle>Terms-of-use (TOS) godkjenningsnivå</InnerContainerTitle>
                     <InnerContainerRow>
                         <CardContainer>
                             <CardContainerIcon>
