@@ -30,6 +30,7 @@ const S = {
         `,
         DashboardRoot: styled.div`
             width: calc(100% - 254px);
+            overflow-y: scroll;
 
             @media screen and (max-width: 480px) {
                 margin-top: 60px;
