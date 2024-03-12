@@ -160,6 +160,7 @@ const S = {
         SidebarCrewManagementContainer: styled.div`
             display: flex;
             flex-flow: column;
+            overflow-y: scroll;
         `,
             CrewManagementCategory: styled.div`
                 display: flex;
@@ -496,7 +497,7 @@ export const Sidebar = () => {
                 <S.SearchInput value={searchText} onChange={onSearchUpdate} placeholder="Søk..." type="text" />
             </S.SidebarSearchContainer>
 
-            <S.SidebarCrewManagementContainer id="sidebarCrewManagementContainer">
+            <S.SidebarCrewManagementContainer>
                 {
                     availableOptions.map(entry => {
                         return entry.entries.length == 0 ? null : (

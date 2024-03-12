@@ -443,4 +443,15 @@ export const CardContainerSelectInput = styled.select`
     outline: none;
     padding: .15rem 0;
     margin-bottom: .15rem;
+    background-color: white;
+    width: 100%;
+
+    &:focus {
+        border-bottom: 1px solid rgb(255,75,157);
+    }
+    &:disabled {
+        background-color: inherit;
+        color: rgb(130, 130, 130);
+        border-bottom: 1px solid rgb(170,170,170)!important;
+    }
 `
