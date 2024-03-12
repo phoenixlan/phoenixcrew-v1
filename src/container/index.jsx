@@ -15,7 +15,6 @@ const S = {
         height: 100%;
 
         @media screen and (max-width: 480px) {
-
         }
     `,
         
