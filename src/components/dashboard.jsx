@@ -423,6 +423,8 @@ export const CardContainerInput = styled.input`
         outline: none;
         padding: .15rem 0;
         margin-bottom: .15rem;
+        background-color: white;
+        width: 100%;
     }
     &:focus {
         border-bottom: 1px solid rgb(255,75,157);
