@@ -187,6 +187,10 @@ export const InputCheckbox = ({ label, value, onChange, disabled }) => {
 export const InputElementDescription = styled.span`
     font-size: .7rem;
 `
+export const FormContainer = styled.form`
+    display: flex;
+`
+
 export const InputElement = styled.input`
     font-family: "Roboto";
     border: 0;
@@ -348,6 +352,7 @@ export const CardContainer = styled.div`
     flex: 1;
     overflow: hidden;
     margin-bottom: 1em;
+    gap: .35em;
 `
 export const CardContainerIcon = styled.div`
     display: flex;
@@ -355,6 +360,12 @@ export const CardContainerIcon = styled.div`
     width: 3em;
     text-align: center;
     align-items: middle;
+
+    @media screen and (max-width: 480px) {
+        display: flex;
+        margin: .75em 0 auto 0;
+        align-items: middle;
+    }
 `
 export const CardContainerInnerIcon = styled.div`
     display: flex;
@@ -365,8 +376,15 @@ export const CardContainerText = styled.div`
     display: flex;
     flex-flow: column;
     position: relative;
-    flex: 1;
+    flex: ${props => props.flex ? props.flex : "1"};
     overflow: hidden;
+
+    @media screen and (max-width: 480px) {
+        flex-wrap: wrap;
+        width: 100%;
+        flex: 1;
+        display: ${props => props.mobileHide ? "none" : ""};
+    }
 `
 export const CardContainerInnerText = styled.div`
     font-family: ${props => props.console ? 'monospace' : 'inherit'};
@@ -374,4 +392,45 @@ export const CardContainerInnerText = styled.div`
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
+`
+export const CardContainerInputWrapper = styled.div`
+    display: flex;
+    flex-flow: row;
+    flex: 1;
+    gap: 1em;
+    flex-wrap: wrap;
+
+    @media screen and (max-width: 480px) {
+        flex-flow: column;
+        display: flex;
+        margin: auto;
+    }
+`
+export const CardContainerInput = styled.input`
+    &[type="text"], &[type="email"], &[type="date"] {
+        position: relative;
+        flex: 1;
+        border: 0;
+        border-bottom: 1px solid rgb(80,80,80);
+        outline: none;
+        padding: .15rem 0;
+        margin-bottom: .15rem;
+    }
+    &:focus {
+        border-bottom: 1px solid rgb(255,75,157);
+    }
+    &:disabled {
+        background-color: inherit;
+        color: rgb(130, 130, 130);
+        border-bottom: 1px solid rgb(170,170,170)!important;
+    }
+`
+export const CardContainerSelectInput = styled.select`
+    position: relative;
+    flex: 1;
+    border: 0;
+    border-bottom: 1px solid rgb(80,80,80);
+    outline: none;
+    padding: .15rem 0;
+    margin-bottom: .15rem;
 `
