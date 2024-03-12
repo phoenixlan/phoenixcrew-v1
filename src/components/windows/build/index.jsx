@@ -26,6 +26,11 @@ export const WindowContainer = styled.div`
 
     @media (max-width:48em) {
     }
+
+    @media screen and (max-width: 480px) {
+        height: 100vh;
+        overflow-y: scroll;
+    }
 `
 export const WindowContentContainer = styled.div`
     display: flex;
@@ -36,6 +41,10 @@ export const WindowContentContainer = styled.div`
     @media (max-width:48em) {
         flex-flow: column;
         padding: 0 2em;
+    }
+
+    @media screen and (max-width: 480px) {
+        padding: 0 1.5em;
     }
 `
 
@@ -128,7 +137,7 @@ export const DashboardRootContainer = styled.div`
 
     @media screen and (max-width: 480px) {
         width: unset;
-        padding: 8px;
+        padding: 0;
     }
 `
 

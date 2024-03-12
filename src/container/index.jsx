@@ -15,8 +15,8 @@ const S = {
         height: 100%;
 
         @media screen and (max-width: 480px) {
-            width: unset;
-            padding: 8px;
+            width: calc(100vw - 2em);
+            padding: 0 1em;
         }
     `,
         

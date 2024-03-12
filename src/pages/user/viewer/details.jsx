@@ -68,8 +68,8 @@ export const UserViewerDetails = ({ user, reloadFunction }) => {
         <>
             <InnerContainer border nopadding extramargin >
                 <InnerContainerRow mobileNoGap>
-                    <PanelButton onClick={() => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: user.firstname + user.lastname, size: 0, component: EditUserDetails, entries: user })} icon={faUserPen}>Rediger konto</PanelButton>
-                    <PanelButton onClick={() => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: user.firstname + user.lastname, size: 1, component: ActivateUser, entries: user })} disabled={activationState} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "..."}</PanelButton>
+                    <PanelButton onClick={() => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: (user.firstname + " " + user.lastname), size: 0, component: EditUserDetails, entries: user })} icon={faUserPen}>Rediger konto</PanelButton>
+                    <PanelButton onClick={() => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: (user.firstname + " " + user.lastname), size: 1, component: ActivateUser, entries: user })} disabled={activationState} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "..."}</PanelButton>
                     <PanelButton onClick={downloadCard} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
             </InnerContainer>
