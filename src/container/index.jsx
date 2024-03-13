@@ -15,8 +15,7 @@ const S = {
         height: 100%;
 
         @media screen and (max-width: 480px) {
-            width: calc(100vw - 2em);
-            padding: 0 1em;
+
         }
     `,
         
@@ -35,7 +34,7 @@ const S = {
             @media screen and (max-width: 480px) {
                 margin-top: 60px;
                 width: 100%;
-                padding: 0px;
+                padding: 0 1em;
             }
         `
 }
