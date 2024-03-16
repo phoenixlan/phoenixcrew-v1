@@ -39,7 +39,7 @@ export const ViewUser = (props) => {
                     }
                 }
             }));
-            setUser(user)
+            setUser(user);
             setLoading(false);
 
         } else {
