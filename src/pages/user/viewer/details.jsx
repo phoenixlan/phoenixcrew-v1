@@ -49,7 +49,7 @@ export const UserViewerDetails = ({ user, reloadFunction }) => {
             setModifyUserButtonAvailibility(true);
         }
 
-        // Try to get user information and set the information as states which can be used later:
+        // Try to get user information and set the information as states which can be used later or throw an error.
         try {
             setActivationState(await User.getUserActivationState(user.uuid));
             setMembershipState(await User.getUserMembershipStatus(user.uuid));

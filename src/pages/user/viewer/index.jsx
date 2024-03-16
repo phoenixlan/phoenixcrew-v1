@@ -8,6 +8,7 @@ import { UserViewerDetails } from './details';
 import { UserViewerExternalConnections } from './externalConnections';
 import { UserViewerTickets } from './tickets';
 import { UserPositions, UserViewerPositions } from './positions';
+import { Notice } from '../../../components/containers/notice';
 
 const TABS = {
     USER_DETAILS: 1,
@@ -22,11 +23,21 @@ export const ViewUser = (props) => {
 
     const [activeContent, setActiveContent] = useState(1);
 
-    const [loading, setLoading] = useState(true);
+    const [ error, setError ] = useState(null);
+    const [ loading, setLoading ] = useState(true);
 
     const reload = async () => {
         setLoading(true);
-        const user = await User.getUser(uuid);
+
+        let user;
+
+        // Try to get user information or throw an error if it fails.
+        try {
+            user = await User.getUser(uuid);
+        } catch(e) {
+            console.error("An error occured while attempting to gather user information:\n" + e);
+            setError(e);
+        }
         
         if(user) {
             // Fetch more info about the user
@@ -40,11 +51,9 @@ export const ViewUser = (props) => {
                 }
             }));
             setUser(user);
-            setLoading(false);
-
-        } else {
-            console.log("Fuck");
         }
+
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -54,9 +63,13 @@ export const ViewUser = (props) => {
     }, []);
 
 
+    // Show loading page
     if(loading) {
         return (<PageLoading />)
-    } else {
+    } 
+    
+    // Show user page
+    else if(user) {
         return (
             <>
                 <DashboardHeader>
@@ -89,6 +102,26 @@ export const ViewUser = (props) => {
 
                 <DashboardContent visible={activeContent === TABS.INTEGRATIONS}>
                     <UserViewerExternalConnections user={user} />
+                </DashboardContent>
+            </>
+        )
+    }
+
+    // Show error if user is not set.
+    else {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Bruker
+                    </DashboardTitle>
+                </DashboardHeader>
+
+                <DashboardContent>
+                    <Notice type="error">
+                        Det oppsto en feil ved henting av informasjon for denne brukeren.<br />
+                        {error.message}
+                    </Notice>
                 </DashboardContent>
             </>
         )
