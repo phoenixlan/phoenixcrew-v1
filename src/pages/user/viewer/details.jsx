@@ -1,33 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { User } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
-import { InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel } from '../../../components/dashboard';
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, PanelButton } from '../../../components/dashboard';
 
-import { Button } from "../../../components/button"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
+import { Colors } from '../../../theme';
+import { dateOfBirthToAge } from '../../../utils/user';
+import { EditUserDetails } from '../../../components/windows/types/user/editUserDetails';
+import { WindowManagerContext } from '../../../components/windows/windowManager';
+import { ActivateUser } from '../../../components/windows/types/user/activateUser';
+import { AuthenticationContext } from '../../../components/authentication';
 
 const S = {
     Avatar: styled.img`
         width: 256px;
-        border: 1px solid rgb(235, 235, 235);
+        border: 1px solid ${Colors.Gray200};
+
+        @media screen and (max-width: 480px) {
+            width: 100%;
+        }
     `,
 }
 
-export const UserViewerDetails = ({ user }) => {
+export const UserViewerDetails = ({ user, reloadFunction }) => {
+
+    // Import the following React contexts:
+    const authorizedUser = useContext(AuthenticationContext);
+    const windowManager = useContext(WindowManagerContext);
+
+    const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
+    const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
+
     const [ membershipState, setMembershipState ] = useState(null);
-    const [ activationState, setActivationState] = useState(null);
-    const [ loading, setLoading ] = useState(false);
+    const [ activationState, setActivationState ] = useState(null);
+
+    const [ loading, setLoading ] = useState(true);
 
     const reload = async () => {
         setLoading(true);
-        const [ membershipState, activationState ] = await Promise.all([
-            User.getUserMembershipStatus(user.uuid),
-            User.getUserActivationState(user.uuid),
-        ])
-        setMembershipState(membershipState);
-        setActivationState(activationState);
+
+        // Check if user has "admin" role and make the following functions available:
+        if (authorizedUser.roles.includes("admin")) {
+            setActivationButtonAvailibility(true);
+            setModifyUserButtonAvailibility(true);
+        }
+
+        // Try to get user information and set the information as states which can be used later or throw an error.
+        try {
+            setActivationState(await User.getUserActivationState(user.uuid));
+            setMembershipState(await User.getUserMembershipStatus(user.uuid));
+        } catch(e) {
+            console.error("An error occured while attempting to gather user information:\n" + e);
+        }
+
+        // Logic finished, show the user details page:
         setLoading(false);
     }
 
@@ -52,127 +82,186 @@ export const UserViewerDetails = ({ user }) => {
         return (<PageLoading />)
     }
     return (
-        <InnerContainer>
-            <form>
-                <InnerContainerRow>
-                    <InnerContainer flex="1">
-                        <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Fornavn</InputLabel>
-                                <>{user.firstname}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Etternavn</InputLabel>
-                                <>{user.lastname}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Telefon</InputLabel>
-                                <>{user.phone}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Foresattes telefon</InputLabel>
-                                <>{user.guardian_phone??"Ikke satt"}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Epost</InputLabel>
-                                <>{user.email}</>
-                            </InputContainer>
-                            <InputContainer column extramargin />
-                        </InnerContainerRow>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Fødselsdato</InputLabel>
-                                <>{user.birthdate}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Kjønn</InputLabel>
-                                <>{user.gender == "Gender.male" ? "Mann" : "Kvinne"}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Addresse</InputLabel>
-                                <>{user.address}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Postkode</InputLabel>
-                                <>{user.postal_code}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Landskode</InputLabel>
-                                <>{user.country_code}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-
-                        <InnerContainerTitle>Medlemsskap informasjon</InnerContainerTitle>
-                        <InnerContainerRow nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Radar Event medlem i år</InputLabel>
-                                <>{membershipState !== null ? (membershipState ? "Ja" : "Nei") : "..."}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-
-                        <InnerContainerTitle>Konto informasjon</InnerContainerTitle>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Bruker-UUID</InputLabel>
-                                <>{user.uuid}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Brukernavn</InputLabel>
-                                <>{user.username}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>TOS nivå</InputLabel>
-                                <>{user.tos_level}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Bruker aktivert</InputLabel>
-                                <>{activationState !== null ? (activationState ? "Ja" : "Nei") : "..."}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                    </InnerContainer>
-                    <InnerContainer flex="1">
-                        <InnerContainerTitle>Avatar</InnerContainerTitle>
-                        <InnerContainer>
-                            <S.Avatar src={user.avatar_urls.sd} />
-                        </InnerContainer>
-                        <InnerContainer>
-                            <Button color="lightgray" onClick={downloadCard}>Generer crewkort</Button>
-                        </InnerContainer>
-                    </InnerContainer>
+        <>
+            <InnerContainer border nopadding extramargin >
+                <InnerContainerRow mobileNoGap>
+                    <PanelButton onClick={modifyUserStateButtonAvailibility ? () => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: (user.firstname + " " + user.lastname), size: 0, component: EditUserDetails, entries: user }) : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger konto</PanelButton>
+                    <PanelButton onClick={activationStateButtonAvailibility ? () => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: (user.firstname + " " + user.lastname), size: 1, component: ActivateUser, entries: user }) : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
+                    <PanelButton onClick={downloadCard} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
-                <InnerContainer>
-                        <InnerContainerTitle>GDPR samtykker</InnerContainerTitle>
-                        <Table>
-                            <TableHead border>
-                                <TableRow>
-                                    <TableCell mobileFlex="4" flex="3">Type</TableCell>
-                                    <TableCell flex="1">Verdi</TableCell>
-                                    <TableCell mobileHide flex="3">Når</TableCell>
-                                    <TableCell mobileHide flex="3">Kilde</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <SelectableTableRow>
-                                    <TableCell mobileFlex="4" flex="3">Påminnelse: kommende arrangementer</TableCell>
-                                    <TableCell flex="1">{ emailConsent ? (<b>Ja</b>) : "Nei" }</TableCell>
-                                    <TableCell mobileHide flex="3">{ emailConsent ? (new Date(emailConsent.created*1000).toLocaleString()) : "N/A" }</TableCell>
-                                    <TableCell mobileHide flex="3">{ emailConsent ? emailConsent.source : "N/A" }</TableCell>
-                                </SelectableTableRow>
-                            </TableBody>
-                        </Table>
-                    
-                </InnerContainer>
+            </InnerContainer>
+            <InnerContainer>
                 
-            </form>
-        </InnerContainer>
+            <InnerContainerRow>
+                <InnerContainer nopadding>
+                    <InnerContainerTitle>Profilbilde</InnerContainerTitle>
+                    <InnerContainer>
+                        <S.Avatar src={user.avatar_urls.sd} />
+                    </InnerContainer>
+                </InnerContainer>
+                <InnerContainer flex="1" mobileRowGap="0em" nopadding>
+                    <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
+                    <InnerContainerRow>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faCode} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Bruker-UUID</InputLabel>
+                                <CardContainerInnerText console>{user.uuid}</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                    </InnerContainerRow>
+                    <InnerContainerRow nopadding mobileNoGap>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faUser} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Fornavn, etternavn</InputLabel>
+                                <CardContainerInnerText>{user.firstname}, {user.lastname}</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faAddressCard} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Brukernavn / visningsnavn</InputLabel>
+                                <CardContainerInnerText>{user.username}</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faMapPin} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Addresse</InputLabel>
+                                <CardContainerInnerText>{user.address}, {user.postal_code}</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                    </InnerContainerRow>
+                    <InnerContainerRow nopadding mobileNoGap>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faEnvelope} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Epost</InputLabel>
+                                <CardContainerInnerText title={"Epost: " + user.email}><a href={"mailto:" + user.email}>{user.email}</a></CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faPhone} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Telefon</InputLabel>
+                                <CardContainerInnerText title={"Telefon: " + user.phone}><a href={"tel:" + user.phone}>{user.phone}</a></CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={user.guardian_phone ? faPhone : faPhoneSlash} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Foresattes telefon</InputLabel>
+                                <CardContainerInnerText>{user.guardian_phone ? <a href={"tel:" + user.guardian_phone}>{user.guardian_phone}</a> : "Ikke satt"}</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                    </InnerContainerRow>
+                    <InnerContainerRow mobileNoGap>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faCalendar} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Fødselsdato</InputLabel>
+                                <CardContainerInnerText>{new Date(user.birthdate).toLocaleDateString('no', {year: 'numeric', month: 'long', day: 'numeric'})}, {dateOfBirthToAge(user.birthdate)} år</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={user.gender === "Gender.male" ? faMars : faVenus} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Kjønn</InputLabel>
+                                <CardContainerInnerText>{user.gender === "Gender.male" ? "Mann" : "Kvinne"}</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                        <CardContainer />
+                    </InnerContainerRow>
+                    <InnerContainerTitle>Informasjon om medlemsskap</InnerContainerTitle>
+                    <InnerContainerRow>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon animation1>
+                                    <FontAwesomeIcon icon={membershipState ? faStarSolid : faStarRegular } />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>Radar Event medlemsskap for gjeldende år</InputLabel>
+                                <CardContainerInnerText>{membershipState !== null ? (membershipState ? "Ja" : "Nei") : "Ikke tilgjengelig"}</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                    </InnerContainerRow>
+                    <InnerContainerTitle>Terms-of-use (TOS) godkjenningsnivå</InnerContainerTitle>
+                    <InnerContainerRow>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faFileContract} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                            <InputLabel small>TOS-aksept nivå</InputLabel>
+                                <CardContainerInnerText>{user.tos_level}</CardContainerInnerText>
+                            </CardContainerText>
+                        </CardContainer>
+                    </InnerContainerRow>
+                </InnerContainer>
+            </InnerContainerRow>
+
+            <InnerContainer>
+                <InnerContainerTitle>GDPR samtykker</InnerContainerTitle>
+                <Table>
+                    <TableHead border>
+                        <TableRow>
+                            <TableCell mobileFlex="4" flex="3">Type</TableCell>
+                            <TableCell flex="1">Verdi</TableCell>
+                            <TableCell mobileHide flex="3">Når</TableCell>
+                            <TableCell mobileHide flex="3">Kilde</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <SelectableTableRow>
+                            <TableCell mobileFlex="4" flex="3">Påminnelse: kommende arrangementer</TableCell>
+                            <TableCell flex="1">{ emailConsent ? (<b>Ja</b>) : "Nei" }</TableCell>
+                            <TableCell mobileHide flex="3">{ emailConsent ? (new Date(emailConsent.created*1000).toLocaleString()) : "N/A" }</TableCell>
+                            <TableCell mobileHide flex="3">{ emailConsent ? emailConsent.source : "N/A" }</TableCell>
+                        </SelectableTableRow>
+                    </TableBody>
+                </Table>
+            </InnerContainer>
+            </InnerContainer>
+        </>
     )
 }

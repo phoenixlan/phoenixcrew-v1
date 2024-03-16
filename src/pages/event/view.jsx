@@ -129,7 +129,7 @@ export const EventViewer = () => {
                                 </InnerContainerRow>
                                 
                                 <InnerContainerTitle>Billetter og øvre aldersgrense</InnerContainerTitle>
-                                <InnerContainerRow nowrap>
+                                <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Antall plasser</InputLabel>
                                         <InputElement type="number" value={event.max_participants} disabled />

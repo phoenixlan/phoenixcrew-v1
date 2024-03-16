@@ -15,8 +15,11 @@ const S = {
     RootContainer: styled.div`
         display: flex;
         flex-flow: row;
-        padding: 1em;
-        height: fit-content;
+        min-height: 2rem;
+        width: auto;
+        flex: 1;
+        font-size: .85rem;
+        padding: 0 1em;
         background-color: ${props => props.secondary};
         border: 1px solid ${props => props.primary};
         color: ${props => props.primary};
@@ -25,16 +28,24 @@ const S = {
         IconContainer: styled.div`
             display: flex;
             min-width: 1em;
-            margin: auto 1.25em auto .25em;
+            margin: auto;
+            padding: .5em;
         `,
             Icon: styled.span`
                 font-size: 1rem;
                 margin: auto;
+                text-align: center;
+
+                @media screen and (max-width: 480px) {
+                    margin: auto 0;
+                    min-width: 2em;
+                }
             `,
         TextContainer: styled.div`
             display: flex;
             flex-flow: column;
             flex: 1 1;
+            padding: .5em;
         `,
 
 }

@@ -160,6 +160,8 @@ const S = {
         SidebarCrewManagementContainer: styled.div`
             display: flex;
             flex-flow: column;
+            overflow-y: scroll;
+            height: 100%;
         `,
             CrewManagementCategory: styled.div`
                 display: flex;
@@ -376,7 +378,7 @@ export const options = [
         roles: ["chief", "info_admin", "admin", "event_admin", "compo_admin"],
         entries: [
             {
-                title: "Timeplan",
+                title: "Programplanlegger",
                 icon: faCalendar,
                 url: "/information/schedule/"
             },
@@ -496,7 +498,7 @@ export const Sidebar = () => {
                 <S.SearchInput value={searchText} onChange={onSearchUpdate} placeholder="Søk..." type="text" />
             </S.SidebarSearchContainer>
 
-            <S.SidebarCrewManagementContainer id="sidebarCrewManagementContainer">
+            <S.SidebarCrewManagementContainer>
                 {
                     availableOptions.map(entry => {
                         return entry.entries.length == 0 ? null : (

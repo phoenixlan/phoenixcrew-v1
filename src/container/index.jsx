@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Sidebar } from "./sidebar"
 import { DashboardBlock } from "../components/dashboard";
 import { MobileNavigation } from './mobileNavigation';
+import { WindowManager } from '../components/windows/windowManager';
 
 const S = {
     DocumentRoot: styled.div`
@@ -14,8 +15,7 @@ const S = {
         height: 100%;
 
         @media screen and (max-width: 480px) {
-            width: unset;
-            padding: 8px;
+
         }
     `,
         
@@ -29,11 +29,12 @@ const S = {
         `,
         DashboardRoot: styled.div`
             width: calc(100% - 254px);
+            overflow-y: scroll;
 
             @media screen and (max-width: 480px) {
                 margin-top: 60px;
                 width: 100%;
-                padding: 0px;
+                padding: 0 1em;
             }
         `
 }
@@ -41,17 +42,19 @@ const S = {
 export const Container = ({ children }) => {
     return (
         <>
-            <MobileNavigation />
-            <S.DocumentRoot>
-                <S.SidebarRoot>
-                    <Sidebar />
-                </S.SidebarRoot>
-                <S.DashboardRoot>
-                    <DashboardBlock>
-                        {children}
-                    </DashboardBlock>
-                </S.DashboardRoot>
-            </S.DocumentRoot>
+            <WindowManager>
+                <MobileNavigation />
+                <S.DocumentRoot>
+                    <S.SidebarRoot>
+                        <Sidebar />
+                    </S.SidebarRoot>
+                    <S.DashboardRoot>
+                        <DashboardBlock>
+                            {children}
+                        </DashboardBlock>
+                    </S.DashboardRoot>
+                </S.DocumentRoot>
+            </WindowManager>
         </>
     );
 }
