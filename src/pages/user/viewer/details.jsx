@@ -13,6 +13,7 @@ import { dateOfBirthToAge } from '../../../utils/user';
 import { EditUserDetails } from '../../../components/windows/types/user/editUserDetails';
 import { WindowManagerContext } from '../../../components/windows/windowManager';
 import { ActivateUser } from '../../../components/windows/types/user/activateUser';
+import { AuthenticationContext } from '../../../components/authentication';
 
 const S = {
     Avatar: styled.img`
@@ -27,20 +28,36 @@ const S = {
 
 export const UserViewerDetails = ({ user, reloadFunction }) => {
 
+    // Import the following React contexts:
+    const authorizedUser = useContext(AuthenticationContext);
     const windowManager = useContext(WindowManagerContext);
 
+    const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
+    const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
+
     const [ membershipState, setMembershipState ] = useState(null);
-    const [ activationState, setActivationState] = useState(null);
-    const [ loading, setLoading ] = useState(false);
+    const [ activationState, setActivationState ] = useState(null);
+
+    const [ loading, setLoading ] = useState(true);
 
     const reload = async () => {
         setLoading(true);
-        const [ membershipState, activationState ] = await Promise.all([
-            User.getUserMembershipStatus(user.uuid),
-            User.getUserActivationState(user.uuid),
-        ])
-        setMembershipState(membershipState);
-        setActivationState(activationState);
+
+        // Check if user has "admin" role and make the following functions available:
+        if (authorizedUser.roles.includes("admin")) {
+            setActivationButtonAvailibility(true);
+            setModifyUserButtonAvailibility(true);
+        }
+
+        // Try to get user information and set the information as states which can be used later:
+        try {
+            setActivationState(await User.getUserActivationState(user.uuid));
+            setMembershipState(await User.getUserMembershipStatus(user.uuid));
+        } catch(e) {
+            console.error("An error occured while attempting to gather user information:\n" + e);
+        }
+
+        // Logic finished, show the user details page:
         setLoading(false);
     }
 
@@ -68,8 +85,8 @@ export const UserViewerDetails = ({ user, reloadFunction }) => {
         <>
             <InnerContainer border nopadding extramargin >
                 <InnerContainerRow mobileNoGap>
-                    <PanelButton onClick={() => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: (user.firstname + " " + user.lastname), size: 0, component: EditUserDetails, entries: user })} icon={faUserPen}>Rediger konto</PanelButton>
-                    <PanelButton onClick={() => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: (user.firstname + " " + user.lastname), size: 1, component: ActivateUser, entries: user })} disabled={activationState} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "..."}</PanelButton>
+                    <PanelButton onClick={modifyUserStateButtonAvailibility ? () => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: (user.firstname + " " + user.lastname), size: 0, component: EditUserDetails, entries: user }) : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger konto</PanelButton>
+                    <PanelButton onClick={activationStateButtonAvailibility ? () => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: (user.firstname + " " + user.lastname), size: 1, component: ActivateUser, entries: user }) : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
                     <PanelButton onClick={downloadCard} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
             </InnerContainer>

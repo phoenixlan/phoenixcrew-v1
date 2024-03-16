@@ -162,6 +162,7 @@ const S = {
             display: flex;
             flex-flow: column;
             overflow-y: scroll;
+            height: 100%;
         `,
             CrewManagementCategory: styled.div`
                 display: flex;
