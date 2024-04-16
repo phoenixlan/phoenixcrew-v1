@@ -19,7 +19,7 @@ const TABS = {
 
 export const ViewUser = (props) => {
     const { uuid } = useParams();
-    const [user, setUser] = useState(null);
+    const [ user, setUser ] = useState(null);
 
     const [activeContent, setActiveContent] = useState(1);
 
@@ -89,7 +89,7 @@ export const ViewUser = (props) => {
                 </DashboardBarSelector>
                 
                 <DashboardContent visible={activeContent === TABS.USER_DETAILS}>
-                    <UserViewerDetails user={user} />
+                    <UserViewerDetails inheritUser={user} />
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent === TABS.POSITIONS}>
@@ -118,7 +118,7 @@ export const ViewUser = (props) => {
                 </DashboardHeader>
 
                 <DashboardContent>
-                    <Notice type="error">
+                    <Notice type="error" visible={true}>
                         Det oppsto en feil ved henting av informasjon for denne brukeren.<br />
                         {error.message}
                     </Notice>

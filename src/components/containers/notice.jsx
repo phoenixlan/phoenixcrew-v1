@@ -13,7 +13,7 @@ const types = {
 
 const S = {
     RootContainer: styled.div`
-        display: flex;
+        display: ${props => props.visible ? "flex" : "none"};
         flex-flow: row;
         min-height: 2rem;
         width: auto;
@@ -23,7 +23,7 @@ const S = {
         background-color: ${props => props.secondary};
         border: 1px solid ${props => props.primary};
         color: ${props => props.primary};
-        margin: .5em 0;
+        margin: .5em 0 1em 0;
     `,
         IconContainer: styled.div`
             display: flex;
@@ -53,14 +53,14 @@ const S = {
 export const Notice = (props) => {
     return ( 
         <>
-            <S.RootContainer primary={types[props.type]?.primary || types['default'].primary} secondary={types[props.type]?.secondary || types['default'].secondary}>
+            <S.RootContainer primary={types[props.type]?.primary || types['default'].primary} secondary={types[props.type]?.secondary || types['default'].secondary} visible={props.visible}>
                 <S.IconContainer hide={props.hideIcon}>
                     <S.Icon>
                         <FontAwesomeIcon icon={types[props.type]?.icon || types['default'].icon} />
                     </S.Icon>
                 </S.IconContainer>
                 <S.TextContainer>
-                    {props.children}
+                    {props.children || props.description}
                 </S.TextContainer>
             </S.RootContainer>
         </>
