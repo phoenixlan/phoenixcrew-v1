@@ -59,13 +59,15 @@ export const WindowContentHeaderContainer = styled.div`
         margin: auto;
         width: 100%;
         flex: 1;
+        border-bottom: 1px solid ${Colors.Gray300};
     }
     
     @media screen and (max-width: 480px) {
         margin: auto 0;
         width: 100%;
-        flex: 1;
+        flex: 0;
         order: 1;
+        border-bottom: 1px solid ${Colors.Gray300};
     }
 `
     export const WindowContentTitleContainer = styled.div`
@@ -121,7 +123,7 @@ export const WindowExitButtonContainer = styled.div`
         font-size: 1.2em;
         width: 100%;
     `
-
+    
 
 
 // Dashboard related:

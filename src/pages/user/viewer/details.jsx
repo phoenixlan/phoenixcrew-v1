@@ -26,7 +26,9 @@ const S = {
     `,
 }
 
-export const UserViewerDetails = ({ user, reloadFunction }) => {
+export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
+
+    const [ user, setUser ] = useState(inheritUser);
 
     // Import the following React contexts:
     const authorizedUser = useContext(AuthenticationContext);
@@ -42,6 +44,8 @@ export const UserViewerDetails = ({ user, reloadFunction }) => {
 
     const reload = async () => {
         setLoading(true);
+
+        setUser(await User.getUser(inheritUser.uuid));
 
         // Check if user has "admin" role and make the following functions available:
         if (authorizedUser.roles.includes("admin")) {
@@ -85,8 +89,8 @@ export const UserViewerDetails = ({ user, reloadFunction }) => {
         <>
             <InnerContainer border nopadding extramargin >
                 <InnerContainerRow mobileNoGap>
-                    <PanelButton onClick={modifyUserStateButtonAvailibility ? () => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: (user.firstname + " " + user.lastname), size: 0, component: EditUserDetails, entries: user }) : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger konto</PanelButton>
-                    <PanelButton onClick={activationStateButtonAvailibility ? () => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: (user.firstname + " " + user.lastname), size: 1, component: ActivateUser, entries: user }) : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
+                    <PanelButton onClick={modifyUserStateButtonAvailibility ? () => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: (user.firstname + " " + user.lastname), size: 0, component: EditUserDetails, entries: user, postFunctions: () => reload() }) : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
+                    <PanelButton onClick={activationStateButtonAvailibility ? () => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: (user.firstname + " " + user.lastname), size: 1, component: ActivateUser, entries: user, postFunctions: () => reload() }) : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
                     <PanelButton onClick={downloadCard} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
             </InnerContainer>
