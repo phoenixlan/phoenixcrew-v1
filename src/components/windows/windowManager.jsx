@@ -17,14 +17,15 @@ const WindowConstructor = ({data}) => {
 
     useEffect(() => {
         // Create keydown EventListener and a function to exit current window when "Escape" has been pressed.
-        document.addEventListener("keydown", EscapeWindow);
-        function EscapeWindow(e) {
+        document.addEventListener("keydown", EscapeButtonHandler);
+        function EscapeButtonHandler(e) {
             if(e.code === "Escape") {
-                windowManager.exitWindow();
-                data.exitFunctions();
+                windowManager.exitWindow()
             }
         }
     }, [])
+
+
 
     // Create a React component from data.component
     const Component = data.component;
@@ -33,7 +34,7 @@ const WindowConstructor = ({data}) => {
         <>
             <WindowContainer size={data.size}>
                 <WindowContentContainer size={data.size}>
-                    <WindowContentHeaderContainer bottomBorder={Component}>
+                    <WindowContentHeaderContainer>
                         <WindowContentTitleContainer>
                             <WindowTitle visible={data.title}>{data.title}</WindowTitle>
                             <WindowSubtitle visible={data.subtitle}>{data.subtitle}</WindowSubtitle>
@@ -54,15 +55,27 @@ const WindowConstructor = ({data}) => {
 
 
 export const WindowManager = (props) => {
-    const [ window, setWindow ] = useState(null);
-
+    const [ window, setWindow ] = useState(undefined);
+    const [ postFunctions, setPostFunctions ] = useState(undefined);
+    
     // Function available within the context provider to create a new window and blur the background
     function newWindow(data) {
+        // Run pre functions and set post functions from data.preFunctions and data.postFunctions.
+        if(data.preFunctions) {
+            data.preFunctions();
+        }
+        if(data.postFunctions) {
+            setPostFunctions(() => data.postFunctions);
+        }
+
         setWindow(<WindowConstructor data={data} />)
     }
 
     // Function available within the context provider to exit current window.
     function exitWindow() {
+        if(postFunctions) {
+            postFunctions();
+        }
         setWindow(false);
     }
 
