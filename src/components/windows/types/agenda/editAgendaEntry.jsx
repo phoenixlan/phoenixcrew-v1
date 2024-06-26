@@ -1,11 +1,18 @@
 import { useForm } from "react-hook-form";
-import { InnerContainer, InnerContainerRow, InputContainer, InputElement, InputLabel, PanelButton } from "../../../dashboard"
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInput, CardContainerInputWrapper, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, PanelButton } from "../../../dashboard"
 import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Notice } from "../../../containers/notice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamation, faFont, faMapPin } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faClock } from "@fortawesome/free-regular-svg-icons";
+import { WindowManagerContext } from "../../windowManager";
 
-export const EditAgendaEntry = ({functions, entries}) => {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+export const EditAgendaEntry = ({ entries }) => {
+    const { register, handleSubmit, formState: { errors } } = useForm();
+
+	// Inherit WindowManagerContext
+    const windowManager = useContext(WindowManagerContext);
 
 	// Variables to keep track of changes in input components
 	const [ title, setTitle ]											= useState(entries.title);
@@ -27,6 +34,8 @@ export const EditAgendaEntry = ({functions, entries}) => {
 	const entryDeviatingTimeTimezoneOffset = new Date(entries.deviating_time*1000).getTimezoneOffset();
 	const [ entryDeviatingTimeISO, setEntryDeviatingTimeISO ] = useState(entries.deviating_time ? new Date(entries.deviating_time*1000-(60000*entryDeviatingTimeTimezoneOffset)).toISOString().slice(0, 16) : undefined);
 
+	// Error handling from API and JS
+	const [ error, setError ]					= useState(undefined);
 
     useEffect(() => {
 		/*
@@ -76,8 +85,9 @@ export const EditAgendaEntry = ({functions, entries}) => {
 		// Try to modify the agenda entry, catch an error if the operation fails
 		try { 
 			await Agenda.modifyAgendaEntry(data.uuid, event.uuid, data.title, data.description, dateUnixTime, Number(data.duration), data.location, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled, dateUnixDeviatingTime);
-			functions.exitFunction();
+			windowManager.exitWindow();
 		} catch(e) {
+			setError(e.message);
 			console.error("An error occured while attempting to update the agenda entry.\n" + e);
 		}
     }
@@ -85,49 +95,67 @@ export const EditAgendaEntry = ({functions, entries}) => {
 	const onDelete = async (data) => {
 		try {
 			await Agenda.deleteAgendaEntry(data.uuid);
+			windowManager.exitWindow();
 		} catch(e) {
 			console.error("An error occured while attempting to delete agenda element " + data.uuid + ".\n" + e);
 		}
-		functions.exitFunction();
 	}
 
 	return (
 		<>
-			<form>
-				<InnerContainerRow>
-					<InnerContainer flex="1">
-						<InnerContainer style={{display: "none"}}>
-							<Notice type="info">
-								<b>Skrivefeil? Kosmetiske endringer?</b>
-								Endre kun tittel, beskrivelse, sted og tid dersom det er kosmetiske endringer, altså store/små bokstaver, skrivefeil, tilleggsinformasjon, osv. Det er dette som er den opprinnelige informasjonen og vises som vanlig på infoskjermene og programmet. Dette bør unngås å endre i etterkant.
-							</Notice>
-							<Notice type="warning">
-								<b>Forsinkelse, problemer, avvik og ny informasjon</b>
-								Dersom det oppstår problemer på stedet som gjør at det som er planlagt blir forsinket i en lenger periode skal du benytte avvikende sted, avvikende tid og informasjon om avvik.<br/>
-								Dette er ny og oppdatert informasjon gitt ut av oss, og vil vises i gul/oransje skrift på infoskjermene og programmet for å indikere et avvik fra den opprinnelige planen.
-							</Notice>
-						</InnerContainer>
+			<InnerContainerRow flex="1">
+				<InnerContainer flex="1" nopadding>
+					<InnerContainer flex="1" mobileRowGap="0em" nopadding>
+						<Notice visible={error} type="error" title="En feil har oppstått" description={error} />
 
-				
-						<InnerContainer flex="1" nopadding>
-							<InputElement type="hidden" value={entries.uuid} {...register("uuid")} />
-							<InputContainer column extramargin>
-								<InputLabel small>Tittel</InputLabel>
-								<InputElement {...register("title", {required: true})} type="text" required value={title} onChange={(e) => setTitle(e.target.value)} />
-							</InputContainer>
-							<InputContainer column extramargin>
-								<InputLabel small>Beskrivelse</InputLabel>
-								<InputElement {...register("description")} type="text" required value={description} onChange={(e) => setDescription(e.target.value)} />
-							</InputContainer>
-							<InnerContainerRow nopadding nowrap>
-								<InputContainer column extramargin>
-									<InputLabel small>Sted</InputLabel>
-									<InputElement {...register("location")} type="text" value={location} onChange={(e) => setLocation(e.target.value)} list="locations" />		
-								</InputContainer>
-								<InputContainer column extramargin disabled={!stateDeviatingControl}>
-									<InputLabel small>Nytt sted</InputLabel>
-									<InputElement {...register("deviating_location")} type="text" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingLocation} onChange={(e) => setDeviatingLocation(e.target.value)} list="locations" />
-								</InputContainer>
+						<InnerContainerTitle>Informasjon</InnerContainerTitle>
+
+						<InputElement type="hidden" value={entries.uuid} {...register("uuid")} />
+						<InnerContainerRow nopadding>
+							<CardContainer>
+								<CardContainerIcon>
+									<CardContainerInnerIcon>
+										<FontAwesomeIcon icon={faFont} />
+									</CardContainerInnerIcon>
+								</CardContainerIcon>
+								<CardContainerInputWrapper>
+									<CardContainerText>
+										<InputLabel small>Tittel</InputLabel>
+										<CardContainerInput {...register("title", {required: true})} type="text" required value={title} onChange={(e) => setTitle(e.target.value)} />
+									</CardContainerText>
+								</CardContainerInputWrapper>
+							</CardContainer>
+						</InnerContainerRow>
+
+						<InnerContainerRow nopadding>
+							<CardContainer>
+								<CardContainerIcon />
+								<CardContainerInputWrapper>
+									<CardContainerText>
+										<InputLabel small>Beskrivelse</InputLabel>
+										<CardContainerInput {...register("description")} type="text" required value={description} onChange={(e) => setDescription(e.target.value)} />
+									</CardContainerText>
+								</CardContainerInputWrapper>
+							</CardContainer>
+						</InnerContainerRow>
+
+						<InnerContainerRow nopadding>
+							<CardContainer>
+								<CardContainerIcon>
+									<CardContainerInnerIcon>
+										<FontAwesomeIcon icon={faMapPin} />
+									</CardContainerInnerIcon>
+								</CardContainerIcon>
+								<CardContainerInputWrapper>
+									<CardContainerText>
+										<InputLabel small>Sted</InputLabel>
+										<CardContainerInput {...register("location")} type="text" value={location} onChange={(e) => setLocation(e.target.value)} list="locations" />
+									</CardContainerText>
+									<CardContainerText disabled={!stateDeviatingControl}>
+										<InputLabel small>Nytt sted</InputLabel>
+										<CardContainerInput {...register("deviating_location")} type="text" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={deviatingLocation} onChange={(e) => setDeviatingLocation(e.target.value)} list="locations" />
+									</CardContainerText>
+								</CardContainerInputWrapper>
 
 								<datalist id="locations">
 									<option value="Multisalen" />
@@ -136,25 +164,43 @@ export const EditAgendaEntry = ({functions, entries}) => {
 									<option value="Radar Scene" />
 									<option value="Online" />
 								</datalist>
-							</InnerContainerRow>
-							<InnerContainerRow nopadding nowrap>
-								<InnerContainerRow nopadding nowrap flex="1">
-									<InputContainer column extramargin>
+							</CardContainer>
+						</InnerContainerRow>
+
+						<InnerContainerRow nopadding>
+							<CardContainer>
+								<CardContainerIcon>
+									<CardContainerInnerIcon>
+										<FontAwesomeIcon icon={faCalendar} />
+									</CardContainerInnerIcon>
+								</CardContainerIcon>
+								<CardContainerInputWrapper>
+									<CardContainerText>
 										<InputLabel small>Tidspunkt</InputLabel>
-										<InputElement {...register("time", {required: true})} type="datetime-local" value={entryTimeISO??null} onChange={(e) => setEntryTimeISO(e.target.value)} />
-									</InputContainer>
-									<InputContainer column extramargin disabled={!stateDeviatingControl || deviatingTimeUnknown}>
+										<CardContainerInput {...register("time", {required: true})} type="datetime-local" value={entryTimeISO??null} onChange={(e) => setEntryTimeISO(e.target.value)} />
+									</CardContainerText>
+									<CardContainerText disabled={!stateDeviatingControl || deviatingTimeUnknown}>
 										<InputLabel small>Nytt tidspunkt</InputLabel>
-										<InputElement {...register("deviating_time")} type="datetime-local" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={entryDeviatingTimeISO??null} onChange={(e) => setEntryDeviatingTimeISO(e.target.value)} />
-									</InputContainer>
-								</InnerContainerRow>
-							</InnerContainerRow>
-							<InnerContainerRow nopadding nowrap>
-								<InputContainer column extramargin>
-									<InputLabel small>Varighet, minutter</InputLabel>
-									<InputElement {...register("duration")} type="number" value={duration??null} onChange={(e) => setDuration(e.target.value)} list="duration" />
-								</InputContainer>
-								<InputContainer column extramargin />
+										<CardContainerInput {...register("deviating_time")} type="datetime-local" tabIndex={!stateDeviatingControl ? "-1" : undefined} value={entryDeviatingTimeISO??null} onChange={(e) => setEntryDeviatingTimeISO(e.target.value)} />
+									</CardContainerText>
+								</CardContainerInputWrapper>
+							</CardContainer>
+						</InnerContainerRow>
+
+						<InnerContainerRow nopadding nowrap>
+							<CardContainer>
+								<CardContainerIcon>
+									<CardContainerInnerIcon>
+										<FontAwesomeIcon icon={faClock} />
+									</CardContainerInnerIcon>
+								</CardContainerIcon>
+								<CardContainerInputWrapper>
+									<CardContainerText>
+										<InputLabel small>Varighet (i minutter)</InputLabel>
+										<CardContainerInput {...register("duration")} type="number" value={duration??null} onChange={(e) => setDuration(e.target.value)} list="duration" />
+									</CardContainerText>
+									<CardContainerText mobileHide />
+								</CardContainerInputWrapper>
 
 								<datalist id="duration">
 									<option value="30" label="30 minutter" />
@@ -162,37 +208,50 @@ export const EditAgendaEntry = ({functions, entries}) => {
 									<option value="90" label="1 time, 30 minutter" />
 									<option value="120" label="2 timer" />
 								</datalist>
-							</InnerContainerRow>
-							<InputContainer column extramargin disabled={!stateDeviatingControl}> 
-								<InputLabel small>Beskrivelse av forsinkelse eller problem</InputLabel>
-								<InputElement {...register("deviating_information")} type="text" value={deviatingInformation} tabIndex={!stateDeviatingControl ? "-1" : undefined} onChange={(e) => setDeviatingInformation(e.target.value)} placeholder={stateCancelled ? "Hendelsen har blitt avlyst" : deviatingTimeUnknown ? "Hendelsen har blitt forsinket, ny tid og informasjon kommer" : null}/>
-							</InputContainer>
+							</CardContainer>
+						</InnerContainerRow>
+
+						<InnerContainerRow nopadding>
+							<CardContainer>
+								<CardContainerIcon>
+									<CardContainerInnerIcon>
+										<FontAwesomeIcon icon={faExclamation} />
+									</CardContainerInnerIcon>
+								</CardContainerIcon>
+								<CardContainerInputWrapper>
+									<CardContainerText disabled={!stateDeviatingControl || !stateCancelled}>
+										<InputLabel small>Beskrivelse av forsinkelse eller problem</InputLabel>
+										<CardContainerInput {...register("deviating_information")} type="text" value={deviatingInformation} tabIndex={!stateDeviatingControl ? "-1" : undefined} onChange={(e) => setDeviatingInformation(e.target.value)} placeholder={stateCancelled ? "Hendelsen har blitt avlyst" : deviatingTimeUnknown ? "Hendelsen har blitt forsinket, ny tid og informasjon kommer" : null} />
+									</CardContainerText>
+								</CardContainerInputWrapper>
+							</CardContainer>
+						</InnerContainerRow>
+
+						<InputContainer>
+							<InputLabel small>Innstillinger</InputLabel>
+						</InputContainer>
+						<div>
 							<InputContainer>
-								<InputLabel small>Innstillinger</InputLabel>
+								<InputElement {...register("pinned")} type="checkbox" checked={statePinned} onChange={() => setStatePinned(!statePinned)} /> Festet hendelse
 							</InputContainer>
-							<div>
-								<InputContainer>
-									<InputElement {...register("pinned")} type="checkbox" checked={statePinned} onChange={() => setStatePinned(!statePinned)} /> Festet hendelse
-								</InputContainer>
-								<InputContainer disabled={stateCancelled}>
-									<InputElement type="checkbox" checked={stateDeviatingControl} onChange={() => setStateDeviatingControl(!stateDeviatingControl)} /> Forsinket hendelse
-								</InputContainer>
-								<InputContainer disabled={stateCancelled || !stateDeviatingControl}>
-									<InputElement {...register("deviating_time_unknown")} type="checkbox" tabIndex={stateCancelled ? "-1" : undefined} checked={deviatingTimeUnknown} onChange={() => setDeviatingTimeUnknown(!deviatingTimeUnknown)} />  Hendelse forsinket til ubestemt tidspunkt
-								</InputContainer>
-								<InputContainer extramargin>
-									<InputElement {...register("cancelled")} type="checkbox" checked={stateCancelled} onChange={() => {setStateCancelled(!stateCancelled); setDeviatingTimeUnknown(stateCancelled ? false : null); setDeviatingInformation("")}} /> Avlys hendelse
-								</InputContainer>
-							</div>
-							<br />
-							<InnerContainerRow mobileNoGap nopadding>
-								<PanelButton type="submit" onClick={handleSubmit(onSubmit)} flex>Endre</PanelButton>
-								<PanelButton type="submit" onClick={handleSubmit(onDelete)} flex>Slett</PanelButton>
-							</InnerContainerRow>
-						</InnerContainer>
+							<InputContainer disabled={stateCancelled}>
+								<InputElement type="checkbox" checked={stateDeviatingControl} onChange={() => setStateDeviatingControl(!stateDeviatingControl)} /> Forsinket hendelse
+							</InputContainer>
+							<InputContainer disabled={stateCancelled || !stateDeviatingControl}>
+								<InputElement {...register("deviating_time_unknown")} type="checkbox" tabIndex={stateCancelled ? "-1" : undefined} checked={deviatingTimeUnknown} onChange={() => setDeviatingTimeUnknown(!deviatingTimeUnknown)} />  Hendelse forsinket til ubestemt tidspunkt
+							</InputContainer>
+							<InputContainer extramargin>
+								<InputElement {...register("cancelled")} type="checkbox" checked={stateCancelled} onChange={() => {setStateCancelled(!stateCancelled); setDeviatingTimeUnknown(stateCancelled ? false : null); setDeviatingInformation("")}} /> Avlys hendelse
+							</InputContainer>
+						</div>
+						<br />
+						<InnerContainerRow mobileNoGap nopadding>
+							<PanelButton type="submit" onClick={handleSubmit(onSubmit)} flex>Endre</PanelButton>
+							<PanelButton type="submit" onClick={handleSubmit(onDelete)} flex>Slett</PanelButton>
+						</InnerContainerRow>
 					</InnerContainer>
-				</InnerContainerRow>
-			</form>
+				</InnerContainer>
+			</InnerContainerRow>
 		</>
 	)
 } 
