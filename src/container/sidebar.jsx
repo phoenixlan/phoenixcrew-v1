@@ -458,8 +458,14 @@ export const Sidebar = () => {
             return named[0].position.name
         }
         else if(mappings.length == 0) {
-            return mappings[0].position.name
-        } else {
+            if(mappings[0] == undefined) {
+                return "Bruker";
+            } else {
+                return mappings[0].position.name
+            }  
+        } 
+        
+        else {
             return `${mappings.length} stillinger`
         }
     }
