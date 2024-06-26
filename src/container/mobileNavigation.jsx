@@ -1,4 +1,4 @@
-import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faSignOutAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useState } from "react";
 import { InnerContainerRow, Navigation, NavigationContainer, NavigationElement, NavigationSpacer } from "../components/bottomnavigation";
 import { useHistory } from "react-router-dom";
@@ -23,6 +23,7 @@ export const MobileNavigation = () => {
                     <NavigationElement icon={faBars} title="Meny" onClick={() => setShowSidebar(!showSidebar)} />
                     <NavigationSpacer />
                     <NavigationElement icon={faUser} title="Min bruker" onClick={() => history.push(`/user/${auth.authUser.uuid}`)} />
+                    <NavigationElement icon={faSignOutAlt} title="Logg ut" onClick={() => auth.logout()} />
                 </InnerContainerRow>
             </NavigationContainer>
             <Navigation visible={showSidebar} >
