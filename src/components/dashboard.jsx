@@ -387,6 +387,12 @@ export const CardContainerText = styled.div`
     flex: ${props => props.flex ? props.flex : "1"};
     overflow: hidden;
 
+    ${props => props.disabled ? `
+        opacity: 0.6;
+        user-select: none;
+        pointer-events: none;
+    ` : null}
+
     @media screen and (max-width: 480px) {
         flex-wrap: wrap;
         width: 100%;
@@ -415,7 +421,7 @@ export const CardContainerInputWrapper = styled.div`
     }
 `
 export const CardContainerInput = styled.input`
-    &[type="text"], &[type="email"], &[type="date"] {
+    &[type="text"], &[type="email"], &[type="date"], &[type="datetime-local"], &[type="number"] {
         position: relative;
         flex: 1;
         border: 0;
@@ -423,6 +429,9 @@ export const CardContainerInput = styled.input`
         outline: none;
         padding: .15rem 0;
         margin-bottom: .15rem;
+        background-color: white;
+        width: 100%;
+        user-select: inherit;
     }
     &:focus {
         border-bottom: 1px solid rgb(255,75,157);
