@@ -1,10 +1,16 @@
 import { useForm } from "react-hook-form";
 import { InnerContainer, InnerContainerRow, InputContainer, InputElement, InputLabel, PanelButton } from "../../../dashboard"
 import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
+import { WindowManagerContext } from "../../windowManager";
+import { useContext } from "react";
 
 
-export const NewAgendaEntry = ({functions}) => {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+export const NewAgendaEntry = () => {
+    
+	// Inherit WindowManagerContext
+    const windowManager = useContext(WindowManagerContext);
+
+    const { register, handleSubmit, formState: { errors } } = useForm();
     
     const onSubmit = async (data) => {
         // Get current event so we can get its UUID
@@ -16,7 +22,7 @@ export const NewAgendaEntry = ({functions}) => {
         // Try to create the agenda entry, catch an error if the operation fails
         try {
             await Agenda.createAgendaEntry(event.uuid, data.title, data.description, data.location, dateUnixTime.getTime()/1000, Number(data.duration), data.pinned)
-            functions.exitFunction();
+            windowManager.exitWindow();
         } catch(e) {
             console.error("An error occured while attempting to create the agenda entry.\n" + e)
         }

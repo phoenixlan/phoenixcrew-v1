@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 
@@ -9,10 +9,10 @@ import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table,
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbtack, faPlay, faMinus, faPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { newWindow } from '../../../components/windows';
 import { NewAgendaEntry } from '../../../components/windows/types/agenda/newAgendaEntry';
 import { EditAgendaEntry } from '../../../components/windows/types/agenda/editAgendaEntry';
 import { Notice } from '../../../components/containers/notice';
+import { WindowManagerContext } from '../../../components/windows/windowManager';
 
 const AgendaEntry = ({ entry, func}) => {
     const pinned = entry.pinned;
@@ -74,9 +74,15 @@ const AgendaEntry = ({ entry, func}) => {
 }
 
 export const AgendaList = () => {
-    const [activeContent, setActiveContent] = useState(1);
     
     const [ currentEvent, setCurrentEvent ] = useState(undefined);
+
+    // Import the following React contexts:
+    const windowManager = useContext(WindowManagerContext);
+    
+    const [ createEntryStateButtonAvailibility, setCreateEntryStateButtonAvailibility ] = useState(false);
+
+    const [ activeContent, setActiveContent ] = useState(1);
     const [ agendaList, setAgendaList ] = useState([]);
 
     const [ window, setWindow ] = useState([]);    
@@ -84,10 +90,12 @@ export const AgendaList = () => {
     const [ loading, setLoading ] = useState(true);
 
     const reloadAgendaList = async () => {
+        setLoading(true);
 
         // Attempt to get current event, and get the agenda list based on current event. Create a warning notice if no event is found.
         const currentEvent = await getCurrentEvent();
         if(currentEvent) {
+            setCreateEntryStateButtonAvailibility(true);
             setCurrentEvent(currentEvent);
             setAgendaList(await Agenda.getAgenda());
         } else {
@@ -106,7 +114,9 @@ export const AgendaList = () => {
 
 
     const reload = async () => {
+        setLoading(true);
         await reloadAgendaList();
+        setLoading(false);
     }
 
 
@@ -146,7 +156,7 @@ export const AgendaList = () => {
 
                     <InnerContainerRow nopadding>
                         <InnerContainer flex="1">
-                            <PanelButton disabled={notice} onClick={() => setWindow(newWindow({title: "Opprett nytt element", subtitle: currentEvent.name, Component: NewAgendaEntry, exitFunction: () => {setWindow(false); reload()}}))} icon={faPlus}>Legg til</PanelButton>
+                            <PanelButton onClick={createEntryStateButtonAvailibility ? () => windowManager.newWindow({title: "Opprett nytt programelement", subtitle: currentEvent.name, size: 0, component: NewAgendaEntry, entries: null, postFunctions: () => reload()}) : null} disabled={!createEntryStateButtonAvailibility} icon={faPlus}>Legg til</PanelButton>
                         </InnerContainer>
                     </InnerContainerRow>
 
@@ -174,7 +184,7 @@ export const AgendaList = () => {
                                                 entry={entry}
                                                 reloadAgendaList={reloadAgendaList}   
                                                 
-                                                func={() => setWindow(newWindow({title: "Endre oppføring", subtitle: currentEvent.name, Component: EditAgendaEntry, exitFunction: () => {setWindow(false); reload()}, entries: entry}))} 
+                                                func={() => windowManager.newWindow({title: "Endre oppføring", subtitle: currentEvent.name, size: 0, component: EditAgendaEntry, entries: entry, postFunctions: () => reload()})}
                                             />
                                         )
                                     })
