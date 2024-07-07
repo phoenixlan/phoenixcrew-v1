@@ -10,6 +10,7 @@ import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser 
 import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
 import { Colors } from '../../../theme';
 import { dateOfBirthToAge } from '../../../utils/user';
+import { Colors } from '../../../theme';
 
 const S = {
     Avatar: styled.img`
