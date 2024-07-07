@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from "react-hook-form";
 
 import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 
@@ -13,32 +12,19 @@ import { newWindow } from '../../../components/windows';
 import { NewAgendaEntry } from '../../../components/windows/types/agenda/newAgendaEntry';
 import { EditAgendaEntry } from '../../../components/windows/types/agenda/editAgendaEntry';
 
-const AgendaEntry = ({ entry, func}) => {
-    const [ active, setActive ]         = useState(false);
-    const [ pinned, setPinned ]         = useState(undefined);
-    const [ deviating, setDeviating ]   = useState(undefined); 
+const AgendaEntry = ({ entry, func }) => {
 
-    useEffect(() => {
-        // Set active state depending on these conditions:
-        setActive(
-            Date.now() - 5 * 60000 < new Date(entry.deviating_time * 1000) ||
-            Date.now() - 5 * 60000 < new Date(entry.time * 1000)
-        )
+    const pinned = entry.pinned;
+    const active = 
+        Date.now() - 5 * 60000 < new Date(entry.deviating_time * 1000) || 
+        Date.now() - 5 * 60000 < new Date(entry.time * 1000);
+    const deviating = 
+        entry.deviating_time_unknown || 
+        entry.deviating_information || 
+        entry.deviating_location || 
+        entry.deviating_time ||
+        entry.cancelled;
 
-        // Set pinned state depending on these conditions:
-        setPinned(
-            entry.pinned
-        )
-
-        // Set deviating state depending on these conditions:
-        setDeviating(
-            entry.deviating_time_unknown ||
-            entry.cancelled ||
-            entry.deviating_information ||
-            entry.deviating_location ||
-            entry.deviating_time
-        )
-    }, [entry]);
     return (
         <SelectableTableRow onClick={func}>
             <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!active} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={active} color="#ef6c00"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
@@ -132,7 +118,13 @@ export const AgendaList = () => {
                                 {
                                     agendaList.map(entry => {
                                         return (
-                                            <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid} func={() => setWindow(newWindow({title: "Endre oppføring", subtitle: currentEvent.name, Component: EditAgendaEntry, exitFunction: () => {setWindow(false); reload()}, entries: entry}))} />
+                                            <AgendaEntry 
+                                                key={entry.uuid}
+                                                entry={entry}
+                                                reloadAgendaList={reloadAgendaList}   
+                                                
+                                                func={() => setWindow(newWindow({title: "Endre oppføring", subtitle: currentEvent.name, Component: EditAgendaEntry, exitFunction: () => {setWindow(false); reload()}, entries: entry}))} 
+                                            />
                                         )
                                     })
                                 }
