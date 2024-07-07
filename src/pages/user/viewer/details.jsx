@@ -8,11 +8,16 @@ import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainer
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
 import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
+import { Colors } from '../../../theme';
 
 const S = {
     Avatar: styled.img`
         width: 256px;
-        border: 1px solid rgb(235, 235, 235);
+        border: 1px solid ${Colors.Gray200};
+
+        @media screen and (max-width: 480px) {
+            width: 100%;
+        }
     `,
 }
 
@@ -170,12 +175,12 @@ export const UserViewerDetails = ({ user }) => {
                         <CardContainer>
                             <CardContainerIcon>
                                 <CardContainerInnerIcon>
-                                    <FontAwesomeIcon icon={user.gender == "Gender.male" ? faMars : faVenus} />
+                                    <FontAwesomeIcon icon={user.gender === "Gender.male" ? faMars : faVenus} />
                                 </CardContainerInnerIcon>
                             </CardContainerIcon>
                             <CardContainerText>
                             <InputLabel small>Kjønn</InputLabel>
-                                <CardContainerInnerText>{user.gender == "Gender.male" ? "Mann" : "Kvinne"}</CardContainerInnerText>
+                                <CardContainerInnerText>{user.gender === "Gender.male" ? "Mann" : "Kvinne"}</CardContainerInnerText>
                             </CardContainerText>
                         </CardContainer>
                         <CardContainer />
