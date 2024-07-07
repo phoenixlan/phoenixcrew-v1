@@ -138,12 +138,10 @@ export const AgendaList = () => {
                     </InnerContainer>
 
                     {
-                    notice
-                    ?   <Notice type={notice.type}>
-                            <b>{notice.title}</b>
-                            {notice.description}
-                        </Notice>
-                    :   <></>
+                    <Notice type={notice.type} visible={notice}>
+                        <b>{notice.title}</b>
+                        {notice.description}
+                    </Notice>
                     }
 
                     <InnerContainerRow nopadding>
