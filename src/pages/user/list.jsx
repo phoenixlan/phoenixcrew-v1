@@ -109,7 +109,7 @@ export const UserList = () => {
                                     return (
                                         <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne" key={user.uuid}>
                                             <TableCell consolas flex="5" visible={!visibleUUID} mobileHide>{ user.uuid }</TableCell>
-                                            <TableCell flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</TableCell>
+                                            <TableCell flex="3" mobileFlex="3">{ user.firstname + " " + user.lastname }</TableCell>
                                             <TableCell flex="1" mobileFlex="1">{dateOfBirthToAge(user.birthdate)}</TableCell>
                                             <TableCell flex="2" mobileHide>{ user.username }</TableCell>
                                             <TableCell flex="3" mobileHide>{ new Date(user.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
