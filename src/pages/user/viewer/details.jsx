@@ -39,6 +39,7 @@ export const UserViewerDetails = ({ user }) => {
 
     const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
     const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
+    const [ deleteAvatarButtonAvailibility, setDeleteAvatarButtonAvailibility ] = useState(false);
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState ] = useState(null);
