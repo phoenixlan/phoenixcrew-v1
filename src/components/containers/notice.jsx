@@ -17,9 +17,8 @@ const S = {
         flex-flow: row;
         min-height: 2rem;
         width: auto;
-        flex: 1;
         font-size: .85rem;
-        padding: 0 1em;
+        padding: .5em 1em;
         background-color: ${props => props.secondary};
         border: 1px solid ${props => props.primary};
         color: ${props => props.primary};
