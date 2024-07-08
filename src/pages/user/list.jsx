@@ -60,7 +60,7 @@ export const UserList = () => {
                     Brukeradministrasjon
                 </DashboardTitle>
                 <DashboardSubtitle>
-                    {users.length} brukere registrert{search ? <> – Viser for øyeblikket {processedUserList.length} brukere</> : null}
+                    {users.length} brukere registrert{search ? <> – Viser for øyeblikket {processedUserList.length} {processedUserList.length === 1 ? "bruker" : "brukere"}</> : null}
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
