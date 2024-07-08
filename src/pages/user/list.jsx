@@ -49,7 +49,8 @@ export const UserList = () => {
             user.firstname.toLowerCase().includes(search) || 
             user.lastname.toLowerCase().includes(search) ||
             user.username.toLowerCase().includes(search) ||
-            user.email.toLowerCase().includes(search)
+            user.email.toLowerCase().includes(search) ||
+            user.phone.includes(search)
         )
         .sort(SORTING_TYPES[activeSortingMethod])
 
