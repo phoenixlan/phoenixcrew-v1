@@ -14,11 +14,13 @@ import { EditUserDetails } from '../../../components/windows/types/user/editUser
 import { WindowManagerContext } from '../../../components/windows/windowManager';
 import { ActivateUser } from '../../../components/windows/types/user/activateUser';
 import { AuthenticationContext } from '../../../components/authentication';
+import { DeleteAvatar } from '../../../components/windows/types/user/deleteAvatar';
 
 const S = {
     Avatar: styled.img`
         width: 256px;
         border: 1px solid ${Colors.Gray200};
+        margin-bottom: 1em;
 
         @media screen and (max-width: 480px) {
             width: 100%;
@@ -36,6 +38,7 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
 
     const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
     const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
+    const [ deleteAvatarButtonAvailibility, setDeleteAvatarButtonAvailibility ] = useState(false);
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState ] = useState(null);
@@ -51,6 +54,13 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
         if (authorizedUser.roles.includes("admin")) {
             setActivationButtonAvailibility(true);
             setModifyUserButtonAvailibility(true);
+        }
+
+        // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
+        if (user.avatar_uuid) {
+            if((authorizedUser.roles.includes("admin") || authorizedUser.roles.includes("hr_admin")) || authorizedUser.authUser.uuid == user.uuid) {
+                setDeleteAvatarButtonAvailibility(true);
+            }
         }
 
         // Try to get user information and set the information as states which can be used later or throw an error.
@@ -101,6 +111,9 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
                     <InnerContainerTitle>Profilbilde</InnerContainerTitle>
                     <InnerContainer>
                         <S.Avatar src={user.avatar_urls.sd} />
+                        <InnerContainerRow mobileNoGap nopadding>
+                            <PanelButton flex="1" onClick={deleteAvatarButtonAvailibility ? () => windowManager.newWindow({title: "Slett avatar", subtitle: (user.firstname + " " + user.lastname), size: 1, component: DeleteAvatar, entries: user, postFunctions: () => reload() }) : null} disabled={(!deleteAvatarButtonAvailibility)}>Slett avatar</PanelButton>
+                        </InnerContainerRow>
                     </InnerContainer>
                 </InnerContainer>
                 <InnerContainer flex="1" mobileRowGap="0em" nopadding>
