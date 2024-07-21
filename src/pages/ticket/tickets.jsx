@@ -27,21 +27,28 @@ export const TicketList = () => {
         setEvent(event);
         setTickets(tickets);
 
-        // Create an array of all the free tickets which has the price of 0.
+        // Count all tickets which is free (Price == 0)
         const ticketsFree = tickets.filter(ticket => ticket.ticket_type.price == 0);
         setTicketsFree(ticketsFree);
 
-        // Create an array of all the bought tickets which has the price above 0.
+        // Count all tickets which has been bought (Price > 0)
         const ticketsBought = tickets.filter(ticket => ticket.ticket_type.price > 0);
         setTicketsBought(ticketsBought);
 
-        // Create an array of all the tickets which is held by users attempting to purchase.
+        // Count all tickets which is held in store sessions
         const storeSessions = await getActiveStoreSessions();
+        let heldTickets = 0; 
+
         storeSessions.map((storeSession) => {
-            return storeSession.entries.map((entry) => {
-                setTicketsHeld((previous) => previous + entry.amount);
-            }); 
+            storeSession.entries.map((entry) => {
+                heldTickets += entry.amount;
+            })
+
         })
+        setTicketsHeld(heldTickets);
+
+
+        
         setLoading(false);
     }
 
