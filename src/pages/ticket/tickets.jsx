@@ -22,10 +22,16 @@ export const TicketList = () => {
     let history = useHistory();
 
     const reload = async () => {
-        const event = await getCurrentEvent();
-        const tickets = await getEventTickets(event.uuid);
-        setEvent(event);
+
+        const localEvent = await getCurrentEvent();
+        
+        const [ tickets, storeSessions ] = await Promise.all([
+            getEventTickets(localEvent.uuid),
+            getActiveStoreSessions()
+        ])
+
         setTickets(tickets);
+        setEvent(localEvent);
 
         // Count all tickets which is free (Price == 0)
         const ticketsFree = tickets.filter(ticket => ticket.ticket_type.price == 0);
@@ -36,9 +42,7 @@ export const TicketList = () => {
         setTicketsBought(ticketsBought);
 
         // Count all tickets which is held in store sessions
-        const storeSessions = await getActiveStoreSessions();
         let heldTickets = 0; 
-
         storeSessions.map((storeSession) => {
             storeSession.entries.map((entry) => {
                 heldTickets += entry.amount;
@@ -48,7 +52,7 @@ export const TicketList = () => {
         setTicketsHeld(heldTickets);
 
 
-        
+
         setLoading(false);
     }
 
