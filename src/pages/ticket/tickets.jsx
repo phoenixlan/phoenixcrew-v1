@@ -91,10 +91,10 @@ export const TicketList = () => {
                         <InnerContainer flex="2">
                             Graf over billetter:
                             <FlexBar>
-                                <BarElement color="blue" title={"Gratisbilletter - " + ticketsFree.length} width={ticketsFree.length} />
+                                <BarElement color="stripedGreen" title={"Gratisbilletter - " + ticketsFree.length} width={ticketsFree.length} />
                                 <BarElement color="green" title={"Kjøpte billetter - " + ticketsBought.length} width={ticketsBought.length} />
                                 <BarElement color="lightgray" title={"Tilgjengelige billetter - " + (event.max_participants - tickets.length) + " av " + event.max_participants} width={event.max_participants - tickets.length - ticketsHeld} />
-                                <BarElement color="orange" title={"Reservert i kjøp - " + ticketsHeld} width={ticketsHeld} />
+                                <BarElement color="stripedOrange" title={"Billetter reservert i kjøp - " + ticketsHeld} width={ticketsHeld} />
                             </FlexBar>
                         </InnerContainer>
                     </InnerContainerRow>

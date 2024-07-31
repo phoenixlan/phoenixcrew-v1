@@ -11,6 +11,10 @@ const colors = {
     violet: {background: "#7E57C2", border: "#311B92"},
     magenta:{background: "#AB47BC", border: "#4A148C"},
     pink:   {background: "#EC407A", border: "#880E4F"},
+
+    stripedGreen: {background: "repeating-linear-gradient(-45deg, #43A047, #43a047 5px, #66BB6A 5px, #66BB6A 10px)", border: "#1B5E20"},
+    stripedOrange: {background: "repeating-linear-gradient(-45deg, #FFCC80, #FFCC80 5px, #FFA726 5px, #FFA726 10px)", border: "#E65100"},
+
     gray:   {background: "rgb(235, 235, 235)", border: "rgb(215, 215, 215)"}
 }
 
@@ -41,7 +45,7 @@ const S = {
             `,
                 BarElementColorIcon: styled.div`
                     border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
-                    background-color: ${props => colors[props.color]?.background || colors["gray"].background};
+                    background: ${props => colors[props.color]?.background || colors["gray"].background};
                     width: 1em;
                     height: 1em;
                 `,
@@ -50,7 +54,7 @@ const S = {
                 `,
 
     ElementRootContainer: styled.div`
-        background-color: ${props => colors[props.color]?.background || colors["gray"].background};
+        background: ${props => colors[props.color]?.background || colors["gray"].background};
         border-bottom: .225em solid ${props => colors[props.color]?.border || colors["gray"].border};
         flex: ${props => props.width};
     
