@@ -187,14 +187,22 @@ export const InputCheckbox = ({ label, value, onChange, disabled }) => {
 export const InputElementDescription = styled.span`
     font-size: .7rem;
 `
+export const FormContainer = styled.form`
+    display: flex;
+`
+
 export const InputElement = styled.input`
     font-family: "Roboto";
     border: 0;
-    padding: 4px 0;
-    background-color: rgb(255, 255, 255);
-    border-bottom: 1px solid rgb(135, 135, 135);
+    padding: 2px 0;
+    color: ${props => props.error ? "#d32f2f" : "inherit"};
+    background-color: ${props => props.error ? "#ffebee" : "rgb(255, 255, 255)"};
+    border-bottom: 1px solid ${props => props.error ? "#d32f2f" : "rgb(135, 135, 135)"};
     outline: none;
-
+    min-height: 1.5em;
+    flex: ${props => props.flex ? props.flex : null};
+        
+    }
     &:focus {
         border-bottom: 1px solid rgb(255,75,157);
     }
@@ -209,6 +217,10 @@ export const InputElement = styled.input`
         bottom: 1px;
         margin-right: .5em;
         margin-bottom: auto;
+    }
+
+    &::after {
+        content: "${props => props.suffix}";
     }
 
     @media screen and (max-width: 480px) {
@@ -340,3 +352,102 @@ export const IFrameContainer = ({ src }) => {
         </>
     )
 }
+
+
+export const CardContainer = styled.div`
+    display: flex;
+    flex-flow: row;
+    flex: 1;
+    overflow: hidden;
+    margin-bottom: 1em;
+    gap: .35em;
+`
+export const CardContainerIcon = styled.div`
+    display: flex;
+    margin: auto;
+    width: 3em;
+    text-align: center;
+    align-items: middle;
+
+    @media screen and (max-width: 480px) {
+        display: flex;
+        margin: .75em 0 auto 0;
+        align-items: middle;
+    }
+`
+export const CardContainerInnerIcon = styled.div`
+    display: flex;
+    margin: auto;
+    font-size: 1em;
+`
+export const CardContainerText = styled.div`
+    display: flex;
+    flex-flow: column;
+    position: relative;
+    flex: ${props => props.flex ? props.flex : "1"};
+    overflow: hidden;
+
+    ${props => props.disabled ? `
+        opacity: 0.6;
+        user-select: none;
+        pointer-events: none;
+    ` : null}
+
+    @media screen and (max-width: 480px) {
+        flex-wrap: wrap;
+        width: 100%;
+        flex: 1;
+        display: ${props => props.mobileHide ? "none" : ""};
+    }
+`
+export const CardContainerInnerText = styled.div`
+    font-family: ${props => props.console ? 'monospace' : 'inherit'};
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+`
+export const CardContainerInputWrapper = styled.div`
+    display: flex;
+    flex-flow: row;
+    flex: 1;
+    gap: 1em;
+    flex-wrap: wrap;
+
+    @media screen and (max-width: 480px) {
+        flex-flow: column;
+        display: flex;
+        margin: auto;
+    }
+`
+export const CardContainerInput = styled.input`
+    &[type="text"], &[type="email"], &[type="date"], &[type="datetime-local"], &[type="number"] {
+        position: relative;
+        flex: 1;
+        border: 0;
+        border-bottom: 1px solid rgb(80,80,80);
+        outline: none;
+        padding: .15rem 0;
+        margin-bottom: .15rem;
+        background-color: white;
+        width: 100%;
+        user-select: inherit;
+    }
+    &:focus {
+        border-bottom: 1px solid rgb(255,75,157);
+    }
+    &:disabled {
+        background-color: inherit;
+        color: rgb(130, 130, 130);
+        border-bottom: 1px solid rgb(170,170,170)!important;
+    }
+`
+export const CardContainerSelectInput = styled.select`
+    position: relative;
+    flex: 1;
+    border: 0;
+    border-bottom: 1px solid rgb(80,80,80);
+    outline: none;
+    padding: .15rem 0;
+    margin-bottom: .15rem;
+`
