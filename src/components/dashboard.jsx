@@ -194,7 +194,7 @@ export const FormContainer = styled.form`
 export const InputElement = styled.input`
     font-family: "Roboto";
     border: 0;
-    padding: 4px 0;
+    padding: .3em 0;
     background-color: rgb(255, 255, 255);
     border-bottom: 1px solid rgb(135, 135, 135);
     outline: none;
@@ -235,7 +235,7 @@ export const InputElement = styled.input`
 export const InputTextArea = styled.textarea`
     font-family: "Roboto";
     border: 0;
-    padding: 4px 0;
+    padding: .3em 0;
     border-bottom: 1px solid rgb(135, 135, 135);
     outline: none;
     resize: vertical;
@@ -253,7 +253,7 @@ export const InputTextArea = styled.textarea`
 export const InputSelect = styled.select`
     font-family: "Roboto";
     border: 0;
-    padding: 3px 0;
+    padding: .3em 0;
     border-bottom: 1px solid rgb(135, 135, 135);
     background-color: rgb(255, 255, 255);
     outline: none;
@@ -272,7 +272,7 @@ const ButtonContainer = styled.button`
     display: flex;
     flex-flow: row;
     min-height: 2rem;
-    width: fit-content;
+    width: ${props => props.fillWidth ? "100%" : "fit-content"};
     font-size: .85rem;
     padding: 0 1em;
     border: 0;
@@ -321,10 +321,10 @@ const ButtonText = styled.span`
     }
 `
 
-export const PanelButton = ({ type, onClick, icon, flex, children, disabled }) => {
+export const PanelButton = ({ type, onClick, icon, flex, fillWidth, children, disabled }) => {
     return (
         <>
-            <ButtonContainer type={type} onClick={onClick} disabled={disabled} flex={flex}>
+            <ButtonContainer type={type} onClick={onClick} disabled={disabled} flex={flex} fillWidth={fillWidth}>
                 {icon ? <ButtonIcon><FontAwesomeIcon icon={icon} /></ButtonIcon> : null}
                 <ButtonText center={icon ? false : true}>{children}</ButtonText>
             </ButtonContainer>
@@ -453,4 +453,8 @@ export const CardContainerSelectInput = styled.select`
         color: rgb(130, 130, 130);
         border-bottom: 1px solid rgb(170,170,170)!important;
     }
+`
+
+export const InlineLink = styled.a`
+    display: inline-block;
 `
