@@ -15,6 +15,7 @@ import { WindowManagerContext } from '../../../components/windows/windowManager'
 import { ActivateUser } from '../../../components/windows/types/user/activateUser';
 import { AuthenticationContext } from '../../../components/authentication';
 import { DeleteAvatar } from '../../../components/windows/types/user/deleteAvatar';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const S = {
     Avatar: styled.img`
@@ -31,6 +32,8 @@ const S = {
 export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
 
     const [ user, setUser ] = useState(inheritUser);
+    
+    let history = useHistory();
 
     // Import the following React contexts:
     const authorizedUser = useContext(AuthenticationContext);
@@ -99,7 +102,7 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
         <>
             <InnerContainer border nopadding extramargin >
                 <InnerContainerRow mobileNoGap>
-                    <PanelButton onClick={modifyUserStateButtonAvailibility ? () => windowManager.newWindow({title: "Endre brukerinformasjon", subtitle: (user.firstname + " " + user.lastname), size: 0, component: EditUserDetails, entries: user, postFunctions: () => reload() }) : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
+                    <PanelButton onClick={modifyUserStateButtonAvailibility ? () => history.push("/user/" + user.uuid + "/edit") : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
                     <PanelButton onClick={activationStateButtonAvailibility ? () => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: (user.firstname + " " + user.lastname), size: 1, component: ActivateUser, entries: user, postFunctions: () => reload() }) : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
                     <PanelButton onClick={downloadCard} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
@@ -161,7 +164,7 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
                                 </CardContainerInnerIcon>
                             </CardContainerIcon>
                             <CardContainerText>
-                            <InputLabel small>Addresse</InputLabel>
+                            <InputLabel small>Adresse</InputLabel>
                                 <CardContainerInnerText>{user.address}, {user.postal_code}</CardContainerInnerText>
                             </CardContainerText>
                         </CardContainer>
