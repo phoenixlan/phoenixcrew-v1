@@ -1,24 +1,59 @@
 import React, { useState, useEffect } from "react"
 import { useHistory } from 'react-router-dom';
-import { getEventTickets, getCurrentEvent, User, Ticket } from "@phoenixlan/phoenix.js";
+import { getActiveStoreSessions, getEventTickets, getCurrentEvent, User, Ticket } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faUserCheck } from "@fortawesome/free-solid-svg-icons";
+import { BarElement, FlexBar } from "../../components/bar";
 
 export const TicketList = () => {
     const [ tickets, setTickets ] = useState([]);
     const [ loading, setLoading ] = useState(true);
+
+    const [ event, setEvent ] = useState(undefined);
+    const [ ticketsFree, setTicketsFree ] = useState(0);
+    const [ ticketsBought, setTicketsBought ] = useState(0);
+    const [ ticketsHeld, setTicketsHeld ] = useState(0);
+
     const [ sortingMethodTicket, setSortingMethodTicket ] = useState(1);
 
     let history = useHistory();
 
     const reload = async () => {
-        const event = await getCurrentEvent();
-        const tickets = await getEventTickets(event.uuid);
-        setTickets(tickets)
-        setLoading(false)
+
+        const localEvent = await getCurrentEvent();
+        
+        const [ tickets, storeSessions ] = await Promise.all([
+            getEventTickets(localEvent.uuid),
+            getActiveStoreSessions()
+        ])
+
+        setTickets(tickets);
+        setEvent(localEvent);
+
+        // Count all tickets which is free (Price == 0)
+        const ticketsFree = tickets.filter(ticket => ticket.ticket_type.price == 0);
+        setTicketsFree(ticketsFree);
+
+        // Count all tickets which has been bought (Price > 0)
+        const ticketsBought = tickets.filter(ticket => ticket.ticket_type.price > 0);
+        setTicketsBought(ticketsBought);
+
+        // Count all tickets which is held in store sessions
+        let heldTickets = 0; 
+        storeSessions.map((storeSession) => {
+            storeSession.entries.map((entry) => {
+                heldTickets += entry.amount;
+            })
+
+        })
+        setTicketsHeld(heldTickets);
+
+
+
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -54,7 +89,13 @@ export const TicketList = () => {
                         </InnerContainer>
                         <InnerContainer flex="1" />
                         <InnerContainer flex="2">
-                            Graf over billetter kommer...
+                            Graf over billetter:
+                            <FlexBar>
+                                <BarElement color="stripedGreen" title={"Gratisbilletter - " + ticketsFree.length} width={ticketsFree.length} />
+                                <BarElement color="green" title={"Kjøpte billetter - " + ticketsBought.length} width={ticketsBought.length} />
+                                <BarElement color="lightgray" title={"Tilgjengelige billetter - " + (event.max_participants - tickets.length) + " av " + event.max_participants} width={event.max_participants - tickets.length - ticketsHeld} />
+                                <BarElement color="stripedOrange" title={"Billetter reservert i kjøp - " + ticketsHeld} width={ticketsHeld} />
+                            </FlexBar>
                         </InnerContainer>
                     </InnerContainerRow>
                     
