@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { User } from "@phoenixlan/phoenix.js";
+import { User, Avatar } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, PanelButton } from '../../../components/dashboard';
@@ -10,11 +10,8 @@ import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser 
 import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
 import { Colors } from '../../../theme';
 import { dateOfBirthToAge } from '../../../utils/user';
-import { EditUserDetails } from '../../../components/windows/types/user/editUserDetails';
 import { WindowManagerContext } from '../../../components/windows/windowManager';
-import { ActivateUser } from '../../../components/windows/types/user/activateUser';
 import { AuthenticationContext } from '../../../components/authentication';
-import { DeleteAvatar } from '../../../components/windows/types/user/deleteAvatar';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const S = {
@@ -78,6 +75,30 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
         setLoading(false);
     }
 
+    // Function to activate the user
+    const activateUser = async () => {
+        if(window.confirm("Er du sikker på at du vil aktivere denne brukeren?")) {
+            try { 
+                await User.activateUser(user.uuid);
+                reload();
+            } catch(e) {
+                console.error("An error occured while attempting to update the user.\n" + e);
+            }
+        }
+    }
+
+    // Function to delete the user's avatar
+    const deleteAvatar = async () => {
+        if(window.confirm("Er du sikker på at du vil slette avataren til denne brukeren?")) {
+            try { 
+                await Avatar.deleteAvatar(user.avatar_uuid);
+                reload();
+            } catch(e) {
+                console.error("An error occured while attempting to delete this users' avatar.\n" + e);
+            }
+        }
+    }
+
     const downloadCard = async () => {
         const result = await User.getCrewCard(user.uuid);
         const href = window.URL.createObjectURL(await result.blob());
@@ -103,7 +124,7 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
             <InnerContainer border nopadding extramargin >
                 <InnerContainerRow mobileNoGap>
                     <PanelButton onClick={modifyUserStateButtonAvailibility ? () => history.push("/user/" + user.uuid + "/edit") : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
-                    <PanelButton onClick={activationStateButtonAvailibility ? () => windowManager.newWindow({title: "Aktiver brukerkonto", subtitle: (user.firstname + " " + user.lastname), size: 1, component: ActivateUser, entries: user, postFunctions: () => reload() }) : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
+                    <PanelButton onClick={activationStateButtonAvailibility ? () => activateUser() : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
                     <PanelButton onClick={downloadCard} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
             </InnerContainer>
@@ -115,7 +136,7 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
                     <InnerContainer>
                         <S.Avatar src={user.avatar_urls.sd} />
                         <InnerContainerRow mobileNoGap nopadding>
-                            <PanelButton flex="1" onClick={deleteAvatarButtonAvailibility ? () => windowManager.newWindow({title: "Slett avatar", subtitle: (user.firstname + " " + user.lastname), size: 1, component: DeleteAvatar, entries: user, postFunctions: () => reload() }) : null} disabled={(!deleteAvatarButtonAvailibility)}>Slett avatar</PanelButton>
+                            <PanelButton flex="1" onClick={deleteAvatarButtonAvailibility ? () => deleteAvatar() : null} disabled={(!deleteAvatarButtonAvailibility)}>Slett avatar</PanelButton>
                         </InnerContainerRow>
                     </InnerContainer>
                 </InnerContainer>

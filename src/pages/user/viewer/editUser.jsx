@@ -1,35 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { User } from "@phoenixlan/phoenix.js";
-import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
-import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerInput, CardContainerInputWrapper, CardContainerSelectInput, CardContainerText, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, PanelButton } from '../../../components/dashboard';
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, PanelButton } from '../../../components/dashboard';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
-import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
 import { Colors } from '../../../theme';
-import { dateOfBirthToAge } from '../../../utils/user';
-import { EditUserDetails } from '../../../components/windows/types/user/editUserDetails';
-import { WindowManagerContext } from '../../../components/windows/windowManager';
-import { ActivateUser } from '../../../components/windows/types/user/activateUser';
 import { AuthenticationContext } from '../../../components/authentication';
-import { DeleteAvatar } from '../../../components/windows/types/user/deleteAvatar';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
 import { Notice } from '../../../components/containers/notice';
-
-const S = {
-    Avatar: styled.img`
-        width: 256px;
-        border: 1px solid ${Colors.Gray200};
-        margin-bottom: 1em;
-
-        @media screen and (max-width: 480px) {
-            width: 100%;
-        }
-    `,
-}
 
 export const EditUser = () => {
 
