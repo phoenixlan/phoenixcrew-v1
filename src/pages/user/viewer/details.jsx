@@ -10,7 +10,6 @@ import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser 
 import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
 import { Colors } from '../../../theme';
 import { dateOfBirthToAge } from '../../../utils/user';
-import { WindowManagerContext } from '../../../components/windows/windowManager';
 import { AuthenticationContext } from '../../../components/authentication';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
@@ -34,7 +33,6 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
 
     // Import the following React contexts:
     const authorizedUser = useContext(AuthenticationContext);
-    const windowManager = useContext(WindowManagerContext);
 
     const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
     const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
