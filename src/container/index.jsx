@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { Sidebar } from "./sidebar"
 import { DashboardBlock } from "../components/dashboard";
 import { MobileNavigation } from './mobileNavigation';
-import { WindowManager } from '../components/windows/windowManager';
 
 const S = {
     DocumentRoot: styled.div`
@@ -41,19 +40,17 @@ const S = {
 export const Container = ({ children }) => {
     return (
         <>
-            <WindowManager>
-                <MobileNavigation />
-                <S.DocumentRoot>
-                    <S.SidebarRoot>
-                        <Sidebar />
-                    </S.SidebarRoot>
-                    <S.DashboardRoot>
-                        <DashboardBlock>
-                            {children}
-                        </DashboardBlock>
-                    </S.DashboardRoot>
-                </S.DocumentRoot>
-            </WindowManager>
+            <MobileNavigation />
+            <S.DocumentRoot>
+                <S.SidebarRoot>
+                    <Sidebar />
+                </S.SidebarRoot>
+                <S.DashboardRoot>
+                    <DashboardBlock>
+                        {children}
+                    </DashboardBlock>
+                </S.DashboardRoot>
+            </S.DocumentRoot>
         </>
     );
 }
