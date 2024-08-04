@@ -16,15 +16,15 @@ export const DashboardBlock = styled.div`
 `
 
 export const DashboardHeader = styled.div`
-    padding: 20px 0;
-    border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
+    padding: 1.2em 0;
+    border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
 `
 export const DashboardBarSelector = styled.div`
     display: flex;
     flex-flow: row;
-    border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
+    border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
     font-family: "Roboto";
-    font-size: 14px;
+    font-size: .85rem;
     column-gap: 24px;
 
     @media screen and (max-width: 480px) {
@@ -36,7 +36,7 @@ export const DashboardBarSelector = styled.div`
 export const DashboardBarElement = styled.div`
     padding: 4px 0;
     font-weight: ${props => props.active ? "600" : "400"};
-    border-bottom: ${props => props.active ? "2px solid rgb(255,170,210)" : ""};
+    border-bottom: ${props => props.active ? ".15rem solid rgb(255,170,210)" : ""};
     cursor: pointer;
 
     @media screen and (max-width: 480px) {
@@ -46,7 +46,7 @@ export const DashboardBarElement = styled.div`
 
 export const DashboardSubtitle = styled.div`
     font-family: "Roboto";
-    font-size: 14px;
+    font-size: .85rem;
     font-weight: lighter;
     color: rgb(96, 94, 92);
     margin: 4px 0;
@@ -54,16 +54,16 @@ export const DashboardSubtitle = styled.div`
 
 export const DashboardTitle = styled.div`
     font-family: "Roboto";
-    font-size: 28px;
+    font-size: 1.8rem;
     font-weight: lighter;
     color: black;
 `
 
 export const DashboardContent = styled.div`
     display: ${props => props.visible == undefined ? "block" : props.visible ? "block" : "none"};
-    padding: 20px 0;
+    padding: 1.2em 0;
     font-family: "Roboto";
-    font-size: 14px;
+    font-size: .85rem;
 `
 
 export const InnerContainer = styled.div`    
@@ -73,7 +73,7 @@ export const InnerContainer = styled.div`
     flex: ${props => props.flex ? props.flex : "undefined"};
     padding-bottom: ${props => props.nopadding ? "0" : "20px"};
     margin-bottom: ${props => props.extramargin ? "20px" : "0"};
-    border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
+    border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
     align-items: ${props => props.alignItems ? props.alignItems : "left"};
 
     @media screen and (max-width: 480px) {
@@ -92,7 +92,7 @@ export const InnerContainerRow = styled.div`
     gap: 2em;
     row-gap: .5em;
     padding-bottom: ${props => props.nopadding ? "0" : "20px"};
-    border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
+    border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
@@ -112,19 +112,19 @@ export const InnerContainerTableBody = styled.tbody`
 `
 export const InnerContainerTitleL = styled.h1`    
     font-size: 18px;
-    padding-bottom: ${props => props.nopadding ? "0px" : "6px"};
+    padding-bottom: ${props => props.nopadding ? "0" : "6px"};
     font-weight: 500;
     margin: 0;
 `
 export const InnerContainerTitle = styled.h3`    
     font-size: 16px;
-    padding-bottom: ${props => props.nopadding ? "0px" : ".55em"};
+    padding-bottom: ${props => props.nopadding ? "0" : ".55em"};
     font-weight: 400;
     margin: 0;
 `
 export const InnerContainerTitleS = styled.h5`    
     font-size: 14px;
-    padding-bottom: ${props => props.nopadding ? "0px" : "6px"};
+    padding-bottom: ${props => props.nopadding ? "0" : "6px"};
     font-weight: 500;
     margin: 0;
 `
@@ -138,7 +138,7 @@ export const DisplayControl = styled.div`
 export const InputLabel = styled.span`
     position: relative;
     font-family: "Roboto";
-    font-size: ${props => props.small ? "11px" : "14px"};
+    font-size: ${props => props.small ? ".65rem" : ".85rem"};
     bottom: ${props => props.bottom ? props.bottom : ""};
     top: ${props => props.top ? props.top : ""};
     margin: ${props => props.small ? "0" : "0 6px"};
@@ -161,8 +161,8 @@ export const InputContainer = styled.div`
     column-gap: 1em;
 
     @media screen and (max-width: 480px) {
-        margin-bottom: ${props => props.mobileNoMargin ? "0px" : "inherit"};
-        row-gap: 0px;
+        margin-bottom: ${props => props.mobileNoMargin ? "0" : "inherit"};
+        row-gap: 0;
         display: ${props => props.mobileHide ? "none" : ""};
     }
 
@@ -185,7 +185,7 @@ export const InputCheckbox = ({ label, value, onChange, disabled }) => {
 }
 
 export const InputElementDescription = styled.span`
-    font-size: .7rem;
+    font-size: .85rem;
 `
 export const FormContainer = styled.form`
     display: flex;
@@ -196,21 +196,21 @@ export const InputElement = styled.input`
     border: 0;
     padding: .3em 0;
     background-color: rgb(255, 255, 255);
-    border-bottom: 1px solid rgb(135, 135, 135);
+    border-bottom: .05rem solid rgb(135, 135, 135);
     outline: none;
 
     &:focus {
-        border-bottom: 1px solid rgb(255,75,157);
+        border-bottom: .05rem solid rgb(255,75,157);
     }
     &:disabled {
         background-color: inherit;
         color: rgb(130, 130, 130);
-        border-bottom: 1px solid rgb(170,170,170)!important;
+        border-bottom: .05rem solid rgb(170,170,170)!important;
     }
 
     &[type="checkbox"] {
         position: relative;
-        bottom: 1px;
+        bottom: .05rem;
         margin-right: .5em;
         margin-bottom: auto;
     }
@@ -236,13 +236,13 @@ export const InputTextArea = styled.textarea`
     font-family: "Roboto";
     border: 0;
     padding: .3em 0;
-    border-bottom: 1px solid rgb(135, 135, 135);
+    border-bottom: .05rem solid rgb(135, 135, 135);
     outline: none;
     resize: vertical;
     min-height: ${props => props.height ? props.height : "150px"};
 
     &:focus {
-        border-bottom: 1px solid rgb(255,75,157);
+        border-bottom: .05rem solid rgb(255,75,157);
     }
     &:disabled {
         background-color: inherit;
@@ -254,12 +254,12 @@ export const InputSelect = styled.select`
     font-family: "Roboto";
     border: 0;
     padding: .3em 0;
-    border-bottom: 1px solid rgb(135, 135, 135);
+    border-bottom: .05rem solid rgb(135, 135, 135);
     background-color: rgb(255, 255, 255);
     outline: none;
 
     &:focus {
-        border-bottom: 1px solid rgb(255,75,157);
+        border-bottom: .05rem solid rgb(255,75,157);
     }
 `
 
@@ -279,7 +279,7 @@ const ButtonContainer = styled.button`
     cursor: pointer;
     background-color: ${Colors.Gray100};
     flex: ${props => props.flex ? "1" : null};
-    border: 1px solid ${Colors.Gray200};
+    border: .05rem solid ${Colors.Gray200};
 
     &[disabled] {
         cursor: not-allowed;
@@ -290,7 +290,7 @@ const ButtonContainer = styled.button`
     }
     &:active, :hover {
         background-color: ${Colors.Gray200};
-        border: 1px solid ${Colors.Gray300};
+        border: .05rem solid ${Colors.Gray300};
     }
 
     @media screen and (max-width: 480px) {
@@ -302,7 +302,7 @@ const ButtonIcon = styled.span`
     display: flex;
     margin: auto;
     position: relative;
-    bottom: 1px;
+    bottom: .05em;
     padding: 0 .5em;
     font-size: 1rem;
 
@@ -333,7 +333,7 @@ export const PanelButton = ({ type, onClick, icon, flex, fillWidth, children, di
 }
 
 const IFrame = styled.iframe`
-    border: 1px solid rgb(235, 235, 235);
+    border: .05rem solid rgb(235, 235, 235);
     width: 100%;
     height: 600px;
 `
@@ -417,7 +417,7 @@ export const CardContainerInput = styled.input`
         position: relative;
         flex: 1;
         border: 0;
-        border-bottom: 1px solid rgb(80,80,80);
+        border-bottom: .05rem solid rgb(80,80,80);
         outline: none;
         padding: .15rem 0;
         margin-bottom: .15rem;
@@ -426,19 +426,19 @@ export const CardContainerInput = styled.input`
         user-select: inherit;
     }
     &:focus {
-        border-bottom: 1px solid rgb(255,75,157);
+        border-bottom: .05rem solid rgb(255,75,157);
     }
     &:disabled {
         background-color: inherit;
         color: rgb(130, 130, 130);
-        border-bottom: 1px solid rgb(170,170,170)!important;
+        border-bottom: .05rem solid rgb(170,170,170)!important;
     }
 `
 export const CardContainerSelectInput = styled.select`
     position: relative;
     flex: 1;
     border: 0;
-    border-bottom: 1px solid rgb(80,80,80);
+    border-bottom: .05rem solid rgb(80,80,80);
     outline: none;
     padding: .15rem 0;
     margin-bottom: .15rem;
@@ -446,15 +446,11 @@ export const CardContainerSelectInput = styled.select`
     width: 100%;
 
     &:focus {
-        border-bottom: 1px solid rgb(255,75,157);
+        border-bottom: .05rem solid rgb(255,75,157);
     }
     &:disabled {
         background-color: inherit;
         color: rgb(130, 130, 130);
-        border-bottom: 1px solid rgb(170,170,170)!important;
+        border-bottom: .05rem solid rgb(170,170,170)!important;
     }
-`
-
-export const InlineLink = styled.a`
-    display: inline-block;
 `
