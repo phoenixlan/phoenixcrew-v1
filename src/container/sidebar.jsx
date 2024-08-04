@@ -456,7 +456,7 @@ export const Sidebar = () => {
             return named[0].position.name
         }
         else if(mappings.length == 0) {
-            if(mappings[0] == undefined) {
+            if(mappings.length == 0) {
                 return "Bruker";
             } else {
                 return mappings[0].position.name
