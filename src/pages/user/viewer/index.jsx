@@ -96,7 +96,7 @@ export const ViewUser = (props) => {
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent === TABS.POSITIONS}>
-                    <UserPositions />
+                    <UserPositions inheritUser={user} />
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent === TABS.TICKETS}>

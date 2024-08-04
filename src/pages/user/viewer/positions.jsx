@@ -6,8 +6,6 @@ import { InnerContainer, InnerContainerTitle } from '../../../components/dashboa
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { position_mapping_to_string } from '../../../utils/user';
 import { faCircleCheck, faLock } from '@fortawesome/free-solid-svg-icons';
-import { useParams } from 'react-router-dom/cjs/react-router-dom';
-
 
 export const Position = ({ position, func, positionName }) => {
 
@@ -28,19 +26,17 @@ export const Position = ({ position, func, positionName }) => {
 
 
 
-export const UserPositions = () => {
+export const UserPositions = ({ inheritUser }) => {
 
-	// Import the following React contexts:
-
-	const { uuid } = useParams();
 	const [ loading, setLoading ] = useState(true);
-	const [ user, setUser ] = useState(null);
+	const [ user, setUser ] = useState(inheritUser);
 
 	const reloadPositionList = async () => {
+		setLoading(true);
 		try {
-			const currentEvent = await getCurrentEvent();
-			const allEvents = await getEvents();
-			const user = await User.getUser(uuid);
+			let currentEvent = await getCurrentEvent();
+			let allEvents = await getEvents();
+			let user = await User.getUser(inheritUser.uuid);
 
 			await Promise.all(user.position_mappings.map(async (position_mapping) => {
 				const position = position_mapping.position;
