@@ -79,7 +79,7 @@ export const ViewUser = (props) => {
                         Bruker
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {user.firstname} {user.lastname}
+                        {user.firstname}, {user.lastname}
                     </DashboardSubtitle>
                 </DashboardHeader>
 
