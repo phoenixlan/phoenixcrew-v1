@@ -33,6 +33,7 @@ import { EmailForm } from "../pages/utils/email";
 import { TicketSalesStats } from "../pages/stats/ticketSales";
 import { TicketVoucherManagement } from '../pages/ticket/ticketVoucherManagement';
 import { AgendaList } from '../pages/information/agenda';
+import { EditUser } from '../pages/user/viewer/editUser';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -91,6 +92,9 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/user/:uuid">
                             <ViewUser />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/user/:uuid/edit">
+                            <EditUser />
                         </PrivateRoute>
                         <PrivateRoute exact path="/information/schedule/">
                             <AgendaList />
