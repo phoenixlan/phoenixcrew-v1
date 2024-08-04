@@ -7,17 +7,18 @@ import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const S = {
-    DiscordAvatar: styled.img`
-        width: 2em;
-        border-radius: 50%;
-        margin-right: 1em;
-    `,
-    AlignBottom: styled.div`
-        height: 100%;
+    DiscordContainer: styled.div`
         display: flex;
-        flex-direction: row;
-        align-items: center;
-    `
+        padding: .5em 0;
+    `,
+    DiscordAvatar: styled.img`
+        width: 2.5em;
+        border-radius: 50%;
+        margin: 0 1em 0 .5em;
+    `,
+    DiscordUsername: styled.span`
+        margin: auto auto auto 0;
+    `,
 }
 
 
@@ -39,20 +40,34 @@ export const UserViewerExternalConnections = ({ user }) => {
         return (<PageLoading />)
     }
     return (
-        <InnerContainer flex="1">
-            <InnerContainerTitle>Eksterne tilkoblinger</InnerContainerTitle>
+        <InnerContainer >
             <InnerContainerRow>
-                <CardContainer>
-                    <CardContainerIcon>
-                        <CardContainerInnerIcon>
-                            <FontAwesomeIcon icon={faDiscord} />
-                        </CardContainerInnerIcon>
-                    </CardContainerIcon>
-                    <CardContainerText>
-                        <InputLabel small>Discord bruker</InputLabel>
-                        <CardContainerInnerText>{discordMapping ? <a href={"https://discordapp.com/users/" + discordMapping.discord_id}>{discordMapping.username}</a> : "Ingen tilkobling"}</CardContainerInnerText>
-                    </CardContainerText>
-                </CardContainer>
+                <InnerContainer flex="1">
+                    <InnerContainerTitle>Eksterne tilkoblinger</InnerContainerTitle>
+                    <InnerContainerRow>
+                        <CardContainer>
+                            <CardContainerIcon>
+                                <CardContainerInnerIcon>
+                                    <FontAwesomeIcon icon={faDiscord} />
+                                </CardContainerInnerIcon>
+                            </CardContainerIcon>
+                            <CardContainerText>
+                                <InputLabel small>Discord bruker</InputLabel>
+                                <S.DiscordContainer>
+                                    { discordMapping 
+                                      ? <>
+                                            <S.DiscordAvatar src={`https://cdn.discordapp.com/avatars/${discordMapping.discord_id}/${discordMapping.avatar}.png`} />
+                                            <S.DiscordUsername>{discordMapping ? <a href={"https://discordapp.com/users/" + discordMapping.discord_id}>{discordMapping.username}</a> : "Ingen tilkobling"}</S.DiscordUsername>
+                                        </>
+                                      : <span>Ingen tilkobling</span>
+                                    }
+                                    
+                                </S.DiscordContainer>
+                            </CardContainerText>
+                        </CardContainer>
+                    </InnerContainerRow>
+                </InnerContainer>
+                <InnerContainer flex="3" />
             </InnerContainerRow>
         </InnerContainer>
     )
