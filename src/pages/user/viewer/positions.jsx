@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { getCurrentEvent, User, Crew, getEvents } from "@phoenixlan/phoenix.js";
+import React, { useState, useEffect } from 'react';
+import { getCurrentEvent, User, Crew, getEvents, PositionMapping } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, IconContainer, TableRow, TableBody, InnerColumnCenter } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer, InnerContainerTitle } from '../../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { position_mapping_to_string } from '../../../utils/user';
-import { faCheck, faCircleCheck, faLock } from '@fortawesome/free-solid-svg-icons';
-import { newWindow } from '../../../components/windows';
-import { DeletePosition } from '../../../components/windows/types/user/deletePosition';
+import { faCircleCheck, faLock } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom/cjs/react-router-dom';
-import { WindowManager, WindowManagerContext } from '../../../components/windows/windowManager';
 
 
 export const Position = ({ position, func, positionName }) => {
@@ -34,11 +31,9 @@ export const Position = ({ position, func, positionName }) => {
 export const UserPositions = () => {
 
 	// Import the following React contexts:
-	const windowManager = useContext(WindowManagerContext);
 
 	const { uuid } = useParams();
 	const [ loading, setLoading ] = useState(true);
-	const [ window, setWindow ] = useState([]);
 	const [ user, setUser ] = useState(null);
 
 	const reloadPositionList = async () => {
@@ -76,24 +71,28 @@ export const UserPositions = () => {
 		} finally {
 			setLoading(false);
 		}
+	}
 
+	const deletePosition = async (position, positionName) => {
+		if(window.confirm("Er du sikker på at du vil fjerne stillingen \"" + positionName + "\" fra " + user.firstname + " " + user.lastname + "?")) {
+			try {
+				await PositionMapping.deletePositionMapping(position.uuid);
+				reloadPositionList()
+			} catch(e) {
+				console.error("An error occured while attempting to delete the position.\n" + e)
+			}
+		}
 	}
 
 	useEffect(async () => {
 		reloadPositionList();
 	}, [])
 
-	const reload = async () => {
-		await reloadPositionList();
-	}
-
-
 	if(loading) {
 		return (<PageLoading />)
 	} else {
 		return (
 			<>
-				{window}
 				<InnerContainer extramargin>
 					<InnerContainerTitle>Stillinger</InnerContainerTitle>
 					<Table>
@@ -120,7 +119,7 @@ export const UserPositions = () => {
 												position={position} 
 												positionName={positionName}
 
-												func={() => windowManager.newWindow({title: "Fjern stilling", subtitle: positionName, size: 1, component: DeletePosition, entries: position, postFunctions: () => reload() })}											/>
+												func={() => deletePosition(position, positionName)} />
 										)
 									})
 								}
