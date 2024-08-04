@@ -454,3 +454,7 @@ export const CardContainerSelectInput = styled.select`
         border-bottom: .05rem solid rgb(170,170,170)!important;
     }
 `
+
+export const InlineLink = styled.a`
+    display: inline-block;
+`
