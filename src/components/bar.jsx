@@ -13,7 +13,7 @@ const colors = {
     pink:   {background: "#EC407A", border: "#880E4F"},
 
     stripedGreen: {background: "repeating-linear-gradient(-45deg, #43A047, #43a047 5px, #66BB6A 5px, #66BB6A 10px)", border: "#1B5E20"},
-    stripedOrange: {background: "repeating-linear-gradient(-45deg, #FFCC80, #FFCC80 5px, #FFA726 5px, #FFA726 10px)", border: "#E65100"},
+    stripedOrange:{background: "repeating-linear-gradient(-45deg, #FFCC80, #FFCC80 5px, #FFA726 5px, #FFA726 10px)", border: "#E65100"},
 
     gray:   {background: "rgb(235, 235, 235)", border: "rgb(215, 215, 215)"}
 }
@@ -25,33 +25,33 @@ const S = {
         width: 100%;
         
     `,
-        BarElementContainer: styled.div`
-            display: flex;
-            width: 100%;
-            height: 2em;
-        `,
-        BarElementInfoContainer: styled.div`
-            display: flex;
-            flex-flow: column;
-            margin: 1em 0;
-            width: 100%;
-            gap: .1em;
-        `,
-            InfoContainer: styled.div`
-                display: flex;
-                flex-flow: row;
-                height: max-content;
-                gap: 1em;
-            `,
-                BarElementColorIcon: styled.div`
-                    border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
-                    background: ${props => colors[props.color]?.background || colors["gray"].background};
-                    width: 1em;
-                    height: 1em;
-                `,
-                BarElementInfoTitle: styled.span`
-                    font-size: 1em;
-                `,
+    BarElementContainer: styled.div`
+        display: flex;
+        width: 100%;
+        height: 2em;
+    `,
+    BarElementInfoContainer: styled.div`
+        display: flex;
+        flex-flow: column;
+        margin: 1em 0;
+        width: 100%;
+        gap: .1em;
+    `,
+    InfoContainer: styled.div`
+        display: flex;
+        flex-flow: row;
+        height: max-content;
+        gap: 1em;
+    `,
+    BarElementColorIcon: styled.div`
+        border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
+        background: ${props => colors[props.color]?.background || colors["gray"].background};
+        width: 1em;
+        height: 1em;
+    `,
+    BarElementInfoTitle: styled.span`
+        font-size: 1em;
+    `,
 
     ElementRootContainer: styled.div`
         background: ${props => colors[props.color]?.background || colors["gray"].background};
