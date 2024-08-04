@@ -356,7 +356,7 @@ export const CardContainer = styled.div`
 `
 export const CardContainerIcon = styled.div`
     display: flex;
-    margin: auto;
+    margin: .6em auto auto auto;
     width: 3em;
     text-align: center;
     align-items: middle;
