@@ -35,12 +35,13 @@ export const TicketList = () => {
         setEvent(localEvent);
 
         // Count all tickets which is free (Price == 0)
-        const ticketsFree = tickets.filter(ticket => ticket.ticket_type.price == 0);
+        let ticketsFree = tickets.filter(ticket => ticket.ticket_type.price == 0);
         setTicketsFree(ticketsFree);
 
-        // Count all tickets which has been bought (Price > 0)
-        const ticketsBought = tickets.filter(ticket => ticket.ticket_type.price > 0);
+        // Count all tickets which has been bought AND is not membership (Price > 0, ticket_type.seatable TRUE)
+        let ticketsBought = tickets.filter(ticket => ticket.ticket_type.price > 0).filter(ticket => ticket.ticket_type.seatable);
         setTicketsBought(ticketsBought);
+        console.log(ticketsBought);
 
         // Count all tickets which is held in store sessions
         let heldTickets = 0; 
