@@ -5,7 +5,7 @@ import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRo
 import { PageLoading } from "../../components/pageLoading";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faUserCheck } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCheck, faUserCheck } from "@fortawesome/free-solid-svg-icons";
 import { BarElement, FlexBar } from "../../components/bar";
 
 export const TicketList = () => {
@@ -110,8 +110,8 @@ export const TicketList = () => {
                         <InnerContainer flex="2">
                             Graf over innsjekkede billetter:
                             <FlexBar>
-                                <BarElement color="green" title={"Billetter som er innsjekket - " + checkedinTickets} width={checkedinTickets} />
-                                <BarElement color="lightgray" title={"Billetter som ikke er innsjekket - " + (tickets.length - checkedinTickets)} width={tickets.length - checkedinTickets} />
+                                <BarElement color="green" title={"Billetter sjekket inn - " + checkedinTickets} width={checkedinTickets} />
+                                <BarElement color="lightgray" title={"Billetter ikke sjekket inn - " + (tickets.length - checkedinTickets)} width={tickets.length - checkedinTickets} />
                             </FlexBar>
                         </InnerContainer>
                     </InnerContainerRow>
@@ -145,7 +145,7 @@ export const TicketList = () => {
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
                                                 <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-                                                <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={ticket.checkedin ? faUserCheck : null}/></IconContainer></TableCell>
+                                                <TableCell flex="0 24px" mobileHide center><IconContainer hidden={!ticket.checked_in} color="#43a047"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer></TableCell>
                                                 <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
