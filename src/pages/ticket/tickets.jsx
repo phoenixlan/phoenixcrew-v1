@@ -47,10 +47,12 @@ export const TicketList = () => {
         let heldTickets = 0; 
         storeSessions.map((storeSession) => {
             storeSession.entries.map((entry) => {
-                heldTickets += entry.amount;
+                if(entry.ticket_type.seatable) {
+                    heldTickets += entry.amount;
+                }  
             })
-
         })
+        console.log(storeSessions);
         setTicketsHeld(heldTickets);
 
         // Count all tickets that has been checked in (checked_in != null)
