@@ -41,7 +41,6 @@ export const TicketList = () => {
         // Count all tickets which has been bought AND is not membership (Price > 0, ticket_type.seatable TRUE)
         let ticketsBought = tickets.filter(ticket => ticket.ticket_type.price > 0).filter(ticket => ticket.ticket_type.seatable);
         setTicketsBought(ticketsBought);
-        console.log(ticketsBought);
 
         // Count all tickets which is held in store sessions
         let heldTickets = 0; 
@@ -52,17 +51,16 @@ export const TicketList = () => {
                 }  
             })
         })
-        console.log(storeSessions);
         setTicketsHeld(heldTickets);
 
         // Count all tickets that has been checked in (checked_in != null)
-        let localCheckedinTickets = 0;
+        let checkedinTickets = 0;
         tickets.map((ticket) => {
             if(ticket.checked_in != null) {
-                localCheckedinTickets++
+                checkedinTickets++
             } 
         })
-        setCheckedinTickets(localCheckedinTickets);
+        setCheckedinTickets(checkedinTickets);
 
 
 
@@ -106,7 +104,7 @@ export const TicketList = () => {
                             <FlexBar>
                                 <BarElement color="stripedGreen" title={"Gratisbilletter - " + ticketsFree.length} width={ticketsFree.length} />
                                 <BarElement color="green" title={"Kjøpte billetter - " + ticketsBought.length} width={ticketsBought.length} />
-                                <BarElement color="lightgray" title={"Tilgjengelige billetter - " + (event.max_participants - tickets.length) + " av " + event.max_participants} width={event.max_participants - tickets.length - ticketsHeld} />
+                                <BarElement color="lightgray" title={"Tilgjengelige billetter - " + (event.max_participants - ticketsBought.length - ticketsFree.length) + " av " + event.max_participants} width={event.max_participants - ticketsBought.length - ticketsFree.length - ticketsHeld} />
                                 <BarElement color="stripedOrange" title={"Billetter reservert i kjøp - " + ticketsHeld} width={ticketsHeld} />
                             </FlexBar>
                         </InnerContainer>
