@@ -16,6 +16,7 @@ export const TicketList = () => {
     const [ ticketsFree, setTicketsFree ] = useState(0);
     const [ ticketsBought, setTicketsBought ] = useState(0);
     const [ ticketsHeld, setTicketsHeld ] = useState(0);
+    const [ checkedinTickets, setCheckedinTickets ] = useState(0);
 
     const [ sortingMethodTicket, setSortingMethodTicket ] = useState(1);
 
@@ -50,6 +51,15 @@ export const TicketList = () => {
 
         })
         setTicketsHeld(heldTickets);
+
+        // Count all tickets that has been checked in (checked_in != null)
+        let localCheckedinTickets = 0;
+        tickets.map((ticket) => {
+            if(ticket.checked_in != null) {
+                localCheckedinTickets++
+            } 
+        })
+        setCheckedinTickets(localCheckedinTickets);
 
 
 
@@ -95,6 +105,13 @@ export const TicketList = () => {
                                 <BarElement color="green" title={"Kjøpte billetter - " + ticketsBought.length} width={ticketsBought.length} />
                                 <BarElement color="lightgray" title={"Tilgjengelige billetter - " + (event.max_participants - tickets.length) + " av " + event.max_participants} width={event.max_participants - tickets.length - ticketsHeld} />
                                 <BarElement color="stripedOrange" title={"Billetter reservert i kjøp - " + ticketsHeld} width={ticketsHeld} />
+                            </FlexBar>
+                        </InnerContainer>
+                        <InnerContainer flex="2">
+                            Graf over innsjekkede billetter:
+                            <FlexBar>
+                                <BarElement color="green" title={"Billetter som er innsjekket - " + checkedinTickets} width={checkedinTickets} />
+                                <BarElement color="lightgray" title={"Billetter som ikke er innsjekket - " + (tickets.length - checkedinTickets)} width={tickets.length - checkedinTickets} />
                             </FlexBar>
                         </InnerContainer>
                     </InnerContainerRow>
