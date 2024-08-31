@@ -141,10 +141,11 @@ export const TicketList = () => {
                 </DashboardHeader>
                 <DashboardContent>
                     <InnerContainerRow>
-                        <InnerContainer flex="1">
-                            Sortering av billetter kommer...
+                        <InnerContainer flex="2">
+                            Sortering av billetter:<br/>
+                            <i>Funksjonen er ikke tilgjengelig</i>
                         </InnerContainer>
-                        <InnerContainer flex="1" />
+                        <InnerContainer flex="1" mobileHide />
                         <InnerContainer flex="2">
                             Graf over billetter:
                             <FlexBar>
@@ -169,15 +170,15 @@ export const TicketList = () => {
                             <TableHead border>
                                 <TableRow>
                                     <TableCell as="th" flex="1" mobileFlex="2">ID</TableCell>
-                                    <TableCell as="th" flex="2" mobileFlex="3">Billett type</TableCell>
+                                    <TableCell as="th" flex="2" mobileHide>Billett type</TableCell>
                                     <TableCell as="th" flex="4" mobileFlex="7">Eies av bruker</TableCell>
                                     <TableCell as="th" flex="4" mobileHide>Kjøpt av bruker</TableCell>
                                     <TableCell as="th" flex="4" mobileHide>Seates av bruker</TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="2">Sete</TableCell>
                                     <TableCell as="th" flex="3" mobileHide>Kjøpetid</TableCell>
                                     
-                                    <TableCell as="th" center flex="0 24px" mobileHide title="Statusikon: Ikon vises dersom billetten har blitt sjekket inn"><IconContainer>...</IconContainer></TableCell>
-                                    <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                    <TableCell as="th" center flex="0 24px" title="Statusikon: Ikon vises dersom billetten har blitt sjekket inn"><IconContainer>...</IconContainer></TableCell>
+                                    <TableCell as="th" center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -186,14 +187,14 @@ export const TicketList = () => {
                                         return (
                                             <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
                                                 <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
-                                                <TableCell flex="2" mobileFlex="3">{ ticket.ticket_type.name }</TableCell>
+                                                <TableCell flex="2" mobileHide>{ ticket.ticket_type.name }</TableCell>
                                                 <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
                                                 <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-                                                <TableCell flex="0 24px" mobileHide center><IconContainer hidden={!ticket.checked_in} color="#43a047"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer></TableCell>
-                                                <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                                <TableCell flex="0 24px" center><IconContainer hidden={!ticket.checked_in} color="#43a047"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer></TableCell>
+                                                <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
                                     })
