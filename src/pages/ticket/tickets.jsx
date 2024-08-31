@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useHistory } from 'react-router-dom';
-import { getActiveStoreSessions, getEventTickets, getCurrentEvent, User, Ticket } from "@phoenixlan/phoenix.js";
+import { getActiveStoreSessions, getEventTickets, getCurrentEvent, User, Ticket, TicketType } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow } from "../../components/dashboard";
@@ -18,6 +18,9 @@ export const TicketList = () => {
     const [ ticketsHeld, setTicketsHeld ] = useState(0);
     const [ checkedinTickets, setCheckedinTickets ] = useState(0);
 
+    const [ ticketsProgressBar, setTicketsProgressBar ] = useState(undefined);
+    const [ checkedinTicketsProgressBar, setCheckedinTicketsProgressBar] = useState(undefined);
+
     const [ sortingMethodTicket, setSortingMethodTicket ] = useState(1);
 
     let history = useHistory();
@@ -26,21 +29,14 @@ export const TicketList = () => {
 
         const localEvent = await getCurrentEvent();
         
-        const [ tickets, storeSessions ] = await Promise.all([
+        const [ tickets, storeSessions, allTicketTypes ] = await Promise.all([
             getEventTickets(localEvent.uuid),
-            getActiveStoreSessions()
+            getActiveStoreSessions(),
+            TicketType.getTicketTypes()
         ])
 
         setTickets(tickets);
         setEvent(localEvent);
-
-        // Count all tickets which is free (Price == 0)
-        let ticketsFree = tickets.filter(ticket => ticket.ticket_type.price == 0);
-        setTicketsFree(ticketsFree);
-
-        // Count all tickets which has been bought AND is not membership (Price > 0, ticket_type.seatable TRUE)
-        let ticketsBought = tickets.filter(ticket => ticket.ticket_type.price > 0).filter(ticket => ticket.ticket_type.seatable);
-        setTicketsBought(ticketsBought);
 
         // Count all tickets which is held in store sessions
         let heldTickets = 0; 
@@ -53,16 +49,66 @@ export const TicketList = () => {
         })
         setTicketsHeld(heldTickets);
 
-        // Count all tickets that has been checked in (checked_in != null)
-        let checkedinTickets = 0;
-        tickets.map((ticket) => {
-            if(ticket.checked_in != null) {
-                checkedinTickets++
-            } 
+
+        // Logic to create progressbars for tickets and checked in tickets
+        let ticketsProgressBar = [];
+        let checkedinTicketsProgressBar = [];
+
+        let availableTickets = localEvent.max_participants - tickets.filter((ticket) => ticket.ticket_type.seatable == true).length - heldTickets; 
+
+        let ticketsCheckedinCount = 0;
+        let ticketsNotCheckedinCount = 0;
+
+        // Go through all tickets, filter out non-seatable tickets, sort after price, count tickets for each type and if they are checked in or not.
+        // Logic for creating the tickets progressbar
+        allTicketTypes
+            .filter((ticketType) => ticketType.seatable == true)
+            .sort((a, b) => a.price < b.price)
+            .map((ticketType) => {
+                let countedTicketsForTicketType = 0;
+    
+                tickets
+                .filter((ticket) => ticket.ticket_type.uuid == ticketType.uuid && ticket.ticket_type.seatable == true)
+                .map((ticket) => {
+                    countedTicketsForTicketType++;
+                    ticket.checked_in ? ticketsCheckedinCount++ : ticketsNotCheckedinCount++;
+                })
+    
+                ticketsProgressBar.push({
+                    key: ticketType.uuid,
+                    color: ticketType.price ? "green" : "stripedGreen",
+                    title: ticketType.name + " - " + countedTicketsForTicketType,
+                    width: countedTicketsForTicketType
+                })
+            })
+        ticketsProgressBar.push({
+            key: "availableTickets",
+            color: "gray",
+            title: "Tilgjengelige billetter - " + availableTickets,
+            width: availableTickets
         })
-        setCheckedinTickets(checkedinTickets);
+        ticketsProgressBar.push({
+            key: "reservedTickets",
+            color: "stripedOrange",
+            title: "Billetter reservert i kjøp - " + heldTickets,
+            width: heldTickets
+        })
+        setTicketsProgressBar(ticketsProgressBar);
 
-
+        // Logic for creating the checkedintickets progressbar
+        checkedinTicketsProgressBar.push({
+            key: "ceckedinTickets",
+            color: "green",
+            title: "Billetter sjekket inn - " + ticketsCheckedinCount,
+            width: ticketsCheckedinCount
+        })
+        checkedinTicketsProgressBar.push({
+            key: "notCheckedinTickets",
+            color: "gray",
+            title: "Billetter ikke sjekket inn - " + ticketsNotCheckedinCount,
+            width: ticketsNotCheckedinCount
+        })
+        setCheckedinTicketsProgressBar(checkedinTicketsProgressBar);
 
         setLoading(false);
     }
@@ -102,17 +148,17 @@ export const TicketList = () => {
                         <InnerContainer flex="2">
                             Graf over billetter:
                             <FlexBar>
-                                <BarElement color="stripedGreen" title={"Gratisbilletter - " + ticketsFree.length} width={ticketsFree.length} />
-                                <BarElement color="green" title={"Kjøpte billetter - " + ticketsBought.length} width={ticketsBought.length} />
-                                <BarElement color="lightgray" title={"Tilgjengelige billetter - " + (event.max_participants - ticketsBought.length - ticketsFree.length) + " av " + event.max_participants} width={event.max_participants - ticketsBought.length - ticketsFree.length - ticketsHeld} />
-                                <BarElement color="stripedOrange" title={"Billetter reservert i kjøp - " + ticketsHeld} width={ticketsHeld} />
+                                {ticketsProgressBar.map((object) => {
+                                    return (<BarElement color={object.color} title={object.title} width={object.width} />)
+                                })}
                             </FlexBar>
                         </InnerContainer>
                         <InnerContainer flex="2">
                             Graf over innsjekkede billetter:
                             <FlexBar>
-                                <BarElement color="green" title={"Billetter sjekket inn - " + checkedinTickets} width={checkedinTickets} />
-                                <BarElement color="lightgray" title={"Billetter ikke sjekket inn - " + (tickets.length - checkedinTickets)} width={tickets.length - checkedinTickets} />
+                                {checkedinTicketsProgressBar.map((object) => {
+                                    return (<BarElement color={object.color} title={object.title} width={object.width} />)
+                                })}
                             </FlexBar>
                         </InnerContainer>
                     </InnerContainerRow>
