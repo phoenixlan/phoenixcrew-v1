@@ -136,7 +136,7 @@ export const TicketList = () => {
                         Billetter
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {tickets.length} billetter registrert for dette arrangementet
+                        {tickets.length} salg for dette arrangementet
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
