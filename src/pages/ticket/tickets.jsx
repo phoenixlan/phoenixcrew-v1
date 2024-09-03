@@ -1,42 +1,48 @@
 import React, { useState, useEffect } from "react"
 import { useHistory } from 'react-router-dom';
-import { getActiveStoreSessions, getEventTickets, getCurrentEvent, User, Ticket, TicketType } from "@phoenixlan/phoenix.js";
+import { getActiveStoreSessions, getEventTickets, getCurrentEvent, User, TicketType } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow } from "../../components/dashboard";
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputLabel, InputSelect } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faCheck, faUserCheck } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { BarElement, FlexBar } from "../../components/bar";
+
+const SORTING_METHODS = {
+    TICKET_ID: 1,
+    TICKET_TYPE: 2,
+    TICKET_OWNER: 3,
+    TICKED_CHECKED_IN: 4
+}
+
+const SORTING_TYPES = {}
+SORTING_TYPES[SORTING_METHODS.TICKET_ID] = (a, b) => a.ticket_id - b.ticket_id;
+SORTING_TYPES[SORTING_METHODS.TICKET_TYPE] = (a, b) => a.ticket_type.name.localeCompare(b.ticket_type.name);
+SORTING_TYPES[SORTING_METHODS.TICKET_OWNER] = (a, b) => a.owner.firstname.localeCompare(b.owner.firstname);
+SORTING_TYPES[SORTING_METHODS.TICKED_CHECKED_IN] = (a, b) => b.checked_in - a.checked_in;
 
 export const TicketList = () => {
     const [ tickets, setTickets ] = useState([]);
     const [ loading, setLoading ] = useState(true);
 
-    const [ event, setEvent ] = useState(undefined);
-    const [ ticketsFree, setTicketsFree ] = useState(0);
-    const [ ticketsBought, setTicketsBought ] = useState(0);
-    const [ ticketsHeld, setTicketsHeld ] = useState(0);
-    const [ checkedinTickets, setCheckedinTickets ] = useState(0);
+    const [ activeSortingMethod, setActiveSortingMethod] = useState(1);
 
     const [ ticketsProgressBar, setTicketsProgressBar ] = useState(undefined);
     const [ checkedinTicketsProgressBar, setCheckedinTicketsProgressBar] = useState(undefined);
-
-    const [ sortingMethodTicket, setSortingMethodTicket ] = useState(1);
 
     let history = useHistory();
 
     const reload = async () => {
 
-        const localEvent = await getCurrentEvent();
+        const event = await getCurrentEvent();
         
         const [ tickets, storeSessions, allTicketTypes ] = await Promise.all([
-            getEventTickets(localEvent.uuid),
+            getEventTickets(event.uuid),
             getActiveStoreSessions(),
             TicketType.getTicketTypes()
         ])
 
         setTickets(tickets);
-        setEvent(localEvent);
 
         // Count all tickets which is held in store sessions
         let heldTickets = 0; 
@@ -47,14 +53,12 @@ export const TicketList = () => {
                 }  
             })
         })
-        setTicketsHeld(heldTickets);
-
 
         // Logic to create progressbars for tickets and checked in tickets
         let ticketsProgressBar = [];
         let checkedinTicketsProgressBar = [];
 
-        let availableTickets = localEvent.max_participants - tickets.filter((ticket) => ticket.ticket_type.seatable == true).length - heldTickets; 
+        let availableTickets = event.max_participants - tickets.filter((ticket) => ticket.ticket_type.seatable == true).length - heldTickets; 
 
         let ticketsCheckedinCount = 0;
         let ticketsNotCheckedinCount = 0;
@@ -113,15 +117,13 @@ export const TicketList = () => {
         setLoading(false);
     }
 
+    // Ticket sorting
+    let processedTicketList = tickets
+        .sort(SORTING_TYPES[activeSortingMethod]);
+
     useEffect(() => {
         reload();
     }, []);
-
-    const checkin = async (ticket_id) => {
-        setLoading(true);
-        await Ticket.checkInTicket(ticket_id);
-        await reload();
-    }
 
     if(loading) {
         return (
@@ -142,8 +144,13 @@ export const TicketList = () => {
                 <DashboardContent>
                     <InnerContainerRow>
                         <InnerContainer flex="2">
-                            Sortering av billetter:<br/>
-                            <i>Funksjonen er ikke tilgjengelig</i>
+                            <InputLabel small>Billettsortering:</InputLabel>
+                            <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
+                                <option value={SORTING_METHODS.TICKET_ID}>Billett ID</option>
+                                <option value={SORTING_METHODS.TICKET_TYPE}>Billett type</option>
+                                <option value={SORTING_METHODS.TICKET_OWNER}>Billett eier</option>
+                                <option value={SORTING_METHODS.TICKED_CHECKED_IN}>Innsjekket</option>
+                            </InputSelect>
                         </InnerContainer>
                         <InnerContainer flex="1" mobileHide />
                         <InnerContainer flex="2">
@@ -183,7 +190,7 @@ export const TicketList = () => {
                             </TableHead>
                             <TableBody>
                                 {
-                                    tickets.map((ticket) => {
+                                    processedTicketList.map((ticket) => {
                                         return (
                                             <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
                                                 <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
