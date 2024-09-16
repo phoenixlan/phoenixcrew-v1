@@ -6,7 +6,7 @@ import { SidebarButton } from "./sidebarButton";
 import Logo from "../assets/phoenixlan_square_logo.png";
 
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
-import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote, faTicket } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote, faTicket, faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
@@ -136,6 +136,7 @@ const S = {
 
         SidebarSearchContainer: styled.div`
             display: flex;
+            border-bottom: 1px solid rgb(235, 235, 235);
             height: ${commonHeight};
             padding: 0 16px;
 
@@ -160,6 +161,7 @@ const S = {
         SidebarCrewManagementContainer: styled.div`
             display: flex;
             flex-flow: column;
+            overflow-y: scroll;
         `,
             CrewManagementCategory: styled.div`
                 display: flex;
@@ -320,6 +322,11 @@ export const options = [
                 title: "Crew",
                 icon: faCircle,
                 url: "/crews/"
+            },
+            {
+                title: "Crew-kort",
+                icon: faAddressCard,
+                url: "/card_orders/"
             },
             {
                 title: "Godkjenning av avatarer",

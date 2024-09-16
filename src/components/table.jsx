@@ -90,6 +90,7 @@ export const SelectableTableRow = styled.tr`
     cursor: pointer;
     user-select: none;
     color: ${props => props.active ? "rgb(150, 150, 150)" : "inherit"};
+    display: ${props => props.visible ? "none" : "flex"};
     
     :hover {
         background-color: rgb(235, 235, 235);
