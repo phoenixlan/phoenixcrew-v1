@@ -6,11 +6,10 @@ import { SidebarButton } from "./sidebarButton";
 import Logo from "../assets/phoenixlan_square_logo.png";
 
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
-import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote, faTicket } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faTicket } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
-import { position_mapping_to_string } from '../utils/user';
 
 export const CategoryContext = React.createContext({});
 
