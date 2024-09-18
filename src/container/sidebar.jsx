@@ -455,19 +455,19 @@ export const Sidebar = () => {
     const getFittingPosition = (mappings) => {
         const named = mappings.filter(mapping => !!mapping.position.name);
 
-        // Possible outcomes:
+        // Possible position and name combinations:
         /*
             amount of positions is either null, one or multiple
             amount of position custom names is either null, one or multiple
 
-            1. ✓ positions = multiple, custom name = multiple     case 1 (return custom name of position[0])
-            2. ✓ positions = multiple, custom name = one          case 1 (return custom name of position[0])
-            3. ✓ positions = multiple, custom name = none         case 2 (return amount of positions)
+            1. ✓ positions = multiple, custom name = multiple     handle as case 1 (return custom name of position[0])
+            2. ✓ positions = multiple, custom name = one          handle as case 1 (return custom name of position[0])
+            3. ✓ positions = multiple, custom name = none         handle as case 2 (return amount of positions)
 
-            4. ✓ positions = one, custom name = one               case 1 (return custom name of position[0])
-            5. ✓ positions = one, custom name = none              case 3 (return position_mapping_to_string)
+            4. ✓ positions = one, custom name = one               handle as case 1 (return custom name of position[0])
+            5. ✓ positions = one, custom name = none              handle as case 3 (return position_mapping_to_string)
 
-            6. ✓ positions = none, custom name = none             case 4 (return "bruker")
+            6. ✓ positions = none, custom name = none             handle as case 4 (return "bruker")
         */
 
         // Case 1 - If the user has multiple positions and multiple custom position names, show the first.
@@ -483,7 +483,7 @@ export const Sidebar = () => {
             return position_mapping_to_string(mappings);
         }
         // Case 4 - If the user has no positions, show "Bruker"
-        if(mappings.length == 0) {
+        if(mappings.length == 0) { 
             return "Bruker";
         }
     }
