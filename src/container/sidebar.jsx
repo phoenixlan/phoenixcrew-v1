@@ -10,7 +10,7 @@ import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle,
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
-import { position_mapping_to_string } from '../../../utils/user';
+import { position_mapping_to_string } from '../utils/user';
 
 export const CategoryContext = React.createContext({});
 
