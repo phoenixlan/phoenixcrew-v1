@@ -455,8 +455,8 @@ export const Sidebar = () => {
     const getFittingPosition = (mappings) => {
         const named = mappings.filter(mapping => !!mapping.position.name);
 
-        // Possible position and name combinations:
-        /*
+        /*  Possible position and name combinations:
+
             amount of positions is either null, one or multiple
             amount of position custom names is either null, one or multiple
 
