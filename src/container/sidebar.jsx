@@ -10,6 +10,8 @@ import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle,
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
+import { position_mapping_to_string } from '../../../utils/user';
+
 export const CategoryContext = React.createContext({});
 
 const commonWidth   =   "44px";
@@ -452,19 +454,37 @@ export const Sidebar = () => {
 
     const getFittingPosition = (mappings) => {
         const named = mappings.filter(mapping => !!mapping.position.name);
+
+        // Possible outcomes:
+        /*
+            amount of positions is either null, one or multiple
+            amount of position custom names is either null, one or multiple
+
+            1. ✓ positions = multiple, custom name = multiple     case 1 (return custom name of position[0])
+            2. ✓ positions = multiple, custom name = one          case 1 (return custom name of position[0])
+            3. ✓ positions = multiple, custom name = none         case 2 (return amount of positions)
+
+            4. ✓ positions = one, custom name = one               case 1 (return custom name of position[0])
+            5. ✓ positions = one, custom name = none              case 3 (return position_mapping_to_string)
+
+            6. ✓ positions = none, custom name = none             case 4 (return "bruker")
+        */
+
+        // Case 1 - If the user has multiple positions and multiple custom position names, show the first.
         if(named.length > 0) {
-            return named[0].position.name
+            return named[0].position.name;
         }
-        else if(mappings.length == 0) {
-            if(mappings.length == 0) {
-                return "Bruker";
-            } else {
-                return mappings[0].position.name
-            }  
-        } 
-        
-        else {
-            return `${mappings.length} stillinger`
+        // Case 2 - If the user has multiple positions, but no position has a custom name, show the number of positions.
+        if(mappings.length > 0) {
+            return `${mappings.length} stillinger`;
+        }
+        // Case 3 - If the user has one position, and the position does not have a custom name
+        if(mappings.length == 1) {
+            return position_mapping_to_string(mappings);
+        }
+        // Case 4 - If the user has no positions, show "Bruker"
+        if(mappings.length == 0) {
+            return "Bruker";
         }
     }
 
