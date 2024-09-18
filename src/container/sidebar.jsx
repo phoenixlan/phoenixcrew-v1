@@ -454,37 +454,37 @@ export const Sidebar = () => {
 
     const getFittingPosition = (mappings) => {
         const named = mappings.filter(mapping => !!mapping.position.name);
+        const groupLeader = mappings.filter(mapping => mapping.position.chief);
+        const groupMember = mappings.filter(mapping => mapping.position.crew_uuid);
 
         /*  Possible position and name combinations:
 
             amount of positions is either null, one or multiple
             amount of position custom names is either null, one or multiple
 
-            1. ✓ positions = multiple, custom name = multiple     handle as case 1 (return custom name of position[0])
-            2. ✓ positions = multiple, custom name = one          handle as case 1 (return custom name of position[0])
-            3. ✓ positions = multiple, custom name = none         handle as case 2 (return amount of positions)
+            1. ✓ positions = multiple, custom name = multiple  handle as case 1, return custom name of position[0]
+            2. ✓ positions = multiple, custom name = one       handle as case 1, return custom name of position[0]
+            3. ✓ positions = multiple, custom name = none      handle as case 2, check their (highest) role, aka. groupleader or crewmember based on position properties. 
 
-            4. ✓ positions = one, custom name = one               handle as case 1 (return custom name of position[0])
-            5. ✓ positions = one, custom name = none              handle as case 3 (return position_mapping_to_string)
+            4. ✓ positions = one, custom name = one            handle as case 1, return custom name of position[0]
+            5. ✓ positions = one, custom name = none           handle as case 2, check their (highest) role, aka. groupleader or crewmember based on position properties.
 
-            6. ✓ positions = none, custom name = none             handle as case 4 (return "bruker")
+            6. ✓ positions = none, custom name = none          handle as case 3, return "bruker"
         */
 
-        // Case 1 - If the user has multiple positions and multiple custom position names, show the first.
+        // Case 1 - If the user has multiple positions and atleast one custom position name, show the first.
         if(named.length > 0) {
             return named[0].position.name;
         }
-        // Case 2 - If the user has multiple positions, but no position has a custom name, show the number of positions.
-        if(mappings.length > 0) {
-            return `${mappings.length} stillinger`;
-        }
-        // Case 3 - If the user has one position, and the position does not have a custom name
-        if(mappings.length == 1) {
-            return position_mapping_to_string(mappings);
-        }
-        // Case 4 - If the user has no positions, show "Bruker"
-        if(mappings.length == 0) { 
-            return "Bruker";
+        // Case 2/3 - If the user has multiple positions and none custom position names, show their (highest) role, aka. groupleader, crewmember or user.
+        if(mappings.length >= 0) {
+            if(groupLeader.length > 0) {
+                return "Gruppeleder"
+            }
+            if(groupMember.length > 0) {
+                return "Crew medlem"
+            }
+            return "Bruker"
         }
     }
 
