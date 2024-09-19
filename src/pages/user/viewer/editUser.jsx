@@ -42,8 +42,8 @@ export const EditUser = () => {
     const [ loading, setLoading ] = useState(true);
 
     const onSubmit = async (data) => {
-		try { 
-			await User.modifyUser(data.uuid, data.firstname, data.lastname, data.username, data.email, data.phone, data.guardian_phone, data.address, data.postal_code, data.birthdate, data.gender);
+        try { 
+            await User.modifyUser(data.uuid, data.firstname, data.lastname, data.username, data.email, data.phone, data.guardian_phone, data.address, data.postal_code, data.birthdate, data.gender);
             await reload();
             setUpdateSuccess(true);
             setError(false);
