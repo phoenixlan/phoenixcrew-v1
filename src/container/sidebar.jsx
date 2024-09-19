@@ -481,7 +481,7 @@ export const Sidebar = () => {
                 return "Gruppeleder"
             }
             if(groupMember.length > 0) {
-                return "Crew medlem"
+                return "Gruppemedlem"
             }
             return "Bruker"
         }
