@@ -25,18 +25,22 @@ const S = {
     `,
 }
 
-export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
+export const UserViewerDetails = ({ user, reloadFunction }) => {
 
-    const [ user, setUser ] = useState(inheritUser);
+    //const [ user, setUser ] = useState(inheritUser);
     
     let history = useHistory();
 
     // Import the following React contexts:
-    const authorizedUser = useContext(AuthenticationContext);
+    const loggedinUser = useContext(AuthenticationContext);
 
-    const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
-    const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
-    const [ deleteAvatarButtonAvailibility, setDeleteAvatarButtonAvailibility ] = useState(false);
+    // Function availibility control:
+    let activationStateButtonAvailibility = false;
+    let modifyUserStateButtonAvailibility = false;
+    let deleteAvatarButtonAvailibility = false;
+    //const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
+    //const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
+    //const [ deleteAvatarButtonAvailibility, setDeleteAvatarButtonAvailibility ] = useState(false);
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState ] = useState(null);
@@ -46,25 +50,34 @@ export const UserViewerDetails = ({ inheritUser, reloadFunction }) => {
     const reload = async () => {
         setLoading(true);
 
-        setUser(await User.getUser(inheritUser.uuid));
+        //setUser(await User.getUser(inheritUser.uuid));
 
         // Check if user has "admin" role and make the following functions available:
-        if (authorizedUser.roles.includes("admin")) {
-            setActivationButtonAvailibility(true);
-            setModifyUserButtonAvailibility(true);
+        if (loggedinUser.roles.includes("admin")) {
+            activationStateButtonAvailibility = true;
+            modifyUserStateButtonAvailibility = true;
+            //setActivationButtonAvailibility(true);
+            //setModifyUserButtonAvailibility(true);
         }
 
         // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
         if (user.avatar_uuid) {
-            if((authorizedUser.roles.includes("admin") || authorizedUser.roles.includes("hr_admin")) || authorizedUser.authUser.uuid == user.uuid) {
-                setDeleteAvatarButtonAvailibility(true);
+            if((loggedinUser.roles.includes("admin") || loggedinUser.roles.includes("hr_admin")) || loggedinUser.authUser.uuid == user.uuid) {
+                deleteAvatarButtonAvailibility = true;
+                //setDeleteAvatarButtonAvailibility(true);
             }
         }
 
         // Try to get user information and set the information as states which can be used later or throw an error.
         try {
-            setActivationState(await User.getUserActivationState(user.uuid));
-            setMembershipState(await User.getUserMembershipStatus(user.uuid));
+            const [ activationState, membershipState ] = await Promise.all([
+                User.getUserActivationState(user.uuid),
+                User.getUserMembershipStatus(user.uuid)
+            ])
+            setActivationState(activationState);
+            setMembershipState(membershipState);
+            // setActivationState(await User.getUserActivationState(user.uuid));
+            // setMembershipState(await User.getUserMembershipStatus(user.uuid));
         } catch(e) {
             console.error("An error occured while attempting to gather user information:\n" + e);
         }
