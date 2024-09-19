@@ -6,10 +6,11 @@ import { SidebarButton } from "./sidebarButton";
 import Logo from "../assets/phoenixlan_square_logo.png";
 
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
-import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote, faTicket } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faTicket } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
+
 export const CategoryContext = React.createContext({});
 
 const commonWidth   =   "44px";
@@ -452,13 +453,37 @@ export const Sidebar = () => {
 
     const getFittingPosition = (mappings) => {
         const named = mappings.filter(mapping => !!mapping.position.name);
+        const groupLeader = mappings.filter(mapping => mapping.position.chief);
+        const groupMember = mappings.filter(mapping => mapping.position.crew_uuid);
+
+        /*  Possible position and name combinations:
+
+            amount of positions is either null, one or multiple
+            amount of position custom names is either null, one or multiple
+
+            1. ✓ positions = multiple, custom name = multiple  handle as case 1, return custom name of position[0]
+            2. ✓ positions = multiple, custom name = one       handle as case 1, return custom name of position[0]
+            3. ✓ positions = multiple, custom name = none      handle as case 2, check their (highest) role, aka. groupleader or crewmember based on position properties. 
+
+            4. ✓ positions = one, custom name = one            handle as case 1, return custom name of position[0]
+            5. ✓ positions = one, custom name = none           handle as case 2, check their (highest) role, aka. groupleader or crewmember based on position properties.
+
+            6. ✓ positions = none, custom name = none          handle as case 3, return "bruker"
+        */
+
+        // Case 1 - If the user has multiple positions and atleast one custom position name, show the first.
         if(named.length > 0) {
-            return named[0].position.name
+            return named[0].position.name;
         }
-        else if(mappings.length == 0) {
-            return mappings[0].position.name
-        } else {
-            return `${mappings.length} stillinger`
+        // Case 2/3 - If the user has multiple positions and none custom position names, show their (highest) role, aka. groupleader, crewmember or user.
+        if(mappings.length >= 0) {
+            if(groupLeader.length > 0) {
+                return "Gruppeleder"
+            }
+            if(groupMember.length > 0) {
+                return "Gruppemedlem"
+            }
+            return "Bruker"
         }
     }
 
