@@ -37,9 +37,13 @@ export const UserViewerDetails = ({ user }) => {
     let modifyUserStateButtonAvailibility;
     let deleteAvatarButtonAvailibility;
 
-    const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
-    const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
-    const [ deleteAvatarButtonAvailibility, setDeleteAvatarButtonAvailibility ] = useState(false);
+    // Function availibility control:
+    let activationStateButtonAvailibility = false;
+    let modifyUserStateButtonAvailibility = false;
+    let deleteAvatarButtonAvailibility = false;
+    //const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
+    //const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
+    //const [ deleteAvatarButtonAvailibility, setDeleteAvatarButtonAvailibility ] = useState(false);
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState ] = useState(null);
