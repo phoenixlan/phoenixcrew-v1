@@ -23,19 +23,19 @@ export const EditUser = () => {
     const authorizedUser = useContext(AuthenticationContext);
 
     // Variables to keep track of changes in input components
-	const [ firstname, setFirstname ] = useState(null);
-	const [ lastname, setLastname ]	= useState(null);
-	const [ username, setUsername ]	= useState(null);
-	const [ email, setEmail ] = useState(null);
-	const [ phone, setPhone ] = useState(null);
-	const [ guardianPhone, setGuardianPhone ] = useState(null);
-	const [ address, setAddress ] = useState(null);
-	const [ postalCode, setPostalCode ]	= useState(null);
-	const [ birthdate, setBirthdate ] = useState(null);
-	const [ gender, setGender ]	= useState(null);
+    const [ firstname, setFirstname ] = useState(null);
+    const [ lastname, setLastname ]	= useState(null);
+    const [ username, setUsername ]	= useState(null);
+    const [ email, setEmail ] = useState(null);
+    const [ phone, setPhone ] = useState(null);
+    const [ guardianPhone, setGuardianPhone ] = useState(null);
+    const [ address, setAddress ] = useState(null);
+    const [ postalCode, setPostalCode ]	= useState(null);
+    const [ birthdate, setBirthdate ] = useState(null);
+    const [ gender, setGender ]	= useState(null);
 
     // States for error and success, used when attempting to fetch user and update user
-	const [ error, setError ] = useState(false);
+    const [ error, setError ] = useState(false);
     const [ updateSuccess, setUpdateSuccess ] = useState(false);
 
     // Loading state
