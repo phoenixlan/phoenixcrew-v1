@@ -16,6 +16,7 @@ import { AuthenticationContext } from '../components/authentication';
 import { ViewApplication } from '../pages/application/view';
 import { PositionList } from '../pages/position';
 import { CrewList } from '../pages/crew/list';
+import { CrewMemberList } from '../pages/crew/allMembers';
 import { UserList } from '../pages/user/list';
 import { SeatmapList } from '../pages/seatmap/listSeatmaps';
 import { SeatmapEditor } from '../pages/seatmap/seatmapEditor';
@@ -33,6 +34,8 @@ import { EmailForm } from "../pages/utils/email";
 import { TicketSalesStats } from "../pages/stats/ticketSales";
 import { TicketVoucherManagement } from '../pages/ticket/ticketVoucherManagement';
 import { AgendaList } from '../pages/information/agenda';
+import { UserbaseStats } from '../pages/stats/userbase';
+import { AgeDistributionStats } from '../pages/stats/ageDistribution';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -68,6 +71,9 @@ export const CrewRouter = () => {
                         <PrivateRoute exact path="/crews/">
                             <CrewList />
                         </PrivateRoute>
+                        <PrivateRoute exact path="/crews/members/">
+                            <CrewMemberList />
+                        </PrivateRoute>
                         <PrivateRoute exact path="/crew/:uuid">
                             <ViewCrew />
                         </PrivateRoute>
@@ -100,6 +106,12 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/stats/ticket_sales">
                             <TicketSalesStats />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/stats/userbase">
+                            <UserbaseStats />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/stats/age_distribution">
+                            <AgeDistributionStats />
                         </PrivateRoute>
                         <PrivateRoute exact path="/tickets/">
                             <TicketList />

@@ -6,7 +6,7 @@ import { SidebarButton } from "./sidebarButton";
 import Logo from "../assets/phoenixlan_square_logo.png";
 
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
-import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faTicket } from '@fortawesome/free-solid-svg-icons';
+import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle, faEnvelope, faUserFriends, faSignOutAlt, faInfo, faKey, faFileSignature, faPortrait, faStickyNote, faTicket, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
@@ -309,6 +309,16 @@ export const options = [
                 title: "Billettsalg",
                 icon: faMoneyBill,
                 url: "/stats/ticket_sales/"
+            },
+            {
+                title: "Brukerbase",
+                icon: faUsers,
+                url: "/stats/userbase/"
+            },
+            {
+                title: "Alders-fordeling",
+                icon: faUsers,
+                url: "/stats/age_distribution/"
             }
         ]
     },
@@ -321,6 +331,11 @@ export const options = [
                 title: "Crew",
                 icon: faCircle,
                 url: "/crews/"
+            },
+            {
+                title: "Alle crewmedlemmer",
+                icon: faUsers,
+                url: "/crews/members/"
             },
             {
                 title: "Godkjenning av avatarer",
