@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { User, Avatar } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
-import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, PanelButton } from '../../../components/dashboard';
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton } from '../../../components/dashboard';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
@@ -27,46 +27,36 @@ const S = {
 
 export const UserViewerDetails = ({ user }) => {
 
-    //const [ user, setUser ] = useState(inheritUser);
-    
     let history = useHistory();
 
     // Import the following React contexts:
     const loggedinUser = useContext(AuthenticationContext);
 
     // Function availibility control:
-    let activationStateButtonAvailibility = false;
-    let modifyUserStateButtonAvailibility = false;
-    let deleteAvatarButtonAvailibility = false;
-    //const [ activationStateButtonAvailibility, setActivationButtonAvailibility ] = useState(false);
-    //const [ modifyUserStateButtonAvailibility, setModifyUserButtonAvailibility ] = useState(false);
-    //const [ deleteAvatarButtonAvailibility, setDeleteAvatarButtonAvailibility ] = useState(false);
+    let activationStateButtonAvailibility;
+    let modifyUserStateButtonAvailibility;
+    let deleteAvatarButtonAvailibility;
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState ] = useState(null);
 
     const [ loading, setLoading ] = useState(true);
 
+    // Check if user has "admin" role and make the following functions available:
+    if (loggedinUser.roles.includes("admin")) {
+        activationStateButtonAvailibility = true;
+        modifyUserStateButtonAvailibility = true;
+    }
+
+    // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
+    if (user.avatar_uuid) {
+        if((loggedinUser.roles.includes("admin") || loggedinUser.roles.includes("hr_admin")) || loggedinUser.authUser.uuid == user.uuid) {
+            deleteAvatarButtonAvailibility = true;
+        }
+    }
+
     const reload = async () => {
         setLoading(true);
-
-        //setUser(await User.getUser(inheritUser.uuid));
-
-        // Check if user has "admin" role and make the following functions available:
-        if (loggedinUser.roles.includes("admin")) {
-            activationStateButtonAvailibility = true;
-            modifyUserStateButtonAvailibility = true;
-            //setActivationButtonAvailibility(true);
-            //setModifyUserButtonAvailibility(true);
-        }
-
-        // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
-        if (user.avatar_uuid) {
-            if((loggedinUser.roles.includes("admin") || loggedinUser.roles.includes("hr_admin")) || loggedinUser.authUser.uuid == user.uuid) {
-                deleteAvatarButtonAvailibility = true;
-                //setDeleteAvatarButtonAvailibility(true);
-            }
-        }
 
         // Try to get user information and set the information as states which can be used later or throw an error.
         try {
@@ -76,8 +66,6 @@ export const UserViewerDetails = ({ user }) => {
             ])
             setActivationState(activationState);
             setMembershipState(membershipState);
-            // setActivationState(await User.getUserActivationState(user.uuid));
-            // setMembershipState(await User.getUserMembershipStatus(user.uuid));
         } catch(e) {
             console.error("An error occured while attempting to gather user information:\n" + e);
         }
@@ -103,13 +91,14 @@ export const UserViewerDetails = ({ user }) => {
         if(window.confirm("Er du sikker på at du vil slette avataren til denne brukeren?")) {
             try { 
                 await Avatar.deleteAvatar(user.avatar_uuid);
-                reload();
+                window.location.reload();
             } catch(e) {
                 console.error("An error occured while attempting to delete this users' avatar.\n" + e);
             }
         }
     }
 
+    // Print crew card
     const downloadCard = async () => {
         const result = await User.getCrewCard(user.uuid);
         const href = window.URL.createObjectURL(await result.blob());
