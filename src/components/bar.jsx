@@ -56,7 +56,7 @@ const S = {
     ElementRootContainer: styled.div`
         background: ${props => colors[props.color]?.background || colors["gray"].background};
         border-bottom: .225em solid ${props => colors[props.color]?.border || colors["gray"].border};
-        flex: ${props => props.width};
+        flex: ${props => props.fillOnEmpty ? (props.width == 0 ? "1" : props.width) : props.width};
     
         &:hover & ToolTip {
             background-color: red;
@@ -68,10 +68,11 @@ export const BarElement = (props) => {
     const color = props.color;
     const width = props.width;
     const title = props.title;
+    const fillOnEmpty = props.fillOnEmpty;
     
     return (
         <>
-            <S.ElementRootContainer color={color} width={width} title={title} />
+            <S.ElementRootContainer color={color} width={width} title={title} fillOnEmpty={fillOnEmpty} />
         </>
     )
 }

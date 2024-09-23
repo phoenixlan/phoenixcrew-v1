@@ -110,7 +110,8 @@ export const TicketList = () => {
             key: "notCheckedinTickets",
             color: "gray",
             title: "Billetter ikke sjekket inn - " + ticketsNotCheckedinCount,
-            width: ticketsNotCheckedinCount
+            width: ticketsNotCheckedinCount,
+            fillOnEmpty: !ticketsCheckedinCount
         })
         setCheckedinTicketsProgressBar(checkedinTicketsProgressBar);
 
@@ -124,6 +125,8 @@ export const TicketList = () => {
     useEffect(() => {
         reload();
     }, []);
+
+    console.log(checkedinTicketsProgressBar)
 
     if(loading) {
         return (
@@ -165,7 +168,7 @@ export const TicketList = () => {
                             Graf over innsjekkede billetter:
                             <FlexBar>
                                 {checkedinTicketsProgressBar.map((object) => {
-                                    return (<BarElement color={object.color} title={object.title} width={object.width} />)
+                                    return (<BarElement color={object.color} title={object.title} width={object.width} fillOnEmpty={object.fillOnEmpty} />)
                                 })}
                             </FlexBar>
                         </InnerContainer>
