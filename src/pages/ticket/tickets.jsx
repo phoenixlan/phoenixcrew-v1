@@ -126,8 +126,6 @@ export const TicketList = () => {
         reload();
     }, []);
 
-    console.log(checkedinTicketsProgressBar)
-
     if(loading) {
         return (
             <PageLoading />
