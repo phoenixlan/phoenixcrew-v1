@@ -25,7 +25,7 @@ const S = {
     `,
 }
 
-export const UserViewerDetails = ({ user, reloadFunction }) => {
+export const UserViewerDetails = ({ user }) => {
 
     //const [ user, setUser ] = useState(inheritUser);
     
