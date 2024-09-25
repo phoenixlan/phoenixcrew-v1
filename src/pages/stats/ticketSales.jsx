@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Colors
-} from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
 import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent, InnerContainer, InputCheckbox } from "../../components/dashboard";
@@ -18,17 +7,6 @@ import { PageLoading } from "../../components/pageLoading";
 
 import { Statistics } from "@phoenixlan/phoenix.js"
 
-// Move?
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Colors
-);
 
 export const options = {
     responsive: true,
@@ -46,13 +24,15 @@ export const options = {
 // Takes a list of something, runs a callback on each value, returns the one with the highest value
 const mostest = (list, callback) => {
     let soFar = 0;
+    let soFarI = 0;
     for(let i = 0; i < list.length; i++) {
         const val = callback(list[i])
         if(val > soFar) {
-            soFar = i;
+            soFarI = i;
+            soFar = val
         }
     }
-    return list[soFar];
+    return list[soFarI];
 }
 
 export const TicketSalesStats = () => {
@@ -107,5 +87,4 @@ export const TicketSalesStats = () => {
             </DashboardContent>
         </>
     )
-    return (<p>a</p>)
 }
