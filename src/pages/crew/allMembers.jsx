@@ -1,10 +1,7 @@
 import React , { useEffect, useState } from "react";
-import { Crew } from "@phoenixlan/phoenix.js";
+import { Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
-import { faArrowRight, faCheck, faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS} from "../../components/dashboard";
-import { Table, TableCell, CrewColorBox, IconContainer, SelectableTableRow, TableHead, TableRow } from "../../components/table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle } from "../../components/dashboard";
 import { Button } from "../../components/button"
 import { useHistory } from "react-router-dom";
 import { SimpleUserCard } from "../../components/simpleUserCard";
@@ -35,10 +32,29 @@ export const CrewMemberList= () => {
     let history = useHistory();
 
     useEffect(async () => {
+        const event = await getCurrentEvent();
         const crews = await Promise.all((await Crew.getCrews())
             .filter(crew => crew.active)
-            .map(async (crew) => {
-                return await Crew.getCrew(crew.uuid);
+            .map(async (base_crew) => {
+                const crew = await Crew.getCrew(base_crew.uuid);
+
+                const crewMembersMap = new Map();
+                crew.positions.forEach((position) => {
+                    position.position_mappings.filter((position_mapping => position_mapping.event_uuid === null || position_mapping.event === event.uuid)).map(mapping => mapping.user).forEach((user) => {
+                        if(!crewMembersMap.has(user.uuid)) {
+                            crewMembersMap.set(user.uuid, user)
+                        }
+                    })
+                })
+
+                const crewMembers = Array.from(crewMembersMap.values());
+                console.log(crewMembers)
+
+                return {
+                    name: crew.name,
+                    uuid: crew.uuid,
+                    members: crewMembers
+                }
             })
         )
         setCrews(crews);
@@ -65,25 +81,13 @@ export const CrewMemberList= () => {
                 <InnerContainer>
                     {
                         crews.map((crew) => {
-                            const crewMembersMap = new Map();
-                            crew.positions.forEach((position) => {
-                                position.position_mappings.map(mapping => mapping.user).forEach((user) => {
-                                    if(!crewMembersMap.has(user.uuid)) {
-                                        crewMembersMap.set(user.uuid, user)
-                                    }
-                                })
-                            })
-
-                            const crewMembers = Array.from(crewMembersMap.values());
-                            console.log(crewMembers)
-
                             return (
                                 <>
                                     <InnerContainerTitle nopadding>{crew.name}</InnerContainerTitle>
-                                    <p><i>{crewMembers.length} medlemmer</i></p>
+                                    <p><i>{crew.members.length} medlemmer</i></p>
                                     <InnerContainerRow>
                                         {
-                                            crewMembers.map(member => (<SimpleUserCard user={member} key={member.uuid} />))
+                                            crew.members.map(member => (<SimpleUserCard user={member} key={member.uuid} />))
                                         }
                                     </InnerContainerRow>
                                         <Button color={Theme.Passive} onClick={e => {history.push(`/crew/${crew.uuid}`)}}>Se crew</Button>
