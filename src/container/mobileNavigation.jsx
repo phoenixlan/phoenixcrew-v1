@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { AuthenticationContext } from "../components/authentication";
 import { Sidebar } from "./sidebar";
 
-export const mobileContext = React.createContext({})
+export const mobileContext = React.createContext({setShowSidebar: (val) => {}})
 export const MobileNavigation = () => {
 
     const [ showSidebar, setShowSidebar ] = useState(false);
