@@ -44,7 +44,6 @@ export const Authentication = (props) => {
     useEffect(() => {
         // Give PhoenixJS a callback that will be used to notify when the refesh token changed from within
         User.Oauth.setTokensUpdateCallback((new_token, new_refresh_token) => {
-            console.log(`Tokens updated: ${new_token} ${new_refresh_token}`);
             window.localStorage.setItem("auth", JSON.stringify({
                 token: new_token,
                 refreshToken: new_refresh_token,
@@ -101,9 +100,6 @@ export const Authentication = (props) => {
                     /// Try to setAuthState with existing token & refreshToken.
                     try {
                         await User.Oauth.setAuthState(object.token, object.refreshToken);
-                        const tokenPayload = User.Oauth.getTokenPayload();
-
-                        console.log("Token payload: " + JSON.stringify(tokenPayload));
 
                         // If we are already logged in as someone, only update if the user uuid is updated.
                         const authenticatedUser = await User.getAuthenticatedUser();                        
@@ -134,10 +130,10 @@ export const Authentication = (props) => {
         window.onstorage = () => {
             // When local storage changes, dump the list to
             // the console.
-            console.log("Update!")
             const current_storage = window.localStorage.getItem("auth")
             if(!current_storage) {
                 // We were logged out? Then log us out
+                setLoadingFinished(false);
                 setAuthUser(null);
             }
             checkAuth();
