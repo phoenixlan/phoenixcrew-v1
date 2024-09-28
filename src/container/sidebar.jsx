@@ -540,7 +540,7 @@ export const Sidebar = () => {
                 {
                     availableOptions.map(entry => {
                         return entry.entries.length == 0 ? null : (
-                            <S.CrewManagementCategory>
+                            <S.CrewManagementCategory key={entry.title}>
                                 <S.SidebarCrewManagementMenuIcon id="menuIcon">
                                     <S.ElementIconContainer id="iconContainer">
                                         <FontAwesomeIcon icon={entry.icon} />
