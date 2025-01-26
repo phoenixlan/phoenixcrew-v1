@@ -53,16 +53,16 @@ export const UserViewerExternalConnections = ({ user }) => {
                             </CardContainerIcon>
                             <CardContainerText>
                                 <InputLabel small>Discord bruker</InputLabel>
-                                <S.DiscordContainer>
+                                
                                     { discordMapping 
-                                      ? <>
+                                      ? <S.DiscordContainer>
                                             <S.DiscordAvatar src={`https://cdn.discordapp.com/avatars/${discordMapping.discord_id}/${discordMapping.avatar}.png`} />
                                             <S.DiscordUsername>{discordMapping ? <a href={"https://discordapp.com/users/" + discordMapping.discord_id}>{discordMapping.username}</a> : "Ingen tilkobling"}</S.DiscordUsername>
-                                        </>
-                                      : <span>Ingen tilkobling</span>
+                                        </S.DiscordContainer>
+                                      : <CardContainerInnerText>Ingen tilkobling</CardContainerInnerText>
                                     }
                                     
-                                </S.DiscordContainer>
+                                
                             </CardContainerText>
                         </CardContainer>
                     </InnerContainerRow>
