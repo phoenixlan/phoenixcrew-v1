@@ -7,7 +7,8 @@ import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardH
 import { UserViewerDetails } from './details';
 import { UserViewerExternalConnections } from './externalConnections';
 import { UserViewerTickets } from './tickets';
-import { UserViewerPositions } from './positions';
+import { UserPositions, UserViewerPositions } from './positions';
+import { Notice } from '../../../components/containers/notice';
 import { UserViewerApplications } from './applications';
 
 const TABS = {
@@ -20,15 +21,25 @@ const TABS = {
 
 export const ViewUser = (props) => {
     const { uuid } = useParams();
-    const [user, setUser] = useState(null);
+    const [ user, setUser ] = useState(null);
 
     const [activeContent, setActiveContent] = useState(1);
 
-    const [loading, setLoading] = useState(true);
+    const [ error, setError ] = useState(null);
+    const [ loading, setLoading ] = useState(true);
 
     const reload = async () => {
         setLoading(true);
-        const user = await User.getUser(uuid);
+
+        let user;
+
+        // Try to get user information or throw an error if it fails.
+        try {
+            user = await User.getUser(uuid);
+        } catch(e) {
+            console.error("An error occured while attempting to gather user information:\n" + e);
+            setError(e);
+        }
         
         if(user) {
             // Fetch more info about the user
@@ -37,16 +48,14 @@ export const ViewUser = (props) => {
                 if(position.crew_uuid) {
                     position.crew = await Crew.getCrew(position.crew_uuid);
                     if(position.team_uuid) {
-                        position.team = position.crew.teams.find((team) => team.uuid == position.team_uuid)
+                        position.team = position.crew.teams.find((team) => team.uuid === position.team_uuid)
                     }
                 }
             }));
-            setUser(user)
-            setLoading(false);
-
-        } else {
-            console.log("Fuck");
+            setUser(user);
         }
+
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -56,9 +65,13 @@ export const ViewUser = (props) => {
     }, []);
 
 
+    // Show loading page
     if(loading) {
         return (<PageLoading />)
-    } else {
+    } 
+    
+    // Show user page
+    else if(user) {
         return (
             <>
                 <DashboardHeader>
@@ -66,36 +79,56 @@ export const ViewUser = (props) => {
                         Bruker
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {user.lastname}, {user.firstname}
+                        {user.firstname}, {user.lastname}
                     </DashboardSubtitle>
                 </DashboardHeader>
 
                 <DashboardBarSelector border>
-                    <DashboardBarElement active={activeContent == TABS.USER_DETAILS} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
-                    <DashboardBarElement active={activeContent == TABS.APPLICATIONS} onClick={() => setActiveContent(TABS.APPLICATIONS)}>Søknader</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.USER_DETAILS} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.APPLICATIONS} onClick={() => setActiveContent(TABS.APPLICATIONS)}>Søknader</DashboardBarElement>
                 </DashboardBarSelector>
                 
-                <DashboardContent visible={activeContent == TABS.USER_DETAILS}>
+                <DashboardContent visible={activeContent === TABS.USER_DETAILS}>
                     <UserViewerDetails user={user} />
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == TABS.POSITIONS}>
-                    <UserViewerPositions user={user} reload={reload}/>
+                <DashboardContent visible={activeContent === TABS.POSITIONS}>
+                    <UserPositions inheritUser={user} />
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == TABS.TICKETS}>
+                <DashboardContent visible={activeContent === TABS.TICKETS}>
                     <UserViewerTickets user={user} />
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == TABS.INTEGRATIONS}>
+                <DashboardContent visible={activeContent === TABS.INTEGRATIONS}>
                     <UserViewerExternalConnections user={user} />
                 </DashboardContent>
 
-                <DashboardContent visible={activeContent == TABS.APPLICATIONS}>
+                <DashboardContent visible={activeContent === TABS.APPLICATIONS}>
                     <UserViewerApplications user={user} />
+                </DashboardContent>
+            </>
+        )
+    }
+
+    // Show error if user is not set.
+    else {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Bruker
+                    </DashboardTitle>
+                </DashboardHeader>
+
+                <DashboardContent>
+                    <Notice type="error" visible={true}>
+                        Det oppsto en feil ved henting av informasjon for denne brukeren.<br />
+                        {error.message}
+                    </Notice>
                 </DashboardContent>
             </>
         )
