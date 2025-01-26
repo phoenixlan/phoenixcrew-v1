@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
 import { Colors } from "../theme";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 export const DashboardBlock = styled.div`
     background: white;
@@ -16,7 +17,7 @@ export const DashboardBlock = styled.div`
 `
 
 export const DashboardHeader = styled.div`
-    padding: 1.2em 0;
+    padding: 2em 0;
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
 `
 export const DashboardBarSelector = styled.div`
@@ -60,19 +61,24 @@ export const DashboardTitle = styled.div`
 `
 
 export const DashboardContent = styled.div`
-    display: ${props => props.visible == undefined ? "block" : props.visible ? "block" : "none"};
-    padding: 1.2em 0;
+    display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
+    padding: ${props => props.nopadding ? "0" : "1.5rem 0"};
+    flex-flow: column;
+    row-gap: 3rem;
+    padding: 2rem 0;
     font-family: "Roboto";
     font-size: .85rem;
 `
 
 export const InnerContainer = styled.div`    
     font-size: .85rem;
+    width: 100%;
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
     flex-flow: column;
     flex: ${props => props.flex ? props.flex : "undefined"};
-    padding-bottom: ${props => props.nopadding ? "0" : "20px"};
-    margin-bottom: ${props => props.extramargin ? "20px" : "0"};
+    /*padding: ${props => props.nopadding ? "0" : "2rem 0"};*/
+    margin-top: auto;
+    margin-bottom: ${props => props.extramargin ? "20px" : "auto"};
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
     align-items: ${props => props.alignItems ? props.alignItems : "left"};
 
@@ -86,12 +92,13 @@ export const InnerContainer = styled.div`
 
 export const InnerContainerRow = styled.div`
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
+    width: 100%;
     flex: ${props => props.flex ? props.flex : "undefined"};
     flex-flow: row;
     flex-wrap: ${props => props.nowrap ? "nowrap" : "wrap"};
-    gap: 2em;
-    row-gap: .5em;
-    padding-bottom: ${props => props.nopadding ? "0" : "20px"};
+    column-gap: 2rem;
+    row-gap: 2rem;
+    /*padding-bottom: ${props => props.nopadding ? "0" : "20px"};*/
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
 
     @media screen and (max-width: 480px) {
@@ -101,6 +108,12 @@ export const InnerContainerRow = styled.div`
         width: 100%;
         row-gap: ${props => props.mobileNoGap ? "0" : "16px"};
     }
+`
+
+export const RowBorder = styled.div`
+    display: flex;
+    border-left: 1px solid rgb(235, 235, 235);
+    height: 100%;
 `
 
 export const InnerContainerTable = styled.table`
@@ -117,10 +130,10 @@ export const InnerContainerTitleL = styled.h1`
     margin: 0;
 `
 export const InnerContainerTitle = styled.h3`    
-    font-size: 16px;
-    padding-bottom: ${props => props.nopadding ? "0" : ".55em"};
+    font-size: 1rem;
     font-weight: 400;
     margin: 0;
+    padding-bottom: .35rem;
 `
 export const InnerContainerTitleS = styled.h5`    
     font-size: 14px;
@@ -157,7 +170,6 @@ export const InputContainer = styled.div`
     display: flex;
     flex: ${props => props.flex ? props.flex : "1"};
     flex-flow: ${props => props.column ? "column" : "row"};
-    margin-bottom: ${props => props.extramargin ? "18px" : "1px"};
     column-gap: 1em;
 
     @media screen and (max-width: 480px) {
@@ -251,6 +263,8 @@ export const InputTextArea = styled.textarea`
 `
 
 export const InputSelect = styled.select`
+    width: 100%;
+    display: flex;
     font-family: "Roboto";
     border: 0;
     padding: .3em 0;
@@ -271,26 +285,28 @@ export const InputButton = styled.button`
 const ButtonContainer = styled.button`
     display: flex;
     flex-flow: row;
-    min-height: 2rem;
+    min-height: 2.1rem;
     width: ${props => props.fillWidth ? "100%" : "fit-content"};
     font-size: .85rem;
     padding: 0 1em;
-    border: 0;
     cursor: pointer;
-    background-color: ${Colors.Gray100};
+    background-color: ${Colors.Pink100};
     flex: ${props => props.flex ? "1" : null};
-    border: .05rem solid ${Colors.Gray200};
+    border: 0;
+    border-bottom: .25rem solid ${Colors.Pink200};
 
-    &[disabled] {
-        cursor: not-allowed;
-    }
     &[disabled], &[disabled]:active, &[disabled]:hover {
         cursor: not-allowed;
         background-color: ${Colors.Gray100};
+        border-bottom: .25rem solid ${Colors.Gray200};
     }
-    &:active, :hover {
-        background-color: ${Colors.Gray200};
-        border: .05rem solid ${Colors.Gray300};
+    &:hover {
+        background-color: ${Colors.Pink50};
+        border-bottom: .25rem solid ${Colors.Pink100};
+    }
+    &:active {
+        background-color: ${Colors.Pink200};
+        border-bottom: 0 solid;
     }
 
     @media screen and (max-width: 480px) {
@@ -454,3 +470,80 @@ export const CardContainerSelectInput = styled.select`
         border-bottom: .05rem solid rgb(170,170,170)!important;
     }
 `
+export const SpanLink = styled.span`
+    color: rgb(255,75,157);
+    cursor: pointer;
+
+    &:hover {
+        color: rgb(255, 156, 192);
+    }
+    &:active, &:focus {
+        color: rgb(255,75,157);
+    }
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mobileHide ? "none" : ""};
+    }
+`
+
+
+/*
+
+*/
+export const DropdownCardContainer = styled.div`
+    display: flex;
+    flex-flow: column;
+    row-gap: .5rem;
+
+    @media screen and (min-width: 480px) {
+        display: ${props => props.desktopHide ? "none" : "flex"};
+    }    
+`
+export const DropdownCardContent = styled.div`
+    display: flex;
+    flex-flow: column;
+    flex-basis: ${props => props.dropdownState ? "1" : "0"};
+    transition: .2s;
+    overflow: hidden;
+    row-gap: 1rem;
+`
+const LocalDropdownHeader = styled.div`
+    display: flex;
+    width: 100%;
+    cursor: pointer;
+`
+const LocalDropdownHeaderTitleContainer = styled.div`
+    display: flex;
+    flex: 1;
+`
+const LocalDropdownHeaderButtonContainer = styled.div`
+    display: flex;
+    flex: 0;
+`
+const LocalDropdownHeaderTitle = styled.div`
+    display: flex;
+    font-family: "Roboto";
+    font-size: 1rem;
+    font-weight: lighter;
+`
+
+const LocalDropdownHeaderButton = styled.div`
+    display: flex;
+    font-size: 1rem;
+`
+export const DropdownCardHeader = ({ title, dropdownState, onClick }) => {
+    return (
+        <LocalDropdownHeader onClick={onClick}>
+            <LocalDropdownHeaderTitleContainer>
+                <LocalDropdownHeaderTitle>
+                    {title}
+                </LocalDropdownHeaderTitle>
+            </LocalDropdownHeaderTitleContainer>
+            <LocalDropdownHeaderButtonContainer>
+                <LocalDropdownHeaderButton>
+                    <FontAwesomeIcon icon={dropdownState ? faMinus : faPlus} />
+                </LocalDropdownHeaderButton>
+            </LocalDropdownHeaderButtonContainer>
+        </LocalDropdownHeader>
+    )
+}

@@ -17,7 +17,12 @@ export const Colors = {
     Gray100: "#F5F5F5",
     Gray200: "#EEEEEE",
     Gray300: "#E0E0E0",
-    Gray500: "#7b7b7b"
+    Gray500: "#7b7b7b",
+
+    Pink50: "#ffdeed",
+    Pink100: "#ffaad2",
+    Pink200: "#f773b0",
+    Pink300: "#eb338e",
 }
 
 export const Theme = {
