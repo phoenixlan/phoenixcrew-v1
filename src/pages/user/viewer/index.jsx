@@ -133,24 +133,4 @@ export const ViewUser = (props) => {
             </>
         )
     }
-
-    // Show error if user is not set.
-    else {
-        return (
-            <>
-                <DashboardHeader border>
-                    <DashboardTitle>
-                        Bruker
-                    </DashboardTitle>
-                </DashboardHeader>
-
-                <DashboardContent>
-                    <Notice type="error" visible={true}>
-                        Det oppsto en feil ved henting av informasjon for denne brukeren.<br />
-                        {error.message}
-                    </Notice>
-                </DashboardContent>
-            </>
-        )
-    }
 };
