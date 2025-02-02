@@ -36,7 +36,7 @@ export const PositionDetails = ({position}) => {
         <>
             <InnerContainer>
                 <InnerContainerRow>
-                    <InnerContainer flex="3" nopadding>
+                    <InnerContainer flex="1" floattop>
                         <InnerContainerTitle>Stillingsinformasjon</InnerContainerTitle>
                         <InnerContainerRow>
                             <CardContainer>
@@ -59,48 +59,81 @@ export const PositionDetails = ({position}) => {
                                     </CardContainerInnerIcon>
                                 </CardContainerIcon>
                                 <CardContainerText>
-                                <InputLabel small>Tittel{position.name ? null : " – Systemgenerert"}</InputLabel>
+                                    <InputLabel small>Stillingstittel{position.name ? null : " – Systemgenerert"}</InputLabel>
                                     <CardContainerInnerText>{position.name ? position.name : (position.chief ? "Gruppeleder for " : "Medlemmer av ") + (team ? ` ${team.name} i ` : " ") + (crew?.name ?? "Ukjent crew")}</CardContainerInnerText>
                                 </CardContainerText>
                             </CardContainer>
+                            
                         </InnerContainerRow>
-                        <InnerContainerRow>
+                        <InnerContainerRow nopadding mobileNoGap>
                             <CardContainer>
                                 <CardContainerIcon>
-                                    <CardContainerInnerIcon>
-                                        <FontAwesomeIcon icon={faUserTie} />
-                                    </CardContainerInnerIcon>
+                                    <CardContainerInnerIcon />
                                 </CardContainerIcon>
                                 <CardContainerText>
-                                <InputLabel small>Gruppeleder</InputLabel>
-                                    <CardContainerInnerText>{position.chief ? "Ja" : "Nei"}</CardContainerInnerText>
+                                    <InputLabel small>Stillingsbeskrivelse</InputLabel>
+                                    <CardContainerInnerText>{position.description}</CardContainerInnerText>
                                 </CardContainerText>
                             </CardContainer>
-                            <CardContainer>
-                                <CardContainerIcon>
-                                    <CardContainerInnerIcon>
-                                        <FontAwesomeIcon icon={faLink} />
-                                    </CardContainerInnerIcon>
-                                </CardContainerIcon>
-                                <CardContainerText>
-                                <InputLabel small>Tilknyttet crew</InputLabel>
-                                    <CardContainerInnerText>{crew ? crew.name : "Ikke tilknyttet crew"}</CardContainerInnerText>
-                                </CardContainerText>
-                            </CardContainer>
-                            <CardContainer>
-                                <CardContainerIcon>
-                                    <CardContainerInnerIcon>
-                                        <FontAwesomeIcon icon={faLink} />
-                                    </CardContainerInnerIcon>
-                                </CardContainerIcon>
-                                <CardContainerText>
-                                <InputLabel small>Tilknyttet team</InputLabel>
-                                    <CardContainerInnerText>{team ? team.name : "Ikke tilknyttet team"}</CardContainerInnerText>
-                                </CardContainerText>
-                            </CardContainer>
+                            
                         </InnerContainerRow>
                     </InnerContainer>
-                    <InnerContainer flex="1" />
+
+                    <InnerContainer flex="1" floattop rowgap>
+                        <InnerContainer>
+                            <InnerContainerTitle>Tilknytning til crew og team</InnerContainerTitle>
+                            <InnerContainerRow norowgap nowrap>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faLink} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Tilknyttet crew</InputLabel>
+                                        <CardContainerInnerText>{crew ? crew.name : "Ikke tilknyttet crew"}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faLink} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Tilknyttet team</InputLabel>
+                                        <CardContainerInnerText>{team ? team.name : "Ikke tilknyttet team"}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                            </InnerContainerRow>
+                        </InnerContainer>
+
+                        <InnerContainer>
+                            <InnerContainerTitle>Innstillinger</InnerContainerTitle>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faUserTie} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Gruppeleder stilling</InputLabel>
+                                        <CardContainerInnerText>{position.chief ? "Ja" : "Nei"}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faUserTie} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Symbolsk stilling</InputLabel>
+                                        <CardContainerInnerText>{position.is_vanity ? "Ja" : "Nei"}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                        </InnerContainer>
+                    </InnerContainer>
                 </InnerContainerRow>
             </InnerContainer>
         </>
