@@ -81,7 +81,7 @@ export const PositionDetails = ({position}) => {
 
                     <InnerContainer flex="1" floattop rowgap>
                         <InnerContainer>
-                            <InnerContainerTitle>Tilknytning til crew og team</InnerContainerTitle>
+                            <InnerContainerTitle>Tilknytning til crew</InnerContainerTitle>
                             <InnerContainerRow norowgap nowrap>
                                 <CardContainer>
                                     <CardContainerIcon>
@@ -94,17 +94,7 @@ export const PositionDetails = ({position}) => {
                                         <CardContainerInnerText>{crew ? crew.name : "Ikke tilknyttet crew"}</CardContainerInnerText>
                                     </CardContainerText>
                                 </CardContainer>
-                                <CardContainer>
-                                    <CardContainerIcon>
-                                        <CardContainerInnerIcon>
-                                            <FontAwesomeIcon icon={faLink} />
-                                        </CardContainerInnerIcon>
-                                    </CardContainerIcon>
-                                    <CardContainerText>
-                                    <InputLabel small>Tilknyttet team</InputLabel>
-                                        <CardContainerInnerText>{team ? team.name : "Ikke tilknyttet team"}</CardContainerInnerText>
-                                    </CardContainerText>
-                                </CardContainer>
+                                <CardContainer />
                             </InnerContainerRow>
                         </InnerContainer>
 

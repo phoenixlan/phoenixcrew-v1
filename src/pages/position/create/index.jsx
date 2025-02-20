@@ -106,7 +106,7 @@ export const CreatePosition = () => {
                             
                             <InnerContainer flex="1" floattop rowgap>
                                 <InnerContainer>
-                                    <InnerContainerTitle>Tilknytning til crew og team</InnerContainerTitle>
+                                    <InnerContainerTitle>Tilknytning til crew</InnerContainerTitle>
                                     <InnerContainerRow norowgap nowrap>
                                         <CardContainer>
                                             <InputContainer column extramargin>
@@ -120,14 +120,7 @@ export const CreatePosition = () => {
                                                 </InputSelect>
                                             </InputContainer>
                                         </CardContainer>
-                                        <CardContainer>
-                                            <InputContainer column extramargin>
-                                                <InputLabel small>Tilknytt team</InputLabel>
-                                                <InputSelect {...register("team_uuid")}>
-                                                    <option></option>
-                                                </InputSelect>
-                                            </InputContainer>
-                                        </CardContainer>
+                                        <CardContainer />
                                     </InnerContainerRow>
                                 </InnerContainer>
 
