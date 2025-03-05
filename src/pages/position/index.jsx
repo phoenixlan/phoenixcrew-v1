@@ -6,7 +6,7 @@ import { TableCell, IconContainer, SelectableTableRow, Table, TableBody, TableHe
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from '../../components/dashboard';
 import { PageLoading } from "../../components/pageLoading"
 
-import { faArrowRight, faAward } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 
@@ -73,7 +73,6 @@ export const PositionList = () => {
                                     <TableCell as="th" flex="2" mobileHide>Type</TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="1">Aktive <br/>brukere</TableCell>
                                     <TableCell as="th" flex="2" mobileHide>Antall <br/>rettigheter</TableCell>
-                                    <TableCell as="th" flex="1" moduleFlex="1" title="Er stillingen en offentlig stilling som skal vises på crewkort osv?">Offentlig<br />stilling?</TableCell>
                                     <TableCell as="th" flex="0 24px" mobileHide />
                                 </TableRow>
                             </TableHead>
@@ -97,7 +96,6 @@ export const PositionList = () => {
                                                 <TableCell flex="2" mobileHide>{role.name ? "Custom" : "System"}</TableCell>
                                                 <TableCell flex="2" mobileFlex="1">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
-                                                <TableCell flex="1" mobileFlex="1">{role.name ? (role.is_vanity ? (<b>Ja</b>) : (<b>nei</b>)) : null}</TableCell>
                                                 <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )

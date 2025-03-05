@@ -42,17 +42,9 @@ export const Authentication = (props) => {
         
 
     useEffect(() => {
-        // Give PhoenixJS a callback that will be used to notify when the refesh token changed from within
-        User.Oauth.setTokensUpdateCallback((new_token, new_refresh_token) => {
-            window.localStorage.setItem("auth", JSON.stringify({
-                token: new_token,
-                refreshToken: new_refresh_token,
-            }));
-        })
-
         /// Check if the user is already authenticated or is requesting to be authenticated.
         const checkAuth = async () => {
-            setLoadingFinished(false);
+
             /// Create storage variable with information from local storage.
             const storage = window.localStorage.getItem("auth");
 
@@ -67,15 +59,14 @@ export const Authentication = (props) => {
                         
                         let Token = await User.Oauth.getToken();
                         setAuthUser(await User.getAuthenticatedUser());
-                        //let RefreshToken = await User.Oauth.getRefreshToken();
+                        let RefreshToken = await User.Oauth.getRefreshToken();
 
                         /// Store user information in the local storage for later use.
-                        /*
                         window.localStorage.setItem("auth", JSON.stringify({
                             token: Token,
+                            user: authUser,
                             refreshToken: RefreshToken,
                         }));
-                        */
                         setRoles(jwt_decode(Token).roles);
                         setLoadingFinished(true);
                     } 
@@ -100,11 +91,8 @@ export const Authentication = (props) => {
                     /// Try to setAuthState with existing token & refreshToken.
                     try {
                         await User.Oauth.setAuthState(object.token, object.refreshToken);
-
-                        // If we are already logged in as someone, only update if the user uuid is updated.
                         const authenticatedUser = await User.getAuthenticatedUser();                        
                         setAuthUser(authenticatedUser);
-
                         setRoles(jwt_decode(object.token).roles);
                         setLoadingFinished(true);
                     }
@@ -126,18 +114,6 @@ export const Authentication = (props) => {
                 }
             }
         }
-        // If local storage is updated from another tab, refresh auth as if the page was loaded.
-        window.onstorage = () => {
-            // When local storage changes, dump the list to
-            // the console.
-            const current_storage = window.localStorage.getItem("auth")
-            if(!current_storage) {
-                // We were logged out? Then log us out
-                setLoadingFinished(false);
-                setAuthUser(null);
-            }
-            checkAuth();
-        };
 
         checkAuth();
     }, []);

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from "styled-components";
 
 
-export const SidebarButton = styled.span`
+export const SidebarButton = styled(Link)`
     display: flex;
 
     cursor: pointer;
