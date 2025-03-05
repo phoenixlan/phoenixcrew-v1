@@ -8,6 +8,7 @@ import { Login } from "../pages/login"
 import { Dashboard } from "../pages/dashboard"
 import { ViewUser} from "../pages/user/viewer"
 import { ListApplications } from "../pages/application/list"
+import { PageLoading } from "../components/pageLoading"
 
 import { PrivateRoute } from "./privateRoute"
 import { PublicRoute } from "./publicRoute"
@@ -41,18 +42,23 @@ export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
 
     const history = createBrowserHistory();
+
     return auth.loadingFinished ? (
         <Router history={history}>
             <Switch>
-                <PublicRoute path="/login" component={Login} />
+                <PublicRoute path="/login">
+                    <Login />
+                </PublicRoute>
                 <PrivateRoute path="/">
                     <Container>
                         <PrivateRoute exact path="/">
                             <Dashboard />
                         </PrivateRoute>
-                        <PrivateRoute exact path="/logout" component={() => auth.logout()} />
-
-
+                        <PrivateRoute exact path="/logout">
+                            {
+                                () => auth.logout()
+                            }
+                        </PrivateRoute>
                         <PrivateRoute exact path="/application/:uuid">
                             <ViewApplication />
                         </PrivateRoute>
@@ -135,5 +141,7 @@ export const CrewRouter = () => {
                 </PrivateRoute>
             </Switch>
         </Router>
-    ) : (<h1>Loading</h1>);
+    ) : (
+        <PageLoading />
+    );
 }
