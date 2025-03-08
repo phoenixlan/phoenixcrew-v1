@@ -81,7 +81,6 @@ export const PositionList = () => {
                                     <TableCell as="th" flex="2" mobileHide>Type</TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="1">Aktive <br/>brukere</TableCell>
                                     <TableCell as="th" flex="2" mobileHide>Antall <br/>rettigheter</TableCell>
-                                    <TableCell as="th" flex="1" moduleFlex="1" title="Er stillingen en offentlig stilling som skal vises på crewkort osv?">Offentlig<br />stilling?</TableCell>
                                     <TableCell as="th" flex="0 24px" mobileHide />
                                 </TableRow>
                             </TableHead>
@@ -102,10 +101,9 @@ export const PositionList = () => {
                                                 <TableCell mobileHide consolas flex="9" visible={!visibleUUID}>{role.uuid}</TableCell>
                                                 <TableCell flex="4" mobileHide>{(roleCrew?.name ?? "-")}</TableCell>
                                                 <TableCell flex="9" mobileFlex="3">{name}</TableCell>
-                                                <TableCell flex="2" mobileHide>{role.name ? "Custom" : "System"}</TableCell>
+                                                <TableCell flex="2" mobileHide>{(role.name && role.is_vanity) ? "Symbolsk" : (role.name) ? "-" : "System"}</TableCell>
                                                 <TableCell flex="2" mobileFlex="1">{currentEvent ? role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
-                                                <TableCell flex="1" mobileFlex="1">{role.name ? (role.is_vanity ? (<b>Ja</b>) : (<b>nei</b>)) : null}</TableCell>
                                                 <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
