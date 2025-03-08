@@ -7,6 +7,7 @@ import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardH
 import { useParams } from "react-router-dom";
 import { PositionMemberList } from "./memberList";
 import { PositionPermissionList } from "./permissionList";
+import { PositionDetails } from "./details";
 
 
 export const ViewPosition = (props) => {
@@ -60,16 +61,14 @@ export const ViewPosition = (props) => {
                         </DashboardBarSelector>
 
                         <DashboardContent visible={activeContent == 1}>
-                            <InnerContainer>
-                                
-                            </InnerContainer>
+                            <PositionDetails position={position} />
                         </DashboardContent>
 
                         <DashboardContent visible={activeContent == 2}>
                             <PositionPermissionList position={position} />
                         </DashboardContent>
 
-                        <DashboardContent visible={activeContent == 3}>
+                        <DashboardContent visible={activeContent == 3} nopadding>
                             <PositionMemberList position={position} refresh={load}/>
                         </DashboardContent>
                 </>
