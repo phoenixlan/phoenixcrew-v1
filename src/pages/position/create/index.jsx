@@ -45,7 +45,9 @@ export const CreatePosition = () => {
     const onSubmit = async (data) => {
         data.team_uuid = null;
 
-        if(data.crew_uuid == "") {data.crew_uuid = null; data.chief = false;}
+
+        if(!attachedCrew) { data.crew_uuid = null;}
+        if(!attachedCrew || !data.chief) { data.chief = false; }
 
         try { 
             let response = await Position.createPosition(data.name, data.description, data.chief, data.is_vanity, data.crew_uuid, data.team_uuid);
@@ -112,7 +114,7 @@ export const CreatePosition = () => {
                                             <InputContainer column extramargin>
                                                 <InputLabel small>Tilknytt crew</InputLabel>
                                                 <InputSelect {...register("crew_uuid")} value={attachedCrew} onChange={(e) => setAttachedCrew(e.target.value)}>
-                                                    <option value={null} label="Ingen tilknytning" />
+                                                    <option value={""} label="Ingen tilknytning" />
                                                     {
                                                     crewList.map((crew) => (<option key={crew.uuid} value={crew.uuid}>{crew.name}</option>))
                                                     }
