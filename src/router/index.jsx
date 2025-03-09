@@ -38,6 +38,7 @@ import { AgendaList } from '../pages/information/agenda';
 import { UserbaseStats } from '../pages/stats/userbase';
 import { AgeDistributionStats } from '../pages/stats/ageDistribution';
 import { EditUser } from '../pages/user/viewer/editUser';
+import { CreatePosition } from '../pages/position/create';
 
 export const CrewRouter = () => {
     const auth = useContext(AuthenticationContext);
@@ -71,6 +72,9 @@ export const CrewRouter = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/positions/:uuid">
                             <ViewPosition />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/position/create">
+                            <CreatePosition />
                         </PrivateRoute>
                         <PrivateRoute exact path="/avatar/approval/">
                             <AvatarApproval />
