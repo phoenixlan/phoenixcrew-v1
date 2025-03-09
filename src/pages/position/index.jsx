@@ -7,6 +7,7 @@ import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, I
 import { PageLoading } from "../../components/pageLoading"
 
 import { faArrowRight, faAward, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faAddressCard } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 
@@ -78,9 +79,9 @@ export const PositionList = () => {
                                     <TableCell as="th" flex="9" mobileHide visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
                                     <TableCell as="th" flex="4" mobileHide>Tilknyttet <br/>crew</TableCell>
                                     <TableCell as="th" flex="9" mobileFlex="3">Navn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
-                                    <TableCell as="th" flex="2" mobileHide>Type</TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="1">Aktive <br/>brukere</TableCell>
                                     <TableCell as="th" flex="2" mobileHide>Antall <br/>rettigheter</TableCell>
+                                    <TableCell as="th" flex="0 24px" mobileHide />
                                     <TableCell as="th" flex="0 24px" mobileHide />
                                 </TableRow>
                             </TableHead>
@@ -100,10 +101,10 @@ export const PositionList = () => {
                                             <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}} key={role.uuid}>
                                                 <TableCell mobileHide consolas flex="9" visible={!visibleUUID}>{role.uuid}</TableCell>
                                                 <TableCell flex="4" mobileHide>{(roleCrew?.name ?? "-")}</TableCell>
-                                                <TableCell flex="9" mobileFlex="3">{name}</TableCell>
-                                                <TableCell flex="2" mobileHide>{(role.name && role.is_vanity) ? "Symbolsk" : (role.name) ? "-" : "System"}</TableCell>
+                                                <TableCell flex="9" mobileFlex="3" italic={!role.name}>{name}</TableCell>
                                                 <TableCell flex="2" mobileFlex="1">{currentEvent ? role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
+                                                <TableCell flex="0 24px" mobileHide><IconContainer>{role.name ? role.is_vanity ? <FontAwesomeIcon icon={faAddressCard} title="Stillingen er oppført som en symbolsk stilling og prioriteres ved generering av crewkort" /> : null : null}</IconContainer></TableCell>
                                                 <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
