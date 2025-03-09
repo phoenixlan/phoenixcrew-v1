@@ -81,7 +81,7 @@ export const PositionList = () => {
                                     <TableCell as="th" flex="9" mobileFlex="3">Navn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="1">Aktive <br/>brukere</TableCell>
                                     <TableCell as="th" flex="2" mobileHide>Antall <br/>rettigheter</TableCell>
-                                    <TableCell as="th" flex="0 24px" mobileHide />
+                                    <TableCell as="th" flex="2" mobileHide>Symbolsk<br/>stilling</TableCell>
                                     <TableCell as="th" flex="0 24px" mobileHide />
                                 </TableRow>
                             </TableHead>
@@ -104,7 +104,7 @@ export const PositionList = () => {
                                                 <TableCell flex="9" mobileFlex="3" italic={!role.name}>{name}</TableCell>
                                                 <TableCell flex="2" mobileFlex="1">{currentEvent ? role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
-                                                <TableCell flex="0 24px" mobileHide><IconContainer>{role.name ? role.is_vanity ? <FontAwesomeIcon icon={faAddressCard} title="Stillingen er oppført som en symbolsk stilling og prioriteres ved generering av crewkort" /> : null : null}</IconContainer></TableCell>
+                                                <TableCell flex="2" mobileHide>{role.name ? role.is_vanity ? "Ja" : "Nei" : null}</TableCell>
                                                 <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
