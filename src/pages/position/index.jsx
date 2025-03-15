@@ -104,7 +104,7 @@ export const PositionList = () => {
                                                 <TableCell flex="9" mobileFlex="3" italic={!role.name}>{name}</TableCell>
                                                 <TableCell flex="2" mobileFlex="1">{currentEvent ? role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
-                                                <TableCell flex="2" mobileHide>{role.name ? role.is_vanity ? "Ja" : "Nei" : null}</TableCell>
+                                                <TableCell flex="2" mobileHide>{role.is_vanity ? "Ja" : "Nei"}</TableCell>
                                                 <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
