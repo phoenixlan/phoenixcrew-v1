@@ -73,21 +73,25 @@ export const DashboardContent = styled.div`
 export const InnerContainer = styled.div`    
     font-size: .85rem;
     width: 100%;
-    display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
+    display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex!important" : "none!important"};
     flex-flow: column;
     flex: ${props => props.flex ? props.flex : "undefined"};
     /*padding: ${props => props.nopadding ? "0" : "2rem 0"};*/
-    margin-top: auto;
+    margin-top: ${props => props.floattop ? "0" : "auto"};
     margin-bottom: ${props => props.extramargin ? "20px" : "auto"};
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
     align-items: ${props => props.alignItems ? props.alignItems : "left"};
+    row-gap: ${props => props.rowgap ?  "2rem" : undefined};
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
         width: 100%;
-        row-gap: ${props => props.mobileRowGap ? props.mobileRowGap : "12px"};
         height: min-content;
     }
+
+    @media screen and (min-width: 480px) {
+        display: ${props => props.desktopHide ? "none" : "flex"};
+    }  
 `
 
 export const InnerContainerRow = styled.div`
@@ -97,7 +101,7 @@ export const InnerContainerRow = styled.div`
     flex-flow: row;
     flex-wrap: ${props => props.nowrap ? "nowrap" : "wrap"};
     column-gap: 2rem;
-    row-gap: 2rem;
+    row-gap: ${props => props.norowgap ? undefined : "2rem"};
     /*padding-bottom: ${props => props.nopadding ? "0" : "20px"};*/
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
 
@@ -106,9 +110,16 @@ export const InnerContainerRow = styled.div`
         flex-wrap: wrap;
         flex-flow: ${props => props.mobileFlow ? props.mobileFlow : "column"};
         width: 100%;
-        row-gap: ${props => props.mobileNoGap ? "0" : "16px"};
     }
 `
+
+export const InlineContainer = styled.div`
+    display: flex;
+    flex-flow: row;
+    width: min-content;
+    column-gap: 1rem;
+`
+
 
 export const RowBorder = styled.div`
     display: flex;
@@ -133,7 +144,7 @@ export const InnerContainerTitle = styled.h3`
     font-size: 1rem;
     font-weight: 400;
     margin: 0;
-    padding-bottom: .35rem;
+    padding-bottom: 1rem;
 `
 export const InnerContainerTitleS = styled.h5`    
     font-size: 14px;
@@ -185,11 +196,11 @@ export const InputContainer = styled.div`
     ` : null}
 `
 
-export const InputCheckbox = ({ label, value, onChange, disabled }) => {
+export const InputCheckbox = ({ label, value, onChange, disabled }, props) => {
     return (
         <>
             <InputContainer mobileNoMargin>
-                <input type="checkbox" checked={value} onChange={onChange} disabled={disabled} />
+                <input type="checkbox" checked={value} onChange={onChange} disabled={disabled} {...props} />
                 <InputLabel top="1px">{label}</InputLabel>
             </InputContainer>
         </>
@@ -215,6 +226,8 @@ export const InputElement = styled.input`
         border-bottom: .05rem solid rgb(255,75,157);
     }
     &:disabled {
+        user-select: none;
+        cursor: not-allowed;
         background-color: inherit;
         color: rgb(130, 130, 130);
         border-bottom: .05rem solid rgb(170,170,170)!important;
@@ -263,17 +276,18 @@ export const InputTextArea = styled.textarea`
 `
 
 export const InputSelect = styled.select`
-    width: 100%;
     display: flex;
+    flex: 1;
     font-family: "Roboto";
     border: 0;
     padding: .3em 0;
-    border-bottom: .05rem solid rgb(135, 135, 135);
+    border-bottom: ${props => props.noborder ? "0" : ".05rem solid rgb(135, 135, 135)"};
     background-color: rgb(255, 255, 255);
     outline: none;
+    padding-inline: 0!important;
 
     &:focus {
-        border-bottom: .05rem solid rgb(255,75,157);
+        border-bottom: ${props => props.noborder ? "0" : ".05rem solid rgb(255,75,157)"};
     }
 `
 
@@ -394,6 +408,8 @@ export const CardContainerText = styled.div`
     position: relative;
     flex: ${props => props.flex ? props.flex : "1"};
     overflow: hidden;
+    margin: auto;
+    row-gap: .35em;
 
     ${props => props.disabled ? `
         opacity: 0.6;
@@ -408,8 +424,15 @@ export const CardContainerText = styled.div`
         display: ${props => props.mobileHide ? "none" : ""};
     }
 `
+
+export const CardContainerDescriptiveText = styled.span`
+    display: flex;
+    font-size: .75rem;
+`
+
 export const CardContainerInnerText = styled.div`
     font-family: ${props => props.console ? 'monospace' : 'inherit'};
+    text-decoration: ${props => props.italic ? "italic" : undefined};
     text-overflow: ellipsis;
     width: 100%;
     overflow: hidden;
@@ -491,7 +514,7 @@ export const SpanLink = styled.span`
 
 */
 export const DropdownCardContainer = styled.div`
-    display: flex;
+    display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex" : "none"};
     flex-flow: column;
     row-gap: .5rem;
 
