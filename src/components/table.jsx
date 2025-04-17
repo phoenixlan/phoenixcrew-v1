@@ -35,6 +35,7 @@ const StyledCell = styled.td`
     text-align: ${props => props.center ? "center" : "left"};
     text-transform: ${props => props.uppercase ? "uppercase" : "inherit"};
     font-weight: ${props => props.bold ? "700" : "400"};
+    font-style: ${props => props.italic ? "italic" : "normal"};
     overflow: hidden;
     background-color: ${props => props.fillGray ? "rgb(235, 235, 235)" : null};
 
