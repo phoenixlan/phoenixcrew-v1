@@ -3,10 +3,11 @@ import React , { useEffect, useRef, useState } from "react";
 import { Position, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 
 import { TableCell, IconContainer, SelectableTableRow, Table, TableBody, TableHead, TableRow } from '../../components/table';
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from '../../components/dashboard';
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputCheckbox, PanelButton, SpanLink } from '../../components/dashboard';
 import { PageLoading } from "../../components/pageLoading"
 
-import { faArrowRight, faAward } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faAward, faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faAddressCard } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 
@@ -32,7 +33,10 @@ export const PositionList = () => {
 
         setCrews(crews);
         setRoles(positions);
-        setCurrentEvent(currentEvent);
+        if(currentEvent) {
+            setCurrentEvent(currentEvent);
+        }
+
 
         setLoading(false);
     }, []);
@@ -56,24 +60,28 @@ export const PositionList = () => {
                 </DashboardHeader>
                 <DashboardContent>
                     <InnerContainer>
-                        Stillinger er hvordan brukere tilhører crew, og hvordan brukere får rettigheter på nettsidene til Phoenix.<br />
-                        En bruker kan ha flere stillinger og trenger ikke å bety at man tilhører et crew.
+                        <InnerContainerRow mobileNoGap>
+                            <PanelButton onClick={true ? () => history.push("/position/create") : null} disabled={false} icon={faPlus}>Opprett ny stilling</PanelButton>
+                        </InnerContainerRow>
                     </InnerContainer>
-                    <InnerContainer mobileHide>
-                        <InputCheckbox label="Vis stilling UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
+
+                    <InnerContainer>
+                        <InnerContainerRow>
+                            Stillinger er hvordan brukere tilhører crew, og hvordan brukere får rettigheter på nettsidene til Phoenix.<br />
+                            En bruker kan ha flere stillinger og trenger ikke å bety at man tilhører et crew.
+                        </InnerContainerRow>
                     </InnerContainer>
     
                     <InnerContainer>
                         <Table>
                             <TableHead border>
                                 <TableRow>
-                                    <TableCell as="th" flex="9" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                    <TableCell as="th" flex="9" mobileHide visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
                                     <TableCell as="th" flex="4" mobileHide>Tilknyttet <br/>crew</TableCell>
-                                    <TableCell as="th" flex="9" mobileFlex="3">Navn</TableCell>
-                                    <TableCell as="th" flex="2" mobileHide>Type</TableCell>
+                                    <TableCell as="th" flex="9" mobileFlex="3">Navn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="1">Aktive <br/>brukere</TableCell>
                                     <TableCell as="th" flex="2" mobileHide>Antall <br/>rettigheter</TableCell>
-                                    <TableCell as="th" flex="1" moduleFlex="1" title="Er stillingen en offentlig stilling som skal vises på crewkort osv?">Offentlig<br />stilling?</TableCell>
+                                    <TableCell as="th" flex="2" mobileHide>Symbolsk<br/>stilling</TableCell>
                                     <TableCell as="th" flex="0 24px" mobileHide />
                                 </TableRow>
                             </TableHead>
@@ -93,11 +101,10 @@ export const PositionList = () => {
                                             <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}} key={role.uuid}>
                                                 <TableCell mobileHide consolas flex="9" visible={!visibleUUID}>{role.uuid}</TableCell>
                                                 <TableCell flex="4" mobileHide>{(roleCrew?.name ?? "-")}</TableCell>
-                                                <TableCell flex="9" mobileFlex="3">{name}</TableCell>
-                                                <TableCell flex="2" mobileHide>{role.name ? "Custom" : "System"}</TableCell>
-                                                <TableCell flex="2" mobileFlex="1">{role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length}</TableCell>
+                                                <TableCell flex="9" mobileFlex="3" italic={!role.name}>{name}</TableCell>
+                                                <TableCell flex="2" mobileFlex="1">{currentEvent ? role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
-                                                <TableCell flex="1" mobileFlex="1">{role.name ? (role.is_vanity ? (<b>Ja</b>) : (<b>nei</b>)) : null}</TableCell>
+                                                <TableCell flex="2" mobileHide>{role.is_vanity ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null}</TableCell>
                                                 <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
