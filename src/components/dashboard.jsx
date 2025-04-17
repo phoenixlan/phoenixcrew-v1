@@ -104,6 +104,7 @@ export const InnerContainerRow = styled.div`
     row-gap: ${props => props.norowgap ? undefined : "2rem"};
     /*padding-bottom: ${props => props.nopadding ? "0" : "20px"};*/
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
+    line-height: 1.15rem;
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
@@ -436,7 +437,8 @@ export const CardContainerInnerText = styled.div`
     text-overflow: ellipsis;
     width: 100%;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: ${props => props.nowrap ? "nowrap" : "initial"};
+    line-height: 1.15rem;
 `
 export const CardContainerInputWrapper = styled.div`
     display: flex;
