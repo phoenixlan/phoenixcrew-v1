@@ -14,8 +14,6 @@ const S = {
         height: 100%;
 
         @media screen and (max-width: 480px) {
-            width: unset;
-            padding: 8px;
         }
     `,
         
@@ -29,11 +27,12 @@ const S = {
         `,
         DashboardRoot: styled.div`
             width: calc(100% - 254px);
+            overflow-y: scroll;
 
             @media screen and (max-width: 480px) {
                 margin-top: 60px;
                 width: 100%;
-                padding: 0px;
+                padding: 0 1em;
             }
         `
 }
