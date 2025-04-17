@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-import { TableCell, IconContainer, SelectableTableRow, Table, TableHead, TableBody, TableRow } from '../../../components/table';
+import { TableCell, IconContainer, SelectableTableRow, Table, TableHead, TableBody, TableRow, InnerColumnCenter } from '../../../components/table';
 import { CardContainerText, DropdownCardContainer, DropdownCardContent, DropdownCardHeader, InlineContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputLabel, InputSelect, PanelButton, RowBorder, SpanLink } from '../../../components/dashboard';
 import { UserSearch } from "../../../components/userSearch";
 import { FormButton } from '../../../components/form';
 
 import { PositionMapping, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
 
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 import { PageLoading } from "../../../components/pageLoading";
@@ -46,20 +46,19 @@ export const PositionMemberList = ({ position, refresh }) => {
             if(!member) {
                 alert("No member is selected");
             } else {
-                
                 try {
                     setIsAddingMember(true);
                     await PositionMapping.createPositionMapping(member, position.uuid);
                     await refresh();
                 } catch(e) {
-                    setError(e.value)
+                    alert("An error occured when adding the selected to this position.\n\n" + e)
                     console.error("An error occured when adding this user (" + member + ") to this position (" + position.uuid + ").\n" + e)
                 } finally {
                     setIsAddingMember(false);
                 }
             }
         } else {
-            alert("Vi mangler nåværende event")
+            alert("An error occured when adding the selected user to this position.\nThere is no current event.")
         }
 
     }
@@ -154,23 +153,27 @@ export const PositionMemberList = ({ position, refresh }) => {
 
                 <InnerContainer>
                     <InnerContainerRow>
+                        <InnerContainer flex="1">
+                            <InputLabel small>{messages["position.filterByEventTitle"]}</InputLabel>
+                            <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                                {
+                                    events.map((event) => (<option value={event.uuid}>{event.name} {currentEvent ? event.uuid == currentEvent.uuid ? "(Nåværende)" : null : null}</option>))
+                                }
+                            </InputSelect>
+                        </InnerContainer>
+                        <InnerContainer flex="2" />
+                    </InnerContainerRow>
+                </InnerContainer>
+
+                <InnerContainer>
+                    <InnerContainerRow>
                         <InnerContainerRow>
                             <InnerContainer>
                                 <Table>
                                     <TableHead border>
                                         <TableRow>
-                                            <TableCell inline>
-                                                <span>{messages["position.filterByEventTitle"]}</span>
-                                                <InputSelect noborder value={currentViewingEvent} onChange={updateViewingEvent}>
-                                                    {
-                                                        events.map((event) => (<option value={event.uuid}>{event.name} {currentEvent ? event.uuid == currentEvent.uuid ? "(Nåværende)" : null : null}</option>))
-                                                    }
-                                                </InputSelect>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableHead border>
-                                        <TableRow>
+                                            <TableCell as="th" flex="0 1.3rem" mobileHide center title="Indikerer om brukeren innehar denne stillingen permanent eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+                                            <TableCell as="th" flex="0 1px" mobileHide fillGray />
                                             <TableCell mobileHide flex="3" visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
                                             <TableCell mobileFlex="2" flex="2">Brukernavn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
                                             <TableCell mobileFlex="3" flex="4">Navn</TableCell>
@@ -183,6 +186,8 @@ export const PositionMemberList = ({ position, refresh }) => {
                                                 const user = position_mapping.user
                                                 return (
                                                     <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
+                                                        <TableCell flex="0 1.3rem"  mobileHide center><IconContainer hidden={position_mapping.event_uuid} color="#ef6c00"><FontAwesomeIcon icon={faLock} title="Pemrnanent stilling - Brukeren innehar denne stillingen men uten tilknytning til et arrangement." /></IconContainer></TableCell>
+                                                        <TableCell as="th" flex="0 1px" mobileHide fillGray />
                                                         <TableCell mobileHide consolas flex="3" visible={!visibleUUID}>{ user.uuid }</TableCell>
                                                         <TableCell mobileFlex="2" flex="2">{ user.username }</TableCell>
                                                         <TableCell mobileFlex="3" flex="4">{ user.firstname + ", " + user.lastname}</TableCell>
