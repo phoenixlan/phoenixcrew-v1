@@ -6,7 +6,7 @@ import { TableCell, IconContainer, SelectableTableRow, Table, TableBody, TableHe
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputCheckbox, PanelButton, SpanLink } from '../../components/dashboard';
 import { PageLoading } from "../../components/pageLoading"
 
-import { faArrowRight, faAward, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faAward, faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faAddressCard } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
@@ -104,7 +104,7 @@ export const PositionList = () => {
                                                 <TableCell flex="9" mobileFlex="3" italic={!role.name}>{name}</TableCell>
                                                 <TableCell flex="2" mobileFlex="1">{currentEvent ? role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
-                                                <TableCell flex="2" mobileHide>{role.is_vanity ? "Ja" : "Nei"}</TableCell>
+                                                <TableCell flex="2" mobileHide>{role.is_vanity ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null}</TableCell>
                                                 <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
