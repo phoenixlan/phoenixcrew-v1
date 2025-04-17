@@ -6,7 +6,7 @@ import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableBody, TableRow } from "../../components/table";
 import { dateOfBirthToAge } from '../../utils/user';
-import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox, SpanLink } from "../../components/dashboard";
 
 export const UserList= () => {
     const [users, setUsers] = useState([]);
@@ -38,16 +38,12 @@ export const UserList= () => {
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainer mobileHide>
-                    <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
-                </InnerContainer>
-
                 <InnerContainer>
                     <Table>
                         <TableHead border>
                             <TableRow>
-                                <TableCell as="th" flex="5" visible={!visibleUUID}>UUID</TableCell>
-                                <TableCell as="th" flex="3" mobileFlex="3">Navn</TableCell>
+                                <TableCell as="th" flex="5" visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
+                                <TableCell as="th" flex="3" mobileFlex="3">Navn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
                                 <TableCell as="th" flex="1" mobileFlex="1">Alder</TableCell>
                                 <TableCell as="th" flex="2" mobileHide>Brukernavn</TableCell>
                                 <TableCell as="th" flex="3" mobileHide>Registrert</TableCell>
