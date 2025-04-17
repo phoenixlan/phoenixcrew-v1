@@ -1,6 +1,6 @@
 import React , { useContext, useEffect, useState } from "react";
 
-import { Position} from "@phoenixlan/phoenix.js";
+import { Position, getCurrentEvent } from "@phoenixlan/phoenix.js";
 
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
 
@@ -16,7 +16,9 @@ import { PageLoading } from "../../../components/pageLoading";
 export const ViewPosition = (props) => {
     const { uuid } = useParams();
     const [error, setError] = useState(false);
+    const [currentEvent, setCurrentEvent] = useState(null);
     const [position, setPosition] = useState(null);
+    const [usersForCurrentEvent, setUsersForCurrentEvent] = useState([])
     const [loading, setLoading] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
     const [activeContent, setActiveContent] = useState(1);
@@ -29,7 +31,11 @@ export const ViewPosition = (props) => {
 
         // Get position based on UUID and return error if something fails.
         try {
+            const currentEvent = await getCurrentEvent();
             const position = await Position.getPosition(uuid);
+
+            setUsersForCurrentEvent(position.position_mappings.filter((user) => (user.event_uuid === null || user.event_uuid == currentEvent.uuid)))
+            setCurrentEvent(currentEvent);
             setPosition(position);
         } catch(e) {
             setError(e);
@@ -62,7 +68,7 @@ export const ViewPosition = (props) => {
                     <DashboardBarSelector border>
                         <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Generelt</DashboardBarElement>
                         <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Rettigheter ({position.permissions.length})</DashboardBarElement>
-                        <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Medlemmer ({position.position_mappings.length})</DashboardBarElement>
+                        <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Medlemmer {currentEvent ? ("("+ usersForCurrentEvent.length + ")") : null}</DashboardBarElement>
                     </DashboardBarSelector>
 
                     <DashboardContent visible={activeContent == 1}>
