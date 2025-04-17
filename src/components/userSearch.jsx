@@ -37,7 +37,7 @@ const S = {
     `
 }
 
-export const UserSearch = ({ onUserSelected }) => {
+export const UserSearch = ({ onUserSelected, disabled }) => {
     const [ query, setQuery ] = useState("");
     const [ users, setUsers ] = useState([]);
     const [ showSuggestions, setShowSuggestions ] = useState(false);
@@ -76,7 +76,7 @@ export const UserSearch = ({ onUserSelected }) => {
             
             <InputContainer column extramargin>
                 <InputLabel small>Bruker</InputLabel>
-                <InputElement value={query} onChange={(e) => setQuery(e.target.value)} onFocus={() => setShowSuggestions(true)} onBlur={() => setShowSuggestions(false)} />
+                <InputElement disabled={disabled} value={query} onChange={(e) => setQuery(e.target.value)} onFocus={() => setShowSuggestions(true)} onBlur={() => setShowSuggestions(false)} />
             </InputContainer>
         </S.Container>
     );
