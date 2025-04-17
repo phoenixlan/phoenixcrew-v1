@@ -76,7 +76,6 @@ export const InnerContainer = styled.div`
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex!important" : "none!important"};
     flex-flow: column;
     flex: ${props => props.flex ? props.flex : "undefined"};
-    /*padding: ${props => props.nopadding ? "0" : "2rem 0"};*/
     margin-top: ${props => props.floattop ? "0" : "auto"};
     margin-bottom: ${props => props.extramargin ? "20px" : "auto"};
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
@@ -111,6 +110,8 @@ export const InnerContainerRow = styled.div`
         flex-wrap: wrap;
         flex-flow: ${props => props.mobileFlow ? props.mobileFlow : "column"};
         width: 100%;
+        row-gap: ${props => props.mobileNoGap ? "0" : ".8rem"};
+        column-gap: ${props => props.mobileNoGap ? "0" : ".8rem"};
     }
 `
 
