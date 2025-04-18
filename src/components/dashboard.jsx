@@ -80,7 +80,7 @@ export const InnerContainer = styled.div`
     margin-bottom: ${props => props.extramargin ? "20px" : "auto"};
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
     align-items: ${props => props.alignItems ? props.alignItems : "left"};
-    row-gap: ${props => props.rowgap ?  "2rem" : undefined};
+    row-gap: ${props => props.rowgap ?  "3rem" : undefined};
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
@@ -387,6 +387,10 @@ export const CardContainer = styled.div`
     overflow: hidden;
     margin-bottom: 1em;
     gap: .35em;
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mobileHide ? "none" : ""};
+    }
 `
 export const CardContainerIcon = styled.div`
     display: flex;
