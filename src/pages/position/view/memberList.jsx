@@ -172,7 +172,7 @@ export const PositionMemberList = ({ position, refresh }) => {
                                 <Table>
                                     <TableHead border>
                                         <TableRow>
-                                            <TableCell mobileFlex="0 2rem" flex="0 1.3rem" center title="Indikerer om brukeren innehar denne stillingen permanent eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+                                            <TableCell mobileFlex="0 1.5rem" flex="0 1.3rem" center title="Indikerer om brukeren innehar denne stillingen permanent eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
                                             <TableCell flex="0 1px" mobileHide fillGray />
                                             <TableCell mobileHide flex="3" visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
                                             <TableCell mobileHide flex="2">Brukernavn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
@@ -186,7 +186,7 @@ export const PositionMemberList = ({ position, refresh }) => {
                                                 const user = position_mapping.user
                                                 return (
                                                     <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
-                                                        <TableCell mobileFlex="0 2rem" flex="0 1.3rem" center><IconContainer hidden={position_mapping.event_uuid} color="#ef6c00"><FontAwesomeIcon icon={faLock} title="Pemrnanent stilling - Brukeren innehar denne stillingen men uten tilknytning til et arrangement." /></IconContainer></TableCell>
+                                                        <TableCell mobileFlex="0 1.5rem" flex="0 1.3rem" center><IconContainer hidden={position_mapping.event_uuid} color="#ef6c00"><FontAwesomeIcon icon={faLock} title="Pemrnanent stilling - Brukeren innehar denne stillingen men uten tilknytning til et arrangement." /></IconContainer></TableCell>
                                                         <TableCell flex="0 1px" mobileHide fillGray />
                                                         <TableCell mobileHide consolas flex="3" visible={!visibleUUID}>{ user.uuid }</TableCell>
                                                         <TableCell mobileHide flex="2">{ user.username }</TableCell>
