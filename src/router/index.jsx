@@ -37,7 +37,7 @@ import { TicketVoucherManagement } from '../pages/ticket/ticketVoucherManagement
 import { AgendaList } from '../pages/information/agenda';
 import { UserbaseStats } from '../pages/stats/userbase';
 import { AgeDistributionStats } from '../pages/stats/ageDistribution';
-
+import { EditUser } from '../pages/user/viewer/editUser';
 import { Authentication } from '../components/authentication';
 
 const RouterInner = () => {
@@ -102,6 +102,9 @@ const RouterInner = () => {
                     </PrivateRoute>
                     <PrivateRoute exact path="/user/:uuid">
                         <ViewUser />
+                    </PrivateRoute>
+                    <PrivateRoute exact path="/user/:uuid/edit">
+                        <EditUser />
                     </PrivateRoute>
                     <PrivateRoute exact path="/information/schedule/">
                         <AgendaList />
