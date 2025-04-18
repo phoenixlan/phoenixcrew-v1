@@ -172,10 +172,10 @@ export const PositionMemberList = ({ position, refresh }) => {
                                 <Table>
                                     <TableHead border>
                                         <TableRow>
-                                            <TableCell as="th" flex="0 1.3rem" mobileHide center title="Indikerer om brukeren innehar denne stillingen permanent eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
-                                            <TableCell as="th" flex="0 1px" mobileHide fillGray />
+                                            <TableCell mobileFlex="0 2rem" flex="0 1.3rem" center title="Indikerer om brukeren innehar denne stillingen permanent eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+                                            <TableCell flex="0 1px" mobileHide fillGray />
                                             <TableCell mobileHide flex="3" visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
-                                            <TableCell mobileFlex="2" flex="2">Brukernavn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
+                                            <TableCell mobileHide flex="2">Brukernavn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
                                             <TableCell mobileFlex="3" flex="4">Navn</TableCell>
                                             <TableCell mobileHide flex="0 24px" />
                                         </TableRow>
@@ -186,10 +186,10 @@ export const PositionMemberList = ({ position, refresh }) => {
                                                 const user = position_mapping.user
                                                 return (
                                                     <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne">
-                                                        <TableCell flex="0 1.3rem"  mobileHide center><IconContainer hidden={position_mapping.event_uuid} color="#ef6c00"><FontAwesomeIcon icon={faLock} title="Pemrnanent stilling - Brukeren innehar denne stillingen men uten tilknytning til et arrangement." /></IconContainer></TableCell>
-                                                        <TableCell as="th" flex="0 1px" mobileHide fillGray />
+                                                        <TableCell mobileFlex="0 2rem" flex="0 1.3rem" center><IconContainer hidden={position_mapping.event_uuid} color="#ef6c00"><FontAwesomeIcon icon={faLock} title="Pemrnanent stilling - Brukeren innehar denne stillingen men uten tilknytning til et arrangement." /></IconContainer></TableCell>
+                                                        <TableCell flex="0 1px" mobileHide fillGray />
                                                         <TableCell mobileHide consolas flex="3" visible={!visibleUUID}>{ user.uuid }</TableCell>
-                                                        <TableCell mobileFlex="2" flex="2">{ user.username }</TableCell>
+                                                        <TableCell mobileHide flex="2">{ user.username }</TableCell>
                                                         <TableCell mobileFlex="3" flex="4">{ user.firstname + ", " + user.lastname}</TableCell>
                                                         <TableCell mobileHide flex="0 24px"><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                                     </SelectableTableRow>
