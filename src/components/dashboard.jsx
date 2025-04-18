@@ -40,6 +40,13 @@ export const DashboardBarElement = styled.div`
     border-bottom: ${props => props.active ? ".15rem solid rgb(255,170,210)" : ""};
     cursor: pointer;
 
+    ${props => props.disabled ? `
+        user-select: none;
+        cursor: not-allowed;
+        background-color: inherit;
+        color: rgb(130, 130, 130);
+    ` : null}
+
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
     }
