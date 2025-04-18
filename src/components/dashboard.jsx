@@ -17,7 +17,7 @@ export const DashboardBlock = styled.div`
 `
 
 export const DashboardHeader = styled.div`
-    padding: 2em 0;
+    padding: ${props => props.border ? "3rem 0" : "1.5rem 0"};
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
 `
 export const DashboardBarSelector = styled.div`
@@ -65,7 +65,7 @@ export const DashboardContent = styled.div`
     padding: ${props => props.nopadding ? "0" : "1.5rem 0"};
     flex-flow: column;
     row-gap: 3rem;
-    padding: 2rem 0;
+    padding: 3rem 0;
     font-family: "Roboto";
     font-size: .85rem;
 `
@@ -76,7 +76,6 @@ export const InnerContainer = styled.div`
     display: ${props => props.visible == undefined ? "flex" : props.visible ? "flex!important" : "none!important"};
     flex-flow: column;
     flex: ${props => props.flex ? props.flex : "undefined"};
-    /*padding: ${props => props.nopadding ? "0" : "2rem 0"};*/
     margin-top: ${props => props.floattop ? "0" : "auto"};
     margin-bottom: ${props => props.extramargin ? "20px" : "auto"};
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
@@ -111,6 +110,10 @@ export const InnerContainerRow = styled.div`
         flex-wrap: wrap;
         flex-flow: ${props => props.mobileFlow ? props.mobileFlow : "column"};
         width: 100%;
+        row-gap: ${props => props.mobileNoGap ? "0" : ".8rem"};
+        column-gap: ${props => props.mobileNoGap ? "0" : ".8rem"};
+        row-gap: ${props => props.rowgap ? "3rem" : ""};
+        column-gap: ${props => props.rowgap ? "3rem" : ""};
     }
 `
 
