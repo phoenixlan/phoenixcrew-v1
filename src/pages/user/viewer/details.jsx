@@ -142,7 +142,7 @@ export const UserViewerDetails = ({ user }) => {
                         </InnerContainer>
                     </InnerContainer>
 
-                    <InnerContainer flex="5" floattop rowgap>
+                    <InnerContainer flex="5" floattop rowgap nopadding>
                         <InnerContainer>
                             <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
                             <InnerContainerRow>
@@ -231,7 +231,7 @@ export const UserViewerDetails = ({ user }) => {
                                 </CardContainer>
                             </InnerContainerRow>
 
-                            <InnerContainerRow mobileNoGap>
+                            <InnerContainerRow nopadding mobileNoGap>
                                 <CardContainer>
                                     <CardContainerIcon>
                                         <CardContainerInnerIcon>
@@ -254,7 +254,7 @@ export const UserViewerDetails = ({ user }) => {
                                         <CardContainerInnerText>{user.gender === "Gender.male" ? "Mann" : "Kvinne"}</CardContainerInnerText>
                                     </CardContainerText>
                                 </CardContainer>
-                                <CardContainer />
+                                <CardContainer mobileHide />
                             </InnerContainerRow>
                         </InnerContainer>
 
