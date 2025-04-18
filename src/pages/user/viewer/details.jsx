@@ -122,7 +122,7 @@ export const UserViewerDetails = ({ user }) => {
     }
     return (
         <>
-            <InnerContainer>
+            <InnerContainer rowgap>
                 <InnerContainerRow>
                     <PanelButton onClick={modifyUserStateButtonAvailibility ? () => history.push("/user/" + user.uuid + "/edit") : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
                     <PanelButton onClick={activationStateButtonAvailibility ? () => activateUser() : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
@@ -131,8 +131,8 @@ export const UserViewerDetails = ({ user }) => {
             </InnerContainer>
             
             <InnerContainer rowgap>
-                <InnerContainerRow>
-                    <InnerContainer flex="1" floattop>
+                <InnerContainerRow rowgap>
+                    <InnerContainer flex="2" floattop>
                         <InnerContainerTitle>Profilbilde</InnerContainerTitle>
                         <InnerContainer>
                             <S.Avatar src={user.avatar_urls.sd} />
@@ -142,7 +142,7 @@ export const UserViewerDetails = ({ user }) => {
                         </InnerContainer>
                     </InnerContainer>
 
-                    <InnerContainer flex="3" floattop rowgap>
+                    <InnerContainer flex="5" floattop rowgap>
                         <InnerContainer>
                             <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
                             <InnerContainerRow>
@@ -259,36 +259,42 @@ export const UserViewerDetails = ({ user }) => {
                         </InnerContainer>
 
                         <InnerContainer>
-                            <InnerContainerTitle>Informasjon om medlemsskap</InnerContainerTitle>
                             <InnerContainerRow>
-                                <CardContainer>
-                                    <CardContainerIcon>
-                                        <CardContainerInnerIcon animation1>
-                                            <FontAwesomeIcon icon={membershipState ? faStarSolid : faStarRegular } />
-                                        </CardContainerInnerIcon>
-                                    </CardContainerIcon>
-                                    <CardContainerText>
-                                    <InputLabel small>Radar Event medlemsskap for gjeldende år</InputLabel>
-                                        <CardContainerInnerText>{membershipState !== null ? (membershipState ? "Ja" : "Nei") : "Ikke tilgjengelig"}</CardContainerInnerText>
-                                    </CardContainerText>
-                                </CardContainer>
-                            </InnerContainerRow>
-                        </InnerContainer>
+                                <InnerContainer flex="1" floattop>
+                                    <InnerContainerTitle>Informasjon om medlemsskap</InnerContainerTitle>
+                                    <InnerContainerRow>
+                                        <CardContainer>
+                                            <CardContainerIcon>
+                                                <CardContainerInnerIcon animation1>
+                                                    <FontAwesomeIcon icon={membershipState ? faStarSolid : faStarRegular } />
+                                                </CardContainerInnerIcon>
+                                            </CardContainerIcon>
+                                            <CardContainerText>
+                                            <InputLabel small>Radar Event medlemsskap for gjeldende år</InputLabel>
+                                                <CardContainerInnerText>{membershipState !== null ? (membershipState ? "Ja" : "Nei") : "Informasjon ikke tilgjengelig"}</CardContainerInnerText>
+                                            </CardContainerText>
+                                        </CardContainer>
+                                    </InnerContainerRow>
+                                </InnerContainer>
+                               
+                                <InnerContainer flex="1" floattop>
+                                    <InnerContainerTitle>Terms-of-use (TOS) godkjenningsnivå</InnerContainerTitle>
+                                    <InnerContainerRow>
+                                        <CardContainer>
+                                            <CardContainerIcon>
+                                                <CardContainerInnerIcon>
+                                                    <FontAwesomeIcon icon={faFileContract} />
+                                                </CardContainerInnerIcon>
+                                            </CardContainerIcon>
+                                            <CardContainerText>
+                                            <InputLabel small>TOS-aksept nivå</InputLabel>
+                                                <CardContainerInnerText>{user.tos_level}</CardContainerInnerText>
+                                            </CardContainerText>
+                                        </CardContainer>
+                                    </InnerContainerRow>
+                                </InnerContainer>
 
-                        <InnerContainer>
-                            <InnerContainerTitle>Terms-of-use (TOS) godkjenningsnivå</InnerContainerTitle>
-                            <InnerContainerRow>
-                                <CardContainer>
-                                    <CardContainerIcon>
-                                        <CardContainerInnerIcon>
-                                            <FontAwesomeIcon icon={faFileContract} />
-                                        </CardContainerInnerIcon>
-                                    </CardContainerIcon>
-                                    <CardContainerText>
-                                    <InputLabel small>TOS-aksept nivå</InputLabel>
-                                        <CardContainerInnerText>{user.tos_level}</CardContainerInnerText>
-                                    </CardContainerText>
-                                </CardContainer>
+                                
                             </InnerContainerRow>
                         </InnerContainer>
                     </InnerContainer>
