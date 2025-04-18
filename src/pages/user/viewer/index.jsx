@@ -88,7 +88,7 @@ export const ViewUser = (props) => {
                     <DashboardBarElement active={activeContent === TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
-                    <DashboardBarElement active={activeContent === TABS.APPLICATIONS} onClick={() => setActiveContent(TABS.APPLICATIONS)}>Søknader</DashboardBarElement>
+                    <DashboardBarElement disabled active={activeContent === TABS.APPLICATIONS} title="Ikke tilgjengelig">Søknader</DashboardBarElement>
                 </DashboardBarSelector>
                 
                 <DashboardContent visible={activeContent === TABS.USER_DETAILS}>
