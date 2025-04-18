@@ -15,7 +15,7 @@ export const Position = ({ position, func, positionName }) => {
 
 	return (
 		<SelectableTableRow onClick={locked ? null : func}>
-			<TableCell flex="0 1.3rem"  mobileHide center><IconContainer hidden={!locked} color="#ef6c00"><FontAwesomeIcon icon={faLock} title="Stillingen er ikke tilknyttet et arrangement og er permanent. Stillingen kan ikke slettes." /></IconContainer></TableCell>
+			<TableCell mobileFlex="0 1.5rem" flex="0 1.3rem" center><IconContainer hidden={!locked} color="#ef6c00"><FontAwesomeIcon icon={faLock} title="Stillingen er ikke tilknyttet et arrangement og er permanent. Stillingen kan ikke slettes." /></IconContainer></TableCell>
 			<TableCell flex="0 1.3rem"  mobileHide center><IconContainer hidden={!active} color="#43a047"><FontAwesomeIcon icon={faCircleCheck} title="Stillingen er aktiv og gir rettigheter til brukeren." /></IconContainer></TableCell>
 			<TableCell flex="0 1px"     mobileHide fillGray />
 			<TableCell flex="3"                   >{positionName}</TableCell>
@@ -95,8 +95,8 @@ export const UserPositions = ({ inheritUser }) => {
 					<Table>
 						<TableHead border>
 							<TableRow>
-								<TableCell as="th" flex="0 1.3rem" mobileHide center title="Indikerer om stillingen kan bli slettet, eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
-								<TableCell as="th" flex="0 1.3rem" mobileHide center title="Indikerer om stillingen er aktiv, eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+								<TableCell as="th" mobileFlex="0 1.5rem" flex="0 1.3rem" center title="Indikerer om stillingen kan bli slettet, eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+								<TableCell as="th" mobileHide flex="0 1.3rem" center title="Indikerer om stillingen er aktiv, eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
 								<TableCell as="th" flex="0 1px" mobileHide fillGray />
 								<TableCell as="th" flex="3">Navn</TableCell>
 								<TableCell as="th" flex="2">Status</TableCell>
