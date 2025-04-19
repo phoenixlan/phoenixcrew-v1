@@ -1,11 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
 import { User } from "@phoenixlan/phoenix.js";
 import { PageLoading } from '../../../components/pageLoading';
 import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, PanelButton } from '../../../components/dashboard';
 
-import { Colors } from '../../../theme';
-import { AuthenticationContext } from '../../../components/authentication';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
 import { Notice } from '../../../components/containers/notice';
@@ -17,10 +14,7 @@ export const EditUser = () => {
 
     let history = useHistory();
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
-
-    // Import the following React contexts:
-    const authorizedUser = useContext(AuthenticationContext);
+    const { register, handleSubmit } = useForm();
 
     // Variables to keep track of changes in input components
     const [ firstname, setFirstname ] = useState(null);
@@ -63,7 +57,6 @@ export const EditUser = () => {
 
         try {
             user = await User.getUser(uuid);
-            console.log(user);
 
             setFirstname(user.firstname);
             setLastname(user.lastname);
