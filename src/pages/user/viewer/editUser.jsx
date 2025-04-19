@@ -154,14 +154,14 @@ export const EditUser = () => {
                                         <CardContainer>
                                             <InputContainer column extramargin>
                                                 <InputLabel small>Telefon</InputLabel>
-                                                <InputElement {...register("phone")} type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                                                <InputElement {...register("phone")} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
                                             </InputContainer>
                                         </CardContainer>
 
                                         <CardContainer>
                                             <InputContainer column extramargin>
                                                 <InputLabel small>Foresattes telefon</InputLabel>
-                                                <InputElement {...register("guardian_phone")} type="text" value={guardianPhone} onChange={(e) => setGuardianPhone(e.target.value)} />
+                                                <InputElement {...register("guardian_phone")} type="tel" value={guardianPhone} onChange={(e) => setGuardianPhone(e.target.value)} />
                                             </InputContainer>
                                         </CardContainer>
                                     </InnerContainerRow>
