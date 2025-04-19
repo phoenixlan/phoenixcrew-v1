@@ -6,12 +6,26 @@ import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableBody, TableRow } from "../../components/table";
 import { dateOfBirthToAge } from '../../utils/user';
-import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox, SpanLink, InnerContainerRow, InputContainer, InputLabel, InputSelect, InputElement, CardContainer } from "../../components/dashboard";
+
+const SORTING_METHODS = {
+    FIRSTNAME: 1,
+    USERNAME: 2,
+    AGE: 3,
+    CREATED: 4
+}
+
+const SORTING_TYPES = {}
+SORTING_TYPES[SORTING_METHODS.FIRSTNAME] = (a, b) => a.firstname.localeCompare(b.firstname);
+SORTING_TYPES[SORTING_METHODS.USERNAME] = (a, b) => a.username.localeCompare(b.username);
+SORTING_TYPES[SORTING_METHODS.CREATED] = (a, b) => a.created - b.created;
+SORTING_TYPES[SORTING_METHODS.AGE] = (a, b) => dateOfBirthToAge(a.birthdate) - dateOfBirthToAge(b.birthdate);
 
 export const UserList= () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const [activeSortingMethod, setActiveSortingMethod] = useState(1);
+    const [search, setSearch] = useState("");
     const [visibleUUID, setVisibleUUID] = useState(false);
 
     let history = useHistory();
@@ -27,6 +41,17 @@ export const UserList= () => {
         return (<PageLoading />)
     }
 
+    let processedUserList = users
+    .filter((user) => 
+        user.uuid.toLowerCase().includes(search) ||
+        user.firstname.toLowerCase().includes(search) || 
+        user.lastname.toLowerCase().includes(search) ||
+        user.username.toLowerCase().includes(search) ||
+        user.email.toLowerCase().includes(search) ||
+        user.phone.includes(search)
+    )
+    .sort(SORTING_TYPES[activeSortingMethod])
+
     return (
         <>
             <DashboardHeader border>
@@ -34,20 +59,45 @@ export const UserList= () => {
                     Brukeradministrasjon
                 </DashboardTitle>
                 <DashboardSubtitle>
-                    {users.length} brukere registrert
+                    { search 
+                      ? "Viser " + processedUserList.length + " av " + users.length + " brukere registrert"
+                      : users.length + " brukere registrert"
+                    }
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainer mobileHide>
-                    <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
+                <InnerContainer>
+                    <InnerContainerRow>
+                        <InnerContainer flex="1">
+                            <CardContainer>
+                                <InputContainer column extramargin>
+                                    <InputLabel small>Søk</InputLabel>
+                                    <InputElement type="text" placeholder="For- etternavn, e-post, telefon nummer ..." onChange={(e) => setSearch(e.target.value.toLowerCase())}></InputElement>
+                                </InputContainer>
+                            </CardContainer>
+                            
+                            <CardContainer>
+                                <InputContainer column extramargin>
+                                    <InputLabel small>Sortering</InputLabel>
+                                    <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
+                                        <option value={SORTING_METHODS.FIRSTNAME}>Fornavn</option>
+                                        <option value={SORTING_METHODS.USERNAME}>Brukernavn</option>
+                                        <option value={SORTING_METHODS.AGE}>Alder</option>
+                                        <option value={SORTING_METHODS.CREATED}>Registrert</option>
+                                    </InputSelect>
+                                </InputContainer>
+                            </CardContainer>
+                        </InnerContainer>
+                        <InnerContainer flex="2" />
+                    </InnerContainerRow>
                 </InnerContainer>
 
                 <InnerContainer>
                     <Table>
                         <TableHead border>
                             <TableRow>
-                                <TableCell as="th" flex="5" visible={!visibleUUID}>UUID</TableCell>
-                                <TableCell as="th" flex="3" mobileFlex="3">Navn</TableCell>
+                                <TableCell as="th" flex="5" visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
+                                <TableCell as="th" flex="3" mobileFlex="3">Navn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
                                 <TableCell as="th" flex="1" mobileFlex="1">Alder</TableCell>
                                 <TableCell as="th" flex="2" mobileHide>Brukernavn</TableCell>
                                 <TableCell as="th" flex="3" mobileHide>Registrert</TableCell>
@@ -56,19 +106,19 @@ export const UserList= () => {
                         </TableHead>
                         <TableBody>
                             {
-                                users.map((user) => {
+                                processedUserList.map((user) => {
                                     return (
                                         <SelectableTableRow onClick={e => {history.push(`/user/${user.uuid}`)}} title="Trykk for å åpne" key={user.uuid}>
                                             <TableCell consolas flex="5" visible={!visibleUUID} mobileHide>{ user.uuid }</TableCell>
-                                            <TableCell flex="3" mobileFlex="3">{ user.lastname + ", " + user.firstname }</TableCell>
+                                            <TableCell flex="3" mobileFlex="3">{ user.firstname + " " + user.lastname }</TableCell>
                                             <TableCell flex="1" mobileFlex="1">{dateOfBirthToAge(user.birthdate)}</TableCell>
                                             <TableCell flex="2" mobileHide>{ user.username }</TableCell>
                                             <TableCell flex="3" mobileHide>{ new Date(user.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>
                                             <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                         </SelectableTableRow>
                                     )
-                                })
-                            }
+                                }
+                            )}
                         </TableBody>
                     </Table>
                 </InnerContainer>
