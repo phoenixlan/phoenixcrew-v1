@@ -37,6 +37,7 @@ export const UserViewerDetails = ({ user }) => {
     let activationStateButtonAvailibility;
     let modifyUserStateButtonAvailibility;
     let deleteAvatarButtonAvailibility;
+    let printCrewCardButtonAvailibility;
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState ] = useState(null);
@@ -51,6 +52,7 @@ export const UserViewerDetails = ({ user }) => {
 
     // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
     if (user.avatar_uuid) {
+        printCrewCardButtonAvailibility = true;
         if((loggedinUser.roles.includes("admin") || loggedinUser.roles.includes("hr_admin")) || loggedinUser.authUser.uuid === user.uuid) {
             deleteAvatarButtonAvailibility = true;
         }
@@ -126,7 +128,7 @@ export const UserViewerDetails = ({ user }) => {
                 <InnerContainerRow>
                     <PanelButton onClick={modifyUserStateButtonAvailibility ? () => history.push("/user/" + user.uuid + "/edit") : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
                     <PanelButton onClick={activationStateButtonAvailibility ? () => activateUser() : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
-                    <PanelButton onClick={downloadCard} icon={faPrint}>Print crewkort</PanelButton>
+                    <PanelButton onClick={printCrewCardButtonAvailibility ? downloadCard : null} disabled={!printCrewCardButtonAvailibility} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
             </InnerContainer>
             
