@@ -116,7 +116,8 @@ export const UserPositions = ({ inheritUser }) => {
 												position={position} 
 												positionName={positionName}
 
-												func={() => deletePosition(position, positionName)} />
+												func={() => deletePosition(position, positionName)}
+											/>
 										)
 									})
 								}
