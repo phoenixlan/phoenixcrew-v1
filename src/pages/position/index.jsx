@@ -100,8 +100,8 @@ export const PositionList = () => {
                                         return (
                                             <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}} key={role.uuid}>
                                                 <TableCell mobileHide consolas flex="9" visible={!visibleUUID}>{role.uuid}</TableCell>
-                                                <TableCell flex="4" mobileHide>{(roleCrew?.name ?? "-")}</TableCell>
                                                 <TableCell flex="9" mobileFlex="3" italic={!role.name}>{name}</TableCell>
+                                                <TableCell flex="4" mobileHide>{(roleCrew?.name ?? "-")}</TableCell>
                                                 <TableCell flex="2" mobileFlex="1">{currentEvent ? role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
                                                 <TableCell flex="2" mobileHide>{role.is_vanity ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null}</TableCell>
@@ -110,8 +110,8 @@ export const PositionList = () => {
                                         )
                                     })
                                     .sort((a, b) => {
-                                        const crewNameA = a.props.children[1].props.children;
-                                        const crewNameB = b.props.children[1].props.children;
+                                        const crewNameA = a.props.children[2].props.children;
+                                        const crewNameB = b.props.children[2].props.children;
                                         
                                         if (crewNameA < crewNameB) {
                                             return -1;

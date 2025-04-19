@@ -169,7 +169,6 @@ export const InputLabel = styled.label`
     font-size: ${props => props.small ? ".65rem" : ".85rem"};
     bottom: ${props => props.bottom ? props.bottom : ""};
     top: ${props => props.top ? props.top : ""};
-    margin: ${props => props.small ? "0" : "0 6px"};
     color: ${props => props.color ? props.color : "inherit"};
 `
 
