@@ -34,8 +34,8 @@ export const Authentication = (props) => {
         
         /// Logout function, used with the Authentication Context
         function logout() {
-            setAuthUser(null);
             window.localStorage.removeItem("auth");
+            window.location.reload();
         }
         
 
