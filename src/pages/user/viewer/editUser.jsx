@@ -191,7 +191,7 @@ export const EditUser = () => {
                                         <CardContainer>
                                             <InputContainer column extramargin>
                                                 <InputLabel small>Kjønn</InputLabel>
-                                                <InputSelect {...register("gender")} value={gender == "Gender.male" ? "male" : undefined || gender == "Gender.female" ? "female" : undefined} onChange={(e) => setGender(e.target.value)}>
+                                                <InputSelect {...register("gender")} value={gender === "Gender.male" ? "male" : undefined || gender === "Gender.female" ? "female" : undefined} onChange={(e) => setGender(e.target.value)}>
                                                     <option value="" disabled></option>
                                                     <option value="male">Mann</option>
                                                     <option value="female">Kvinne</option>
