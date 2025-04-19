@@ -163,7 +163,7 @@ export const DisplayControl = styled.div`
     display: ${props => props.visible ? "" : "none"};
 `
 
-export const InputLabel = styled.span`
+export const InputLabel = styled.label`
     position: relative;
     font-family: "Roboto";
     font-size: ${props => props.small ? ".65rem" : ".85rem"};

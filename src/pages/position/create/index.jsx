@@ -130,16 +130,16 @@ export const CreatePosition = () => {
                                     <InnerContainerTitle>Innstillinger</InnerContainerTitle>
                                     <InnerContainer>
                                         <CardContainer column extramargin>
-                                            <InputElement {...register("chief")} type="checkbox" disabled={!attachedCrew} />
+                                            <InputElement {...register("chief")} id='chief' type="checkbox" disabled={!attachedCrew} />
                                             <CardContainerText>
-                                                Gruppeleder stilling
+                                                <InputLabel htmlFor='chief'>Gruppeleder stilling</InputLabel>
                                                 <CardContainerDescriptiveText>OBS! Ved å huke av denne må stillingen knyttes til et crew.<br/>Gir gruppeledertilganger som å åpne crew, godkjenne avatarer og søknader, oppdatere timeplan, og sende eposter.</CardContainerDescriptiveText>
                                             </CardContainerText>
                                         </CardContainer>
                                         <CardContainer column extramargin>
-                                            <InputElement {...register("is_vanity")} type="checkbox" />
+                                            <InputElement {...register("is_vanity")} id='is_vanity' type="checkbox" />
                                             <CardContainerText>
-                                                Symbolsk stilling
+                                                <InputLabel htmlFor='is_vanity'>Symbolsk stilling</InputLabel>
                                                 <CardContainerDescriptiveText>Stillingstittelen til denne stillingen blir prioritert når du printer kort.</CardContainerDescriptiveText>
                                             </CardContainerText>
                                         </CardContainer>

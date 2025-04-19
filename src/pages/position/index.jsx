@@ -77,8 +77,8 @@ export const PositionList = () => {
                             <TableHead border>
                                 <TableRow>
                                     <TableCell as="th" flex="9" mobileHide visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
-                                    <TableCell as="th" flex="4" mobileHide>Tilknyttet <br/>crew</TableCell>
                                     <TableCell as="th" flex="9" mobileFlex="3">Navn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Tilknyttet <br/>crew</TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="1">Aktive <br/>brukere</TableCell>
                                     <TableCell as="th" flex="2" mobileHide>Antall <br/>rettigheter</TableCell>
                                     <TableCell as="th" flex="2" mobileHide>Symbolsk<br/>stilling</TableCell>
