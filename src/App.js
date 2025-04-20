@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { Authentication } from './components/authentication';
-
 import { CrewRouter } from './router';
 
 // For charts
@@ -33,9 +31,7 @@ function App() {
 
     return (
         <>
-            <Authentication>
-                <CrewRouter />
-            </Authentication>
+            <CrewRouter />
         </>
     );
 }
