@@ -12,6 +12,8 @@ import { Colors } from '../../../theme';
 import { dateOfBirthToAge } from '../../../utils/user';
 import { AuthenticationContext } from '../../../components/authentication';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { captureException } from "@sentry/browser";
+import { Notice } from '../../../components/containers/notice';
 
 const S = {
     Avatar: styled.img`
@@ -34,20 +36,32 @@ export const UserViewerDetails = ({ user }) => {
     const loggedinUser = useContext(AuthenticationContext);
 
     // Function availibility control:
-    let activationStateButtonAvailibility;
-    let modifyUserStateButtonAvailibility;
-    let deleteAvatarButtonAvailibility;
-    let printCrewCardButtonAvailibility;
+    let activationStateButtonAvailibility = false;
+    let modifyUserStateButtonAvailibility = false;
+    let deleteAvatarButtonAvailibility = false;
+    let printCrewCardButtonAvailibility = false;
+
+    let activationStateAccess = false;
+    let membershipStateAccess = false;
 
     const [ membershipState, setMembershipState ] = useState(null);
     const [ activationState, setActivationState ] = useState(null);
-
+    
     const [ loading, setLoading ] = useState(true);
+    const [ error, setError ] = useState(null);
 
     // Check if user has "admin" role and make the following functions available:
     if (loggedinUser.roles.includes("admin")) {
         activationStateButtonAvailibility = true;
+        activationStateAccess = true;
         modifyUserStateButtonAvailibility = true;
+        membershipStateAccess = true;
+    }
+
+    // Check if user has "hr_admin" role and make the following functions available:
+    if (loggedinUser.roles.includes("hr_admin")) {
+        activationStateButtonAvailibility = true;
+        membershipStateAccess = true;
     }
 
     // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
@@ -64,14 +78,16 @@ export const UserViewerDetails = ({ user }) => {
         // Try to get user information and set the information as states which can be used later or throw an error.
         try {
             const [ activationState, membershipState ] = await Promise.all([
-                User.getUserActivationState(user.uuid),
-                User.getUserMembershipStatus(user.uuid)
+                activationStateAccess ? User.getUserActivationState(user.uuid) : null,
+                membershipStateAccess ? User.getUserMembershipStatus(user.uuid) : null
             ])
             setActivationState(activationState);
             setMembershipState(membershipState);
         } catch(e) {
+            setError(e);
+            captureException(e);
             console.error("An error occured while attempting to gather user information:\n" + e);
-        }
+        } 
 
         // Logic finished, show the user details page:
         setLoading(false);
@@ -84,6 +100,8 @@ export const UserViewerDetails = ({ user }) => {
                 await User.activateUser(user.uuid);
                 reload();
             } catch(e) {
+                setError(e);
+                captureException(e);
                 console.error("An error occured while attempting to update the user.\n" + e);
             }
         }
@@ -96,6 +114,8 @@ export const UserViewerDetails = ({ user }) => {
                 await Avatar.deleteAvatar(user.avatar_uuid);
                 window.location.reload();
             } catch(e) {
+                setError(e);
+                captureException(e);
                 console.error("An error occured while attempting to delete this users' avatar.\n" + e);
             }
         }
@@ -127,10 +147,20 @@ export const UserViewerDetails = ({ user }) => {
             <InnerContainer rowgap>
                 <InnerContainerRow>
                     <PanelButton onClick={modifyUserStateButtonAvailibility ? () => history.push("/user/" + user.uuid + "/edit") : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
-                    <PanelButton onClick={activationStateButtonAvailibility ? () => activateUser() : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton>
+                    {activationStateAccess ? <PanelButton onClick={activationStateButtonAvailibility ? () => activateUser() : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton> : null}
                     <PanelButton onClick={printCrewCardButtonAvailibility ? downloadCard : null} disabled={!printCrewCardButtonAvailibility} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
             </InnerContainer>
+
+            { error ?
+                <InnerContainer rowgap>
+                    <Notice type="error" visible={true}>
+                        Det oppsto en feil:<br />
+                        {error.message}
+                    </Notice>
+                </InnerContainer>
+                                    
+            : null }
             
             <InnerContainer rowgap>
                 <InnerContainerRow rowgap>
@@ -262,6 +292,8 @@ export const UserViewerDetails = ({ user }) => {
 
                         <InnerContainer>
                             <InnerContainerRow>
+                                {
+                                membershipStateAccess ?
                                 <InnerContainer flex="1" floattop>
                                     <InnerContainerTitle>Informasjon om medlemsskap</InnerContainerTitle>
                                     <InnerContainerRow>
@@ -278,6 +310,7 @@ export const UserViewerDetails = ({ user }) => {
                                         </CardContainer>
                                     </InnerContainerRow>
                                 </InnerContainer>
+                                : null }
                                
                                 <InnerContainer flex="1" floattop>
                                     <InnerContainerTitle>Terms-of-use (TOS) godkjenningsnivå</InnerContainerTitle>
