@@ -33,7 +33,7 @@ export const UserViewerDetails = ({ user }) => {
     let history = useHistory();
 
     // Import the following React contexts:
-    const loggedinUser = useContext(AuthenticationContext);
+    const authContext = useContext(AuthenticationContext);
 
     // Function availibility control:
     let activationStateButtonAvailibility = false;
@@ -51,7 +51,7 @@ export const UserViewerDetails = ({ user }) => {
     const [ error, setError ] = useState(null);
 
     // Check if user has "admin" role and make the following functions available:
-    if (loggedinUser.roles.includes("admin")) {
+    if (authContext.roles.includes("admin")) {
         activationStateButtonAvailibility = true;
         activationStateAccess = true;
         modifyUserStateButtonAvailibility = true;
@@ -59,7 +59,7 @@ export const UserViewerDetails = ({ user }) => {
     }
 
     // Check if user has "hr_admin" role and make the following functions available:
-    if (loggedinUser.roles.includes("hr_admin")) {
+    if (authContext.roles.includes("hr_admin")) {
         activationStateButtonAvailibility = true;
         membershipStateAccess = true;
     }
@@ -67,7 +67,7 @@ export const UserViewerDetails = ({ user }) => {
     // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
     if (user.avatar_uuid) {
         printCrewCardButtonAvailibility = true;
-        if((loggedinUser.roles.includes("admin") || loggedinUser.roles.includes("hr_admin")) || loggedinUser.authUser.uuid === user.uuid) {
+        if((authContext.roles.includes("admin") || authContext.roles.includes("hr_admin")) || authContext.authUser.uuid === user.uuid) {
             deleteAvatarButtonAvailibility = true;
         }
     }
