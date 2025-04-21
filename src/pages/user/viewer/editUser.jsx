@@ -47,7 +47,7 @@ export const EditUser = () => {
             captureException(e);
             setUpdateSuccess(false);
             console.error("An error occured while attempting to update the user.\n" + e);
-		}
+        }
     }
 
     
