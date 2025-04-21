@@ -106,10 +106,6 @@ export const ViewUser = (props) => {
                 <DashboardContent visible={activeContent === TABS.INTEGRATIONS}>
                     <UserViewerExternalConnections user={user} />
                 </DashboardContent>
-
-                <DashboardContent visible={activeContent === TABS.APPLICATIONS}>
-                    <UserViewerApplications user={user} />
-                </DashboardContent>
             </>
         )
     }
