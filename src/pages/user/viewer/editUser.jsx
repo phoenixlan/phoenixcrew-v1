@@ -5,6 +5,7 @@ import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, Da
 
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
+import { captureException } from "@sentry/browser";
 import { Notice } from '../../../components/containers/notice';
 
 export const EditUser = () => {
@@ -42,9 +43,10 @@ export const EditUser = () => {
             setUpdateSuccess(true);
             setError(false);
         } catch(e) {
+            setError(e.message);
+            captureException(e);
             setUpdateSuccess(false);
-			setError(e.message);
-			console.error("An error occured while attempting to update the user.\n" + e);
+            console.error("An error occured while attempting to update the user.\n" + e);
 		}
     }
 
@@ -70,6 +72,7 @@ export const EditUser = () => {
             setGender(user.gender);
         } catch(e) {
             setError(e);
+            captureException(e);
             console.error("An error occured while attempting to gather user information:\n" + e);
         }
 
