@@ -20,11 +20,10 @@ export const ViewPosition = (props) => {
     const [position, setPosition] = useState(null);
     const [usersForCurrentEvent, setUsersForCurrentEvent] = useState([])
     const [loading, setLoading] = useState(true);
-    const [visibleUUID, setVisibleUUID] = useState(false);
     const [activeContent, setActiveContent] = useState(1);
 
     // Import the following React contexts:
-    const loggedinUser = useContext(AuthenticationContext);
+    const authContext = useContext(AuthenticationContext);
 
     const load = async () => {
         setLoading(true);
@@ -34,7 +33,7 @@ export const ViewPosition = (props) => {
             const currentEvent = await getCurrentEvent();
             const position = await Position.getPosition(uuid);
 
-            setUsersForCurrentEvent(position.position_mappings.filter((user) => (user.event_uuid === null || user.event_uuid == currentEvent.uuid)))
+            setUsersForCurrentEvent(position.position_mappings.filter((user) => (!user.event_uuid || user.event_uuid == currentEvent.uuid)))
             setCurrentEvent(currentEvent);
             setPosition(position);
         } catch(e) {
@@ -52,7 +51,7 @@ export const ViewPosition = (props) => {
 
     if(loading) {
         return (<PageLoading />)
-    } else if(loggedinUser.roles.includes("admin") || loggedinUser.roles.includes("hr_admin")) {
+    } else if(authContext.roles.includes("admin") || authContext.roles.includes("hr_admin")) {
         if(position) {
             return (
                 <>

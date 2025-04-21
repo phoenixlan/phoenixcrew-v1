@@ -9,19 +9,12 @@ import { PageLoading } from "../../../components/pageLoading";
 export const PositionDetails = ({position}) => {
 
     const [ loading, setLoading ] = useState(true);
-    const [ crew, setCrew ] = useState(undefined);
-    const [ team, setTeam ] = useState(undefined);
+    const [ crew, setCrew ] = useState(null);
+    const [ team, setTeam ] = useState(null);
 
     useEffect(async () => {
-        let crew;
-        let team;
-
-        if(position.crew_uuid) {
-            crew = await Crew.getCrew(position.crew_uuid);
-        }
-        if(position.team_uuid) {
-            team = crew?.teams.find((team) => team.uuid == position.team_uuid)
-        }
+        let crew = position.crew_uuid ? await Crew.getCrew(position.crew_uuid) : null;
+        let team = position.team_uuid ? crew?.teams.find((team) => team.uuid == position.team_uuid) : null;
 
         setCrew(crew);
         setTeam(team);
