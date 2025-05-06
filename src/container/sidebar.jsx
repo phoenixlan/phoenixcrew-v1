@@ -392,7 +392,7 @@ export const options = [
         roles: ["chief", "info_admin", "admin", "event_admin", "compo_admin"],
         entries: [
             {
-                title: "Timeplan",
+                title: "Programplanlegger",
                 icon: faCalendar,
                 url: "/information/schedule/"
             },

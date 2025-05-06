@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect, useContext } from 'react';
 
 import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 
@@ -9,39 +8,60 @@ import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardH
 import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead, TableRow, TableBody } from '../../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbtack, faPlay, faMinus, faPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-import { newWindow } from '../../../components/windows';
+import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { NewAgendaEntry } from '../../../components/windows/types/agenda/newAgendaEntry';
 import { EditAgendaEntry } from '../../../components/windows/types/agenda/editAgendaEntry';
+import { Notice } from '../../../components/containers/notice';
+import { WindowManagerContext } from '../../../components/windows/windowManager';
 
 const AgendaEntry = ({ entry, func}) => {
-    const [ active, setActive ]         = useState(false);
-    const [ pinned, setPinned ]         = useState(undefined);
-    const [ deviating, setDeviating ]   = useState(undefined); 
+    const pinned = entry.pinned;
 
-    useEffect(() => {
-        // Set active state depending on these conditions:
-        setActive(
-            Date.now() - 5 * 60000 < new Date(entry.deviating_time * 1000) ||
-            Date.now() - 5 * 60000 < new Date(entry.time * 1000)
-        )
+    const entry_planned = 
+        entry.duration
+        ? entry.deviating_time
+          ? Date.now() < entry.deviating_time * 1000 
+          : Date.now() < entry.time * 1000
+        : entry.deviating_time
+          ? Date.now() < entry.deviating_time * 1000 + 10 * 60000
+          : Date.now() < entry.time * 1000 + 10 * 60000
 
-        // Set pinned state depending on these conditions:
-        setPinned(
-            entry.pinned
-        )
+    const entry_active =
+        entry.duration
+        ? entry.deviating_time
+          ? Date.now() > entry.deviating_time * 1000 &&
+            Date.now() < (entry.deviating_time * 1000 + (entry.duration + 10) * 60000)
+          : Date.now() > entry.time * 1000 &&
+            Date.now() < (entry.time * 1000 + (entry.duration + 10) * 60000)
+        : false
 
-        // Set deviating state depending on these conditions:
-        setDeviating(
-            entry.deviating_time_unknown ||
-            entry.cancelled ||
-            entry.deviating_information ||
-            entry.deviating_location ||
-            entry.deviating_time
-        )
-    }, [entry]);
+    const entry_finished =
+        entry.duration
+        ? entry.deviating_time
+          ? Date.now() > (entry.deviating_time * 1000 + (entry.duration + 10) * 60000)
+          : Date.now() > (entry.time * 1000 + (entry.duration + 10) * 60000)
+        : Date.now() > entry.time * 1000 + 10 * 60000
+
+    const deviating = 
+        entry.deviating_time_unknown || 
+        entry.deviating_information || 
+        entry.deviating_location || 
+        entry.deviating_time ||
+        entry.cancelled;
+
     return (
         <SelectableTableRow onClick={func}>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!active} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={active} color="#ef6c00"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
+            <TableCell flex="0 1.3rem"  mobileHide center   >
+                <IconContainer hidden={!entry_planned} color="#388e3c">
+                    <FontAwesomeIcon icon={faClock} title="Oppføringen vises på skjermen, og er oppført under 'Kommende hendelser'" />
+                </IconContainer>
+                <IconContainer hidden={!entry_active} color="#388e3c">
+                    <FontAwesomeIcon icon={faPlay} title="Oppføringen vises på skjermen, og er oppført under 'Dette skjer nå'" />
+                </IconContainer>
+                <IconContainer hidden={!entry_finished} color="#ef6c00">
+                    <FontAwesomeIcon icon={faMinus} title="Oppføringen har passert start og, eller slutt tidspunktet og skjules." />
+                </IconContainer>
+            </TableCell>
             <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!pinned} color="#d32f2f"><FontAwesomeIcon icon={faThumbtack} title="Elementet er festet og vises øverst på infoskjermene." /></IconContainer></TableCell>
             <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!deviating} color="#ef6c00"><FontAwesomeIcon icon={faCircleExclamation} title="Elementet har et eller flere endringer, åpne elementet for å se." /></IconContainer></TableCell>
             <TableCell flex="0 1px"     mobileHide fillGray />
@@ -53,23 +73,38 @@ const AgendaEntry = ({ entry, func}) => {
     )
 }
 
-export const AgendaList = (props) => {
-    const [activeContent, setActiveContent] = useState(1);
-    const [currentEvent, setCurrentEvent] = useState(undefined);
+export const AgendaList = () => {
+    
+    const [ currentEvent, setCurrentEvent ] = useState(undefined);
 
-    const [agendaList, setAgendaList] = useState([]);
+    // Import the following React contexts:
+    const windowManager = useContext(WindowManagerContext);
+    
+    const [ createEntryStateButtonAvailibility, setCreateEntryStateButtonAvailibility ] = useState(false);
+
+    const [ activeContent, setActiveContent ] = useState(1);
+    const [ agendaList, setAgendaList ] = useState([]);
 
     const [ window, setWindow ] = useState([]);    
-    const [loading, setLoading] = useState(true);
+    const [ notice, setNotice ] = useState(false);
+    const [ loading, setLoading ] = useState(true);
 
     const reloadAgendaList = async () => {
-        setCurrentEvent(await getCurrentEvent());
-        const getAgendaList = await Agenda.getAgenda();
-        if (getAgendaList) {
-            setAgendaList(getAgendaList);
-            setLoading(false);
+        setLoading(true);
+
+        // Attempt to get current event, and get the agenda list based on current event. Create a warning notice if no event is found.
+        const currentEvent = await getCurrentEvent();
+        if(currentEvent) {
+            setCreateEntryStateButtonAvailibility(true);
+            setCurrentEvent(currentEvent);
+            setAgendaList(await Agenda.getAgenda());
+        } else {
+            setNotice({"type": "warning", "title": "Oops, vi mangler et fremtidig arrangement!", "description": "Det eksisterer for øyeblikket ingen nye arrangementer frem i tid. Dette gjør at du ikke får hentet programmet, eller laget nye oppføringer til programmet. Opprett et nytt arrangement under Arrangementer i sidemenyen for å fortsette."});
         }
-      };
+
+        // Remove loading screen when logic is done
+        setLoading(false);
+    };
     
     useEffect(async () => {
         reloadAgendaList().catch((e) => {
@@ -77,9 +112,13 @@ export const AgendaList = (props) => {
         })
     }, []);
 
+
     const reload = async () => {
+        setLoading(true);
         await reloadAgendaList();
+        setLoading(false);
     }
+
 
     if(loading) {
         return (
@@ -92,7 +131,7 @@ export const AgendaList = (props) => {
                 {window}
                 <DashboardHeader>
                     <DashboardTitle>
-                        Program
+                        Programplanlegger
                     </DashboardTitle>
                 </DashboardHeader>
 
@@ -108,9 +147,16 @@ export const AgendaList = (props) => {
                         Informasjonen du legger inn vises på hovedsiden under tidsplan og på infosiden/infoskjermene som blir satt opp på lokasjonen.
                     </InnerContainer>
 
+                    {
+                    <Notice type={notice.type} visible={notice}>
+                        <b>{notice.title}</b>
+                        {notice.description}
+                    </Notice>
+                    }
+
                     <InnerContainerRow nopadding>
                         <InnerContainer flex="1">
-                            <PanelButton onClick={() => setWindow(newWindow({title: "Opprett nytt element", subtitle: currentEvent.name, Component: NewAgendaEntry, exitFunction: () => {setWindow(false); reload()}}))} icon={faPlus}>Legg til</PanelButton>
+                            <PanelButton onClick={createEntryStateButtonAvailibility ? () => windowManager.newWindow({title: "Opprett nytt programelement", subtitle: currentEvent.name, size: 0, component: NewAgendaEntry, entries: null, postFunctions: () => reload()}) : null} disabled={!createEntryStateButtonAvailibility} icon={faPlus}>Legg til</PanelButton>
                         </InnerContainer>
                     </InnerContainerRow>
 
@@ -130,12 +176,21 @@ export const AgendaList = (props) => {
                             </TableHead>
                             <TableBody columnReverse>
                                 {
-                                    agendaList.map(entry => {
+                                    agendaList
+                                    .map(entry => {
                                         return (
-                                            <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid} func={() => setWindow(newWindow({title: "Endre oppføring", subtitle: currentEvent.name, Component: EditAgendaEntry, exitFunction: () => {setWindow(false); reload()}, entries: entry}))} />
+                                            <AgendaEntry 
+                                                key={entry.uuid}
+                                                entry={entry}
+                                                reloadAgendaList={reloadAgendaList}   
+                                                
+                                                func={() => windowManager.newWindow({title: "Endre oppføring", subtitle: currentEvent.name, size: 0, component: EditAgendaEntry, entries: entry, postFunctions: () => reload()})}
+                                            />
                                         )
                                     })
+                                    .reverse()
                                 }
+
                                 
                             </TableBody>
                         </Table>
