@@ -1,36 +1,127 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { User } from "@phoenixlan/phoenix.js";
+import { User, Avatar } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
-import { InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel } from '../../../components/dashboard';
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton } from '../../../components/dashboard';
 
-import { Button } from "../../../components/button"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faStar as faStarSolid, faCheck, faCode, faFileContract, faMapPin, faMars, faPhone, faPhoneSlash, faPrint, faUserPen, faVenus } from '@fortawesome/free-solid-svg-icons';
+import { Colors } from '../../../theme';
+import { dateOfBirthToAge } from '../../../utils/user';
+import { AuthenticationContext } from '../../../components/authentication';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { captureException } from "@sentry/browser";
+import { Notice } from '../../../components/containers/notice';
 
 const S = {
     Avatar: styled.img`
-        width: 256px;
-        border: 1px solid rgb(235, 235, 235);
+        width: inherit;
+        border: 1px solid ${Colors.Gray200};
+        margin-bottom: 1rem;
+        display: flex;
+
+        @media screen and (max-width: 480px) {
+            width: 100%;
+        }
     `,
 }
 
 export const UserViewerDetails = ({ user }) => {
+
+    let history = useHistory();
+
+    // Import the following React contexts:
+    const authContext = useContext(AuthenticationContext);
+
+    // Function availibility control:
+    let activationStateButtonAvailibility = false;
+    let modifyUserStateButtonAvailibility = false;
+    let deleteAvatarButtonAvailibility = false;
+    let printCrewCardButtonAvailibility = false;
+
+    let activationStateAccess = false;
+    let membershipStateAccess = false;
+
     const [ membershipState, setMembershipState ] = useState(null);
-    const [ activationState, setActivationState] = useState(null);
-    const [ loading, setLoading ] = useState(false);
+    const [ activationState, setActivationState ] = useState(null);
+    
+    const [ loading, setLoading ] = useState(true);
+    const [ error, setError ] = useState(null);
+
+    // Check if user has "admin" role and make the following functions available:
+    if (authContext.roles.includes("admin")) {
+        activationStateButtonAvailibility = true;
+        activationStateAccess = true;
+        modifyUserStateButtonAvailibility = true;
+        membershipStateAccess = true;
+    }
+
+    // Check if user has "hr_admin" role and make the following functions available:
+    if (authContext.roles.includes("hr_admin")) {
+        activationStateButtonAvailibility = true;
+        membershipStateAccess = true;
+    }
+
+    // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
+    if (user.avatar_uuid) {
+        printCrewCardButtonAvailibility = true;
+        if((authContext.roles.includes("admin") || authContext.roles.includes("hr_admin")) || authContext.authUser.uuid === user.uuid) {
+            deleteAvatarButtonAvailibility = true;
+        }
+    }
 
     const reload = async () => {
         setLoading(true);
-        const [ membershipState, activationState ] = await Promise.all([
-            User.getUserMembershipStatus(user.uuid),
-            User.getUserActivationState(user.uuid),
-        ])
-        setMembershipState(membershipState);
-        setActivationState(activationState);
+
+        // Try to get user information and set the information as states which can be used later or throw an error.
+        try {
+            const [ activationState, membershipState ] = await Promise.all([
+                activationStateAccess ? User.getUserActivationState(user.uuid) : null,
+                membershipStateAccess ? User.getUserMembershipStatus(user.uuid) : null
+            ])
+            setActivationState(activationState);
+            setMembershipState(membershipState);
+        } catch(e) {
+            setError(e);
+            captureException(e);
+            console.error("An error occured while attempting to gather user information:\n" + e);
+        } 
+
+        // Logic finished, show the user details page:
         setLoading(false);
     }
 
+    // Function to activate the user
+    const activateUser = async () => {
+        if(window.confirm("Er du sikker på at du vil aktivere denne brukeren?")) {
+            try { 
+                await User.activateUser(user.uuid);
+                reload();
+            } catch(e) {
+                setError(e);
+                captureException(e);
+                console.error("An error occured while attempting to update the user.\n" + e);
+            }
+        }
+    }
+
+    // Function to delete the user's avatar
+    const deleteAvatar = async () => {
+        if(window.confirm("Er du sikker på at du vil slette avataren til denne brukeren?")) {
+            try { 
+                await Avatar.deleteAvatar(user.avatar_uuid);
+                window.location.reload();
+            } catch(e) {
+                setError(e);
+                captureException(e);
+                console.error("An error occured while attempting to delete this users' avatar.\n" + e);
+            }
+        }
+    }
+
+    // Print crew card
     const downloadCard = async () => {
         const result = await User.getCrewCard(user.uuid);
         const href = window.URL.createObjectURL(await result.blob());
@@ -52,105 +143,201 @@ export const UserViewerDetails = ({ user }) => {
         return (<PageLoading />)
     }
     return (
-        <InnerContainer>
-            <form>
+        <>
+            <InnerContainer rowgap>
                 <InnerContainerRow>
-                    <InnerContainer flex="1">
-                        <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Fornavn</InputLabel>
-                                <>{user.firstname}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Etternavn</InputLabel>
-                                <>{user.lastname}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Telefon</InputLabel>
-                                <>{user.phone}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Foresattes telefon</InputLabel>
-                                <>{user.guardian_phone??"Ikke satt"}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Epost</InputLabel>
-                                <>{user.email}</>
-                            </InputContainer>
-                            <InputContainer column extramargin />
-                        </InnerContainerRow>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Fødselsdato</InputLabel>
-                                <>{user.birthdate}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Kjønn</InputLabel>
-                                <>{user.gender == "Gender.male" ? "Mann" : "Kvinne"}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Addresse</InputLabel>
-                                <>{user.address}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Postkode</InputLabel>
-                                <>{user.postal_code}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Landskode</InputLabel>
-                                <>{user.country_code}</>
-                            </InputContainer>
-                        </InnerContainerRow>
+                    <PanelButton onClick={modifyUserStateButtonAvailibility ? () => history.push("/user/" + user.uuid + "/edit") : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
+                    {activationStateAccess ? <PanelButton onClick={activationStateButtonAvailibility ? () => activateUser() : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton> : null}
+                    <PanelButton onClick={printCrewCardButtonAvailibility ? downloadCard : null} disabled={!printCrewCardButtonAvailibility} icon={faPrint}>Print crewkort</PanelButton>
+                </InnerContainerRow>
+            </InnerContainer>
 
-                        <InnerContainerTitle>Medlemsskap informasjon</InnerContainerTitle>
-                        <InnerContainerRow nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Radar Event medlem i år</InputLabel>
-                                <>{membershipState !== null ? (membershipState ? "Ja" : "Nei") : "..."}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-
-                        <InnerContainerTitle>Konto informasjon</InnerContainerTitle>
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Bruker-UUID</InputLabel>
-                                <>{user.uuid}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow nowrap>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Brukernavn</InputLabel>
-                                <>{user.username}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>TOS nivå</InputLabel>
-                                <>{user.tos_level}</>
-                            </InputContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Bruker aktivert</InputLabel>
-                                <>{activationState !== null ? (activationState ? "Ja" : "Nei") : "..."}</>
-                            </InputContainer>
-                        </InnerContainerRow>
-                    </InnerContainer>
-                    <InnerContainer flex="1">
-                        <InnerContainerTitle>Avatar</InnerContainerTitle>
+            { error ?
+                <InnerContainer rowgap>
+                    <Notice type="error" visible={true}>
+                        Det oppsto en feil:<br />
+                        {error.message}
+                    </Notice>
+                </InnerContainer>
+                                    
+            : null }
+            
+            <InnerContainer rowgap>
+                <InnerContainerRow rowgap>
+                    <InnerContainer flex="2" floattop>
+                        <InnerContainerTitle>Profilbilde</InnerContainerTitle>
                         <InnerContainer>
                             <S.Avatar src={user.avatar_urls.sd} />
+                            <InnerContainerRow mobileNoGap nopadding>
+                                <PanelButton flex="1" onClick={deleteAvatarButtonAvailibility ? () => deleteAvatar() : null} disabled={(!deleteAvatarButtonAvailibility)}>Slett avatar</PanelButton>
+                            </InnerContainerRow>
                         </InnerContainer>
+                    </InnerContainer>
+
+                    <InnerContainer flex="5" floattop rowgap nopadding>
                         <InnerContainer>
-                            <Button color="lightgray" onClick={downloadCard}>Generer crewkort</Button>
+                            <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
+                            <InnerContainerRow>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faCode} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Bruker-UUID</InputLabel>
+                                        <CardContainerInnerText console>{user.uuid}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                            </InnerContainerRow>
+
+                            <InnerContainerRow nopadding mobileNoGap>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faUser} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Fornavn, etternavn</InputLabel>
+                                        <CardContainerInnerText>{user.firstname}, {user.lastname}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faAddressCard} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Brukernavn / visningsnavn</InputLabel>
+                                        <CardContainerInnerText>{user.username}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faMapPin} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Adresse</InputLabel>
+                                        <CardContainerInnerText>{user.address}, {user.postal_code}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                            </InnerContainerRow>
+
+                            <InnerContainerRow nopadding mobileNoGap>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faEnvelope} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Epost</InputLabel>
+                                        <CardContainerInnerText title={"Epost: " + user.email}><a href={"mailto:" + user.email}>{user.email}</a></CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faPhone} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Telefon</InputLabel>
+                                        <CardContainerInnerText title={"Telefon: " + user.phone}><a href={"tel:" + user.phone}>{user.phone}</a></CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={user.guardian_phone ? faPhone : faPhoneSlash} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Foresattes telefon</InputLabel>
+                                        <CardContainerInnerText>{user.guardian_phone ? <a href={"tel:" + user.guardian_phone}>{user.guardian_phone}</a> : "Ikke satt"}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                            </InnerContainerRow>
+
+                            <InnerContainerRow nopadding mobileNoGap>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faCalendar} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Fødselsdato</InputLabel>
+                                        <CardContainerInnerText>{new Date(user.birthdate).toLocaleDateString('no', {year: 'numeric', month: 'long', day: 'numeric'})}, {dateOfBirthToAge(user.birthdate)} år</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={user.gender === "Gender.male" ? faMars : faVenus} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Kjønn</InputLabel>
+                                        <CardContainerInnerText>{user.gender === "Gender.male" ? "Mann" : "Kvinne"}</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer mobileHide />
+                            </InnerContainerRow>
+                        </InnerContainer>
+
+                        <InnerContainer>
+                            <InnerContainerRow>
+                                {
+                                membershipStateAccess ?
+                                <InnerContainer flex="1" floattop>
+                                    <InnerContainerTitle>Informasjon om medlemsskap</InnerContainerTitle>
+                                    <InnerContainerRow>
+                                        <CardContainer>
+                                            <CardContainerIcon>
+                                                <CardContainerInnerIcon animation1>
+                                                    <FontAwesomeIcon icon={membershipState ? faStarSolid : faStarRegular } />
+                                                </CardContainerInnerIcon>
+                                            </CardContainerIcon>
+                                            <CardContainerText>
+                                            <InputLabel small>Radar Event medlemsskap for gjeldende år</InputLabel>
+                                                <CardContainerInnerText>{membershipState !== null ? (membershipState ? "Ja" : "Nei") : "Informasjon ikke tilgjengelig"}</CardContainerInnerText>
+                                            </CardContainerText>
+                                        </CardContainer>
+                                    </InnerContainerRow>
+                                </InnerContainer>
+                                : null }
+                               
+                                <InnerContainer flex="1" floattop>
+                                    <InnerContainerTitle>Terms-of-use (TOS) godkjenningsnivå</InnerContainerTitle>
+                                    <InnerContainerRow>
+                                        <CardContainer>
+                                            <CardContainerIcon>
+                                                <CardContainerInnerIcon>
+                                                    <FontAwesomeIcon icon={faFileContract} />
+                                                </CardContainerInnerIcon>
+                                            </CardContainerIcon>
+                                            <CardContainerText>
+                                            <InputLabel small>TOS-aksept nivå</InputLabel>
+                                                <CardContainerInnerText>{user.tos_level}</CardContainerInnerText>
+                                            </CardContainerText>
+                                        </CardContainer>
+                                    </InnerContainerRow>
+                                </InnerContainer>
+
+                                
+                            </InnerContainerRow>
                         </InnerContainer>
                     </InnerContainer>
                 </InnerContainerRow>
+
                 <InnerContainer>
-                        <InnerContainerTitle>GDPR samtykker</InnerContainerTitle>
+                    <InnerContainerTitle>GDPR samtykker</InnerContainerTitle>
+                    <InnerContainer>
                         <Table>
                             <TableHead border>
                                 <TableRow>
@@ -169,10 +356,9 @@ export const UserViewerDetails = ({ user }) => {
                                 </SelectableTableRow>
                             </TableBody>
                         </Table>
-                    
+                    </InnerContainer>
                 </InnerContainer>
-                
-            </form>
-        </InnerContainer>
+            </InnerContainer>
+        </>
     )
 }
