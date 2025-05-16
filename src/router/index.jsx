@@ -71,6 +71,9 @@ const RouterInner = () => {
                     <PrivateRoute exact path="/positions/:uuid">
                         <ViewPosition />
                     </PrivateRoute>
+                    <PrivateRoute exact path="/position/create">
+                        <CreatePosition />
+                    </PrivateRoute>
                     <PrivateRoute exact path="/avatar/approval/">
                         <AvatarApproval />
                     </PrivateRoute>
