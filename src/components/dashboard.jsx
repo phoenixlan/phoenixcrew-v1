@@ -87,7 +87,7 @@ export const InnerContainer = styled.div`
     margin-bottom: ${props => props.extramargin ? "20px" : "auto"};
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
     align-items: ${props => props.alignItems ? props.alignItems : "left"};
-    row-gap: ${props => props.rowgap ?  "3rem" : undefined};
+    row-gap: ${props => props.rowgap ?  "2rem" : undefined};
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
@@ -170,13 +170,12 @@ export const DisplayControl = styled.div`
     display: ${props => props.visible ? "" : "none"};
 `
 
-export const InputLabel = styled.span`
+export const InputLabel = styled.label`
     position: relative;
     font-family: "Roboto";
     font-size: ${props => props.small ? ".65rem" : ".85rem"};
     bottom: ${props => props.bottom ? props.bottom : ""};
     top: ${props => props.top ? props.top : ""};
-    margin: ${props => props.small ? "0" : "0 6px"};
     color: ${props => props.color ? props.color : "inherit"};
 `
 

@@ -37,6 +37,7 @@ import { TicketVoucherManagement } from '../pages/ticket/ticketVoucherManagement
 import { AgendaList } from '../pages/information/agenda';
 import { UserbaseStats } from '../pages/stats/userbase';
 import { AgeDistributionStats } from '../pages/stats/ageDistribution';
+import { CreatePosition } from '../pages/position/create';
 import { EditUser } from '../pages/user/viewer/editUser';
 import { Authentication } from '../components/authentication';
 
