@@ -4,13 +4,15 @@ import { captureException } from "@sentry/browser";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
-import { faCheck, faCode, faGear, faLink, faLocationDot, faUserGroup, faUserTie } from "@fortawesome/free-solid-svg-icons"
+import { faCheck, faCode, faDollarSign, faGear, faLink, faLocationDot, faUserGroup, faUserTie } from "@fortawesome/free-solid-svg-icons"
 
 import { SelectableTableRow, Table, TableBody, TableCell, TableHead, TableRow } from "../../../components/table";
-import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton, SpanLink } from "../../../components/dashboard"
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerTextSuffixWarning, InputLabel, PanelButton, SpanLink } from "../../../components/dashboard"
 import { AuthenticationContext } from "../../../components/authentication";
 import { PageLoading } from "../../../components/pageLoading";
+import { useParams } from "react-router-dom";
 import { Ticket } from "@phoenixlan/phoenix.js";
+import { Notice } from "../../../components/containers/notice";
 
 
 
@@ -18,12 +20,18 @@ import { Ticket } from "@phoenixlan/phoenix.js";
 export const TicketInformation = ({data}) => {
 
     const history = useHistory();
+    const { id } = useParams();
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
     
     // Function availibility control:
     let checkinStateButtonAvailibility = false;
+
+    // Ticket for event is current event check
+    let ticketForCurrentEvent = data.currentEvent.uuid === data.ticket.event.uuid;
+
+    const [ ticketEventLog, setTicketEventLog ] = useState([]);
 
     const [ error, setError ] = useState(null);
     const [ loading, setLoading ] = useState(true);
@@ -42,14 +50,45 @@ export const TicketInformation = ({data}) => {
         }
     }
 
+    const createEventlog = async () => {
+        let ticketEventLog = [];
+
+        // Create log entry when ticket was created
+        if(data.ticket.payment_uuid) {
+            ticketEventLog.push({timestamp: data.ticket.created, message: "Billett opprettet med vellykket kjøpt"})
+        } else {
+            ticketEventLog.push({timestamp: data.ticket.created, message: "Billett opprettet"})
+        }
+        
+        // Create log entry when ticket was checked in
+        if(data.ticket.checked_in) {
+            ticketEventLog.push({timestamp: data.ticket.checked_in, message: "Billett sjekket inn"})
+        }
+
+        // Create log entries when ticket has been transferred
+        try {
+            let ticketTransferLog = await Ticket.getTransferLog(id);
+            ticketTransferLog.map((data) => {
+                ticketEventLog.push({timestamp: data.created, message: "Billett overført fra " + data.from_user.firstname + " " + data.from_user.lastname + " til " + data.to_user.firstname + " " + data.to_user.lastname + " " + (data.reverted ? "– Overførselen ble angret" : "")})
+            })
+        } catch(e) {
+            console.error(e)
+        }
+
+        setTicketEventLog(ticketEventLog);
+    }
+
     // Check if user has "admin" role and make the following functions available:
     if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin") || authContext.roles.includes("ticket_checkin")) {
         checkinStateButtonAvailibility = true;
     }
 
     useEffect(async () => {
+        createEventlog();
         setLoading(false);
     }, [])
+
+    console.log();
 
     if(loading) {
         return (<PageLoading />)
@@ -57,13 +96,18 @@ export const TicketInformation = ({data}) => {
     return (
         <>
                     <InnerContainer rowgap>
+                        <InnerContainerRow visible={!ticketForCurrentEvent}>
+                            <Notice fillWidth type="warning" visible>
+                                OBS! Du ser på en billett for et annet arrangement
+                            </Notice>
+                        </InnerContainerRow>
                         <InnerContainerRow>
                             <PanelButton onClick={checkinStateButtonAvailibility ? () => checkinTicket() : null} disabled={(data.ticket.checked_in || !checkinStateButtonAvailibility)} icon={faCheck}>{data.ticket.checked_in === null ? "Sjekk inn billett" : "Billett sjekket inn"}</PanelButton>
                         </InnerContainerRow>
                     </InnerContainer>
 
                     <InnerContainer>
-                        <InnerContainerRow>
+                        <InnerContainerRow rowgap>
                             <InnerContainer flex="1" floattop>
                                 <InnerContainerTitle>Generelt</InnerContainerTitle>
                                 <CardContainer>
@@ -89,22 +133,34 @@ export const TicketInformation = ({data}) => {
                                 <CardContainer>
                                     <CardContainerIcon>
                                         <CardContainerInnerIcon>
-                                            <FontAwesomeIcon icon={faCalendar} />
+                                            <FontAwesomeIcon icon={faDollarSign} />
                                         </CardContainerInnerIcon>
                                     </CardContainerIcon>
                                     <CardContainerText>
-                                    <InputLabel small>Arrangement</InputLabel>
-                                        <CardContainerInnerText><SpanLink onClick={() => history.push(`/event/${data.ticket.event.uuid}`)}>{data.ticket.event.name}</SpanLink></CardContainerInnerText>
+                                    <InputLabel small>Pris</InputLabel>
+                                        <CardContainerInnerText>{data.ticket.ticket_type.price} kr</CardContainerInnerText>
                                     </CardContainerText>
                                 </CardContainer>
 
                                 <CardContainer>
                                     <CardContainerIcon>
                                         <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faCalendar} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Gjelder for arrangement</InputLabel>
+                                        <CardContainerInnerText italic={!ticketForCurrentEvent}><SpanLink onClick={() => history.push(`/event/${data.ticket.event.uuid}`)}>{data.ticket.event.name}</SpanLink><InnerTextSuffixWarning visible={!ticketForCurrentEvent} title={data.ticket.event.name + " er ikke gjeldende arrangement"} /></CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+
+                                <CardContainer disabled={!data.ticket.ticket_type.seatable}>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
                                             <FontAwesomeIcon icon={faLocationDot} />
                                         </CardContainerInnerIcon>
                                     </CardContainerIcon>
-                                    <CardContainerText disabled={!data.ticket.ticket_type.seatable}>
+                                    <CardContainerText>
                                     <InputLabel small>Setereservasjon</InputLabel>
                                         <CardContainerInnerText>{data.ticket.ticket_type.seatable ? data.ticket.seat ? ("R" + data.ticket.seat.row.row_number + " S" + data.ticket.seat.number) : "Billetten er ikke seatet" : "Billetten kan ikke seates"}</CardContainerInnerText>
                                     </CardContainerText>
@@ -113,7 +169,7 @@ export const TicketInformation = ({data}) => {
 
                             <InnerContainer flex="1" floattop rowgap nopadding>
                                 <InnerContainer>
-                                    <InnerContainerTitle>Relaterte personer</InnerContainerTitle>
+                                    <InnerContainerTitle>Eier, kjøper, og seater</InnerContainerTitle>
                                     <CardContainer>
                                         <CardContainerIcon>
                                             <CardContainerInnerIcon>
@@ -150,32 +206,6 @@ export const TicketInformation = ({data}) => {
                                         </CardContainerText>
                                     </CardContainer>
                                 </InnerContainer>
-
-                                <InnerContainer>
-                                <InnerContainerTitle>Status</InnerContainerTitle>
-                                    <CardContainer>
-                                        <CardContainerIcon>
-                                            <CardContainerInnerIcon>
-                                                <FontAwesomeIcon icon={data.currentEvent.uuid === data.ticket.event.uuid ? faCheck : null}  />
-                                            </CardContainerInnerIcon>
-                                        </CardContainerIcon>
-                                        <CardContainerText>
-                                        <InputLabel small>Aktiv for kommende arrangement</InputLabel>
-                                            <CardContainerInnerText>{data.currentEvent.uuid === data.ticket.event.uuid ? "Ja" : "Nei, ikke nåværende arrangement"}</CardContainerInnerText>
-                                        </CardContainerText>
-                                    </CardContainer>
-                                    <CardContainer>
-                                        <CardContainerIcon>
-                                            <CardContainerInnerIcon>
-                                                <FontAwesomeIcon icon={data.ticket.checked_in ? faCheck : null} />
-                                            </CardContainerInnerIcon>
-                                        </CardContainerIcon>
-                                        <CardContainerText>
-                                        <InputLabel small>Sjekket inn</InputLabel>
-                                            <CardContainerInnerText>{data.ticket.checked_in ? "Ja" : "Nei"}</CardContainerInnerText>
-                                        </CardContainerText>
-                                    </CardContainer>
-                                </InnerContainer>
                             </InnerContainer>
                         </InnerContainerRow>
                     </InnerContainer>
@@ -190,10 +220,19 @@ export const TicketInformation = ({data}) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    <SelectableTableRow>
-                                        <TableCell flex="1">24.05.2025 18:10</TableCell>
-                                        <TableCell flex="5">Billett kjøpt</TableCell>
-                                    </SelectableTableRow>
+                                    {
+                                        ticketEventLog
+                                        .sort((a, b) => a.timestamp < b.timestamp)
+                                        .map((entry) => {
+                                            return (
+                                                <SelectableTableRow>
+                                                    <TableCell flex="1">{new Date(entry.timestamp*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'})}</TableCell>
+                                                    <TableCell flex="5">{entry.message}</TableCell>
+                                                </SelectableTableRow>
+                                            )
+                                        })
+                                    }
+                                    
                                 </TableBody>
                             </Table>
                         </InnerContainer>
