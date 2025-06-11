@@ -97,7 +97,7 @@ export const TicketInformation = ({data}) => {
         <>
                     <InnerContainer rowgap>
                         <InnerContainerRow visible={!ticketForCurrentEvent}>
-                            <Notice fillWidth type="warning" visible>
+                            <Notice fillWidth type="info" visible>
                                 OBS! Du ser på en billett for et annet arrangement
                             </Notice>
                         </InnerContainerRow>
@@ -150,7 +150,7 @@ export const TicketInformation = ({data}) => {
                                     </CardContainerIcon>
                                     <CardContainerText>
                                     <InputLabel small>Gjelder for arrangement</InputLabel>
-                                        <CardContainerInnerText italic={!ticketForCurrentEvent}><SpanLink onClick={() => history.push(`/event/${data.ticket.event.uuid}`)}>{data.ticket.event.name}</SpanLink><InnerTextSuffixWarning visible={!ticketForCurrentEvent} title={data.ticket.event.name + " er ikke gjeldende arrangement"} /></CardContainerInnerText>
+                                        <CardContainerInnerText italic={!ticketForCurrentEvent}><SpanLink onClick={() => history.push(`/event/${data.ticket.event.uuid}`)}>{data.ticket.event.name}</SpanLink></CardContainerInnerText>
                                     </CardContainerText>
                                 </CardContainer>
 
