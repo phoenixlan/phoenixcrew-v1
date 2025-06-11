@@ -18,15 +18,24 @@ const S = {
         min-height: 2rem;
         flex: 1;
         font-size: .85rem;
-        padding: .5em 1em;
+        padding: .5em calc(1em - 4px);
         background-color: ${props => props.secondary};
-        border: 1px solid ${props => props.primary};
+        border-left: 4px solid ${props => props.primary};
         color: ${props => props.primary};
     `,
         IconContainer: styled.div`
             display: flex;
-            min-width: 1em;
-            margin: auto 1.25em auto .25em;
+            margin: auto;
+            position: relative;
+            bottom: .05em;
+            padding: 0 .5em;
+            font-size: 1rem;
+            width: 1em!important;
+
+            @media screen and (max-width: 480px) {
+                margin: auto 0;
+                min-width: 2em;
+            }
         `,
             Icon: styled.span`
                 font-size: 1rem;
@@ -37,6 +46,7 @@ const S = {
             flex-flow: column;
             flex: 1 1;
             margin: auto;
+            padding: 0 .5em;
         `,
 
 }
