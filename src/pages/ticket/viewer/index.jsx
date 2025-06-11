@@ -51,7 +51,7 @@ export const ViewTicket = () => {
         if(data) {
             return (
                 <>
-                    <DashboardHeader>
+                    <DashboardHeader border>
                         <DashboardTitle>
                             Billett
                         </DashboardTitle>
@@ -60,11 +60,7 @@ export const ViewTicket = () => {
                         </DashboardSubtitle>
                     </DashboardHeader>
 
-                    <DashboardBarSelector border>
-                        <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Billettinformasjon</DashboardBarElement>
-                    </DashboardBarSelector>
-
-                    <DashboardContent visible={activeContent == 1}>
+                    <DashboardContent>
                         <TicketInformation data={data} />
                     </DashboardContent>
                 </>
