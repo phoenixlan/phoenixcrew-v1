@@ -40,6 +40,7 @@ import { AgeDistributionStats } from '../pages/stats/ageDistribution';
 import { CreatePosition } from '../pages/position/create';
 import { EditUser } from '../pages/user/viewer/editUser';
 import { Authentication } from '../components/authentication';
+import { ViewTicket } from '../pages/ticket/viewer';
 
 const RouterInner = () => {
     const auth = useContext(AuthenticationContext);
@@ -137,8 +138,8 @@ const RouterInner = () => {
                     <PrivateRoute exact path="/tickets/vouchers/">
                         <TicketVoucherManagement/>
                     </PrivateRoute>
-                    <PrivateRoute exact path="/ticket/:uuid/">
-                        <NotAvailable />
+                    <PrivateRoute exact path="/ticket/:id/">
+                        <ViewTicket />
                     </PrivateRoute>
                     <PrivateRoute exact path="/store_sessions/">
                         <StoreSessionList/>
