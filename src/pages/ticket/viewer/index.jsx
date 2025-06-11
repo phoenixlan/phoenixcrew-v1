@@ -48,7 +48,7 @@ export const ViewTicket = () => {
     if(loading) {
         return (<PageLoading />)
     } else if(authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
-        if(true) {
+        if(data) {
             return (
                 <>
                     <DashboardHeader>
