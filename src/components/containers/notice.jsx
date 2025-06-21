@@ -18,9 +18,9 @@ const S = {
         min-height: 2rem;
         flex: 1;
         font-size: .85rem;
-        padding: .5em calc(1em - 4px);
+        padding: .5em calc(1em - .25rem);
         background-color: ${props => props.secondary};
-        border-left: 4px solid ${props => props.primary};
+        border-left: .25rem solid ${props => props.primary};
         color: ${props => props.primary};
     `,
         IconContainer: styled.div`
