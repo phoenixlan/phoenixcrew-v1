@@ -75,6 +75,9 @@ export const TicketInformation = ({data}) => {
             console.error(e)
         }
 
+        // Sort all log entries by their timestamps
+        ticketEventLog.sort((a, b) => a.timestamp < b.timestamp)
+
         setTicketEventLog(ticketEventLog);
     }
 
@@ -225,9 +228,7 @@ export const TicketInformation = ({data}) => {
                                 </TableHead>
                                 <TableBody>
                                     {
-                                        ticketEventLog
-                                        .sort((a, b) => a.timestamp < b.timestamp)
-                                        .map((entry) => {
+                                        ticketEventLog.map((entry) => {
                                             return (
                                                 <SelectableTableRow>
                                                     <TableCell flex="1">{new Date(entry.timestamp*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'})}</TableCell>
