@@ -96,11 +96,15 @@ export const TicketInformation = ({data}) => {
     return (
         <>
                     <InnerContainer rowgap>
-                        <InnerContainerRow visible={!ticketForCurrentEvent}>
-                            <Notice fillWidth type="info" visible>
-                                OBS! Du ser på en billett for et annet arrangement
-                            </Notice>
-                        </InnerContainerRow>
+                        {
+                            !ticketForCurrentEvent && 
+                            <InnerContainerRow>
+                                <Notice fillWidth type="info" visible>
+                                    OBS! Du ser på en billett for et annet arrangement
+                                </Notice>
+                            </InnerContainerRow>
+                        }
+                        
                         <InnerContainerRow>
                             <PanelButton onClick={checkinStateButtonAvailibility ? () => checkinTicket() : null} disabled={(data.ticket.checked_in || !checkinStateButtonAvailibility)} icon={faCheck}>{data.ticket.checked_in === null ? "Sjekk inn billett" : "Billett sjekket inn"}</PanelButton>
                         </InnerContainerRow>
