@@ -144,7 +144,7 @@ export const TicketList = () => {
                 </DashboardHeader>
                 <DashboardContent>
                     <InnerContainerRow>
-                        <InnerContainer flex="2">
+                        <InnerContainer flex="2" floattop>
                             <InputLabel small>Billettsortering:</InputLabel>
                             <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
                                 <option value={SORTING_METHODS.TICKET_ID}>Billett ID</option>
@@ -154,7 +154,7 @@ export const TicketList = () => {
                             </InputSelect>
                         </InnerContainer>
                         <InnerContainer flex="1" mobileHide />
-                        <InnerContainer flex="2">
+                        <InnerContainer flex="2" floattop>
                             Graf over billetter:
                             <FlexBar>
                                 {ticketsProgressBar.map((object) => {
@@ -162,7 +162,7 @@ export const TicketList = () => {
                                 })}
                             </FlexBar>
                         </InnerContainer>
-                        <InnerContainer flex="2">
+                        <InnerContainer flex="2" floattop>
                             Graf over innsjekkede billetter:
                             <FlexBar>
                                 {checkedinTicketsProgressBar.map((object) => {
