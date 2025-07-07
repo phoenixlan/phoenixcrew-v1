@@ -35,7 +35,7 @@ export const DashboardBarSelector = styled.div`
     }
 `
 export const DashboardBarElement = styled.div`
-    padding: 4px 0;
+    padding: .35rem 0;
     font-weight: ${props => props.active ? "600" : "400"};
     border-bottom: ${props => props.active ? ".15rem solid rgb(255,170,210)" : ""};
     cursor: pointer;
@@ -57,7 +57,7 @@ export const DashboardSubtitle = styled.div`
     font-size: .85rem;
     font-weight: lighter;
     color: rgb(96, 94, 92);
-    margin: 4px 0;
+    margin: .35rem 0;
 `
 
 export const DashboardTitle = styled.div`

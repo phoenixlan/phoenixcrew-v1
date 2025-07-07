@@ -11,7 +11,7 @@ export const TableHead = styled.thead`
     font-weight: 500;
     flex-flow: column;
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
-    gap: 4px;
+    gap: .35rem;
 `
 export const TableBody = styled.tbody`
     display: flex;
