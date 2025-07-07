@@ -35,7 +35,7 @@ const S = {
         flex-flow: column;
         margin: 1em 0;
         width: 100%;
-        gap: .1em;
+        gap: .35rem;
     `,
     InfoContainer: styled.div`
         display: flex;
@@ -43,12 +43,15 @@ const S = {
         height: max-content;
         gap: 1em;
     `,
-    BarElementColorIcon: styled.div`
-        border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
-        background: ${props => colors[props.color]?.background || colors["gray"].background};
-        width: 1em;
-        height: 1em;
+    BarElementIconContainer: styled.div`
+        
     `,
+        BarElementColorIcon: styled.div`
+            border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
+            background: ${props => colors[props.color]?.background || colors["gray"].background};
+            width: 1rem;
+            height: 1rem;
+        `,
     BarElementInfoTitle: styled.span`
         font-size: 1em;
     `,
@@ -89,7 +92,10 @@ export const FlexBar = ({children}) => {
                         children.filter(element => element.props.title && element.props.width).map((element) => {
                             return (
                                 <S.InfoContainer>
-                                    <S.BarElementColorIcon color={element.props.color} />
+                                    <S.BarElementIconContainer>
+                                        <S.BarElementColorIcon color={element.props.color} />
+                                    </S.BarElementIconContainer>
+                                    
                                     <S.BarElementInfoTitle>
                                         {element.props.title}
                                     </S.BarElementInfoTitle>
