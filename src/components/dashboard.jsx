@@ -342,6 +342,7 @@ const ButtonIcon = styled.span`
     display: flex;
     margin: auto;
     position: relative;
+    padding: 0 .5em;
     font-size: 1rem;
 
     @media screen and (max-width: 480px) {
