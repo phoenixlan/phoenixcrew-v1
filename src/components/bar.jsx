@@ -42,6 +42,7 @@ const S = {
         flex-flow: row;
         height: max-content;
         gap: 1em;
+        align-items: stretch;
     `,
     BarElementIconContainer: styled.div`
         
@@ -52,8 +53,15 @@ const S = {
             width: 1rem;
             height: 1rem;
         `,
+    BarElementCountSeparator: styled.div`
+        font-size: 1em;
+        display: flex;
+        flex: 0 1.5rem;
+    `,
     BarElementInfoTitle: styled.span`
         font-size: 1em;
+        display: flex;
+        flex: 1;
     `,
 
     ElementRootContainer: styled.div`
@@ -69,13 +77,13 @@ const S = {
 
 export const BarElement = (props) => {
     const color = props.color;
-    const width = props.width;
+    const count = props.count;
     const title = props.title;
     const fillOnEmpty = props.fillOnEmpty;
     
     return (
         <>
-            <S.ElementRootContainer color={color} width={width} title={title} fillOnEmpty={fillOnEmpty} />
+            <S.ElementRootContainer color={color} width={count} title={title} fillOnEmpty={fillOnEmpty} />
         </>
     )
 }
@@ -89,12 +97,16 @@ export const FlexBar = ({children}) => {
                 </S.BarElementContainer>
                 <S.BarElementInfoContainer>
                     {
-                        children.filter(element => element.props.title && element.props.width).map((element) => {
+                        children.filter(element => element.props.title && element.props.count).map((element) => {
                             return (
                                 <S.InfoContainer>
                                     <S.BarElementIconContainer>
                                         <S.BarElementColorIcon color={element.props.color} />
                                     </S.BarElementIconContainer>
+
+                                    <S.BarElementCountSeparator>
+                                        {element.props.count}
+                                    </S.BarElementCountSeparator>
                                     
                                     <S.BarElementInfoTitle>
                                         {element.props.title}

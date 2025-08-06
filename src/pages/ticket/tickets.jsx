@@ -82,21 +82,21 @@ export const TicketList = () => {
                 ticketsProgressBar.push({
                     key: ticketType.uuid,
                     color: ticketType.price ? "green" : "stripedGreen",
-                    title: ticketType.name + " - " + countedTicketsForTicketType,
-                    width: countedTicketsForTicketType
+                    title: ticketType.name,
+                    count: countedTicketsForTicketType
                 })
             })
         ticketsProgressBar.push({
             key: "availableTickets",
             color: "gray",
-            title: "Tilgjengelige billetter - " + availableTickets,
-            width: availableTickets
+            title: "Tilgjengelige billetter",
+            count: availableTickets
         })
         ticketsProgressBar.push({
             key: "reservedTickets",
             color: "stripedOrange",
-            title: "Billetter reservert i kjøp - " + heldTickets,
-            width: heldTickets
+            title: "Billetter reservert i kjøp",
+            count: heldTickets
         })
         setTicketsProgressBar(ticketsProgressBar);
 
@@ -104,14 +104,14 @@ export const TicketList = () => {
         checkedinTicketsProgressBar.push({
             key: "ceckedinTickets",
             color: "green",
-            title: "Billetter sjekket inn - " + ticketsCheckedinCount,
-            width: ticketsCheckedinCount
+            title: "Billetter sjekket inn",
+            count: ticketsCheckedinCount
         })
         checkedinTicketsProgressBar.push({
             key: "notCheckedinTickets",
             color: "gray",
-            title: "Billetter ikke sjekket inn - " + ticketsNotCheckedinCount,
-            width: ticketsNotCheckedinCount,
+            title: "Billetter ikke sjekket inn",
+            count: ticketsNotCheckedinCount,
             fillOnEmpty: !ticketsCheckedinCount
         })
         setCheckedinTicketsProgressBar(checkedinTicketsProgressBar);
@@ -153,50 +153,63 @@ export const TicketList = () => {
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainerRow>
-                    <InnerContainer flex="1" floattop>
-                        <CardContainer>
-                            10 000 kr
-                        </CardContainer>
-                        <CardContainer>
-                            <InputContainer column extramargin>
-                                <InputLabel small>Søk</InputLabel>
-                                <InputElement type="text" placeholder="Billet ID, for- etternavn, brukernavn ..." onChange={(e) => setSearch(e.target.value.toLowerCase())}></InputElement>
-                            </InputContainer>
-                        </CardContainer>
-                        <CardContainer>
-                            <InnerContainer flex="1" floattop>
-                                <InputLabel small>Billettsortering:</InputLabel>
-                                <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
-                                    <option value={SORTING_METHODS.TICKET_ID}>Billett ID</option>
-                                    <option value={SORTING_METHODS.TICKET_TYPE}>Billett type</option>
-                                    <option value={SORTING_METHODS.TICKET_OWNER}>Billett eier</option>
-                                    <option value={SORTING_METHODS.TICKED_CHECKED_IN}>Innsjekket</option>
-                                </InputSelect>
+                <InnerContainer rowgap>
+                    <InnerContainerRow>
+                        <InnerContainer flex="1" floattop>
+                            <InnerContainer>
+                                <InnerContainerTitle>Filtrering og sortering</InnerContainerTitle>
+                                <InnerContainer>
+                                    <CardContainer>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Søk</InputLabel>
+                                            <InputElement type="text" placeholder="Billet ID, for- etternavn, brukernavn ..." onChange={(e) => setSearch(e.target.value.toLowerCase())}></InputElement>
+                                        </InputContainer>
+                                    </CardContainer>
+                                </InnerContainer>
+
+                                <InnerContainer>
+                                    <CardContainer>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Billettsortering</InputLabel>
+                                            <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
+                                                <option value={SORTING_METHODS.TICKET_ID}>Billett ID</option>
+                                                <option value={SORTING_METHODS.TICKET_TYPE}>Billett type</option>
+                                                <option value={SORTING_METHODS.TICKET_OWNER}>Billett eier</option>
+                                                <option value={SORTING_METHODS.TICKED_CHECKED_IN}>Innsjekket</option>
+                                            </InputSelect>
+                                        </InputContainer>
+                                    </CardContainer>
+                                </InnerContainer>
                             </InnerContainer>
-                        </CardContainer>
-                    </InnerContainer>
-                    
-                    
-                    <InnerContainerRow flex="2" floattop>
-                        <InnerContainer flex="1" floattop>
-                            Graf over billetter:
-                            <FlexBar>
-                                {ticketsProgressBar.map((object) => {
-                                    return (<BarElement color={object.color} title={object.title} width={object.width} />)
-                                })}
-                            </FlexBar>
                         </InnerContainer>
+
                         <InnerContainer flex="1" floattop>
-                            Graf over innsjekkede billetter:
-                            <FlexBar>
-                                {checkedinTicketsProgressBar.map((object) => {
-                                    return (<BarElement color={object.color} title={object.title} width={object.width} fillOnEmpty={object.fillOnEmpty} />)
-                                })}
-                            </FlexBar>
+                            <InnerContainer>
+                                <InnerContainerTitle>Billettfordeling</InnerContainerTitle>
+                                <InnerContainer column extramargin>
+                                    <FlexBar>
+                                        {ticketsProgressBar.map((object) => {
+                                            return (<BarElement color={object.color} title={object.title} count={object.count} />)
+                                        })}
+                                    </FlexBar>
+                                </InnerContainer>
+                            </InnerContainer>
+                        </InnerContainer>
+                        
+                        <InnerContainer flex="1" floattop>
+                            <InnerContainer>
+                                <InnerContainerTitle>Innsjekkede billetter</InnerContainerTitle>
+                                <InnerContainerRow>
+                                    <FlexBar>
+                                        {checkedinTicketsProgressBar.map((object) => {
+                                            return (<BarElement color={object.color} title={object.title} count={object.count} fillOnEmpty={object.fillOnEmpty} />)
+                                        })}
+                                    </FlexBar>
+                                </InnerContainerRow>
+                            </InnerContainer>
                         </InnerContainer>
                     </InnerContainerRow>
-                </InnerContainerRow>
+                </InnerContainer>
                 
 
                 <InnerContainer>
