@@ -13,6 +13,7 @@ import { PageLoading } from "../../../components/pageLoading";
 import { useParams } from "react-router-dom";
 import { Ticket } from "@phoenixlan/phoenix.js";
 import { Notice } from "../../../components/containers/notice";
+import { TimestampToDateTime } from "../../../components/timestampToDateTime";
 
 
 
@@ -231,7 +232,7 @@ export const TicketInformation = ({data}) => {
                                         ticketEventLog.map((entry) => {
                                             return (
                                                 <SelectableTableRow>
-                                                    <TableCell flex="1">{new Date(entry.timestamp*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'})}</TableCell>
+                                                    <TableCell flex="1"><TimestampToDateTime timestamp={entry.timestamp} type="DD_MM_YYYY_HH_MM_SS" /></TableCell>
                                                     <TableCell flex="5">{entry.message}</TableCell>
                                                 </SelectableTableRow>
                                             )
