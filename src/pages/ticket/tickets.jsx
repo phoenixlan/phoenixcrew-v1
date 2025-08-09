@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { getActiveStoreSessions, getEventTickets, getCurrentEvent, User, TicketType } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputLabel, InputSelect } from "../../components/dashboard";
+import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, RowBorder } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { BarElement, FlexBar } from "../../components/bar";
@@ -26,6 +26,7 @@ export const TicketList = () => {
     const [ loading, setLoading ] = useState(true);
 
     const [ activeSortingMethod, setActiveSortingMethod] = useState(1);
+    const [ search, setSearch ] = useState("");
 
     const [ ticketsProgressBar, setTicketsProgressBar ] = useState(undefined);
     const [ checkedinTicketsProgressBar, setCheckedinTicketsProgressBar] = useState(undefined);
@@ -81,21 +82,21 @@ export const TicketList = () => {
                 ticketsProgressBar.push({
                     key: ticketType.uuid,
                     color: ticketType.price ? "green" : "stripedGreen",
-                    title: ticketType.name + " - " + countedTicketsForTicketType,
-                    width: countedTicketsForTicketType
+                    title: ticketType.name,
+                    count: countedTicketsForTicketType
                 })
             })
         ticketsProgressBar.push({
             key: "availableTickets",
             color: "gray",
-            title: "Tilgjengelige billetter - " + availableTickets,
-            width: availableTickets
+            title: "Tilgjengelige billetter",
+            count: availableTickets
         })
         ticketsProgressBar.push({
             key: "reservedTickets",
             color: "stripedOrange",
-            title: "Billetter reservert i kjøp - " + heldTickets,
-            width: heldTickets
+            title: "Billetter reservert i kjøp",
+            count: heldTickets
         })
         setTicketsProgressBar(ticketsProgressBar);
 
@@ -103,24 +104,20 @@ export const TicketList = () => {
         checkedinTicketsProgressBar.push({
             key: "ceckedinTickets",
             color: "green",
-            title: "Billetter sjekket inn - " + ticketsCheckedinCount,
-            width: ticketsCheckedinCount
+            title: "Billetter sjekket inn",
+            count: ticketsCheckedinCount
         })
         checkedinTicketsProgressBar.push({
             key: "notCheckedinTickets",
             color: "gray",
-            title: "Billetter ikke sjekket inn - " + ticketsNotCheckedinCount,
-            width: ticketsNotCheckedinCount,
+            title: "Billetter ikke sjekket inn",
+            count: ticketsNotCheckedinCount,
             fillOnEmpty: !ticketsCheckedinCount
         })
         setCheckedinTicketsProgressBar(checkedinTicketsProgressBar);
 
         setLoading(false);
     }
-
-    // Ticket sorting
-    let processedTicketList = tickets
-        .sort(SORTING_TYPES[activeSortingMethod]);
 
     useEffect(() => {
         reload();
@@ -131,87 +128,128 @@ export const TicketList = () => {
             <PageLoading />
         )
     }
-    else {
-        return (
-            <>
-                <DashboardHeader border>
-                    <DashboardTitle>
-                        Billetter
-                    </DashboardTitle>
-                    <DashboardSubtitle>
-                        {tickets.length} salg for dette arrangementet
-                    </DashboardSubtitle>
-                </DashboardHeader>
-                <DashboardContent>
+
+    // Ticket sorting and filtering
+    let processedTicketList = tickets
+    .filter((ticket) => 
+        ticket.owner.firstname.toLowerCase().includes(search) || 
+        ticket.owner.lastname.toLowerCase().includes(search) ||
+        ticket.owner.username.toLowerCase().includes(search) ||
+        ticket.ticket_id == search
+    )
+    .sort(SORTING_TYPES[activeSortingMethod]);
+
+    return (
+        <>
+            <DashboardHeader border>
+                <DashboardTitle>
+                    Billetter
+                </DashboardTitle>
+                <DashboardSubtitle>
+                    { search 
+                        ? "Viser " + processedTicketList.length + " av " + tickets.length + " salg for dette arrangementet"
+                        : tickets.length + " salg for dette arrangementet"
+                    }
+                </DashboardSubtitle>
+            </DashboardHeader>
+            <DashboardContent>
+                <InnerContainer rowgap>
                     <InnerContainerRow>
-                        <InnerContainer flex="2">
-                            <InputLabel small>Billettsortering:</InputLabel>
-                            <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
-                                <option value={SORTING_METHODS.TICKET_ID}>Billett ID</option>
-                                <option value={SORTING_METHODS.TICKET_TYPE}>Billett type</option>
-                                <option value={SORTING_METHODS.TICKET_OWNER}>Billett eier</option>
-                                <option value={SORTING_METHODS.TICKED_CHECKED_IN}>Innsjekket</option>
-                            </InputSelect>
+                        <InnerContainer flex="1" floattop>
+                            <InnerContainer>
+                                <InnerContainerTitle>Filtrering og sortering</InnerContainerTitle>
+                                <InnerContainer>
+                                    <CardContainer>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Søk</InputLabel>
+                                            <InputElement type="text" placeholder="Billet ID, for- etternavn, brukernavn ..." onChange={(e) => setSearch(e.target.value.toLowerCase())}></InputElement>
+                                        </InputContainer>
+                                    </CardContainer>
+                                </InnerContainer>
+
+                                <InnerContainer>
+                                    <CardContainer>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Billettsortering</InputLabel>
+                                            <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
+                                                <option value={SORTING_METHODS.TICKET_ID}>Billett ID</option>
+                                                <option value={SORTING_METHODS.TICKET_TYPE}>Billett type</option>
+                                                <option value={SORTING_METHODS.TICKET_OWNER}>Billett eier</option>
+                                                <option value={SORTING_METHODS.TICKED_CHECKED_IN}>Innsjekket</option>
+                                            </InputSelect>
+                                        </InputContainer>
+                                    </CardContainer>
+                                </InnerContainer>
+                            </InnerContainer>
                         </InnerContainer>
-                        <InnerContainer flex="1" mobileHide />
-                        <InnerContainer flex="2">
-                            Graf over billetter:
-                            <FlexBar>
-                                {ticketsProgressBar.map((object) => {
-                                    return (<BarElement color={object.color} title={object.title} width={object.width} />)
-                                })}
-                            </FlexBar>
+
+                        <InnerContainer flex="1" floattop>
+                            <InnerContainer>
+                                <InnerContainerTitle>Billettfordeling</InnerContainerTitle>
+                                <InnerContainer column extramargin>
+                                    <FlexBar>
+                                        {ticketsProgressBar.map((object) => {
+                                            return (<BarElement color={object.color} title={object.title} count={object.count} />)
+                                        })}
+                                    </FlexBar>
+                                </InnerContainer>
+                            </InnerContainer>
                         </InnerContainer>
-                        <InnerContainer flex="2">
-                            Graf over innsjekkede billetter:
-                            <FlexBar>
-                                {checkedinTicketsProgressBar.map((object) => {
-                                    return (<BarElement color={object.color} title={object.title} width={object.width} fillOnEmpty={object.fillOnEmpty} />)
-                                })}
-                            </FlexBar>
+                        
+                        <InnerContainer flex="1" floattop>
+                            <InnerContainer>
+                                <InnerContainerTitle>Innsjekkede billetter</InnerContainerTitle>
+                                <InnerContainerRow>
+                                    <FlexBar>
+                                        {checkedinTicketsProgressBar.map((object) => {
+                                            return (<BarElement color={object.color} title={object.title} count={object.count} fillOnEmpty={object.fillOnEmpty} />)
+                                        })}
+                                    </FlexBar>
+                                </InnerContainerRow>
+                            </InnerContainer>
                         </InnerContainer>
                     </InnerContainerRow>
-                    
-    
-                    <InnerContainer>
-                        <Table>
-                            <TableHead border>
-                                <TableRow>
-                                    <TableCell as="th" flex="1" mobileFlex="2">ID</TableCell>
-                                    <TableCell as="th" flex="2" mobileHide>Billett type</TableCell>
-                                    <TableCell as="th" flex="4" mobileFlex="7">Eies av bruker</TableCell>
-                                    <TableCell as="th" flex="4" mobileHide>Kjøpt av bruker</TableCell>
-                                    <TableCell as="th" flex="4" mobileHide>Seates av bruker</TableCell>
-                                    <TableCell as="th" flex="2" mobileFlex="2">Sete</TableCell>
-                                    <TableCell as="th" flex="3" mobileHide>Kjøpetid</TableCell>
-                                    
-                                    <TableCell as="th" center flex="0 24px" title="Statusikon: Ikon vises dersom billetten har blitt sjekket inn"><IconContainer>...</IconContainer></TableCell>
-                                    <TableCell as="th" center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {
-                                    processedTicketList.map((ticket) => {
-                                        return (
-                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
-                                                <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
-                                                <TableCell flex="2" mobileHide>{ ticket.ticket_type.name }</TableCell>
-                                                <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
-                                                <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
-                                                <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
-                                                <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
-                                                <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-                                                <TableCell flex="0 24px" center><IconContainer hidden={!ticket.checked_in} color="#43a047"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer></TableCell>
-                                                <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
-                                            </SelectableTableRow>
-                                        )
-                                    })
-                                }
-                            </TableBody>
-                        </Table>
-                    </InnerContainer>
-                </DashboardContent>
-            </>
-        )
-    }
+                </InnerContainer>
+                
+
+                <InnerContainer>
+                    <Table>
+                        <TableHead border>
+                            <TableRow>
+                                <TableCell as="th" flex="1" mobileFlex="2">ID</TableCell>
+                                <TableCell as="th" flex="2" mobileHide>Billett type</TableCell>
+                                <TableCell as="th" flex="4" mobileFlex="7">Eies av bruker</TableCell>
+                                <TableCell as="th" flex="4" mobileHide>Kjøpt av bruker</TableCell>
+                                <TableCell as="th" flex="4" mobileHide>Seates av bruker</TableCell>
+                                <TableCell as="th" flex="2" mobileFlex="2">Sete</TableCell>
+                                <TableCell as="th" flex="3" mobileHide>Kjøpetid</TableCell>
+                                
+                                <TableCell as="th" center flex="0 24px" title="Statusikon: Ikon vises dersom billetten har blitt sjekket inn"><IconContainer>...</IconContainer></TableCell>
+                                <TableCell as="th" center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                processedTicketList.map((ticket) => {
+                                    return (
+                                        <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
+                                            <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
+                                            <TableCell flex="2" mobileHide>{ ticket.ticket_type.name }</TableCell>
+                                            <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
+                                            <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
+                                            <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
+                                            <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
+                                            <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                            <TableCell flex="0 24px" center><IconContainer hidden={!ticket.checked_in} color="#43a047"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer></TableCell>
+                                            <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                        </SelectableTableRow>
+                                    )
+                                })
+                            }
+                        </TableBody>
+                    </Table>
+                </InnerContainer>
+            </DashboardContent>
+        </>
+    )
 }
