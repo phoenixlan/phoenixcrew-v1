@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
 import { Colors } from "../theme";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 export const DashboardBlock = styled.div`
     background: white;
@@ -342,8 +342,10 @@ const ButtonIcon = styled.span`
     display: flex;
     margin: auto;
     position: relative;
+    bottom: .05em;
     padding: 0 .5em;
     font-size: 1rem;
+    width: 1em!important;
 
     @media screen and (max-width: 480px) {
         margin: auto 0;
@@ -393,6 +395,11 @@ export const CardContainer = styled.div`
     margin-bottom: 1em;
     gap: .35em;
 
+    
+    ${props => props.disabled ? `
+        opacity: 0.6;
+    ` : null}
+
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
     }
@@ -414,6 +421,7 @@ export const CardContainerInnerIcon = styled.div`
     display: flex;
     margin: auto;
     font-size: 1em;
+    color: inherit;
 `
 export const CardContainerText = styled.div`
     display: flex;
@@ -445,13 +453,40 @@ export const CardContainerDescriptiveText = styled.span`
 
 export const CardContainerInnerText = styled.div`
     font-family: ${props => props.console ? 'monospace' : 'inherit'};
-    text-decoration: ${props => props.italic ? "italic" : undefined};
+    font-style: ${props => props.italic ? "italic" : undefined};
     text-overflow: ellipsis;
     width: 100%;
     overflow: hidden;
     white-space: ${props => props.nowrap ? "nowrap" : "initial"};
     line-height: 1.15rem;
 `
+
+
+
+const InnerTextSuffixWarningIconContainer = styled.span`
+    display: ${props => props.visible ? "inline" : "none"};
+    padding-left: .5rem;
+    
+`
+const InnerTextSuffixWarningIcon = styled.span`
+    position: relative;
+    bottom: .05rem;
+    color: #f57c00;
+
+    @media screen and (max-width: 480px) {
+        bottom: 0;
+    }
+`
+
+export const InnerTextSuffixWarning = ({ visible, title }) => {
+    return (
+        <InnerTextSuffixWarningIconContainer visible={visible}>
+            <InnerTextSuffixWarningIcon title={title}><FontAwesomeIcon icon={faTriangleExclamation} /></InnerTextSuffixWarningIcon>
+        </InnerTextSuffixWarningIconContainer>
+    )
+}
+
+
 export const CardContainerInputWrapper = styled.div`
     display: flex;
     flex-flow: row;
