@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Link, useHistory } from 'react-router-dom';
+import { useState, useEffect, useContext } from "react";
+import { useHistory } from 'react-router-dom';
 import { TicketType, getCurrentEvent, getEventTickets, Ticket, User } from "@phoenixlan/phoenix.js";
 import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, DropdownCardContainer, DropdownCardContent, DropdownCardHeader, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, InputSelect, PanelButton, RowBorder } from "../../components/dashboard";
-import { FormContainer, FormEntry, FormLabel, FormSelect, FormButton } from '../../components/form';
 import { UserSearch } from '../../components/userSearch';
-import { Table, Row, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
+import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Notice } from "../../components/containers/notice";
 import { TimestampToDateTime } from "../../components/timestampToDateTime";
+import { AuthenticationContext } from "../../components/authentication";
 
 const commonText = {
     "freeTicket.giveTicketTitle": "Opprett gratis- eller avtalebillett",
@@ -18,6 +18,15 @@ const commonText = {
 
 
 export const FreeTicketManagement = () => {
+
+    let history = useHistory();
+
+    // Import the following React contexts:
+    const authContext = useContext(AuthenticationContext);
+
+    // Function availibility control:
+    let viewFreeTicketManagement = false;
+
     const [ ticketTypes, setTicketTypes ] = useState([]);
     const [ tickets, setTickets ] = useState([]);
     const [ allTickets, setAllTickets ] = useState([]);
@@ -30,26 +39,31 @@ export const FreeTicketManagement = () => {
 
     const [ currentEvent, setCurrentEvent ] = useState();
 
-    let history = useHistory();
+    // Check if user has "admin" role and make the following functions available:
+    if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
+        viewFreeTicketManagement = true;
+    }
 
     const load = async () => {
-        const [ currentEvent, types ] = await Promise.all([
-            getCurrentEvent(),
-            TicketType.getTicketTypes()
-        ])
+        if(viewFreeTicketManagement) {
+            const [ currentEvent, types ] = await Promise.all([
+                getCurrentEvent(),
+                TicketType.getTicketTypes()
+            ])
 
-        if(currentEvent) {
-            setCurrentEvent(currentEvent);
+            if(currentEvent) {
+                setCurrentEvent(currentEvent);
 
-            const tickets = await getEventTickets(currentEvent.uuid);
+                const tickets = await getEventTickets(currentEvent.uuid);
 
-            const validTypes = types.filter(type => type.price === 0);
-            setTicketTypes(validTypes);
+                const validTypes = types.filter(type => type.price === 0);
+                setTicketTypes(validTypes);
 
-            // TODO filter
-            const validTypeUuids = validTypes.map(type => type.uuid);
-            setAllTickets(tickets);
-            setTickets(tickets.filter(ticket => validTypeUuids.indexOf(ticket.ticket_type.uuid) !== -1));
+                // TODO filter
+                const validTypeUuids = validTypes.map(type => type.uuid);
+                setAllTickets(tickets);
+                setTickets(tickets.filter(ticket => validTypeUuids.indexOf(ticket.ticket_type.uuid) !== -1));
+            }
         }
 
         setLoading(false);
@@ -91,104 +105,63 @@ export const FreeTicketManagement = () => {
         return (
             <PageLoading />
         )
-    }
-
-    return (
-        <>
-            <DashboardHeader border>
-                <DashboardTitle>
-                    Gratisbilletter
-                </DashboardTitle>
-                {   
-                    // Check: If there exists a tickettype which is free or not
-                    ticketTypes.length === 0 ?
-                        null
-                    :
-                        // Check: If there exists any free tickets during the current event
-                        tickets.length === 0 ?
-                            <DashboardSubtitle>
-                                Det er for øyeblikket ingen gratisbilletter i sirkulasjon
-                            </DashboardSubtitle>
+    } else if(viewFreeTicketManagement) {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Gratisbilletter
+                    </DashboardTitle>
+                    {   
+                        // Check: If there exists a tickettype which is free or not
+                        ticketTypes.length === 0 ?
+                            null
                         :
-                            <DashboardSubtitle>
-                                {allTickets.length} billetter registrert for dette arrangementet hvorav {tickets.length} er gratisbilletter
-                            </DashboardSubtitle>
-                    //:
-                } 
+                            // Check: If there exists any free tickets during the current event
+                            tickets.length === 0 ?
+                                <DashboardSubtitle>
+                                    Det er for øyeblikket ingen gratisbilletter i sirkulasjon
+                                </DashboardSubtitle>
+                            :
+                                <DashboardSubtitle>
+                                    {allTickets.length} billetter registrert for dette arrangementet hvorav {tickets.length} er gratisbilletter
+                                </DashboardSubtitle>
+                        //:
+                    } 
 
-            </DashboardHeader>
+                </DashboardHeader>
 
-            <DashboardContent>
+                <DashboardContent>
 
-                
-                <InnerContainer visible={!currentEvent}>
-                    <InnerContainerRow>
-                        <Notice fillWidth type="warning" visible={!currentEvent}>
-                            Det eksisterer for øyeblikket ingen aktive arrangementer.<br/>
-                            Det er derfor ikke mulig å opprette gratis- eller avtalebilletter.<br/>
-                            Opprett et nytt arrangement for å kunne opprette gratis- eller avtalebilletter.
-                        </Notice>
-                    </InnerContainerRow>
-                </InnerContainer>
-
-                {/* Create free ticket container for phone users, hidden for desktop users */}
-                <InnerContainer desktopHide>
-                    <DropdownCardContainer>
-                        <DropdownCardHeader title={commonText["freeTicket.giveTicketTitle"]} dropdownState={giveFreeTicketDropdownState} onClick={() => setGiveFreeTicketDropdownState(!giveFreeTicketDropdownState)} />
-                        <DropdownCardContent dropdownState={giveFreeTicketDropdownState}>
-                            {commonText["freeTicket.giveTicketDescription"]}
-                            
-                            <InputContainer column>
-                                <InputLabel small>Billett-type</InputLabel>
-                                <InputSelect disabled={!currentEvent} value={selectedTicketType} onChange={updateTicketType}>
-                                    <option value={""} label="Ikke valgt" />
-                                    {
-                                        ticketTypes.map((type) => (<option key={type.uuid} value={type.uuid}>{type.name}</option >))
-                                    }
-                                </InputSelect>
-                            </InputContainer>
-
-                            <UserSearch disabled={!currentEvent} onUserSelected={onUserSelected} onChange={() => onUserSelected(null)} />
-                            {
-                                isGivingFreeTicket ? (
-                                    <PageLoading />
-                                ) : (
-                                    <PanelButton fillWidth disabled={(!selectedUser || !selectedTicketType)} type="submit" onClick={() => giveTicket()}>Opprett billett</PanelButton>
-                                )
-                            }
-                        </DropdownCardContent>
-                    </DropdownCardContainer>
-                </InnerContainer>
-
-                {/* Create free ticket container for desktop users, hidden for phone users */}
-                <InnerContainer mobileHide>
-                    <InnerContainerRow>
+                    
+                    <InnerContainer visible={!currentEvent}>
                         <InnerContainerRow>
-                            <InnerContainer flex="4" nopadding>
-                                <InnerContainerTitle>{commonText["freeTicket.giveTicketTitle"]}</InnerContainerTitle>
+                            <Notice fillWidth type="warning" visible={!currentEvent}>
+                                Det eksisterer for øyeblikket ingen aktive arrangementer.<br/>
+                                Det er derfor ikke mulig å opprette gratis- eller avtalebilletter.<br/>
+                                Opprett et nytt arrangement for å kunne opprette gratis- eller avtalebilletter.
+                            </Notice>
+                        </InnerContainerRow>
+                    </InnerContainer>
+
+                    {/* Create free ticket container for phone users, hidden for desktop users */}
+                    <InnerContainer desktopHide>
+                        <DropdownCardContainer>
+                            <DropdownCardHeader title={commonText["freeTicket.giveTicketTitle"]} dropdownState={giveFreeTicketDropdownState} onClick={() => setGiveFreeTicketDropdownState(!giveFreeTicketDropdownState)} />
+                            <DropdownCardContent dropdownState={giveFreeTicketDropdownState}>
                                 {commonText["freeTicket.giveTicketDescription"]}
-                            </InnerContainer>
-                            <RowBorder />
-                            <InnerContainer flex="2" nopadding>
-                                <CardContainer>
-                                    <InputContainer column>
-                                        <InputLabel small>Billett-type</InputLabel>
-                                        <InputSelect disabled={!currentEvent} value={selectedTicketType} onChange={updateTicketType}>
-                                            <option value={""} label="Ikke valgt" />
-                                            {
-                                                ticketTypes.map((type) => (<option key={type.uuid} value={type.uuid}>{type.name}</option >))
-                                            }
-                                        </InputSelect>
-                                    </InputContainer>
-                                </CardContainer>
                                 
-                                <CardContainer showOverflow>
-                                    <InputContainer column>
-                                        <UserSearch disabled={!currentEvent} onUserSelected={onUserSelected} />
-                                    </InputContainer>
-                                </CardContainer>
-                            </InnerContainer>
-                            <InnerContainer flex="1" nopadding>
+                                <InputContainer column>
+                                    <InputLabel small>Billett-type</InputLabel>
+                                    <InputSelect disabled={!currentEvent} value={selectedTicketType} onChange={updateTicketType}>
+                                        <option value={""} label="Ikke valgt" />
+                                        {
+                                            ticketTypes.map((type) => (<option key={type.uuid} value={type.uuid}>{type.name}</option >))
+                                        }
+                                    </InputSelect>
+                                </InputContainer>
+
+                                <UserSearch disabled={!currentEvent} onUserSelected={onUserSelected} onChange={() => onUserSelected(null)} />
                                 {
                                     isGivingFreeTicket ? (
                                         <PageLoading />
@@ -196,47 +169,107 @@ export const FreeTicketManagement = () => {
                                         <PanelButton fillWidth disabled={(!selectedUser || !selectedTicketType)} type="submit" onClick={() => giveTicket()}>Opprett billett</PanelButton>
                                     )
                                 }
-                            </InnerContainer>
-                        </InnerContainerRow>
-                    </InnerContainerRow>
-                </InnerContainer>
+                            </DropdownCardContent>
+                        </DropdownCardContainer>
+                    </InnerContainer>
 
-                <InnerContainer>
-                    <Table>
-                        <TableHead border>
-                            <TableRow>
-                                <TableCell as="th" flex="1" mobileFlex="2">ID</TableCell>
-                                <TableCell as="th" flex="2" mobileFlex="3">Billett type</TableCell>
-                                <TableCell as="th" flex="4" mobileFlex="7">Nåværende eier</TableCell>
-                                <TableCell as="th" flex="4" mobileHide>Opprinnelig eier</TableCell>
-                                <TableCell as="th" flex="4" mobileHide>Seates av bruker</TableCell>
-                                <TableCell as="th" flex="2" mobileFlex="2">Sete</TableCell>
-                                <TableCell as="th" flex="3" mobileHide>Utsendelsestid</TableCell>
-                                <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {
-                                tickets.map((ticket) => {
-                                    return (
-                                        <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
-                                            <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
-                                            <TableCell flex="2" mobileFlex="3">{ ticket.ticket_type.name }</TableCell>
-                                            <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
-                                            <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
-                                            <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
-                                            <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
-                                            <TableCell flex="3" mobileHide><TimestampToDateTime timestamp={ticket.created} type="DD_MM_YYYY_HH_MM" /></TableCell>
-                                            <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
-                                        </SelectableTableRow>
-                                    )
-                                })
-                            }
-                        </TableBody>
-                    </Table>
-                </InnerContainer>
-            </DashboardContent>
-        </>
-        
-    )
+                    {/* Create free ticket container for desktop users, hidden for phone users */}
+                    <InnerContainer mobileHide>
+                        <InnerContainerRow>
+                            <InnerContainerRow>
+                                <InnerContainer flex="4" nopadding>
+                                    <InnerContainerTitle>{commonText["freeTicket.giveTicketTitle"]}</InnerContainerTitle>
+                                    {commonText["freeTicket.giveTicketDescription"]}
+                                </InnerContainer>
+                                <RowBorder />
+                                <InnerContainer flex="2" nopadding>
+                                    <CardContainer>
+                                        <InputContainer column>
+                                            <InputLabel small>Billett-type</InputLabel>
+                                            <InputSelect disabled={!currentEvent} value={selectedTicketType} onChange={updateTicketType}>
+                                                <option value={""} label="Ikke valgt" />
+                                                {
+                                                    ticketTypes.map((type) => (<option key={type.uuid} value={type.uuid}>{type.name}</option >))
+                                                }
+                                            </InputSelect>
+                                        </InputContainer>
+                                    </CardContainer>
+                                    
+                                    <CardContainer showOverflow>
+                                        <InputContainer column>
+                                            <UserSearch disabled={!currentEvent} onUserSelected={onUserSelected} />
+                                        </InputContainer>
+                                    </CardContainer>
+                                </InnerContainer>
+                                <InnerContainer flex="1" nopadding>
+                                    {
+                                        isGivingFreeTicket ? (
+                                            <PageLoading />
+                                        ) : (
+                                            <PanelButton fillWidth disabled={(!selectedUser || !selectedTicketType)} type="submit" onClick={() => giveTicket()}>Opprett billett</PanelButton>
+                                        )
+                                    }
+                                </InnerContainer>
+                            </InnerContainerRow>
+                        </InnerContainerRow>
+                    </InnerContainer>
+
+                    <InnerContainer>
+                        <Table>
+                            <TableHead border>
+                                <TableRow>
+                                    <TableCell as="th" flex="1" mobileFlex="2">ID</TableCell>
+                                    <TableCell as="th" flex="2" mobileFlex="3">Billett type</TableCell>
+                                    <TableCell as="th" flex="4" mobileFlex="7">Nåværende eier</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Opprinnelig eier</TableCell>
+                                    <TableCell as="th" flex="4" mobileHide>Seates av bruker</TableCell>
+                                    <TableCell as="th" flex="2" mobileFlex="2">Sete</TableCell>
+                                    <TableCell as="th" flex="3" mobileHide>Utsendelsestid</TableCell>
+                                    <TableCell as="th" center flex="0 24px" mobileHide title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    tickets.map((ticket) => {
+                                        return (
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
+                                                <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
+                                                <TableCell flex="2" mobileFlex="3">{ ticket.ticket_type.name }</TableCell>
+                                                <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
+                                                <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
+                                                <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
+                                                <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
+                                                <TableCell flex="3" mobileHide><TimestampToDateTime timestamp={ticket.created} type="DD_MM_YYYY_HH_MM" /></TableCell>
+                                                <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
+                                            </SelectableTableRow>
+                                        )
+                                    })
+                                }
+                            </TableBody>
+                        </Table>
+                    </InnerContainer>
+                </DashboardContent>
+            </>
+            
+        )
+    } else {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Gratisbilletter
+                    </DashboardTitle>
+                </DashboardHeader>
+                <DashboardContent>
+                    <InnerContainer rowgap>
+                        <InnerContainerRow>
+                            <Notice type="error" visible>
+                                Du har ikke tilgang til å se eller administrere gratisbilletter.
+                            </Notice>
+                        </InnerContainerRow>
+                    </InnerContainer>
+                </DashboardContent>
+            </>
+        )
+    }
 }
