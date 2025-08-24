@@ -296,6 +296,13 @@ export const InputSelect = styled.select`
     outline: none;
     padding-inline: 0!important;
 
+    &:disabled {
+        user-select: none;
+        cursor: not-allowed;
+        background-color: inherit;
+        color: rgb(130, 130, 130);
+        border-bottom: .05rem solid rgb(170,170,170)!important;
+    }
     &:focus {
         border-bottom: ${props => props.noborder ? "0" : ".05rem solid rgb(255,75,157)"};
     }
@@ -391,7 +398,7 @@ export const CardContainer = styled.div`
     display: flex;
     flex-flow: row;
     flex: 1;
-    overflow: hidden;
+    overflow: ${props => props.showOverflow ? "visible" : "hidden"};
     margin-bottom: 1em;
     gap: .35em;
 
