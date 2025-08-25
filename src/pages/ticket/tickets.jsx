@@ -5,7 +5,7 @@ import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRo
 import { PageLoading } from "../../components/pageLoading";
 import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, RowBorder } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCheck, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { BarElement, FlexBar } from "../../components/bar";
 import { AuthenticationContext } from "../../components/authentication";
 import { Notice } from "../../components/containers/notice";
@@ -272,7 +272,10 @@ export const TicketList = () => {
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
                                                 <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-                                                <TableCell flex="0 24px" center><IconContainer hidden={!ticket.checked_in} color="#43a047"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer></TableCell>
+                                                <TableCell flex="0 24px" center>
+                                                    {(!ticket.ticket_type.seatable && ticket.ticket_type.grants_membership) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er medlemsskap, og kan ikke sjekkes inn" /></IconContainer> : null}
+                                                    {(ticket.checked_in) ? <IconContainer color="#388e3c"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer> : null}
+                                                </TableCell>
                                                 <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
