@@ -273,6 +273,7 @@ export const TicketList = () => {
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
                                                 <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
                                                 <TableCell flex="0 24px" center>
+                                                    {/* Temporary logic until API has checkinable columns in ticket_types - Show a minus if a ticket is not checkinable based on logic !seatable and grants_membership, currently only membership tickets */}
                                                     {(!ticket.ticket_type.seatable && ticket.ticket_type.grants_membership) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er medlemsskap, og kan ikke sjekkes inn" /></IconContainer> : null}
                                                     {(ticket.checked_in) ? <IconContainer color="#388e3c"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer> : null}
                                                 </TableCell>
