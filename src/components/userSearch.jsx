@@ -76,7 +76,7 @@ export const UserSearch = ({ onUserSelected, disabled }) => {
             
             <InputContainer column extramargin>
                 <InputLabel small>Bruker</InputLabel>
-                <InputElement disabled={disabled} value={query} onChange={(e) => setQuery(e.target.value)} onFocus={() => setShowSuggestions(true)} onBlur={() => setShowSuggestions(false)} />
+                <InputElement disabled={disabled} value={query} onChange={(e) => {setQuery(e.target.value); onUserSelected(null)}} onFocus={() => setShowSuggestions(true)} onBlur={() => setShowSuggestions(false)} />
             </InputContainer>
         </S.Container>
     );
