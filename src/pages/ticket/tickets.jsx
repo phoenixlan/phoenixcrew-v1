@@ -221,7 +221,7 @@ export const TicketList = () => {
                                     <InnerContainer column extramargin>
                                         <FlexBar>
                                             {ticketsProgressBar.map((object) => {
-                                                return (<BarElement color={object.color} title={object.title} count={object.count} />)
+                                                return (<BarElement color={object.color} title={object.title} count={object.count} key={object.key} />)
                                             })}
                                         </FlexBar>
                                     </InnerContainer>
@@ -234,7 +234,7 @@ export const TicketList = () => {
                                     <InnerContainerRow>
                                         <FlexBar>
                                             {checkedinTicketsProgressBar.map((object) => {
-                                                return (<BarElement color={object.color} title={object.title} count={object.count} fillOnEmpty={object.fillOnEmpty} />)
+                                                return (<BarElement color={object.color} title={object.title} count={object.count} fillOnEmpty={object.fillOnEmpty} key={object.key} />)
                                             })}
                                         </FlexBar>
                                     </InnerContainerRow>
@@ -264,7 +264,7 @@ export const TicketList = () => {
                                 {
                                     processedTicketList.map((ticket) => {
                                         return (
-                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}} key={ticket.ticket_id}>
                                                 <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
                                                 <TableCell flex="2" mobileHide>{ ticket.ticket_type.name }</TableCell>
                                                 <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>

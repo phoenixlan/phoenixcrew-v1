@@ -99,7 +99,7 @@ export const FlexBar = ({children}) => {
                     {
                         children.filter(element => element.props.title && element.props.count).map((element) => {
                             return (
-                                <S.InfoContainer>
+                                <S.InfoContainer key={element.key}>
                                     <S.BarElementIconContainer>
                                         <S.BarElementColorIcon color={element.props.color} />
                                     </S.BarElementIconContainer>
