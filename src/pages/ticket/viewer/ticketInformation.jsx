@@ -235,8 +235,8 @@ export const TicketInformation = ({data}) => {
                                         ticketEventLog.map((entry) => {
                                             return (
                                                 <SelectableTableRow>
-                                                    <TableCell flex="1"><TimestampToDateTime timestamp={entry.timestamp} type="DD_MM_YYYY_HH_MM_SS" /></TableCell>
-                                                    <TableCell flex="5">{entry.message}</TableCell>
+                                                    <TableCell flex="1">{ TimestampToDateTime(entry.timestamp, "DD_MM_YYYY_HH_MM_SS") }</TableCell>
+                                                    <TableCell flex="5">{ entry.message }</TableCell>
                                                 </SelectableTableRow>
                                             )
                                         })
