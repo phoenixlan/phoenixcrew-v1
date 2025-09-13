@@ -239,7 +239,7 @@ export const FreeTicketManagement = () => {
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
-                                                <TableCell flex="3" mobileHide><TimestampToDateTime timestamp={ticket.created} type="DD_MM_YYYY_HH_MM" /></TableCell>
+                                                <TableCell flex="3" mobileHide>{ TimestampToDateTime(ticket.created, "DD_MM_YYYY_HH_MM") }</TableCell>
                                                 <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
