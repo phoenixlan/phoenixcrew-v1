@@ -104,7 +104,7 @@ export const TableRow = styled.tr`
     flex-wrap: wrap;
     min-height: 2.25em;
     gap: .35rem;
-    color: inherit;
+    color: ${props => props.active ? "rgb(150, 150, 150)" : "inherit"};
     width: 100%;
 
     @media screen and (max-width: 480px) {
