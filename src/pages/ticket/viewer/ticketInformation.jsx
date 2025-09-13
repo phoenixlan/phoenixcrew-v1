@@ -84,7 +84,10 @@ export const TicketInformation = ({data}) => {
 
     // Check if user has "admin" role and make the following functions available:
     if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin") || authContext.roles.includes("ticket_checkin")) {
-        checkinStateButtonAvailibility = true;
+        // Temporary logic until API has checkinable columns in ticket_types - Make checkin button only available for seatable tickets (Membership tickets are the only tickettype that doesnt have seatable true)
+        if(data.ticket.ticket_type.seatable) {
+            checkinStateButtonAvailibility = true;
+        }
     }
 
     useEffect(async () => {
