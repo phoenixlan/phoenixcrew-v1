@@ -14,7 +14,7 @@ import { TimestampToDateTime } from "../../components/timestampToDateTime";
 
 const commonText = {
     "voucherManagement.giveVoucherTitle": "Opprett gavekort",
-    "voucherManagement.giveVoucherDescription": [<span>Her kan du opprette og gi ut billett-gavekort, og fungerer ved at du bestemmer type billett som gavekortet kan løses inn i, bestemmer en tidsfrist på når gavekortet må benyttes, og til slutt personen som skal få gavekortet.</span>, <span>Gavekort kan brukes som premie til deltakere som vinner konkurranser, en gode, eller som erstatning hvor brukeren bestemmer når de ønsker å løse inn gavekortet, og du bestemmer fristen for når det må brukes.</span>]
+    "voucherManagement.giveVoucherDescription": ["Her kan du opprette og gi ut billett-gavekort, og fungerer ved at du bestemmer type billett som gavekortet kan løses inn i, bestemmer en tidsfrist på når gavekortet må benyttes, og til slutt personen som skal få gavekortet", "Gavekort kan brukes som premie til deltakere som vinner konkurranser, en gode, eller som erstatning hvor brukeren bestemmer når de ønsker å løse inn gavekortet, og du bestemmer fristen for når det må brukes."]
 }
 
 export const TicketVoucherManagement = () => {
@@ -25,7 +25,7 @@ export const TicketVoucherManagement = () => {
     const authContext = useContext(AuthenticationContext);
 
     // Function availibility control:
-    let viewVoucherManagement = false;
+    const viewVoucherManagement = authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin");
     
     const [ visibleUUID, setVisibleUUID ] = useState(false);
     const [ ticketTypes, setTicketTypes ] = useState([]);
@@ -38,11 +38,6 @@ export const TicketVoucherManagement = () => {
 
     const [ isGivingVoucher, setIsGivingVoucher] = useState(false);
     const [ giveVoucherDropdownState, setGiveVoucherDropdownState ] = useState(false);
-
-    // Check if user has "admin" role and make the following functions available:
-    if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
-        viewVoucherManagement = true;
-    }
 
     const load = async () => {
         if(viewVoucherManagement) {
@@ -144,7 +139,7 @@ export const TicketVoucherManagement = () => {
                         <DropdownCardContainer>
                             <DropdownCardHeader title={commonText["voucherManagement.giveVoucherTitle"]} dropdownState={giveVoucherDropdownState} onClick={() => setGiveVoucherDropdownState(!giveVoucherDropdownState)} />
                             <DropdownCardContent dropdownState={giveVoucherDropdownState}>
-                                {commonText["voucherManagement.giveVoucherDescription"]}
+                                {commonText["voucherManagement.giveVoucherDescription"].map(entry => (<span>{entry}</span>))}
                                 
                                 <InputContainer column>
                                     <InputLabel small>Billett-type</InputLabel> 
@@ -185,7 +180,7 @@ export const TicketVoucherManagement = () => {
                                 <InnerContainer flex="4" nopadding>
                                     <InnerContainerTitle>{commonText["voucherManagement.giveVoucherTitle"]}</InnerContainerTitle>
                                     <InnerContainerTextBody>
-                                        {commonText["voucherManagement.giveVoucherDescription"]}
+                                        {commonText["voucherManagement.giveVoucherDescription"].map(entry => (<span>{entry}</span>))}
                                     </InnerContainerTextBody>
                                 </InnerContainer>
                                 
