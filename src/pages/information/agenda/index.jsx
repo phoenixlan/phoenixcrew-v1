@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from "react-hook-form";
+import { useState, useEffect, useContext } from 'react';
 
 import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
 
 import { PageLoading } from "../../../components/pageLoading"
-
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InnerContainerRow, PanelButton } from '../../../components/dashboard';
 import { TableCell, IconContainer, InnerColumnCenter, SelectableTableRow, Table, TableHead, TableRow, TableBody } from '../../../components/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbtack, faPlay, faMinus, faPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-import { newWindow } from '../../../components/windows';
-import { NewAgendaEntry } from '../../../components/windows/types/agenda/newAgendaEntry';
-import { EditAgendaEntry } from '../../../components/windows/types/agenda/editAgendaEntry';
+import { AuthenticationContext } from '../../../components/authentication';
+import { TimestampToDateTime } from "../../../components/timestampToDateTime";
 
 const AgendaEntry = ({ entry, func}) => {
     const [ active, setActive ]         = useState(false);
@@ -40,27 +38,30 @@ const AgendaEntry = ({ entry, func}) => {
         )
     }, [entry]);
     return (
-        <SelectableTableRow onClick={func}>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!active} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={active} color="#ef6c00"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
+        <>
+            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!active} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={active} color="#616161"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
             <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!pinned} color="#d32f2f"><FontAwesomeIcon icon={faThumbtack} title="Elementet er festet og vises øverst på infoskjermene." /></IconContainer></TableCell>
             <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!deviating} color="#ef6c00"><FontAwesomeIcon icon={faCircleExclamation} title="Elementet har et eller flere endringer, åpne elementet for å se." /></IconContainer></TableCell>
             <TableCell flex="0 1px"     mobileHide fillGray />
             <TableCell flex="2"         mobileFlex="3"      >{ entry.title }</TableCell>
             <TableCell flex="3"         mobileHide          >{ entry.description }</TableCell>
-            <TableCell flex="1"         mobileFlex="2"      >{ new Date(entry.time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-            <TableCell flex="1"         mobileFlex="2"      bold>{ entry.cancelled ? `Avlyst` : entry.deviating_time_unknown ? "Ubestemt tidspunkt" : entry.deviating_time ? new Date(entry.deviating_time*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) : null}</TableCell>
-        </SelectableTableRow>
+            <TableCell flex="1"         mobileFlex="2"      >{ TimestampToDateTime(entry.time, "DD_MM_YYYY_HH_MM")}</TableCell>
+            <TableCell flex="1"         mobileFlex="2"      bold>{ entry.cancelled ? `Avlyst` : entry.deviating_time_unknown ? "Ubestemt tidspunkt" : entry.deviating_time ? TimestampToDateTime(entry.deviating_time, "DD_MM_YYYY_HH_MM") : null}</TableCell>
+        </>
     )
 }
 
 export const AgendaList = (props) => {
-    const [activeContent, setActiveContent] = useState(1);
-    const [currentEvent, setCurrentEvent] = useState(undefined);
 
-    const [agendaList, setAgendaList] = useState([]);
+    let history = useHistory();
+    const [ activeContent, setActiveContent ] = useState(1);
+    const [ currentEvent, setCurrentEvent ] = useState(undefined);
+    const [ agendaList, setAgendaList ] = useState([]);
+    const [ loading, setLoading ] = useState(true);
 
-    const [ window, setWindow ] = useState([]);    
-    const [loading, setLoading] = useState(true);
+    // Import the following React contexts:
+    const authContext = useContext(AuthenticationContext);
+    const agendaManagement = authContext.roles.includes("admin" || "evemt_admin" || "info_admin" || "compo_admin");
 
     const reloadAgendaList = async () => {
         setCurrentEvent(await getCurrentEvent());
@@ -89,7 +90,6 @@ export const AgendaList = (props) => {
         return (
             
             <>
-                {window}
                 <DashboardHeader>
                     <DashboardTitle>
                         Program
@@ -101,18 +101,17 @@ export const AgendaList = (props) => {
                 </DashboardBarSelector>
 
                 <DashboardContent visible={activeContent == 1}>
-                    <InnerContainer>
-                        Programmet er hva som skal skje under arrangementet.<br />
-                        Legg til dato og tid, tittel og beskrivelse for hva som skal skje.<br /><br />
-
-                        Informasjonen du legger inn vises på hovedsiden under tidsplan og på infosiden/infoskjermene som blir satt opp på lokasjonen.
-                    </InnerContainer>
-
                     <InnerContainerRow nopadding>
                         <InnerContainer flex="1">
-                            <PanelButton onClick={() => setWindow(newWindow({title: "Opprett nytt element", subtitle: currentEvent.name, Component: NewAgendaEntry, exitFunction: () => {setWindow(false); reload()}}))} icon={faPlus}>Legg til</PanelButton>
+                            <PanelButton onClick={() => history.push('/information/schedule/create')} icon={faPlus} disabled={!agendaManagement}>Opprett programpost</PanelButton>
                         </InnerContainer>
                     </InnerContainerRow>
+
+                    <InnerContainer>
+                        Programmet er hva som skal skje gjennom arrangementet og vil vises på nettsidene og infoskjermen våres.<br />
+                        Opprett programposter over ved å legge til dato og tid, tittel og beskrivelse for hva som skal skje.<br />
+                        Ved større endringer eller problemer så kan programpostene endres med nye tider, varseltekster, eller avlyses.
+                    </InnerContainer>
 
                     <InnerContainer>
                         <Table>
@@ -132,7 +131,10 @@ export const AgendaList = (props) => {
                                 {
                                     agendaList.map(entry => {
                                         return (
-                                            <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid} func={() => setWindow(newWindow({title: "Endre oppføring", subtitle: currentEvent.name, Component: EditAgendaEntry, exitFunction: () => {setWindow(false); reload()}, entries: entry}))} />
+                                            <SelectableTableRow onClick={() => history.push("/information/schedule/" + entry.uuid)}>
+                                                <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid} />
+                                            </SelectableTableRow>
+                                            
                                         )
                                     })
                                 }
