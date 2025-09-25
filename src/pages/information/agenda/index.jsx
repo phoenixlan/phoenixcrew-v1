@@ -11,10 +11,10 @@ import { faThumbtack, faPlay, faMinus, faPlus, faCircleExclamation } from '@fort
 import { AuthenticationContext } from '../../../components/authentication';
 import { TimestampToDateTime } from "../../../components/timestampToDateTime";
 
-const AgendaEntry = ({ entry, func}) => {
-    const [ active, setActive ]         = useState(false);
-    const [ pinned, setPinned ]         = useState(undefined);
-    const [ deviating, setDeviating ]   = useState(undefined); 
+const AgendaEntry = ({ entry }) => {
+    const [ active, setActive ] = useState(false);
+    const [ pinned, setPinned ] = useState(undefined);
+    const [ deviating, setDeviating ] = useState(undefined); 
 
     useEffect(() => {
         // Set active state depending on these conditions:
@@ -39,23 +39,23 @@ const AgendaEntry = ({ entry, func}) => {
     }, [entry]);
     return (
         <>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!active} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={active} color="#616161"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!pinned} color="#d32f2f"><FontAwesomeIcon icon={faThumbtack} title="Elementet er festet og vises øverst på infoskjermene." /></IconContainer></TableCell>
-            <TableCell flex="0 1.3rem"  mobileHide center   ><IconContainer hidden={!deviating} color="#ef6c00"><FontAwesomeIcon icon={faCircleExclamation} title="Elementet har et eller flere endringer, åpne elementet for å se." /></IconContainer></TableCell>
-            <TableCell flex="0 1px"     mobileHide fillGray />
-            <TableCell flex="2"         mobileFlex="3"      >{ entry.title }</TableCell>
-            <TableCell flex="3"         mobileHide          >{ entry.description }</TableCell>
-            <TableCell flex="1"         mobileFlex="2"      >{ TimestampToDateTime(entry.time, "DD_MM_YYYY_HH_MM")}</TableCell>
-            <TableCell flex="1"         mobileFlex="2"      bold>{ entry.cancelled ? `Avlyst` : entry.deviating_time_unknown ? "Ubestemt tidspunkt" : entry.deviating_time ? TimestampToDateTime(entry.deviating_time, "DD_MM_YYYY_HH_MM") : null}</TableCell>
+            <TableCell flex="0 1.3rem" mobileHide center   ><IconContainer hidden={!active} color="#388e3c"><FontAwesomeIcon icon={faPlay} title="Elementet er innenfor tidsrommet til hva infoskjermen skal vise, og vises." /></IconContainer><IconContainer hidden={active} color="#616161"><FontAwesomeIcon icon={faMinus} title="Elementet er utenfor tidsrommet til hva infoskjermen skal vise, og er skjult." /></IconContainer></TableCell>
+            <TableCell flex="0 1.3rem" mobileHide center   ><IconContainer hidden={!pinned} color="#d32f2f"><FontAwesomeIcon icon={faThumbtack} title="Elementet er festet og vises øverst på infoskjermene." /></IconContainer></TableCell>
+            <TableCell flex="0 1.3rem" mobileHide center   ><IconContainer hidden={!deviating} color="#ef6c00"><FontAwesomeIcon icon={faCircleExclamation} title="Elementet har et eller flere endringer, åpne elementet for å se." /></IconContainer></TableCell>
+            <TableCell flex="0 1px" mobileHide fillGray />
+            <TableCell flex="2" mobileFlex="3" >{ entry.title }</TableCell>
+            <TableCell flex="3" mobileHide>{ entry.description }</TableCell>
+            <TableCell flex="1" mobileFlex="2">{ TimestampToDateTime(entry.time, "DD_MM_YYYY_HH_MM")}</TableCell>
+            <TableCell flex="1" mobileHide bold>{ entry.cancelled ? `Avlyst` : entry.deviating_time_unknown ? "Ubestemt tidspunkt" : entry.deviating_time ? TimestampToDateTime(entry.deviating_time, "DD_MM_YYYY_HH_MM") : null}</TableCell>
         </>
     )
 }
 
-export const AgendaList = (props) => {
+export const AgendaList = () => {
 
     let history = useHistory();
+    
     const [ activeContent, setActiveContent ] = useState(1);
-    const [ currentEvent, setCurrentEvent ] = useState(undefined);
     const [ agendaList, setAgendaList ] = useState([]);
     const [ loading, setLoading ] = useState(true);
 
@@ -64,7 +64,6 @@ export const AgendaList = (props) => {
     const agendaManagement = authContext.roles.includes("admin" || "evemt_admin" || "info_admin" || "compo_admin");
 
     const reloadAgendaList = async () => {
-        setCurrentEvent(await getCurrentEvent());
         const getAgendaList = await Agenda.getAgenda();
         if (getAgendaList) {
             setAgendaList(getAgendaList);
@@ -77,10 +76,6 @@ export const AgendaList = (props) => {
             console.log(e);
         })
     }, []);
-
-    const reload = async () => {
-        await reloadAgendaList();
-    }
 
     if(loading) {
         return (
@@ -117,14 +112,14 @@ export const AgendaList = (props) => {
                         <Table>
                             <TableHead border>
                                 <TableRow>
-                                    <TableCell as="th" center   flex="0 1.3rem" mobileHide          title="Indikerer om elementet er synlig på infoskjermene eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
-                                    <TableCell as="th" center   flex="0 1.3rem" mobileHide          title="Indikerer om elementet er festet øverst på infoskjermene eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
-                                    <TableCell as="th" center   flex="0 1.3rem" mobileHide          title="Indikerer om elementet har et eller flere endringer."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
-                                    <TableCell as="th"          flex="0 1px"    mobileHide fillGray />
-                                    <TableCell as="th"          flex="2"        mobileFlex="3"      >Tittel</TableCell>
-                                    <TableCell as="th"          flex="3"        mobileHide          >Beskrivelse</TableCell>
-                                    <TableCell as="th"          flex="1"        mobileFlex="2"      >Tidspunkt</TableCell>
-                                    <TableCell as="th"          flex="1"        mobileFlex="2"      >Nytt<br/>tidspunkt</TableCell>
+                                    <TableCell as="th" center flex="0 1.3rem" mobileHide title="Indikerer om elementet er synlig på infoskjermene eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+                                    <TableCell as="th" center flex="0 1.3rem" mobileHide title="Indikerer om elementet er festet øverst på infoskjermene eller ikke."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+                                    <TableCell as="th" center flex="0 1.3rem" mobileHide title="Indikerer om elementet har et eller flere endringer."><InnerColumnCenter>...</InnerColumnCenter></TableCell>
+                                    <TableCell as="th" flex="0 1px" mobileHide fillGray />
+                                    <TableCell as="th" flex="2" mobileFlex="3" >Tittel</TableCell>
+                                    <TableCell as="th" flex="3" mobileHide >Beskrivelse</TableCell>
+                                    <TableCell as="th" flex="1" mobileFlex="2" >Tidspunkt</TableCell>
+                                    <TableCell as="th" flex="1" mobileHide>Nytt<br/>tidspunkt</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody columnReverse>
