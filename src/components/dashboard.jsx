@@ -88,6 +88,7 @@ export const InnerContainer = styled.div`
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
     align-items: ${props => props.alignItems ? props.alignItems : "left"};
     row-gap: ${props => props.rowgap ?  "2rem" : undefined};
+    row-gap: ${props => props.textrowgap ? ".5rem" : undefined};
 
     @media screen and (max-width: 480px) {
         display: ${props => props.mobileHide ? "none" : ""};
@@ -163,6 +164,13 @@ export const InnerContainerTitleS = styled.h5`
     font-weight: 500;
     margin: 0;
 `
+
+export const InnerContainerTextBody = styled.div`
+    display: flex;
+    flex-flow: column;
+    row-gap: .5rem;
+`
+
 export const InnerContainerMini = styled.div`
     padding-bottom: 8px;
 `
@@ -328,7 +336,7 @@ const ButtonContainer = styled.button`
     min-height: 2.1rem;
     width: ${props => props.fillWidth ? "100%" : "fit-content"};
     font-size: .85rem;
-    padding: 0 1em;
+    padding: .3rem .7rem;
     cursor: pointer;
     background-color: ${Colors.Pink100};
     flex: ${props => props.flex ? "1" : null};

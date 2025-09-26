@@ -9,6 +9,7 @@ import { faArrowRight, faCheck, faMinus } from "@fortawesome/free-solid-svg-icon
 import { BarElement, FlexBar } from "../../components/bar";
 import { AuthenticationContext } from "../../components/authentication";
 import { Notice } from "../../components/containers/notice";
+import { TimestampToDateTime } from "../../components/timestampToDateTime";
 
 const SORTING_METHODS = {
     TICKET_ID: 1,
@@ -271,7 +272,7 @@ export const TicketList = () => {
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
-                                                <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
+                                                <TableCell flex="3" mobileHide>{ TimestampToDateTime(ticket.created, "DD_MM_YYYY_HH_MM") }</TableCell>
                                                 <TableCell flex="0 24px" center>
                                                     {/* Temporary logic until API has checkinable columns in ticket_types - Show a minus if a ticket is not checkinable based on logic !seatable and grants_membership, currently only membership tickets */}
                                                     {(!ticket.ticket_type.seatable && ticket.ticket_type.grants_membership) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er medlemsskap, og kan ikke sjekkes inn" /></IconContainer> : null}
