@@ -1,24 +1,22 @@
 import React , { useContext, useEffect, useState } from "react";
 
-import { Position, getCurrentEvent } from "@phoenixlan/phoenix.js";
-
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
 
-import { useParams } from "react-router-dom";
-import { PositionMemberList } from "./memberList";
-import { PositionPermissionList } from "./permissionList";
-import { PositionDetails } from "./details";
 import { AuthenticationContext } from "../../../components/authentication";
-import { Notice } from "../../../components/containers/notice";
 import { PageLoading } from "../../../components/pageLoading";
+import { useParams } from "react-router-dom";
+import { Notice } from "../../../components/containers/notice";
 
+import { getCurrentEvent, Ticket } from "@phoenixlan/phoenix.js";
 
-export const ViewPosition = (props) => {
-    const { uuid } = useParams();
+import { TicketInformation } from "./ticketInformation";
+
+export const ViewTicket = () => {
+    const { id } = useParams();
     const [error, setError] = useState(false);
-    const [currentEvent, setCurrentEvent] = useState(null);
-    const [position, setPosition] = useState(null);
-    const [usersForCurrentEvent, setUsersForCurrentEvent] = useState([])
+    
+    const [data, setData] = useState(null);
+
     const [loading, setLoading] = useState(true);
     const [activeContent, setActiveContent] = useState(1);
 
@@ -30,12 +28,10 @@ export const ViewPosition = (props) => {
 
         // Get position based on UUID and return error if something fails.
         try {
+            const ticket = await Ticket.getTicket(id);
             const currentEvent = await getCurrentEvent();
-            const position = await Position.getPosition(uuid);
 
-            setUsersForCurrentEvent(position.position_mappings.filter((user) => (!user.event_uuid || user.event_uuid == currentEvent.uuid)))
-            setCurrentEvent(currentEvent);
-            setPosition(position);
+            setData({ticket, currentEvent});
         } catch(e) {
             setError(e);
         } finally {
@@ -51,35 +47,21 @@ export const ViewPosition = (props) => {
 
     if(loading) {
         return (<PageLoading />)
-    } else if(authContext.roles.includes("admin") || authContext.roles.includes("hr_admin")) {
-        if(position) {
+    } else if(authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
+        if(data) {
             return (
                 <>
-                    <DashboardHeader>
+                    <DashboardHeader border>
                         <DashboardTitle>
-                            Stilling
+                            Billett
                         </DashboardTitle>
                         <DashboardSubtitle>
-                            {position.name}
+                            #{data.ticket.ticket_id} – {data.ticket.event.name}
                         </DashboardSubtitle>
                     </DashboardHeader>
 
-                    <DashboardBarSelector border>
-                        <DashboardBarElement active={activeContent == 1} onClick={() => setActiveContent(1)}>Generelt</DashboardBarElement>
-                        <DashboardBarElement active={activeContent == 2} onClick={() => setActiveContent(2)}>Rettigheter ({position.permissions.length})</DashboardBarElement>
-                        <DashboardBarElement active={activeContent == 3} onClick={() => setActiveContent(3)}>Medlemmer {currentEvent ? ("("+ usersForCurrentEvent.length + ")") : null}</DashboardBarElement>
-                    </DashboardBarSelector>
-
-                    <DashboardContent visible={activeContent == 1}>
-                        <PositionDetails position={position} />
-                    </DashboardContent>
-
-                    <DashboardContent visible={activeContent == 2}>
-                        <PositionPermissionList position={position} />
-                    </DashboardContent>
-
-                    <DashboardContent visible={activeContent == 3} nopadding>
-                        <PositionMemberList position={position} refresh={load}/>
+                    <DashboardContent>
+                        <TicketInformation data={data} />
                     </DashboardContent>
                 </>
             )
@@ -88,13 +70,13 @@ export const ViewPosition = (props) => {
                 <>
                     <DashboardHeader border>
                         <DashboardTitle>
-                            Stilling
+                            Billett
                         </DashboardTitle>
                     </DashboardHeader>
     
                     <DashboardContent>
                         <Notice type="error" visible>
-                            Det oppsto en feil ved henting av informasjon for denne stillingen.<br />
+                            Det oppsto en feil ved henting av informasjon for denne billetten.<br />
                             {error.message}
                         </Notice>
                     </DashboardContent>
@@ -108,7 +90,7 @@ export const ViewPosition = (props) => {
                     <InnerContainer rowgap>
                         <InnerContainerRow>
                             <Notice type="error" visible>
-                                Du har ikke tilgang til å se denne stillingen.
+                                Du har ikke tilgang til å se billettinformasjon.
                             </Notice>
                         </InnerContainerRow>
                     </InnerContainer>

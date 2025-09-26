@@ -13,28 +13,40 @@ const types = {
 
 const S = {
     RootContainer: styled.div`
-        display: flex;
+        display: ${props => props.visible ? "flex" : "none"};
         flex-flow: row;
-        padding: 1em;
-        height: fit-content;
+        min-height: 2rem;
+        flex: 1;
+        font-size: .85rem;
+        padding: .5em calc(1em - .25rem);
         background-color: ${props => props.secondary};
-        border: 1px solid ${props => props.primary};
+        border-left: .25rem solid ${props => props.primary};
         color: ${props => props.primary};
-        margin: .5em 0;
     `,
         IconContainer: styled.div`
             display: flex;
-            min-width: 1em;
-            margin: auto 1.25em auto .25em;
+            margin: auto;
+            position: relative;
+            bottom: .05em;
+            padding: 0 .5em;
+            font-size: 1rem;
+            width: 1em!important;
+
+            @media screen and (max-width: 480px) {
+                margin: auto 0;
+                min-width: 2em;
+            }
         `,
             Icon: styled.span`
                 font-size: 1rem;
-                margin: auto;
+                margin: 2px auto auto auto;
             `,
         TextContainer: styled.div`
             display: flex;
             flex-flow: column;
             flex: 1 1;
+            margin: auto;
+            padding: 0 .5em;
         `,
 
 }
@@ -42,14 +54,14 @@ const S = {
 export const Notice = (props) => {
     return ( 
         <>
-            <S.RootContainer primary={types[props.type]?.primary || types['default'].primary} secondary={types[props.type]?.secondary || types['default'].secondary}>
+            <S.RootContainer primary={types[props.type]?.primary || types['default'].primary} secondary={types[props.type]?.secondary || types['default'].secondary} visible={props.visible} fillWidth={props.fillWidth}>
                 <S.IconContainer hide={props.hideIcon}>
                     <S.Icon>
                         <FontAwesomeIcon icon={types[props.type]?.icon || types['default'].icon} />
                     </S.Icon>
                 </S.IconContainer>
                 <S.TextContainer>
-                    {props.children}
+                    {props.children || props.description}
                 </S.TextContainer>
             </S.RootContainer>
         </>

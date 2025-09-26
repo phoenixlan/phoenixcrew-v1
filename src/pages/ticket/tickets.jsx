@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useHistory } from 'react-router-dom';
 import { getActiveStoreSessions, getEventTickets, getCurrentEvent, User, TicketType } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputLabel, InputSelect } from "../../components/dashboard";
+import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, RowBorder } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCheck, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { BarElement, FlexBar } from "../../components/bar";
+import { AuthenticationContext } from "../../components/authentication";
+import { Notice } from "../../components/containers/notice";
+import { TimestampToDateTime } from "../../components/timestampToDateTime";
 
 const SORTING_METHODS = {
     TICKET_ID: 1,
@@ -22,105 +25,123 @@ SORTING_TYPES[SORTING_METHODS.TICKET_OWNER] = (a, b) => a.owner.firstname.locale
 SORTING_TYPES[SORTING_METHODS.TICKED_CHECKED_IN] = (a, b) => b.checked_in - a.checked_in;
 
 export const TicketList = () => {
+
+    let history = useHistory();
+
+    // Import the following React contexts:
+    const authContext = useContext(AuthenticationContext);
+
+    // Function availibility control:
+    let viewTickets = false;
+
     const [ tickets, setTickets ] = useState([]);
     const [ loading, setLoading ] = useState(true);
 
     const [ activeSortingMethod, setActiveSortingMethod] = useState(1);
+    const [ search, setSearch ] = useState("");
 
     const [ ticketsProgressBar, setTicketsProgressBar ] = useState(undefined);
     const [ checkedinTicketsProgressBar, setCheckedinTicketsProgressBar] = useState(undefined);
 
-    let history = useHistory();
+    const [ currentEvent, setCurrentEvent ] = useState();
+
+    // Check if user has "admin" or "ticket_admin" role and make the following functions available:
+    if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
+        viewTickets = true;
+    }
 
     const reload = async () => {
+        if(viewTickets) {
+            const currentEvent = await getCurrentEvent();
 
-        const event = await getCurrentEvent();
-        
-        const [ tickets, storeSessions, allTicketTypes ] = await Promise.all([
-            getEventTickets(event.uuid),
-            getActiveStoreSessions(),
-            TicketType.getTicketTypes()
-        ])
+            if(currentEvent) {
+                const [ tickets, storeSessions, allTicketTypes ] = await Promise.all([
+                    getEventTickets(currentEvent.uuid),
+                    getActiveStoreSessions(),
+                    TicketType.getTicketTypes()
+                ])
 
-        setTickets(tickets);
-
-        // Count all tickets which is held in store sessions
-        let heldTickets = 0; 
-        storeSessions.map((storeSession) => {
-            storeSession.entries.map((entry) => {
-                if(entry.ticket_type.seatable) {
-                    heldTickets += entry.amount;
-                }  
-            })
-        })
-
-        // Logic to create progressbars for tickets and checked in tickets
-        let ticketsProgressBar = [];
-        let checkedinTicketsProgressBar = [];
-
-        let availableTickets = event.max_participants - tickets.filter((ticket) => ticket.ticket_type.seatable == true).length - heldTickets; 
-
-        let ticketsCheckedinCount = 0;
-        let ticketsNotCheckedinCount = 0;
-
-        // Go through all tickets, filter out non-seatable tickets, sort after price, count tickets for each type and if they are checked in or not.
-        // Logic for creating the tickets progressbar
-        allTicketTypes
-            .filter((ticketType) => ticketType.seatable == true)
-            .sort((a, b) => a.price < b.price)
-            .map((ticketType) => {
-                let countedTicketsForTicketType = 0;
-    
-                tickets
-                .filter((ticket) => ticket.ticket_type.uuid == ticketType.uuid && ticket.ticket_type.seatable == true)
-                .map((ticket) => {
-                    countedTicketsForTicketType++;
-                    ticket.checked_in ? ticketsCheckedinCount++ : ticketsNotCheckedinCount++;
+                // Count all tickets which is held in store sessions
+                let heldTickets = 0; 
+                storeSessions.map((storeSession) => {
+                    storeSession.entries.map((entry) => {
+                        if(entry.ticket_type.seatable) {
+                            heldTickets += entry.amount;
+                        }  
+                    })
                 })
-    
+
+                // Logic to create progressbars for tickets and checked in tickets
+                let ticketsProgressBar = [];
+                let checkedinTicketsProgressBar = [];
+
+                let availableTickets = currentEvent.max_participants - tickets.filter((ticket) => ticket.ticket_type.seatable == true).length - heldTickets; 
+
+                let ticketsCheckedinCount = 0;
+                let ticketsNotCheckedinCount = 0;
+
+                // Go through all tickets, filter out non-seatable tickets, sort after price, count tickets for each type and if they are checked in or not.
+                // Logic for creating the tickets progressbar
+                allTicketTypes
+                    .filter((ticketType) => ticketType.seatable == true)
+                    .sort((a, b) => a.price < b.price)
+                    .map((ticketType) => {
+                        let countedTicketsForTicketType = 0;
+            
+                        tickets
+                        .filter((ticket) => ticket.ticket_type.uuid == ticketType.uuid && ticket.ticket_type.seatable == true)
+                        .map((ticket) => {
+                            countedTicketsForTicketType++;
+                            ticket.checked_in ? ticketsCheckedinCount++ : ticketsNotCheckedinCount++;
+                        })
+            
+                        ticketsProgressBar.push({
+                            key: ticketType.uuid,
+                            color: ticketType.price ? "green" : "stripedGreen",
+                            title: ticketType.name,
+                            count: countedTicketsForTicketType
+                        })
+                    })
                 ticketsProgressBar.push({
-                    key: ticketType.uuid,
-                    color: ticketType.price ? "green" : "stripedGreen",
-                    title: ticketType.name + " - " + countedTicketsForTicketType,
-                    width: countedTicketsForTicketType
+                    key: "availableTickets",
+                    color: "gray",
+                    title: "Tilgjengelige billetter",
+                    count: availableTickets
                 })
-            })
-        ticketsProgressBar.push({
-            key: "availableTickets",
-            color: "gray",
-            title: "Tilgjengelige billetter - " + availableTickets,
-            width: availableTickets
-        })
-        ticketsProgressBar.push({
-            key: "reservedTickets",
-            color: "stripedOrange",
-            title: "Billetter reservert i kjøp - " + heldTickets,
-            width: heldTickets
-        })
-        setTicketsProgressBar(ticketsProgressBar);
+                ticketsProgressBar.push({
+                    key: "reservedTickets",
+                    color: "stripedOrange",
+                    title: "Billetter reservert i kjøp",
+                    count: heldTickets
+                })
+                setTicketsProgressBar(ticketsProgressBar);
 
-        // Logic for creating the checkedintickets progressbar
-        checkedinTicketsProgressBar.push({
-            key: "ceckedinTickets",
-            color: "green",
-            title: "Billetter sjekket inn - " + ticketsCheckedinCount,
-            width: ticketsCheckedinCount
-        })
-        checkedinTicketsProgressBar.push({
-            key: "notCheckedinTickets",
-            color: "gray",
-            title: "Billetter ikke sjekket inn - " + ticketsNotCheckedinCount,
-            width: ticketsNotCheckedinCount,
-            fillOnEmpty: !ticketsCheckedinCount
-        })
-        setCheckedinTicketsProgressBar(checkedinTicketsProgressBar);
+                // Logic for creating the checkedintickets progressbar
+                checkedinTicketsProgressBar.push({
+                    key: "ceckedinTickets",
+                    color: "green",
+                    title: "Billetter sjekket inn",
+                    count: ticketsCheckedinCount
+                })
+                checkedinTicketsProgressBar.push({
+                    key: "notCheckedinTickets",
+                    color: "gray",
+                    title: "Billetter ikke sjekket inn",
+                    count: ticketsNotCheckedinCount,
+                    fillOnEmpty: !ticketsCheckedinCount
+                })
+                setCheckedinTicketsProgressBar(checkedinTicketsProgressBar);
+
+                setCurrentEvent(currentEvent)
+                setTickets(tickets);
+            } else {
+                setTicketsProgressBar([]);
+                setCheckedinTicketsProgressBar([])
+            }
+        }
 
         setLoading(false);
     }
-
-    // Ticket sorting
-    let processedTicketList = tickets
-        .sort(SORTING_TYPES[activeSortingMethod]);
 
     useEffect(() => {
         reload();
@@ -131,7 +152,18 @@ export const TicketList = () => {
             <PageLoading />
         )
     }
-    else {
+
+    // Ticket sorting and filtering
+    let processedTicketList = tickets
+    .filter((ticket) => 
+        ticket.owner.firstname.toLowerCase().includes(search) || 
+        ticket.owner.lastname.toLowerCase().includes(search) ||
+        ticket.owner.username.toLowerCase().includes(search) ||
+        ticket.ticket_id == search
+    )
+    .sort(SORTING_TYPES[activeSortingMethod]);
+
+    if(viewTickets) {
         return (
             <>
                 <DashboardHeader border>
@@ -139,40 +171,80 @@ export const TicketList = () => {
                         Billetter
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {tickets.length} salg for dette arrangementet
+                        { search 
+                            ? "Viser " + processedTicketList.length + " av " + tickets.length + " salg for dette arrangementet"
+                            : tickets.length + " salg for dette arrangementet"
+                        }
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
-                    <InnerContainerRow>
-                        <InnerContainer flex="2">
-                            <InputLabel small>Billettsortering:</InputLabel>
-                            <InputSelect onChange={(e) => setActiveSortingMethod(e.target.value)}>
-                                <option value={SORTING_METHODS.TICKET_ID}>Billett ID</option>
-                                <option value={SORTING_METHODS.TICKET_TYPE}>Billett type</option>
-                                <option value={SORTING_METHODS.TICKET_OWNER}>Billett eier</option>
-                                <option value={SORTING_METHODS.TICKED_CHECKED_IN}>Innsjekket</option>
-                            </InputSelect>
-                        </InnerContainer>
-                        <InnerContainer flex="1" mobileHide />
-                        <InnerContainer flex="2">
-                            Graf over billetter:
-                            <FlexBar>
-                                {ticketsProgressBar.map((object) => {
-                                    return (<BarElement color={object.color} title={object.title} width={object.width} />)
-                                })}
-                            </FlexBar>
-                        </InnerContainer>
-                        <InnerContainer flex="2">
-                            Graf over innsjekkede billetter:
-                            <FlexBar>
-                                {checkedinTicketsProgressBar.map((object) => {
-                                    return (<BarElement color={object.color} title={object.title} width={object.width} fillOnEmpty={object.fillOnEmpty} />)
-                                })}
-                            </FlexBar>
-                        </InnerContainer>
-                    </InnerContainerRow>
+                    <InnerContainer visible={!currentEvent}>
+                        <InnerContainerRow>
+                            <Notice fillWidth type="warning" visible={!currentEvent}>
+                                Det eksisterer for øyeblikket ingen aktive arrangementer.<br/>
+                            </Notice>
+                        </InnerContainerRow>
+                    </InnerContainer>
+
+                    <InnerContainer rowgap>
+                        <InnerContainerRow>
+                            <InnerContainer flex="1" floattop>
+                                <InnerContainer>
+                                    <InnerContainerTitle>Filtrering og sortering</InnerContainerTitle>
+                                    <InnerContainer>
+                                        <CardContainer>
+                                            <InputContainer column extramargin>
+                                                <InputLabel small>Søk</InputLabel>
+                                                <InputElement disabled={!tickets.length} type="text" placeholder="Billet ID, for- etternavn, brukernavn ..." onChange={(e) => setSearch(e.target.value.toLowerCase())}></InputElement>
+                                            </InputContainer>
+                                        </CardContainer>
+                                    </InnerContainer>
+
+                                    <InnerContainer>
+                                        <CardContainer>
+                                            <InputContainer column extramargin>
+                                                <InputLabel small>Billettsortering</InputLabel>
+                                                <InputSelect disabled={!tickets.length} onChange={(e) => setActiveSortingMethod(e.target.value)}>
+                                                    <option value={SORTING_METHODS.TICKET_ID}>Billett ID</option>
+                                                    <option value={SORTING_METHODS.TICKET_TYPE}>Billett type</option>
+                                                    <option value={SORTING_METHODS.TICKET_OWNER}>Billett eier</option>
+                                                    <option value={SORTING_METHODS.TICKED_CHECKED_IN}>Innsjekket</option>
+                                                </InputSelect>
+                                            </InputContainer>
+                                        </CardContainer>
+                                    </InnerContainer>
+                                </InnerContainer>
+                            </InnerContainer>
+
+                            <InnerContainer flex="1" floattop>
+                                <InnerContainer>
+                                    <InnerContainerTitle>Billettfordeling</InnerContainerTitle>
+                                    <InnerContainer column extramargin>
+                                        <FlexBar>
+                                            {ticketsProgressBar.map((object) => {
+                                                return (<BarElement color={object.color} title={object.title} count={object.count} key={object.key} />)
+                                            })}
+                                        </FlexBar>
+                                    </InnerContainer>
+                                </InnerContainer>
+                            </InnerContainer>
+                            
+                            <InnerContainer flex="1" floattop>
+                                <InnerContainer>
+                                    <InnerContainerTitle>Innsjekkede billetter</InnerContainerTitle>
+                                    <InnerContainerRow>
+                                        <FlexBar>
+                                            {checkedinTicketsProgressBar.map((object) => {
+                                                return (<BarElement color={object.color} title={object.title} count={object.count} fillOnEmpty={object.fillOnEmpty} key={object.key} />)
+                                            })}
+                                        </FlexBar>
+                                    </InnerContainerRow>
+                                </InnerContainer>
+                            </InnerContainer>
+                        </InnerContainerRow>
+                    </InnerContainer>
                     
-    
+
                     <InnerContainer>
                         <Table>
                             <TableHead border>
@@ -193,15 +265,19 @@ export const TicketList = () => {
                                 {
                                     processedTicketList.map((ticket) => {
                                         return (
-                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}} key={ticket.ticket_id}>
                                                 <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
                                                 <TableCell flex="2" mobileHide>{ ticket.ticket_type.name }</TableCell>
                                                 <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
-                                                <TableCell flex="3" mobileHide>{ new Date(ticket.created*1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit'}) }</TableCell>
-                                                <TableCell flex="0 24px" center><IconContainer hidden={!ticket.checked_in} color="#43a047"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer></TableCell>
+                                                <TableCell flex="3" mobileHide>{ TimestampToDateTime(ticket.created, "DD_MM_YYYY_HH_MM") }</TableCell>
+                                                <TableCell flex="0 24px" center>
+                                                    {/* Temporary logic until API has checkinable columns in ticket_types - Show a minus if a ticket is not checkinable based on logic !seatable and grants_membership, currently only membership tickets */}
+                                                    {(!ticket.ticket_type.seatable && ticket.ticket_type.grants_membership) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er medlemsskap, og kan ikke sjekkes inn" /></IconContainer> : null}
+                                                    {(ticket.checked_in) ? <IconContainer color="#388e3c"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer> : null}
+                                                </TableCell>
                                                 <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )
@@ -209,6 +285,25 @@ export const TicketList = () => {
                                 }
                             </TableBody>
                         </Table>
+                    </InnerContainer>
+                </DashboardContent>
+            </>
+        )
+    } else {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Billetter
+                    </DashboardTitle>
+                </DashboardHeader>
+                <DashboardContent>
+                    <InnerContainer rowgap>
+                        <InnerContainerRow>
+                            <Notice type="error" visible>
+                                Du har ikke tilgang til å se billetter.
+                            </Notice>
+                        </InnerContainerRow>
                     </InnerContainer>
                 </DashboardContent>
             </>

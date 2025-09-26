@@ -11,7 +11,7 @@ export const TableHead = styled.thead`
     font-weight: 500;
     flex-flow: column;
     border-bottom: ${props => props.border ? "1px solid rgb(235, 235, 235)" : "0"};
-    gap: 4px;
+    gap: .35rem;
 `
 export const TableBody = styled.tbody`
     display: flex;
@@ -35,6 +35,7 @@ const StyledCell = styled.td`
     text-align: ${props => props.center ? "center" : "left"};
     text-transform: ${props => props.uppercase ? "uppercase" : "inherit"};
     font-weight: ${props => props.bold ? "700" : "400"};
+    font-style: ${props => props.italic ? "italic" : "normal"};
     overflow: hidden;
     background-color: ${props => props.fillGray ? "rgb(235, 235, 235)" : null};
 
@@ -103,7 +104,7 @@ export const TableRow = styled.tr`
     flex-wrap: wrap;
     min-height: 2.25em;
     gap: .35rem;
-    color: inherit;
+    color: ${props => props.active ? "rgb(150, 150, 150)" : "inherit"};
     width: 100%;
 
     @media screen and (max-width: 480px) {
