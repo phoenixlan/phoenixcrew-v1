@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
 import { Colors } from "../theme";
-import { faMinus, faPlus, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationTriangle, faMinus, faPlus, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 export const DashboardBlock = styled.div`
     background: white;
@@ -179,13 +179,22 @@ export const InputLabel = styled.label`
     color: ${props => props.color ? props.color : "inherit"};
 `
 
-export const LabelWarning = styled.span`
+const LabelWarningLocal = styled.span`
     display: ${props => props.visible ? "inline-block" : "none"};
     position: relative;
     left: 2px;
     font-size: inherit;
     color: orange;
 `
+
+export const LabelWarning = ({title, visible}) => {
+    return (
+        <LabelWarningLocal title={title} visible={visible}>
+            <FontAwesomeIcon icon={faExclamationTriangle} />
+        </LabelWarningLocal>
+    )
+}
+    
 
 export const InputContainer = styled.div`
     display: flex;
@@ -397,7 +406,7 @@ export const IFrameContainer = ({ src }) => {
 export const CardContainer = styled.div`
     display: flex;
     flex-flow: row;
-    flex: 1;
+    flex: ${props => props.flex ? props.flex : "1"};
     overflow: ${props => props.showOverflow ? "visible" : "hidden"};
     margin-bottom: 1em;
     gap: .35em;

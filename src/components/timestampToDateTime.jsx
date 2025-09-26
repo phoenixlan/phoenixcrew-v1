@@ -9,7 +9,7 @@ const localeStringSettings = {
     HH_MM_SS:               {hour: '2-digit', minute: '2-digit', second: '2-digit'},
 }
 
-export const TimestampToDateTime = ({timestamp, type}) => {
+export const TimestampToDateTime = (timestamp, type) => {
     if(type) {
         if(!localeStringSettings[type]) {
             throw "Invalid locale string layout"
