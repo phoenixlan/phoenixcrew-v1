@@ -1,28 +1,19 @@
-import React , { useEffect, useState } from "react";
+import React , { useState } from "react";
 import { useHistory } from 'react-router-dom';
-import { getEvents } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
-import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard"; 
+import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { useEvents } from "../../hooks/useEvent";
 
 export const EventList = () => {
-    const [events, setEvents] = useState([]);
-    const [loading, setLoading] = useState(true);
-
+    const { data: events = [], isLoading } = useEvents();
     const [visibleUUID, setVisibleUUID] = useState(false);
 
     let history = useHistory();
 
-    useEffect(async () => {
-        setLoading(true);
-        const events = await getEvents();
-        setEvents(events);
-        setLoading(false);
-    }, []);
-
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     }
 
@@ -34,7 +25,7 @@ export const EventList = () => {
                 </DashboardTitle>
             </DashboardHeader>
 
-            
+
 
             <DashboardContent>
                 <InnerContainer mobileHide>

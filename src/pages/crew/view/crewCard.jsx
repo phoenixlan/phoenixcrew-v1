@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPrint } from "@fortawesome/free-solid-svg-icons";
@@ -6,21 +6,14 @@ import { faPrint } from "@fortawesome/free-solid-svg-icons";
 import { PageLoading } from "../../../components/pageLoading"
 
 import { InnerContainer} from "../../../components/dashboard";
-import { getCurrentEvent, User } from "@phoenixlan/phoenix.js";
+import { User } from "@phoenixlan/phoenix.js";
 import { SelectableTableRow, TableCell, Table, TableBody, IconContainer } from '../../../components/table';
+import { useCurrentEvent } from '../../../hooks/useEvent';
 
 export const CrewViewCrewCard = ({ crew }) => {
-    const [ currentEvent, setCurrentEvent ] = useState();
-    const [ loading, setLoading ] = useState(true);
+    const { data: currentEvent, isLoading } = useCurrentEvent();
 
-    const currentEventFilter = (position_mapping) => !position_mapping.event_uuid || position_mapping.event_uuid == currentEvent.uuid;
-
-    const load = async () => {
-        setLoading(true)
-        const currentEvent = await getCurrentEvent();
-        setCurrentEvent(currentEvent);
-        setLoading(false);
-    }
+    const currentEventFilter = (position_mapping) => !position_mapping.event_uuid || position_mapping.event_uuid == currentEvent?.uuid;
 
     const printCard = async (user) => {
         const result = await User.getCrewCard(user.uuid);
@@ -38,11 +31,7 @@ export const CrewViewCrewCard = ({ crew }) => {
         }
     }
 
-    useEffect(async () => {
-        await load();
-    }, [])
-
-    if(loading) {
+    if(isLoading) {
         return (
             <PageLoading />
         )
@@ -65,11 +54,11 @@ export const CrewViewCrewCard = ({ crew }) => {
                     <TableBody>
                         {
                             members.map( user => (
-                                <SelectableTableRow 
-                                    onClick={ 
+                                <SelectableTableRow
+                                    onClick={
                                         e => { printCard(user) }
-                                    } 
-                                    title="Trykk for å printe" 
+                                    }
+                                    title="Trykk for å printe"
                                     key={user.uuid}
                                 >
                                     <TableCell>{ user.firstname } { user.lastname }</TableCell>

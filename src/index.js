@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 import { init } from '@phoenixlan/phoenix.js';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -10,6 +11,16 @@ import reportWebVitals from './reportWebVitals';
 import * as Sentry from "@sentry/react";
 
 export const BASE_URL = process.env.REACT_APP_API_URL??"http://api.dev.phoenixlan.no:3000";
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+            retry: 1,
+            staleTime: 30000,
+        },
+    },
+});
 
 const initialize = () => {
     init(BASE_URL); //init(process.env.BASE_URL);
@@ -24,7 +35,9 @@ initialize()
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

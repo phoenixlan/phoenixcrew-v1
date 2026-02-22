@@ -22,6 +22,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^17.0.1",
     "react-hook-form": "^7.27.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
     "react-svg-spinner": "^1.0.4",

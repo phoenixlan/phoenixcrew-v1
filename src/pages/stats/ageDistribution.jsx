@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import { Bar } from 'react-chartjs-2';
 
-import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent } from "../../components/dashboard";
 import { PageLoading } from "../../components/pageLoading";
 
-import { Statistics } from "@phoenixlan/phoenix.js"
+import { useAgeDistribution } from "../../hooks/useStatistics";
 
 export const user_distribution_options = {
     responsive: true,
@@ -69,26 +69,10 @@ const generate_stat_data = (userbaseStats, event_count_callback) => {
 }
 
 export const AgeDistributionStats= () => {
+    const { data: ageDistributionStats, isLoading } = useAgeDistribution();
 
-    const [ userStats, setUserStats ] = useState({ datasets: [] })
-    const [ crewStats, setCrewStats ] = useState({ datasets: [] })
-    const [ loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const inner = async () => {
-            setLoading(true)
-            const age_distribution_stats = await Statistics.getAgeDistributionStats();
-
-            const user_stats = generate_stat_data(age_distribution_stats, (salesEvent) => salesEvent.age_distribution);
-            const crew_stats = generate_stat_data(age_distribution_stats, (salesEvent) => salesEvent.crew_age_distribution);
-
-            setUserStats(user_stats)
-            setCrewStats(crew_stats)
-
-            setLoading(false)
-        }
-        inner();
-    }, []);
+    const userStats = ageDistributionStats ? generate_stat_data(ageDistributionStats, (salesEvent) => salesEvent.age_distribution) : { datasets: [] };
+    const crewStats = ageDistributionStats ? generate_stat_data(ageDistributionStats, (salesEvent) => salesEvent.crew_age_distribution) : { datasets: [] };
 
     return (
         <>
@@ -102,7 +86,7 @@ export const AgeDistributionStats= () => {
             </DashboardHeader>
             <DashboardContent>
                 {
-                    loading ? (<PageLoading />) : (<>
+                    isLoading ? (<PageLoading />) : (<>
                         <Bar options={user_distribution_options} data={userStats} />
                         <Bar options={crew_distribution_options} data={crewStats} />
                     </>)

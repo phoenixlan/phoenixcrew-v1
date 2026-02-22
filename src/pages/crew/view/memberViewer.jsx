@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PageLoading } from "../../../components/pageLoading"
 import { SimpleUserCard } from "../../../components/simpleUserCard";
 
-import { InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputLabel, InputSelect, InnerContainerTitleS } from "../../../components/dashboard";
-import { getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
+import { InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, InputSelect, InnerContainerTitleS } from "../../../components/dashboard";
+import { useCurrentEvent, useEvents } from "../../../hooks/useEvent";
 
 export const CrewViewMemberViewer = ({ crew }) => {
-    const [ currentEvent, setCurrentEvent ] = useState();
-    const [ events, setEvents ] = useState();
-    const [ loading, setLoading ] = useState(true);
+    const { data: currentEvent, isLoading: currentEventLoading } = useCurrentEvent();
+    const { data: events, isLoading: eventsLoading } = useEvents();
 
     const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
 
@@ -16,23 +15,10 @@ export const CrewViewMemberViewer = ({ crew }) => {
         setCurrentViewingEvent(event.target.value)
     }
 
-    const currentEventFilter = (position_mapping) => !position_mapping.event_uuid || position_mapping.event_uuid == currentViewingEvent;
+    const viewingEvent = currentViewingEvent || currentEvent?.uuid;
+    const currentEventFilter = (position_mapping) => !position_mapping.event_uuid || position_mapping.event_uuid == viewingEvent;
 
-    const load = async () => {
-        setLoading(true)
-        const [ currentEvent, events ] = await Promise.all([
-            getCurrentEvent(),
-            getEvents()
-        ])
-        setCurrentEvent(currentEvent);
-        setCurrentViewingEvent(currentEvent.uuid);
-        setEvents(events)
-        setLoading(false);
-    }
-
-    useEffect(async () => {
-        await load();
-    }, [])
+    const loading = currentEventLoading || eventsLoading;
 
     if(loading) {
         return (
@@ -68,7 +54,7 @@ export const CrewViewMemberViewer = ({ crew }) => {
                         <InnerContainerRow nopadding nowrap>
                             <InputContainer column mobileNoMargin>
                                 <InputLabel small>Arrangement</InputLabel>
-                                <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                                <InputSelect value={viewingEvent} onChange={updateViewingEvent}>
                                     {
                                         events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
                                     }

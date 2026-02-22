@@ -1,8 +1,6 @@
-import React , { useContext, useEffect, useState } from "react";
+import React , { useContext, useState } from "react";
 
-import { Position, getCurrentEvent } from "@phoenixlan/phoenix.js";
-
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow } from '../../../components/dashboard';
 
 import { useParams } from "react-router-dom";
 import { PositionMemberList } from "./memberList";
@@ -11,48 +9,26 @@ import { PositionDetails } from "./details";
 import { AuthenticationContext } from "../../../components/authentication";
 import { Notice } from "../../../components/containers/notice";
 import { PageLoading } from "../../../components/pageLoading";
+import { usePosition } from "../../../hooks/usePosition";
+import { useCurrentEvent } from "../../../hooks/useEvent";
 
 
 export const ViewPosition = (props) => {
     const { uuid } = useParams();
-    const [error, setError] = useState(false);
-    const [currentEvent, setCurrentEvent] = useState(null);
-    const [position, setPosition] = useState(null);
-    const [usersForCurrentEvent, setUsersForCurrentEvent] = useState([])
-    const [loading, setLoading] = useState(true);
     const [activeContent, setActiveContent] = useState(1);
 
-    // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
 
-    const load = async () => {
-        setLoading(true);
+    const { data: position, isLoading: positionLoading, error, refetch } = usePosition(uuid);
+    const { data: currentEvent, isLoading: eventLoading } = useCurrentEvent();
 
-        // Get position based on UUID and return error if something fails.
-        try {
-            const currentEvent = await getCurrentEvent();
-            const position = await Position.getPosition(uuid);
+    const isLoading = positionLoading || eventLoading;
 
-            setUsersForCurrentEvent(position.position_mappings.filter((user) => (!user.event_uuid || user.event_uuid == currentEvent.uuid)))
-            setCurrentEvent(currentEvent);
-            setPosition(position);
-        } catch(e) {
-            setError(e);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        load().catch(e => { 
-            console.log(e);
-        })
-    }, []);
-
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     } else if(authContext.roles.includes("admin") || authContext.roles.includes("hr_admin")) {
         if(position) {
+            const usersForCurrentEvent = currentEvent ? position.position_mappings.filter((user) => (!user.event_uuid || user.event_uuid == currentEvent.uuid)) : [];
             return (
                 <>
                     <DashboardHeader>
@@ -79,7 +55,7 @@ export const ViewPosition = (props) => {
                     </DashboardContent>
 
                     <DashboardContent visible={activeContent == 3} nopadding>
-                        <PositionMemberList position={position} refresh={load}/>
+                        <PositionMemberList position={position} refresh={refetch}/>
                     </DashboardContent>
                 </>
             )
@@ -91,11 +67,11 @@ export const ViewPosition = (props) => {
                             Stilling
                         </DashboardTitle>
                     </DashboardHeader>
-    
+
                     <DashboardContent>
                         <Notice type="error" visible>
                             Det oppsto en feil ved henting av informasjon for denne stillingen.<br />
-                            {error.message}
+                            {error?.message}
                         </Notice>
                     </DashboardContent>
                 </>

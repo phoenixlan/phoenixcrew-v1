@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { TableCell, IconContainer, SelectableTableRow, Table, TableHead, TableBody, TableRow, InnerColumnCenter } from '../../../components/table';
 import { CardContainerText, DropdownCardContainer, DropdownCardContent, DropdownCardHeader, InlineContainer, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputLabel, InputSelect, PanelButton, RowBorder, SpanLink } from '../../../components/dashboard';
 import { UserSearch } from "../../../components/userSearch";
-import { FormButton } from '../../../components/form';
 
-import { PositionMapping, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
+import { PositionMapping } from "@phoenixlan/phoenix.js";
 
 import { faArrowRight, faLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 import { PageLoading } from "../../../components/pageLoading";
 import { Notice } from "../../../components/containers/notice";
+import { useCurrentEvent } from "../../../hooks/useEvent";
+import { useEvents } from "../../../hooks/useEvent";
 
 const messages = {
     "position.addUserTitle": "Legg til bruker",
@@ -21,17 +22,28 @@ const messages = {
 
 
 export const PositionMemberList = ({ position, refresh }) => {
-    const [ loading, setLoading ] = useState(true);
     const [ visibleUUID, setVisibleUUID ] = useState(false);
     const [ member, setNewMember ] = useState(null);
     const [ isAddingMember, setIsAddingMember ] = useState(false);
     const [ addUserDropdownState, setAddUserDropdownState ] = useState(false);
     const [ filterEventDropdownState, setFilterEventDropdownState ] = useState(false);
 
-    const [ currentEvent, setCurrentEvent ] = useState();
-    const [ events, setEvents ] = useState();
     const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
     const [ error, setError ] = useState(null);
+
+    const { data: currentEvent, isLoading: currentEventLoading } = useCurrentEvent();
+    const { data: events = [], isLoading: eventsLoading } = useEvents();
+
+    const isLoading = currentEventLoading || eventsLoading;
+
+    // Set initial viewing event once data is loaded
+    if (!isLoading && currentViewingEvent === null) {
+        if (currentEvent) {
+            setCurrentViewingEvent(currentEvent.uuid);
+        } else if (events.length > 0) {
+            setCurrentViewingEvent(events[0].uuid);
+        }
+    }
 
     const updateViewingEvent = (event) => {
         setCurrentViewingEvent(event.target.value)
@@ -63,32 +75,7 @@ export const PositionMemberList = ({ position, refresh }) => {
 
     }
 
-    const load = async () => {
-        setLoading(true)
-        const [ currentEvent, events ] = await Promise.all([
-            getCurrentEvent(),
-            getEvents()
-        ])
-
-        if(events) {
-            setEvents(events);
-        }
-
-        if(currentEvent) {
-            setCurrentEvent(currentEvent);
-            setCurrentViewingEvent(currentEvent.uuid);
-        } else {
-            setCurrentViewingEvent(events[0].uuid);
-        }
-        
-        setLoading(false);
-    }
-
-    useEffect(async () => {
-        await load();
-    }, [])
-
-    if(loading) {  
+    if(isLoading) {
         return (
             <PageLoading />
         )

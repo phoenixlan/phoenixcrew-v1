@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
-import { getCurrentEvent, getEvents, getApplicationsByEvent } from "@phoenixlan/phoenix.js";
 
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow } from "../../components/table";
 
@@ -10,6 +8,8 @@ import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 
 import { PageLoading } from "../../components/pageLoading"
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InnerContainerRow, InputContainer, InputElement, InputSelect, InputLabel } from '../../components/dashboard';
+import { useCurrentEvent, useEvents } from '../../hooks/useEvent';
+import { useCrewApplications } from '../../hooks/useCrew';
 
 export const ApplicationCrewLabel = ({ application_crew_mapping }) => {
     return (<>{application_crew_mapping.crew.name} {application_crew_mapping.accepted ? (<b>Godkjent!</b>) : null}</>)
@@ -26,7 +26,7 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
             return "Akseptert";
         }
     }
-    
+
     return (
         <SelectableTableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
             <TableCell flex="4" mobileFlex="3">{application.user.firstname} {application.user.lastname}</TableCell>
@@ -75,7 +75,7 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
                             </>
                         )
                     }
-                    
+
                     <TableCell as="th" flex="0 24px" mobileHide><IconContainer/></TableCell>
                 </TableRow>
             </TableHead>
@@ -116,58 +116,28 @@ SORT_TYPES[SORTING_METHODS.SURNAME] = (a, b) => a.user.lastname.localeCompare(b.
 SORT_TYPES[SORTING_METHODS.DATE] = (a, b) => a.created - b.created
 
 export const ListApplications = (props) => {
-    const [applicationList, setApplicationList] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState(1);
     const [activeSortingMethod, setActiveSortingMethod] = useState(1);
-
-    // Used for the event selector
-    const [ currentEvent, setCurrentEvent ] = useState();
-    const [ events, setEvents ] = useState();
     const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
+
+    const { data: currentEvent, isLoading: currentEventLoading } = useCurrentEvent();
+    const { data: events = [], isLoading: eventsLoading } = useEvents();
+
+    // Set initial viewing event once data is loaded
+    if (!currentEventLoading && currentViewingEvent === null && currentEvent) {
+        setCurrentViewingEvent(currentEvent.uuid);
+    }
+
+    const effectiveViewingEvent = currentViewingEvent ?? currentEvent?.uuid;
+    const { data: applicationList = [], isLoading: applicationsLoading } = useCrewApplications(effectiveViewingEvent);
 
     const updateViewingEvent = (event) => {
         setCurrentViewingEvent(event.target.value)
     }
 
-    const refreshApplications = async () => {
-        const applicationList = await getApplicationsByEvent(currentViewingEvent ?? currentEvent.uuid)
+    const isLoading = currentEventLoading || eventsLoading || applicationsLoading;
 
-        if(applicationList) {
-            console.log("Fetched applicationList:")
-            console.log(applicationList);
-            setApplicationList(applicationList)
-            setLoading(false);
-        } else {
-            console.log("Fuck");
-        }
-    }
-
-    useEffect(() => {
-        const asyncInner = async () => {
-            const [ currentEvent, events ] = await Promise.all([
-                getCurrentEvent(),
-                getEvents()
-            ])
-            setCurrentEvent(currentEvent);
-            setCurrentViewingEvent(currentEvent.uuid);
-            setEvents(events)
-        }
-        asyncInner();
-    }, [])
-
-    useEffect(() => {
-        const asyncInner = async () => {
-            // Load events
-            await refreshApplications();
-        }
-        asyncInner().catch(e => {
-            console.log(e);
-        })
-    }, [ currentViewingEvent ]);
-
-
-    if(loading) {
+    if(isLoading) {
         return (
             <PageLoading />
         )

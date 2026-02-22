@@ -1,4 +1,4 @@
-import React , { useEffect, useState, useRef } from "react";
+import React , { useState, useRef } from "react";
 import { useReactToPrint } from 'react-to-print';
 import { useForm } from "react-hook-form";
 import { useHistory } from 'react-router-dom';
@@ -10,31 +10,24 @@ import { FormButton } from '../../components/form';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { TableLabels } from "./tableLabels";
+import { useSeatmaps } from "../../hooks/useSeatmap";
+import { useQueryClient } from "react-query";
 
 export const SeatmapList = () => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const printRef = useRef();
-    const [seatmaps, setSeatmaps] = useState([]);
     const history = useHistory();
-    const [loading, setLoading] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
     const [printUuid, setPrintUuid] = useState(null);
+    const queryClient = useQueryClient();
 
-    const loadSeatmaps = async () => {
-        const seatmapList = await Seatmap.getSeatmaps();
-        setSeatmaps(seatmapList);
-    }
-
-    useEffect(async () => {
-        await loadSeatmaps();
-        setLoading(false);
-    }, []);
+    const { data: seatmaps = [], isLoading } = useSeatmaps();
 
     const onSubmit = async (data) => {
         if(!await Seatmap.createSeatmap(data.name, data.description)) {
             console.log("Fucked up");
         }
-        await loadSeatmaps();
+        queryClient.invalidateQueries(['seatmaps']);
     }
 
     const handlePrint = useReactToPrint({
@@ -42,7 +35,7 @@ export const SeatmapList = () => {
     });
 
 
-    if(loading) {
+    if(isLoading) {
         return (
             <PageLoading />
         )
@@ -94,7 +87,7 @@ export const SeatmapList = () => {
                             </InnerContainerRow>
                         </form>
                     </InnerContainer>
-                    
+
                     <InnerContainer>
                         <Table>
                             <TableHead border>
@@ -117,8 +110,8 @@ export const SeatmapList = () => {
                                                     <TableCell flex="0 24px" mobileHide center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                                 </SelectableTableRow>
                                                 <SelectableTableRow title="Trykk for å printe" onClick={e => {
-                                                    setPrintUuid(seatmap.uuid); 
-                                                    handlePrint(); 
+                                                    setPrintUuid(seatmap.uuid);
+                                                    handlePrint();
                                                     }}
                                                 >
                                                     <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</TableCell>

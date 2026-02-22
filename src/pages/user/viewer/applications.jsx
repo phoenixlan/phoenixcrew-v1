@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { User } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, IconContainer, TableRow } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer } from '../../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { ApplicationCrewLabel } from '../../application/list';
+import { useUserApplications } from '../../../hooks/useUser';
 
 const stateToString = (state) => {
     if(state == "ApplicationState.rejected") {
@@ -21,7 +21,7 @@ const stateToString = (state) => {
     }
     return "Ukjent"
 }
-    
+
 const ApplicationTableEntry = ({ application }) => {
     let history = useHistory();
 
@@ -37,22 +37,10 @@ const ApplicationTableEntry = ({ application }) => {
     )
 }
 
-export const UserViewerApplications = ({ user, reload: reloadUser }) => {
-    const [ loading, setLoading ] = useState(false);
+export const UserViewerApplications = ({ user }) => {
+    const { data: applications = [], isLoading } = useUserApplications(user.uuid);
 
-    const [ applications, setApplications ] = useState([]);
-
-    const reload = async () => {
-        setLoading(true);
-        setApplications(await User.getApplications(user.uuid));
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        reload();
-    }, []);
-
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     }
 

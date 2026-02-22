@@ -9,11 +9,14 @@ import { Notice } from '../../../../components/containers/notice';
 import { PageLoading } from '../../../../components/pageLoading';
 import { useParams } from 'react-router-dom/cjs/react-router-dom';
 import { captureException } from "@sentry/browser";
+import { useAgendaEntry } from '../../../../hooks/useAgenda';
+import { useQueryClient } from 'react-query';
 
 export const EditAgendaEntry = () => {
 
     const history = useHistory();
     const { uuid } = useParams();
+    const queryClient = useQueryClient();
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
@@ -29,25 +32,21 @@ export const EditAgendaEntry = () => {
     const [ deviatingInformation, setDeviatingInformation ] = useState(null);
     const [ pinned, setPinned ] = useState(false);
     const [ cancelled, setCancelled ] = useState(false);
-    const [ loading, setLoading ] = useState(true);
+    const [ initialized, setInitialized ] = useState(false);
 
     const [ stateDeviatingControl, setStateDeviatingControl ] = useState(false);
-	
+
 	const [ entryTimeISO, setEntryTimeISO ] = useState(null);
 	const [ entryDeviatingTimeISO, setEntryDeviatingTimeISO ] = useState(null);
 
     // States for error, used when attempting to create the position
     const [ error, setError ] = useState(false);
 
-    const load = async () => {
-        setLoading(true);
+    const { data: entry, isLoading } = useAgendaEntry(uuid);
 
-        let entry;
-
-        try {
-            entry = await Agenda.getAgendaElement(uuid);
-
-            // Fix timezone issue
+    // Populate form state when entry data loads
+    useEffect(() => {
+        if (entry && !initialized) {
             const entryTimeTimezoneOffset = new Date(entry.time*1000).getTimezoneOffset();
             const entryDeviatingTimeTimezoneOffset = new Date(entry.deviating_time*1000).getTimezoneOffset();
 
@@ -64,14 +63,9 @@ export const EditAgendaEntry = () => {
             setDeviatingInformation(entry.deviating_information);
             setPinned(entry.pinned);
             setCancelled(entry.cancelled);
-        } catch(e) {
-            setError(e.message);
-            captureException(e);
-            console.error("An error occurred while attempting to retrieve the agenda entry.\n" + e);
-        } finally {
-            setLoading(false);
+            setInitialized(true);
         }
-    }
+    }, [entry, initialized]);
 
     const editAgendaEntry = async (data) => {
         const event = await getCurrentEvent();
@@ -91,7 +85,8 @@ export const EditAgendaEntry = () => {
             setError(e.message);
             console.error("An error occured while attempting to edit the agenda entry.\n" + e);
         } finally {
-            load();
+            setInitialized(false);
+            queryClient.invalidateQueries(['agendaEntry', uuid]);
         }
     }
 
@@ -103,6 +98,7 @@ export const EditAgendaEntry = () => {
                 setError(e.message);
                 console.error("An error occured while attempting to delete the agenda entry.\n" + e);
             } finally {
+                queryClient.invalidateQueries(['agendaEntries']);
                 history.push('/information/schedule');
             }
         }
@@ -117,7 +113,7 @@ export const EditAgendaEntry = () => {
                 setDeviatingInformation("Programposten har blitt avlyst")
                 setValue("deviating_information", "Programposten har blitt avlyst")
             }
-        } 
+        }
         if(cancelled) {
             setCancelled(false);
             if(deviatingInformation == "Programposten har blitt avlyst") {
@@ -144,14 +140,8 @@ export const EditAgendaEntry = () => {
         }
     }
 
-    useEffect(() => {
-        load().catch(e => { 
-            console.log(e);
-        });
-    }, [])
-
     // Check if user has "admin" privilege and allow the user to view the create position page
-    if(loading) {
+    if(isLoading) {
         return(<PageLoading />)
     }
     if(agendaManagement) {
@@ -162,7 +152,7 @@ export const EditAgendaEntry = () => {
                         Oppdater programpost
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {title} 
+                        {title}
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
@@ -266,7 +256,7 @@ export const EditAgendaEntry = () => {
                                     </CardContainer>
                                 </InnerContainerRow>
                             </InnerContainer>
-                            
+
                             <InnerContainer flex="1" floattop rowgap>
                                 <InnerContainer>
                                     <InnerContainerTitle>Innstillinger</InnerContainerTitle>
@@ -286,7 +276,7 @@ export const EditAgendaEntry = () => {
                                             </CardContainerText>
                                         </CardContainer>
                                         <CardContainer column extramargin>
-                                            <InputElement {...register("deviating_time_unknown")} type="checkbox" tabIndex={cancelled ? "-1" : undefined} checked={deviatingTimeUnknown} onChange={() => handleSetDeviatingTimeUnknown()} disabled={cancelled || stateDeviatingControl} /> 
+                                            <InputElement {...register("deviating_time_unknown")} type="checkbox" tabIndex={cancelled ? "-1" : undefined} checked={deviatingTimeUnknown} onChange={() => handleSetDeviatingTimeUnknown()} disabled={cancelled || stateDeviatingControl} />
                                             <CardContainerText>
                                                 <InputLabel>Forsinket programpost på ubestemt tid</InputLabel>
                                                 <CardContainerDescriptiveText>Programposten opprinnelige tid blir stryket over<br/>Ny estimert tid blir oppført med TBD (To be determined).</CardContainerDescriptiveText>

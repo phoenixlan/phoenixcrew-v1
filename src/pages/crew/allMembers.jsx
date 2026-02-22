@@ -1,10 +1,11 @@
-import React , { useEffect, useState } from "react";
+import React from "react";
 import { Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle } from "../../components/dashboard";
 import { Button } from "../../components/button"
 import { useHistory } from "react-router-dom";
 import { SimpleUserCard } from "../../components/simpleUserCard";
+import { useQuery } from "react-query";
 
 import styled from "styled-components";
 import { Theme } from "../../theme";
@@ -25,43 +26,39 @@ const S = {
 }
 
 export const CrewMemberList= () => {
-    const [crews, setCrews] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [visibleUUID, setVisibleUUID] = useState(false);
-
     let history = useHistory();
 
-    useEffect(async () => {
+    const { data: crews = [], isLoading } = useQuery(['allCrewMembers'], async () => {
         const event = await getCurrentEvent();
-        const crews = await Promise.all((await Crew.getCrews())
-            .filter(crew => crew.active)
-            .map(async (base_crew) => {
-                const crew = await Crew.getCrew(base_crew.uuid);
+        const crewList = await Crew.getCrews();
+        return Promise.all(
+            crewList
+                .filter(crew => crew.active)
+                .map(async (base_crew) => {
+                    const crew = await Crew.getCrew(base_crew.uuid);
 
-                const crewMembersMap = new Map();
-                crew.positions.forEach((position) => {
-                    position.position_mappings.filter((position_mapping => position_mapping.event_uuid === null || position_mapping.event === event.uuid)).map(mapping => mapping.user).forEach((user) => {
-                        if(!crewMembersMap.has(user.uuid)) {
-                            crewMembersMap.set(user.uuid, user)
-                        }
+                    const crewMembersMap = new Map();
+                    crew.positions.forEach((position) => {
+                        position.position_mappings.filter((position_mapping => position_mapping.event_uuid === null || position_mapping.event === event.uuid)).map(mapping => mapping.user).forEach((user) => {
+                            if(!crewMembersMap.has(user.uuid)) {
+                                crewMembersMap.set(user.uuid, user)
+                            }
+                        })
                     })
+
+                    const crewMembers = Array.from(crewMembersMap.values());
+                    console.log(crewMembers)
+
+                    return {
+                        name: crew.name,
+                        uuid: crew.uuid,
+                        members: crewMembers
+                    }
                 })
+        );
+    });
 
-                const crewMembers = Array.from(crewMembersMap.values());
-                console.log(crewMembers)
-
-                return {
-                    name: crew.name,
-                    uuid: crew.uuid,
-                    members: crewMembers
-                }
-            })
-        )
-        setCrews(crews);
-        setLoading(false);
-    }, []);
-
-    if(loading) {
+    if(isLoading) {
         return (
             <PageLoading />
         )
@@ -94,7 +91,7 @@ export const CrewMemberList= () => {
                                 </>
                             )
                         })
-                    } 
+                    }
                 </InnerContainer>
             </DashboardContent>
         </>

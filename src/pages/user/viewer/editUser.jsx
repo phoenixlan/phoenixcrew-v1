@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { User } from "@phoenixlan/phoenix.js";
 import { PageLoading } from '../../../components/pageLoading';
 import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, PanelButton } from '../../../components/dashboard';
 
@@ -7,15 +6,18 @@ import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min
 import { useForm } from 'react-hook-form';
 import { captureException } from "@sentry/browser";
 import { Notice } from '../../../components/containers/notice';
+import { useUser } from '../../../hooks/useUser';
+import { useModifyUserMutation } from '../../../hooks/useUserMutation';
 
 export const EditUser = () => {
 
     const { uuid } = useParams();
-    const [ user, setUser ] = useState(undefined);
 
     let history = useHistory();
 
     const { register, handleSubmit } = useForm();
+
+    const { data: user, isLoading, error: fetchError } = useUser(uuid);
 
     // Variables to keep track of changes in input components
     const [ firstname, setFirstname ] = useState(null);
@@ -33,13 +35,27 @@ export const EditUser = () => {
     const [ error, setError ] = useState(false);
     const [ updateSuccess, setUpdateSuccess ] = useState(false);
 
-    // Loading state
-    const [ loading, setLoading ] = useState(true);
+    const modifyUserMutation = useModifyUserMutation();
+
+    // Sync user data to form state when user loads
+    useEffect(() => {
+        if(user) {
+            setFirstname(user.firstname);
+            setLastname(user.lastname);
+            setUsername(user.username);
+            setEmail(user.email);
+            setPhone(user.phone);
+            setGuardianPhone(user.guardian_phone);
+            setAddress(user.address);
+            setPostalCode(user.postal_code);
+            setBirthdate(user.birthdate);
+            setGender(user.gender);
+        }
+    }, [user]);
 
     const onSubmit = async (data) => {
-        try { 
-            await User.modifyUser(data.uuid, data);
-            await reload();
+        try {
+            await modifyUserMutation.mutateAsync({ uuid: data.uuid, data });
             setUpdateSuccess(true);
             setError(false);
         } catch(e) {
@@ -50,45 +66,7 @@ export const EditUser = () => {
         }
     }
 
-    
-
-    const reload = async () => {
-        setLoading(true);
-
-        let user;
-
-        try {
-            user = await User.getUser(uuid);
-
-            setFirstname(user.firstname);
-            setLastname(user.lastname);
-            setUsername(user.username);
-            setEmail(user.email);
-            setPhone(user.phone);
-            setGuardianPhone(user.guardian_phone);
-            setAddress(user.address);
-            setPostalCode(user.postal_code);
-            setBirthdate(user.birthdate)
-            setGender(user.gender);
-        } catch(e) {
-            setError(e);
-            captureException(e);
-            console.error("An error occured while attempting to gather user information:\n" + e);
-        }
-
-        if(user) {
-            setUser(user);
-        }
-
-        // Logic finished, show the user details page:
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        reload();
-    }, []);
-
-    if(loading) { // Loading page
+    if(isLoading) { // Loading page
         return (
             <PageLoading />
         )
@@ -221,7 +199,7 @@ export const EditUser = () => {
                     </InnerContainer>
                 </DashboardContent>
             </>
-            
+
         )
     } else { // Show an error when fetching a user fails
         return (
@@ -235,7 +213,7 @@ export const EditUser = () => {
                 <DashboardContent>
                     <Notice type="error" visible={true}>
                         Det oppsto en feil ved henting av informasjon for denne brukeren.<br />
-                        {error.message}
+                        {fetchError?.message}
                     </Notice>
                 </DashboardContent>
             </>
