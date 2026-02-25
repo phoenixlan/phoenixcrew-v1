@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import { User, Crew } from "@phoenixlan/phoenix.js";
+import { useQuery } from 'react-query';
 import { PageLoading } from '../../../components/pageLoading';
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle } from '../../../components/dashboard';
 
 import { UserViewerDetails } from './details';
 import { UserViewerExternalConnections } from './externalConnections';
 import { UserViewerTickets } from './tickets';
-import { UserPositions, UserViewerPositions } from './positions';
+import { UserPositions } from './positions';
 import { Notice } from '../../../components/containers/notice';
-import { UserViewerApplications } from './applications';
 
 const TABS = {
     USER_DETAILS: 1,
@@ -21,55 +21,29 @@ const TABS = {
 
 export const ViewUser = (props) => {
     const { uuid } = useParams();
-    const [ user, setUser ] = useState(null);
-
     const [activeContent, setActiveContent] = useState(1);
 
-    const [ error, setError ] = useState(null);
-    const [ loading, setLoading ] = useState(true);
-
-    const reload = async () => {
-        setLoading(true);
-
-        let user;
-
-        // Try to get user information or throw an error if it fails.
-        try {
-            user = await User.getUser(uuid);
-        } catch(e) {
-            console.error("An error occured while attempting to gather user information:\n" + e);
-            setError(e);
-        }
-        
-        if(user) {
-            // Fetch more info about the user
-            await Promise.all(user.position_mappings.map(async (position_mapping) => {
-                const position = position_mapping.position;
-                if(position.crew_uuid) {
-                    position.crew = await Crew.getCrew(position.crew_uuid);
-                    if(position.team_uuid) {
-                        position.team = position.crew.teams.find((team) => team.uuid === position.team_uuid)
-                    }
+    const { data: user, isLoading, error } = useQuery(['user', uuid], async () => {
+        const user = await User.getUser(uuid);
+        await Promise.all(user.position_mappings.map(async (position_mapping) => {
+            const position = position_mapping.position;
+            if(position.crew_uuid) {
+                position.crew = await Crew.getCrew(position.crew_uuid);
+                if(position.team_uuid) {
+                    position.team = position.crew.teams.find((team) => team.uuid === position.team_uuid)
                 }
-            }));
-            setUser(user);
-        }
-
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        reload().catch(e => {
-            console.log(e);
-        })
-    }, []);
-
+            }
+        }));
+        return user;
+    }, {
+        enabled: !!uuid,
+    });
 
     // Show loading page
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
-    } 
-    
+    }
+
     // Show user page
     else if(user) {
         return (
@@ -89,7 +63,7 @@ export const ViewUser = (props) => {
                     <DashboardBarElement active={activeContent === TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
                 </DashboardBarSelector>
-                
+
                 <DashboardContent visible={activeContent === TABS.USER_DETAILS}>
                     <UserViewerDetails user={user} />
                 </DashboardContent>
@@ -122,7 +96,7 @@ export const ViewUser = (props) => {
                 <DashboardContent>
                     <Notice type="error" visible={true}>
                         Det oppsto en feil ved henting av informasjon for denne brukeren.<br />
-                        {error.message}
+                        {error?.message}
                     </Notice>
                 </DashboardContent>
             </>

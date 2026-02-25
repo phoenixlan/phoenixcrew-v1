@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from 'react-router-dom';
-import { User } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableBody, TableRow } from "../../components/table";
 import { dateOfBirthToAge } from '../../utils/user';
-import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox, SpanLink, InnerContainerRow, InputContainer, InputLabel, InputSelect, InputElement, CardContainer } from "../../components/dashboard";
+import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, SpanLink, InnerContainerRow, InputContainer, InputLabel, InputSelect, InputElement, CardContainer } from "../../components/dashboard";
+import { useUsers } from "../../hooks/useUser";
 
 const SORTING_METHODS = {
     FIRSTNAME: 1,
@@ -22,29 +22,21 @@ SORTING_TYPES[SORTING_METHODS.CREATED] = (a, b) => a.created - b.created;
 SORTING_TYPES[SORTING_METHODS.AGE] = (a, b) => dateOfBirthToAge(a.birthdate) - dateOfBirthToAge(b.birthdate);
 
 export const UserList= () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { data: users = [], isLoading } = useUsers();
     const [activeSortingMethod, setActiveSortingMethod] = useState(1);
     const [search, setSearch] = useState("");
     const [visibleUUID, setVisibleUUID] = useState(false);
 
     let history = useHistory();
 
-    useEffect(async () => {
-        setLoading(true);
-        const users = await User.getUsers();
-        setUsers(users);
-        setLoading(false);
-    }, []);
-
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     }
 
     let processedUserList = users
-    .filter((user) => 
+    .filter((user) =>
         user.uuid.toLowerCase().includes(search) ||
-        user.firstname.toLowerCase().includes(search) || 
+        user.firstname.toLowerCase().includes(search) ||
         user.lastname.toLowerCase().includes(search) ||
         user.username.toLowerCase().includes(search) ||
         user.email.toLowerCase().includes(search) ||
@@ -59,7 +51,7 @@ export const UserList= () => {
                     Brukeradministrasjon
                 </DashboardTitle>
                 <DashboardSubtitle>
-                    { search 
+                    { search
                       ? "Viser " + processedUserList.length + " av " + users.length + " brukere registrert"
                       : users.length + " brukere registrert"
                     }
@@ -75,7 +67,7 @@ export const UserList= () => {
                                     <InputElement type="text" placeholder="For- etternavn, e-post, telefon nummer ..." onChange={(e) => setSearch(e.target.value.toLowerCase())}></InputElement>
                                 </InputContainer>
                             </CardContainer>
-                            
+
                             <CardContainer>
                                 <InputContainer column extramargin>
                                     <InputLabel small>Sortering</InputLabel>

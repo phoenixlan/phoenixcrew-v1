@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { User} from "@phoenixlan/phoenix.js";
 import { PageLoading } from '../../../components/pageLoading';
-import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel } from '../../../components/dashboard';
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel } from '../../../components/dashboard';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useUserDiscordMapping } from '../../../hooks/useUser';
 
 const S = {
     DiscordContainer: styled.div`
@@ -23,20 +23,9 @@ const S = {
 
 
 export const UserViewerExternalConnections = ({ user }) => {
-    const [ loading, setLoading ] = useState(false);
-    const [ discordMapping, setDiscordMapping ] = useState(null);
+    const { data: discordMapping, isLoading } = useUserDiscordMapping(user.uuid);
 
-    const reload = async () => {
-        setLoading(true);
-        setDiscordMapping(await User.getDiscordMapping(user.uuid));
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        reload();
-    }, []);
-
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     }
     return (
@@ -53,16 +42,16 @@ export const UserViewerExternalConnections = ({ user }) => {
                             </CardContainerIcon>
                             <CardContainerText>
                                 <InputLabel small>Discord bruker</InputLabel>
-                                
-                                    { discordMapping 
+
+                                    { discordMapping
                                       ? <S.DiscordContainer>
                                             <S.DiscordAvatar src={`https://cdn.discordapp.com/avatars/${discordMapping.discord_id}/${discordMapping.avatar}.png`} />
                                             <S.DiscordUsername>{discordMapping ? <a href={"https://discordapp.com/users/" + discordMapping.discord_id}>{discordMapping.username}</a> : "Ingen tilkobling"}</S.DiscordUsername>
                                         </S.DiscordContainer>
                                       : <CardContainerInnerText>Ingen tilkobling</CardContainerInnerText>
                                     }
-                                    
-                                
+
+
                             </CardContainerText>
                         </CardContainer>
                     </InnerContainerRow>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 
-import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
+import { Agenda } from '@phoenixlan/phoenix.js'
 
 import { PageLoading } from "../../../components/pageLoading"
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
@@ -10,11 +10,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbtack, faPlay, faMinus, faPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AuthenticationContext } from '../../../components/authentication';
 import { TimestampToDateTime } from "../../../components/timestampToDateTime";
+import { useQuery } from 'react-query';
 
 const AgendaEntry = ({ entry }) => {
     const [ active, setActive ] = useState(false);
     const [ pinned, setPinned ] = useState(undefined);
-    const [ deviating, setDeviating ] = useState(undefined); 
+    const [ deviating, setDeviating ] = useState(undefined);
 
     useEffect(() => {
         // Set active state depending on these conditions:
@@ -54,36 +55,22 @@ const AgendaEntry = ({ entry }) => {
 export const AgendaList = () => {
 
     let history = useHistory();
-    
+
     const [ activeContent, setActiveContent ] = useState(1);
-    const [ agendaList, setAgendaList ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
     const agendaManagement = authContext.roles.includes("admin" || "evemt_admin" || "info_admin" || "compo_admin");
 
-    const reloadAgendaList = async () => {
-        const getAgendaList = await Agenda.getAgenda();
-        if (getAgendaList) {
-            setAgendaList(getAgendaList);
-            setLoading(false);
-        }
-      };
-    
-    useEffect(async () => {
-        reloadAgendaList().catch((e) => {
-            console.log(e);
-        })
-    }, []);
+    const { data: agendaList = [], isLoading } = useQuery(['agendaList'], () => Agenda.getAgenda());
 
-    if(loading) {
+    if(isLoading) {
         return (
             <PageLoading />
         )
     } else {
         return (
-            
+
             <>
                 <DashboardHeader>
                     <DashboardTitle>
@@ -127,13 +114,13 @@ export const AgendaList = () => {
                                     agendaList.map(entry => {
                                         return (
                                             <SelectableTableRow onClick={() => history.push("/information/schedule/" + entry.uuid)}>
-                                                <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid} />
+                                                <AgendaEntry entry={entry} key={entry.uuid} />
                                             </SelectableTableRow>
-                                            
+
                                         )
                                     })
                                 }
-                                
+
                             </TableBody>
                         </Table>
                     </InnerContainer>
@@ -142,4 +129,3 @@ export const AgendaList = () => {
         )
     }
 };
-

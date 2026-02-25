@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import { Bar } from 'react-chartjs-2';
 
-import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent } from "../../components/dashboard";
 import { PageLoading } from "../../components/pageLoading";
 
-import { Statistics } from "@phoenixlan/phoenix.js"
+import { useUserbaseStatistics } from "../../hooks/useStatistics";
 
 export const user_participation_options = {
     responsive: true,
@@ -69,26 +69,10 @@ const generate_stat_data = (userbaseStats, event_count_callback) => {
 }
 
 export const UserbaseStats = () => {
+    const { data: userbaseStats, isLoading } = useUserbaseStatistics();
 
-    const [ userStats, setUserStats ] = useState({ datasets: [] })
-    const [ crewStats, setCrewStats ] = useState({ datasets: [] })
-    const [ loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const inner = async () => {
-            setLoading(true)
-            const userbaseStats = await Statistics.getUserbaseStatistics();
-
-            const user_stats = generate_stat_data(userbaseStats, (salesEvent) => salesEvent.counts);
-            const crew_stats = generate_stat_data(userbaseStats, (salesEvent) => salesEvent.crew_counts);
-
-            setUserStats(user_stats)
-            setCrewStats(crew_stats)
-
-            setLoading(false)
-        }
-        inner();
-    }, []);
+    const userStats = userbaseStats ? generate_stat_data(userbaseStats, (salesEvent) => salesEvent.counts) : { datasets: [] };
+    const crewStats = userbaseStats ? generate_stat_data(userbaseStats, (salesEvent) => salesEvent.crew_counts) : { datasets: [] };
 
     return (
         <>
@@ -102,7 +86,7 @@ export const UserbaseStats = () => {
             </DashboardHeader>
             <DashboardContent>
                 {
-                    loading ? (<PageLoading />) : (<>
+                    isLoading ? (<PageLoading />) : (<>
                         <Bar options={user_participation_options} data={userStats} />
                         <Bar options={crew_participation_options} data={crewStats} />
                     </>)

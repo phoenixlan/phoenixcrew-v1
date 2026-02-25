@@ -1,16 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import { User } from "@phoenixlan/phoenix.js";
+import { useAuthenticatedUser } from "../hooks/useUser";
 
 export const Dashboard = () => {
-    
-    useEffect(async () => {
-        const asyncFunction = async () => {
-            const user = await User.getAuthenticatedUser();
-            console.log(user);
-        }
-        asyncFunction();
-    })
+    const { data: user } = useAuthenticatedUser();
 
     return (
         <>

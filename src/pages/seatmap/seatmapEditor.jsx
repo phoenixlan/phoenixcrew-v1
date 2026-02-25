@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams} from 'react-router-dom';
 import styled from "styled-components";
 
 import Spinner from "react-svg-spinner";
 
-import { Seatmap, Entrance, TicketType, Row } from '@phoenixlan/phoenix.js'
+import { Seatmap, Row } from '@phoenixlan/phoenix.js'
 
 import { ContentContainer } from "../../components/content";
+import { useSeatmap, useEntrances } from "../../hooks/useSeatmap";
+import { useTicketTypes } from "../../hooks/useTicket";
+import { useQueryClient } from "react-query";
 
 const S = {
     SeatmapCanvas: styled.div`
@@ -66,7 +69,7 @@ const S = {
     text-align: center;
     font-family: arial;
 	display: inline-block;
-    
+
     background-color: green;
     `
 }
@@ -88,9 +91,12 @@ const RowElement = ({ row, setActiveRow, active }) => {
 
 export const SeatmapEditor = () => {
     const { uuid } = useParams();
-    const [ seatmap, setSeatmap ] = useState(null);
-    const [ entrances, setEntrances ] = useState([]);
-    const [ ticketTypes, setTicketTypes ] = useState([]);
+    const queryClient = useQueryClient();
+
+    const { data: seatmap, isLoading: seatmapLoading } = useSeatmap(uuid);
+    const { data: entrances = [], isLoading: entrancesLoading } = useEntrances();
+    const { data: ticketTypes = [], isLoading: ticketTypesLoading } = useTicketTypes();
+
     const [ activeRow, setActiveRow ] = useState(null);
 
     const [ rowX, setRowX ] = useState(0);
@@ -103,7 +109,7 @@ export const SeatmapEditor = () => {
 
     const [ selectedBackgroundFile, setSelectedBackgroundFile ] = useState(null);
 
-    const [ loading, setLoading ] = useState(true);
+    const loading = seatmapLoading || entrancesLoading || ticketTypesLoading;
 
     const inputChange = (data) => {
         switch(data.target.name) {
@@ -130,57 +136,38 @@ export const SeatmapEditor = () => {
         }
     }
 
-    const loadEntrances = async () => {
-        const entrances = await Entrance.getEntrances();
-        setEntrances(entrances);
+    const refreshSeatmap = () => {
+        queryClient.invalidateQueries(['seatmap', uuid]);
     }
-    const loadTicketTypes = async () => {
-        const ticketTypes = await TicketType.getTicketTypes();
-        setTicketTypes(ticketTypes);
-    }
-
-    const refreshSeatmap = async () => {
-        setLoading(true);
-        const seatmap = await Seatmap.getSeatmap(uuid);
-        setSeatmap(seatmap);
-        setLoading(false);
-    }
-
-    useEffect(async () => {
-        await loadEntrances();
-        await loadTicketTypes();
-        await refreshSeatmap();
-    }, []);
 
     const newRow = async () => {
-        setLoading(true);
-        const success = await Seatmap.addRow(
+        await Seatmap.addRow(
             seatmap.uuid,
             Number.parseInt(rowNumber),
             Number.parseInt(rowX),
             Number.parseInt(rowY),
             isHorizontal,
             entranceUuid == "" ? undefined : entranceUuid,
-            ticketTypeUuid == "" ? undefined :ticketTypeUuid 
+            ticketTypeUuid == "" ? undefined :ticketTypeUuid
         );
-        await refreshSeatmap();
+        refreshSeatmap();
     }
 
     const moveRow = async (data) => {
         console.log(data);
-        const success = await Row.updateRow(activeRow, {
+        await Row.updateRow(activeRow, {
             x: rowX,
             y: rowY,
             is_horizontal: isHorizontal,
             row_number: rowNumber
         })
-        await refreshSeatmap();
-        
+        refreshSeatmap();
+
     }
 
     const newSeat = async () => {
         await Row.addSeat(activeRow);
-        await refreshSeatmap();
+        refreshSeatmap();
     }
 
     const setActiveRowWrapper = (uuid) => {
@@ -202,9 +189,8 @@ export const SeatmapEditor = () => {
         console.log(selectedBackgroundFile);
         const formData = new FormData();
         formData.append("file", selectedBackgroundFile);
-        setLoading(true);
         await Seatmap.uploadBackground(uuid, formData);
-        await refreshSeatmap();
+        refreshSeatmap();
     }
 
     return (<ContentContainer>

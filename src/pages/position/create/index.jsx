@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Crew, Position } from "@phoenixlan/phoenix.js";
+import React, { useState, useContext } from 'react';
+import { Position } from "@phoenixlan/phoenix.js";
 import { CardContainer, CardContainerDescriptiveText, CardContainerText, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, PanelButton } from '../../../components/dashboard';
 
 import { AuthenticationContext } from '../../../components/authentication';
@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
 import { Notice } from '../../../components/containers/notice';
 import { PageLoading } from '../../../components/pageLoading';
+import { useCrews } from '../../../hooks/useCrew';
 
 export const CreatePosition = () => {
 
@@ -22,25 +23,11 @@ export const CreatePosition = () => {
     const [ description, setDescription ]	        = useState(null);
     const [ attachedCrew, setAttachedCrew ]         = useState(undefined);
     const [ groupLeader, setGroupLeader ]           = useState(false);
-    const [ crewList, setCrewList ]                 = useState(null);
-    const [ loading, setLoading ]                   = useState(true);
 
     // States for error, used when attempting to create the position
     const [ error, setError ] = useState(false);
 
-    const getCrews = async () => {
-        try {
-            setLoading(true);
-            setCrewList(await Crew.getCrews());
-        } catch(e) {
-            setError(e);
-        } finally {
-            setLoading(false);
-        }
-    }
-    useEffect(() => {
-        getCrews();
-    }, [])
+    const { data: crewList, isLoading } = useCrews();
 
     const onSubmit = async (data) => {
         data.team_uuid = null;
@@ -49,7 +36,7 @@ export const CreatePosition = () => {
         if(!attachedCrew) { data.crew_uuid = null;}
         if(!attachedCrew || !data.chief) { data.chief = false; }
 
-        try { 
+        try {
             let response = await Position.createPosition(data.name, data.description, data.chief, data.is_vanity, data.crew_uuid, data.team_uuid);
             history.push("/positions/" + response.uuid);
         } catch(e) {
@@ -60,7 +47,7 @@ export const CreatePosition = () => {
 
 
     // Check if user has "admin" privilege and allow the user to view the create position page
-    if(loading) {
+    if(isLoading) {
         return(<PageLoading />)
     }
     if(loggedinUser.roles.includes("admin")) {
@@ -71,7 +58,7 @@ export const CreatePosition = () => {
                         Opprett ny stilling
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {name} 
+                        {name}
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
@@ -105,7 +92,7 @@ export const CreatePosition = () => {
                                     </CardContainer>
                                 </InnerContainerRow>
                             </InnerContainer>
-                            
+
                             <InnerContainer flex="1" floattop rowgap>
                                 <InnerContainer>
                                     <InnerContainerTitle>Tilknytning til crew</InnerContainerTitle>
@@ -118,7 +105,7 @@ export const CreatePosition = () => {
                                                     {
                                                     crewList.map((crew) => (<option key={crew.uuid} value={crew.uuid}>{crew.name}</option>))
                                                     }
-                                                    
+
                                                 </InputSelect>
                                             </InputContainer>
                                         </CardContainer>

@@ -1,30 +1,18 @@
-import { Crew } from "@phoenixlan/phoenix.js";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel } from "../../../components/dashboard"
-import { faCode, faGear, faLink, faUserGroup, faUserTie } from "@fortawesome/free-solid-svg-icons"
-import { useEffect, useState } from "react";
+import { faCode, faLink, faUserGroup, faUserTie } from "@fortawesome/free-solid-svg-icons"
 import { PageLoading } from "../../../components/pageLoading";
+import { useCrew } from "../../../hooks/useCrew";
 
 export const PositionDetails = ({position}) => {
+    const { data: crew, isLoading } = useCrew(position.crew_uuid);
 
-    const [ loading, setLoading ] = useState(true);
-    const [ crew, setCrew ] = useState(null);
-    const [ team, setTeam ] = useState(null);
-
-    useEffect(async () => {
-        let crew = position.crew_uuid ? await Crew.getCrew(position.crew_uuid) : null;
-        let team = position.team_uuid ? crew?.teams.find((team) => team.uuid == position.team_uuid) : null;
-
-        setCrew(crew);
-        setTeam(team);
-
-        setLoading(false);
-    }, [])
-
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     }
+
+    const team = position.team_uuid ? crew?.teams.find((team) => team.uuid == position.team_uuid) : null;
+
     return (
         <>
             <InnerContainer>
@@ -56,7 +44,7 @@ export const PositionDetails = ({position}) => {
                                     <CardContainerInnerText>{position.name ? position.name : (position.chief ? "Gruppeleder for " : "Medlemmer av ") + (team ? ` ${team.name} i ` : " ") + (crew?.name ?? "Ukjent crew")}</CardContainerInnerText>
                                 </CardContainerText>
                             </CardContainer>
-                            
+
                         </InnerContainerRow>
                         <InnerContainerRow nopadding mobileNoGap>
                             <CardContainer>
@@ -68,7 +56,7 @@ export const PositionDetails = ({position}) => {
                                     <CardContainerInnerText>{position.description}</CardContainerInnerText>
                                 </CardContainerText>
                             </CardContainer>
-                            
+
                         </InnerContainerRow>
                     </InnerContainer>
 

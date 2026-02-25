@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { User, Avatar } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
@@ -14,6 +14,9 @@ import { AuthenticationContext } from '../../../components/authentication';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { captureException } from "@sentry/browser";
 import { Notice } from '../../../components/containers/notice';
+import { useUserActivationState, useUserMembershipStatus } from '../../../hooks/useUser';
+import { useActivateUserMutation } from '../../../hooks/useUserMutation';
+import { useDeleteAvatarMutation } from '../../../hooks/useAvatarMutation';
 
 const S = {
     Avatar: styled.img`
@@ -44,10 +47,6 @@ export const UserViewerDetails = ({ user }) => {
     let activationStateAccess = false;
     let membershipStateAccess = false;
 
-    const [ membershipState, setMembershipState ] = useState(null);
-    const [ activationState, setActivationState ] = useState(null);
-    
-    const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState(null);
 
     // Check if user has "admin" role and make the following functions available:
@@ -72,33 +71,17 @@ export const UserViewerDetails = ({ user }) => {
         }
     }
 
-    const reload = async () => {
-        setLoading(true);
+    const { data: activationState, isLoading: activationLoading } = useUserActivationState(user.uuid, { enabled: activationStateAccess });
+    const { data: membershipState, isLoading: membershipLoading } = useUserMembershipStatus(user.uuid, { enabled: membershipStateAccess });
 
-        // Try to get user information and set the information as states which can be used later or throw an error.
-        try {
-            const [ activationState, membershipState ] = await Promise.all([
-                activationStateAccess ? User.getUserActivationState(user.uuid) : null,
-                membershipStateAccess ? User.getUserMembershipStatus(user.uuid) : null
-            ])
-            setActivationState(activationState);
-            setMembershipState(membershipState);
-        } catch(e) {
-            setError(e);
-            captureException(e);
-            console.error("An error occured while attempting to gather user information:\n" + e);
-        } 
-
-        // Logic finished, show the user details page:
-        setLoading(false);
-    }
+    const activateUserMutation = useActivateUserMutation();
+    const deleteAvatarMutation = useDeleteAvatarMutation();
 
     // Function to activate the user
     const activateUser = async () => {
         if(window.confirm("Er du sikker på at du vil aktivere denne brukeren?")) {
-            try { 
-                await User.activateUser(user.uuid);
-                reload();
+            try {
+                await activateUserMutation.mutateAsync({ uuid: user.uuid });
             } catch(e) {
                 setError(e);
                 captureException(e);
@@ -110,8 +93,8 @@ export const UserViewerDetails = ({ user }) => {
     // Function to delete the user's avatar
     const deleteAvatar = async () => {
         if(window.confirm("Er du sikker på at du vil slette avataren til denne brukeren?")) {
-            try { 
-                await Avatar.deleteAvatar(user.avatar_uuid);
+            try {
+                await deleteAvatarMutation.mutateAsync({ uuid: user.avatar_uuid });
                 window.location.reload();
             } catch(e) {
                 setError(e);
@@ -134,12 +117,10 @@ export const UserViewerDetails = ({ user }) => {
         document.body.removeChild(link);
     }
 
-    useEffect(() => {
-        reload();
-    }, []);
+    const isLoading = activationLoading || membershipLoading;
 
     const emailConsent = user.consents.find(consent => consent.consent_type === "ConsentType.event_notification")
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     }
     return (
@@ -159,9 +140,9 @@ export const UserViewerDetails = ({ user }) => {
                         {error.message}
                     </Notice>
                 </InnerContainer>
-                                    
+
             : null }
-            
+
             <InnerContainer rowgap>
                 <InnerContainerRow rowgap>
                     <InnerContainer flex="2" floattop>
@@ -311,7 +292,7 @@ export const UserViewerDetails = ({ user }) => {
                                     </InnerContainerRow>
                                 </InnerContainer>
                                 : null }
-                               
+
                                 <InnerContainer flex="1" floattop>
                                     <InnerContainerTitle>Terms-of-use (TOS) godkjenningsnivå</InnerContainerTitle>
                                     <InnerContainerRow>
@@ -329,7 +310,7 @@ export const UserViewerDetails = ({ user }) => {
                                     </InnerContainerRow>
                                 </InnerContainer>
 
-                                
+
                             </InnerContainerRow>
                         </InnerContainer>
                     </InnerContainer>

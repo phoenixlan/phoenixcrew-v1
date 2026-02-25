@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputSelect, LabelWarning } from "../../components/dashboard";
-
-import { PageContainer } from "../../components/blocks"
+import { Crew } from "@phoenixlan/phoenix.js";
+import { DashboardContent, InnerContainer, InnerContainerRow, InnerContainerTitle } from "../../components/dashboard";
 
 import { PageLoading } from "../../components/pageLoading"
 import { UserCard } from "../../components/userCard"
 import { Button } from "../../components/button"
 
 import { Theme } from "../../theme";
+import { useCurrentEvent } from '../../hooks/useEvent';
+import { useQuery, useQueryClient } from 'react-query';
 
 const S = {
     ButtonContainer: styled.div`
         display: flex;
         flex-direction: row;
-    
+
     `,
     Avatar: styled.img`
     width: 100%;`,
@@ -69,34 +69,20 @@ const AnswerApplication = (props) => {
 
 export const ViewApplication = (props) => {
     const { uuid } = useParams();
-    const [application, setApplication] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [ currentEvent, setCurrentEvent ] = useState();
+    const queryClient = useQueryClient();
+
+    const { data: currentEvent } = useCurrentEvent();
+
+    const { data: application, isLoading } = useQuery(
+        ['application', uuid],
+        () => Crew.Applications.getApplication(uuid),
+        { enabled: !!uuid }
+    );
 
     const reload = async () => {
-        setLoading(true);
-        const [ application, currentEvent ] = await Promise.all([
-            Crew.Applications.getApplication(uuid),
-            getCurrentEvent()
-        ])
-        if(application) {
-            console.log("Fetched application:")
-            console.log(application);
-
-            setApplication(application)
-            setCurrentEvent(currentEvent)
-            setLoading(false);
-
-        } else {
-            console.log("Fuck");
-        }
+        queryClient.invalidateQueries(['application', uuid]);
+        queryClient.invalidateQueries(['crewApplications']);
     }
-
-    useEffect(() => {
-        reload().catch(e => {
-            console.log(e);
-        })
-    }, []);
 
     const hide = async () => {
         if(window.confirm("Er du sikker på at du vil skjule søknaden?")) {
@@ -105,9 +91,7 @@ export const ViewApplication = (props) => {
         }
     }
 
-
-
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     }
 
@@ -143,9 +127,9 @@ export const ViewApplication = (props) => {
                                     <p>Søknaden er skjult av en administrator.</p>
                                 </InnerContainerRow>
                             </>
-                        ) : 
+                        ) :
                         (
-                            application.event.uuid == currentEvent.uuid ? (<>
+                            currentEvent && application.event.uuid == currentEvent.uuid ? (<>
                                 {application.state !== "ApplicationState.rejected" && (
                                     <AnswerApplication application={application} reload={reload} />
                                 )}
@@ -154,8 +138,8 @@ export const ViewApplication = (props) => {
                                     <InnerContainer>
                                         <InnerContainerTitle>Svar: {application.state === "ApplicationState.accepted" ? "Godkjent" : "Avslått"}</InnerContainerTitle>
                                         <p>Behandlet av: <b>{
-                                        application.last_processed_by ? 
-                                            `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : 
+                                        application.last_processed_by ?
+                                            `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` :
                                             "Ingen"
                                         }</b></p>
                                         <i>{application.answer}</i>
@@ -183,40 +167,4 @@ export const ViewApplication = (props) => {
 
         </DashboardContent>
     </>)
-    //TODO not quite right, backend har ikke application state enda
-    /*
-    return (<PageContainer>
-        <UserCard user={application.user} />
-        <h1>Crew</h1>
-        <ol>
-            {
-                application.crews.map((crew_mapping) => (<li>{crew_mapping.crew.name} {crew_mapping.accepted ? (<b>Godkjent!</b>) : null}</li>))
-            }
-        </ol>
-        <h1>Søknads-tekst</h1>
-        <i>{application.contents}</i>
-
-        {
-            application.event.uuid == currentEvent.uuid ? (<>
-                {application.state !== "ApplicationState.rejected" ? (
-                    <AnswerApplication application={application} reload={reload} />
-                ) : null}
-
-                {application.state !== "ApplicationState.created" ? (
-                    <>
-                        <h2>Svar: {application.state === "ApplicationState.accepted" ? "Godkjent" : "Avslått"}</h2>
-                        <p>Behandlet av: <b>{
-                        application.last_processed_by ? 
-                            `${application.last_processed_by.firstname} ${application.last_processed_by.lastname}` : 
-                            "Ingen"
-                        }</b></p>
-                        <i>{application.answer}</i>
-                    </>
-                ) : null}
-
-                <Button color={Theme.Cancel} onClick={hide}>Skjul</Button>
-            </>) : (<p><i>NB: Denne søknaden er fra et annet arrangement, så du kan ikke godta/avslå.</i></p>)
-        }
-    </PageContainer>)
-    */
 };

@@ -1,17 +1,21 @@
-import React , { useEffect, useState } from "react";
+import React , { useState } from "react";
 import { useParams } from 'react-router-dom';
-import { getEvent, getEventTicketTypes, addEventTicketType, TicketType } from "@phoenixlan/phoenix.js";
+import { TicketType } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationTriangle }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputSelect, LabelWarning } from "../../components/dashboard";
 import { FormButton } from "../../components/form";
+import { useEvent, useEventTicketTypes } from "../../hooks/useEvent";
+import { useTicketTypes } from "../../hooks/useTicket";
+import { useAddEventTicketTypeMutation } from "../../hooks/useEventMutation";
 
 export const EventViewer = () => {
-    const [event, setEvent] = useState([]);
-    const [ticketTypes, setTicketTypes] = useState([]);
-    const [eventTicketTypes, setEventTicketTypes] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { uuid } = useParams();
+
+    const { data: event, isLoading: eventLoading } = useEvent(uuid);
+    const { data: allTicketTypes = [], isLoading: ticketTypesLoading } = useTicketTypes();
+    const { data: eventTicketTypes = [], isLoading: eventTicketTypesLoading } = useEventTicketTypes(event?.uuid);
 
     const [activeContent, setActiveContent] = useState(1);
     const [cancelEventCheck, setCancelEventCheck] = useState(false);
@@ -19,39 +23,9 @@ export const EventViewer = () => {
 
     const [selectedTicketTypeUuid, setSelectedTicketTypeUuid] = useState("");
 
-    const { uuid } = useParams();
+    const addEventTicketTypeMutation = useAddEventTicketTypeMutation();
 
-    const reload = async () => {
-        setLoading(true);
-        const [ event, ticketTypes ] = await Promise.all([
-                getEvent(uuid),
-                TicketType.getTicketTypes(),
-            ]
-        )
-        const eventTicketTypes = await getEventTicketTypes(event.uuid)
-        setEvent(event);
-        setEventTicketTypes(eventTicketTypes);
-
-        const legalTicketTypes = ticketTypes.filter(ticketType => {
-            return ticketType.price !== 0 && eventTicketTypes.filter((type) => type.uuid === ticketType.uuid).length === 0
-        });
-
-        if(legalTicketTypes.length > 0) {
-            setSelectedTicketTypeUuid(legalTicketTypes[0].uuid);
-        } else {
-            setSelectedTicketTypeUuid("")
-        }
-        setTicketTypes(legalTicketTypes);
-
-        if(event.cancellation_reason) {
-            setCancelEventCheck(true);
-            setCancelEventReason(event.cancellation_reason);
-        }
-
-        setLoading(false);
-    }
-
-    useEffect(reload, []);
+    const loading = eventLoading || ticketTypesLoading || eventTicketTypesLoading;
 
     // Function to handle when the checkbox for cancelling the event is clicked.
     const changeCancelEventCheck = () => {
@@ -64,26 +38,29 @@ export const EventViewer = () => {
         }
     }
 
-    const changeSelectedTicketType = (event) => {
-        setSelectedTicketTypeUuid(event.target.value)
+    const changeSelectedTicketType = (e) => {
+        setSelectedTicketTypeUuid(e.target.value)
     }
 
     const addTicketType = async (e) => {
         e.preventDefault()
         if(selectedTicketTypeUuid !== "") {
             console.log(selectedTicketTypeUuid)
-            await addEventTicketType(event.uuid, selectedTicketTypeUuid)
-            reload();
+            await addEventTicketTypeMutation.mutateAsync({ eventUuid: event.uuid, ticketTypeUuid: selectedTicketTypeUuid })
         } else {
             alert("No ticket type left to add")
         }
     }
-    
+
     // View loading page if loading is true
     if(loading) {
         return (<PageLoading />)
     }
-    
+
+    const legalTicketTypes = allTicketTypes.filter(ticketType => {
+        return ticketType.price !== 0 && eventTicketTypes.filter((type) => type.uuid === ticketType.uuid).length === 0
+    });
+
     return (
         <>
             <DashboardHeader>
@@ -101,7 +78,7 @@ export const EventViewer = () => {
 
             <DashboardContent visible={activeContent == 1}>
                 <InnerContainer border extramargin>
-                    <InputCheckbox label="Kanseller arrangementet" value={cancelEventCheck} onChange={() => changeCancelEventCheck()} disabled />
+                    <InputCheckbox label="Kanseller arrangementet" value={cancelEventCheck || !!event.cancellation_reason} onChange={() => changeCancelEventCheck()} disabled />
                 </InnerContainer>
 
                 <InnerContainer>
@@ -127,7 +104,7 @@ export const EventViewer = () => {
                                     </InputContainer>
                                     <InputContainer mobileHide />
                                 </InnerContainerRow>
-                                
+
                                 <InnerContainerTitle>Billetter og øvre aldersgrense</InnerContainerTitle>
                                 <InnerContainerRow nowrap>
                                     <InputContainer column extramargin>
@@ -145,7 +122,7 @@ export const EventViewer = () => {
                                         <InputElement type="number" value={event.participant_age_limit_inclusive} disabled />
                                     </InputContainer>
                                 </InnerContainerRow>
-                                
+
                                 <InnerContainerTitle>Arrangementstid og booking</InnerContainerTitle>
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
@@ -182,25 +159,25 @@ export const EventViewer = () => {
                                     </InputContainer>
                                     <InputContainer mobileHide />
                                 </InnerContainerRow>
-                                
+
                             </InnerContainer>
                             <InnerContainer flex="1">
                                 <InnerContainerTitle>Kansellering av arrangementet</InnerContainerTitle>
                                 <InnerContainerRow nopadding nowrap>
                                     <InputContainer column extramargin>
-                                        <InputLabel small>Begrunnelse for kansellering <LabelWarning 
-                                            title="'Kansellering av arrangementet' er huket av!&#10;Dersom du lagrer vil arrangementet vises som kansellert." 
+                                        <InputLabel small>Begrunnelse for kansellering <LabelWarning
+                                            title="'Kansellering av arrangementet' er huket av!&#10;Dersom du lagrer vil arrangementet vises som kansellert."
                                             visible={cancelEventCheck}><FontAwesomeIcon icon={faExclamationTriangle} /></LabelWarning></InputLabel>
-                                        <InputElement type="text" defaultValue={cancelEventReason} disabled={!cancelEventCheck} />
+                                        <InputElement type="text" defaultValue={cancelEventReason ?? event.cancellation_reason} disabled={!cancelEventCheck} />
                                     </InputContainer>
                                 </InnerContainerRow>
                                 <InnerContainerTitle>Billett-typer som kan kjøpes</InnerContainerTitle>
                                 <InnerContainerRow nowrap>
                                     <InputContainer column extramargin>
                                         <InputLabel small>Legg til billett-type</InputLabel>
-                                        <InputSelect value={selectedTicketTypeUuid} onChange={changeSelectedTicketType}>
+                                        <InputSelect value={selectedTicketTypeUuid || (legalTicketTypes.length > 0 ? legalTicketTypes[0].uuid : "")} onChange={changeSelectedTicketType}>
                                             {
-                                                ticketTypes.map((type) => (
+                                                legalTicketTypes.map((type) => (
                                                     <option value={type.uuid}>{type.name} ({type.price},-)</option>
                                                 ))
                                             }

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import { Seatmap } from '@phoenixlan/phoenix.js';
+
+import { useSeatmapAvailability } from '../../hooks/useSeatmap';
 
 import Logo from "../../assets/logo.svg"
 
@@ -37,14 +38,7 @@ const S = {
 }
 
 export const TableLabels = React.forwardRef(({uuid}, ref) => {
-    const [ availability, setAvailability ] = useState(null)
-
-    useEffect(async () => {
-        const availability = await Seatmap.getSeatmapAvailability(uuid);
-        console.log(availability);
-        setAvailability(availability)
-    }, [uuid])
-    console.log(uuid)
+    const { data: availability } = useSeatmapAvailability(uuid);
 
     return (<S.PrintWrapper ref={ref}>
         {
@@ -61,7 +55,7 @@ export const TableLabels = React.forwardRef(({uuid}, ref) => {
                     </S.SeatTitle>
                 </S.Seat>
             ))
-                
+
             )) : (<h1>Waiting</h1>)
         }
 

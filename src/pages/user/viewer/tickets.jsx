@@ -1,35 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { User} from "@phoenixlan/phoenix.js";
-import { Table, TableCell, TableHead, SelectableTableRow, Row, IconContainer, TableRow, TableBody } from "../../../components/table";
+import React from 'react';
+import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
-import { InnerContainer, InnerContainerTitle, InnerContainerTitleS } from '../../../components/dashboard';
+import { InnerContainer, InnerContainerTitle } from '../../../components/dashboard';
+import { useUserOwnedTickets, useUserPurchasedTickets } from '../../../hooks/useUser';
 
 export const UserViewerTickets = ({ user }) => {
-    const [ loading, setLoading ] = useState(false);
-    const [ ownedTickets, setOwnedTickets ] = useState([]);
-    const [ purchasedTickets, setPurchasedTickets ] = useState([]);
-    const [ seatableTickets, setSeatableTickets] = useState([]);
+    const { data: ownedTickets = [], isLoading: ownedLoading } = useUserOwnedTickets(user.uuid);
+    const { data: purchasedTickets = [], isLoading: purchasedLoading } = useUserPurchasedTickets(user.uuid);
 
-    const reload = async () => {
-        setLoading(true);
-        const [ ownedTickets, purchasedTickets, seatableTickets ] = await Promise.all([
-            User.getOwnedTickets(user.uuid),
-            User.getPurchasedTickets(user.uuid),
-            User.getSeatableTickets(user.uuid),
-        ])
-
-        setOwnedTickets(ownedTickets);
-        setPurchasedTickets(purchasedTickets);
-        setSeatableTickets(seatableTickets);
-
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        reload();
-    }, []);
-
-    if(loading) {
+    if(ownedLoading || purchasedLoading) {
         return (<PageLoading />)
     }
     return (

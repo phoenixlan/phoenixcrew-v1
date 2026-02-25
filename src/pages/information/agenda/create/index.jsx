@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { Agenda, getCurrentEvent } from "@phoenixlan/phoenix.js";
 import { CardContainer, CardContainerDescriptiveText, CardContainerText, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, PanelButton } from '../../../../components/dashboard';
 
@@ -6,7 +6,6 @@ import { AuthenticationContext } from '../../../../components/authentication';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
 import { Notice } from '../../../../components/containers/notice';
-import { PageLoading } from '../../../../components/pageLoading';
 
 export const CreateAgendaEntry = () => {
 
@@ -23,19 +22,9 @@ export const CreateAgendaEntry = () => {
     const [ location, setLocation ] = useState(null);
     const [ time, setTime ] = useState(null);
     const [ duration, setDuration ] = useState(null);
-    const [ loading, setLoading ] = useState(true);
 
     // States for error, used when attempting to create the position
     const [ error, setError ] = useState(false);
-
-    const load = async () => {
-        setLoading(false);
-    }
-
-
-    useEffect(() => {
-        load();
-    })
 
     const createAgendaEntry = async (data) => {
         const event = await getCurrentEvent();
@@ -52,10 +41,6 @@ export const CreateAgendaEntry = () => {
     }
 
 
-    // Check if user has "admin" privilege and allow the user to view the create position page
-    if(loading) {
-        return(<PageLoading />)
-    }
     if(agendaManagement) {
         return (
             <>
@@ -64,7 +49,7 @@ export const CreateAgendaEntry = () => {
                         Opprett ny programpost
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {title} 
+                        {title}
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
@@ -105,7 +90,7 @@ export const CreateAgendaEntry = () => {
                                         <InputContainer column extramargin>
                                             <InputLabel small>Sted</InputLabel>
                                             <InputElement {...register("location")} type="text" list="locations" value={location} onChange={(e) => setLocation(e.target.value)} />
-                                        
+
                                             <datalist id="locations">
                                                 <option value="Multisalen" />
                                                 <option value="Vestibylen" />
@@ -141,7 +126,7 @@ export const CreateAgendaEntry = () => {
                                     </CardContainer>
                                 </InnerContainerRow>
                             </InnerContainer>
-                            
+
                             <InnerContainer flex="1" floattop rowgap>
                                 <InnerContainer>
                                     <InnerContainerTitle>Innstillinger</InnerContainerTitle>

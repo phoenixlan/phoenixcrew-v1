@@ -1,9 +1,10 @@
-import React , { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { Avatar } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerMini, InnerContainerRow, InnerContainerTitleL, InnerContainerTitleS } from "../../components/dashboard";
 import { FormButton } from "../../components/form";
+import { useUnapprovedAvatars } from "../../hooks/useAvatar";
+import { useSetAvatarApprovedMutation } from "../../hooks/useAvatarMutation";
 
 const S = {
     AvatarEntry: styled.div`
@@ -32,30 +33,17 @@ const S = {
 }
 
 export const AvatarApproval = () => {
-    const [ avatars, setAvatars ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
+    const { data: avatars = [], isLoading } = useUnapprovedAvatars();
+    const setApprovalMutation = useSetAvatarApprovedMutation();
 
-    const refreshAvatars = async () => {
-        setLoading(true);
-        const avatars = await Avatar.getPendingAvatars();
-        setAvatars(avatars);
-        setLoading(false)
-    }
-
-    useEffect(() => {
-        refreshAvatars();
-    }, []);
-
-    if(loading) {
+    if(isLoading) {
         return (
             <PageLoading />
         )
     }
 
-    const setApproval = async (uuid, state) => {
-        setLoading(true);
-        await Avatar.setApproved(uuid, state);
-        await refreshAvatars();
+    const setApproval = (uuid, state) => {
+        setApprovalMutation.mutate({ uuid, approved: state });
     }
 
     return (
@@ -80,7 +68,7 @@ export const AvatarApproval = () => {
                                             <InnerContainerTitleL nopadding>{`${avatar.user.firstname} ${avatar.user.lastname}`}</InnerContainerTitleL>
                                             <InnerContainerTitleS>{avatar.user.username}</InnerContainerTitleS>
                                         </InnerContainerMini>
-                                        
+
                                         <S.DecisionPanel>
                                             <FormButton type="submit" onClick={() => setApproval(avatar.uuid, true)}>Godkjenn</FormButton>
                                             <FormButton type="submit" onClick={() => setApproval(avatar.uuid, false)}>Avslå</FormButton>

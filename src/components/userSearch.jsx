@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
-import { User } from "@phoenixlan/phoenix.js"
+import { useSearchUsers } from "../hooks/useUser";
 import { InputContainer, InputElement, InputLabel } from "./dashboard";
 
 const S = {
@@ -39,14 +39,9 @@ const S = {
 
 export const UserSearch = ({ onUserSelected, disabled }) => {
     const [ query, setQuery ] = useState("");
-    const [ users, setUsers ] = useState([]);
     const [ showSuggestions, setShowSuggestions ] = useState(false);
 
-    useEffect(async () => {
-        if(query.length >= 3) {
-            setUsers(await User.searchUsers(query));
-        }
-    }, [query]);
+    const { data: users = [] } = useSearchUsers(query);
 
     const setUser = (user) => {
         console.log("Click")
@@ -57,7 +52,7 @@ export const UserSearch = ({ onUserSelected, disabled }) => {
     return (
         <S.Container>
             {
-                (users.length > 0 && showSuggestions) ? 
+                (users.length > 0 && showSuggestions) ?
                     (
                     <S.UserList>
                         {
@@ -69,11 +64,11 @@ export const UserSearch = ({ onUserSelected, disabled }) => {
                             ))
                         }
                     </S.UserList>
-                    ) 
-                : 
+                    )
+                :
                     null
             }
-            
+
             <InputContainer column extramargin>
                 <InputLabel small>Bruker</InputLabel>
                 <InputElement disabled={disabled} value={query} onChange={(e) => {setQuery(e.target.value); onUserSelected(null)}} onFocus={() => setShowSuggestions(true)} onBlur={() => setShowSuggestions(false)} />

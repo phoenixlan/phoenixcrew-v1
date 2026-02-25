@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { getCurrentEvent, User, Crew, getEvents, PositionMapping } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, IconContainer, TableRow, TableBody, InnerColumnCenter } from "../../../components/table";
 
@@ -7,6 +7,7 @@ import { InnerContainer, InnerContainerTitle } from '../../../components/dashboa
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { position_mapping_to_string } from '../../../utils/user';
 import { faCircleCheck, faLock } from '@fortawesome/free-solid-svg-icons';
+import { useQuery, useQueryClient } from 'react-query';
 
 export const Position = ({ position, func, positionName }) => {
 
@@ -28,13 +29,11 @@ export const Position = ({ position, func, positionName }) => {
 
 
 export const UserPositions = ({ inheritUser }) => {
+    const queryClient = useQueryClient();
 
-    const [ loading, setLoading ] = useState(true);
-    const [ user, setUser ] = useState(inheritUser);
-
-    const reloadPositionList = async () => {
-        setLoading(true);
-        try {
+    const { data: user, isLoading } = useQuery(
+        ['userPositionsEnriched', inheritUser.uuid],
+        async () => {
             let currentEvent = await getCurrentEvent();
             let allEvents = await getEvents();
             let user = await User.getUser(inheritUser.uuid);
@@ -42,18 +41,15 @@ export const UserPositions = ({ inheritUser }) => {
             await Promise.all(user.position_mappings.map(async (position_mapping) => {
                 const position = position_mapping.position;
 
-                // Create a boolean inside position_mapping which tells if the position is active for the current event, or not. 
-                position_mapping.active_position = 
+                position_mapping.active_position =
                     position_mapping.event_uuid === currentEvent.uuid ||
                     !position_mapping.event_uuid;
 
-                // Create a variable inside position_mapping which tells what event the position was inherited from. (Inherited from event name)
                 if(position_mapping.event_uuid) {
                     position_mapping.event_name = allEvents.filter(event => event.uuid === position_mapping.event_uuid).map(event => event.name);
                     position_mapping.event_time = allEvents.filter(event => event.uuid === position_mapping.event_uuid).map(event => event.start_time);
                 }
 
-                // Create a variable inside position_mapping for crew and team, used in position_mapping_to_string.
                 if(position.crew_uuid) {
                     position.crew = await Crew.getCrew(position.crew_uuid);
                     if(position.team_uuid) {
@@ -62,30 +58,22 @@ export const UserPositions = ({ inheritUser }) => {
                 }
             }));
 
-            setUser(user);
-        } catch(e) {
-            console.log(e);
-        } finally {
-            setLoading(false);
+            return user;
         }
-    }
+    );
 
     const deletePosition = async (position, positionName) => {
         if(window.confirm("Er du sikker på at du vil fjerne stillingen \"" + positionName + "\" fra " + user.firstname + " " + user.lastname + "?")) {
             try {
                 await PositionMapping.deletePositionMapping(position.uuid);
-                reloadPositionList()
+                queryClient.invalidateQueries(['userPositionsEnriched', inheritUser.uuid]);
             } catch(e) {
                 console.error("An error occured while attempting to delete the position.\n" + e)
             }
         }
     }
 
-    useEffect(async () => {
-        reloadPositionList();
-    }, [])
-
-    if(loading) {
+    if(isLoading) {
         return (<PageLoading />)
     } else {
         return (
@@ -111,9 +99,9 @@ export const UserPositions = ({ inheritUser }) => {
                                         let positionName = position_mapping_to_string(position);
 
                                         return (
-                                            <Position 
-                                                key={position.uuid} 
-                                                position={position} 
+                                            <Position
+                                                key={position.uuid}
+                                                position={position}
                                                 positionName={positionName}
 
                                                 func={() => deletePosition(position, positionName)}

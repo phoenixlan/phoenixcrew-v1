@@ -1,35 +1,21 @@
-import React , { useEffect, useState } from "react";
+import React , { useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import { Crew, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
-
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputTextArea, InputSelect, InnerContainerTitleS } from "../../../components/dashboard";
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputContainer, InputElement, InputLabel, InputTextArea } from "../../../components/dashboard";
 import { PageLoading } from "../../../components/pageLoading"
 
 import { CrewViewMemberViewer } from "./memberViewer";
 import { CrewViewCrewCard } from "./crewCard";
+import { useCrew } from "../../../hooks/useCrew";
 
 export const ViewCrew = () => {
     const { uuid } = useParams();
     const [ activeContent, setActiveContent ] = useState(1);
-    const [ loading, setLoading ] = useState(true);
-    const [ crew, setCrew ] = useState();
 
-    useEffect(async () => {
-        try {
-            const crew = await Crew.getCrew(uuid);
-            setCrew(crew);
-            setLoading(false);
-        } catch(e) {
-            return (
-                <p>En feil oppsto</p>
-            )
-        }
-        
-    }, []);
+    const { data: crew, isLoading } = useCrew(uuid);
 
-    if(loading) {
+    if(isLoading) {
         return (
             <PageLoading />
         )
