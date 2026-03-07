@@ -41,6 +41,7 @@ import { CreatePosition } from '../pages/position/create';
 import { EditUser } from '../pages/user/viewer/editUser';
 import { Authentication } from '../components/authentication';
 import { ViewTicket } from '../pages/ticket/viewer';
+import { TicketTypeList } from '../pages/ticket/ticketTypes';
 import { CreateAgendaEntry } from '../pages/information/agenda/create';
 import { EditAgendaEntry } from '../pages/information/agenda/view';
 
@@ -146,6 +147,9 @@ const RouterInner = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/ticket/:id/">
                             <ViewTicket />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/ticket-types/">
+                            <TicketTypeList/>
                         </PrivateRoute>
                         <PrivateRoute exact path="/store_sessions/">
                             <StoreSessionList/>

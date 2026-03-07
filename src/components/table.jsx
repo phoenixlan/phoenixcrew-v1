@@ -72,7 +72,7 @@ export const InnerColumnCenter = styled.span`
     text-align: auto
 `
 export const IconContainer = styled.span`
-    color: ${props => props.color ? props.color : "rgb(40, 40, 40)"};
+    color: ${props => props.color ? props.color : "inherit"};
     position: relative;
     margin: auto;
     width: 100%;
