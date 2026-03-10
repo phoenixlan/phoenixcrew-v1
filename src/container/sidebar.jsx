@@ -382,6 +382,11 @@ export const options = [
                 url: "/store_sessions"
             },
             {
+                title: "Billett-typer",
+                icon: faTicket,
+                url: "/ticket-types/"
+            },
+            {
                 title: "Setekart",
                 icon: faMap,
                 url: "/seatmap/"
