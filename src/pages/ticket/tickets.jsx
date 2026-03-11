@@ -65,7 +65,7 @@ export const TicketList = () => {
                 let heldTickets = 0; 
                 storeSessions.map((storeSession) => {
                     storeSession.entries.map((entry) => {
-                        if(entry.ticket_type.seatable) {
+                        if(entry.ticket_type.grants_admission) {
                             heldTickets += entry.amount;
                         }  
                     })
@@ -75,21 +75,21 @@ export const TicketList = () => {
                 let ticketsProgressBar = [];
                 let checkedinTicketsProgressBar = [];
 
-                let availableTickets = currentEvent.max_participants - tickets.filter((ticket) => ticket.ticket_type.seatable == true).length - heldTickets; 
+                let availableTickets = currentEvent.max_participants - tickets.filter((ticket) => ticket.ticket_type.grants_admission == true).length - heldTickets; 
 
                 let ticketsCheckedinCount = 0;
                 let ticketsNotCheckedinCount = 0;
 
-                // Go through all tickets, filter out non-seatable tickets, sort after price, count tickets for each type and if they are checked in or not.
+                // Go through all tickets, filter out tickets that does not grant admission, sort after price, count tickets for each type and if they are checked in or not.
                 // Logic for creating the tickets progressbar
                 allTicketTypes
-                    .filter((ticketType) => ticketType.seatable == true)
+                    .filter((ticketType) => ticketType.grants_admission == true)
                     .sort((a, b) => a.price < b.price)
                     .map((ticketType) => {
                         let countedTicketsForTicketType = 0;
             
                         tickets
-                        .filter((ticket) => ticket.ticket_type.uuid == ticketType.uuid && ticket.ticket_type.seatable == true)
+                        .filter((ticket) => ticket.ticket_type.uuid == ticketType.uuid && ticket.ticket_type.grants_admission == true)
                         .map((ticket) => {
                             countedTicketsForTicketType++;
                             ticket.checked_in ? ticketsCheckedinCount++ : ticketsNotCheckedinCount++;
@@ -274,8 +274,7 @@ export const TicketList = () => {
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
                                                 <TableCell flex="3" mobileHide>{ TimestampToDateTime(ticket.created, "DD_MM_YYYY_HH_MM") }</TableCell>
                                                 <TableCell flex="0 24px" center>
-                                                    {/* Temporary logic until API has checkinable columns in ticket_types - Show a minus if a ticket is not checkinable based on logic !seatable and grants_membership, currently only membership tickets */}
-                                                    {(!ticket.ticket_type.seatable && ticket.ticket_type.grants_membership) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er medlemsskap, og kan ikke sjekkes inn" /></IconContainer> : null}
+                                                    {(!ticket.ticket_type.grants_admission) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er medlemsskap, og kan ikke sjekkes inn" /></IconContainer> : null}
                                                     {(ticket.checked_in) ? <IconContainer color="#388e3c"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer> : null}
                                                 </TableCell>
                                                 <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
