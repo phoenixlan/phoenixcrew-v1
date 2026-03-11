@@ -274,7 +274,7 @@ export const TicketList = () => {
                                                 <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
                                                 <TableCell flex="3" mobileHide>{ TimestampToDateTime(ticket.created, "DD_MM_YYYY_HH_MM") }</TableCell>
                                                 <TableCell flex="0 24px" center>
-                                                    {(!ticket.ticket_type.grants_admission) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er medlemsskap, og kan ikke sjekkes inn" /></IconContainer> : null}
+                                                    {(!ticket.ticket_type.grants_admission) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er ikke en inngangsbillett og kan ikke sjekkes inn" /></IconContainer> : null}
                                                     {(ticket.checked_in) ? <IconContainer color="#388e3c"><FontAwesomeIcon icon={faCheck} title="Billetten er sjekket inn" /></IconContainer> : null}
                                                 </TableCell>
                                                 <TableCell flex="0 24px" center><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
