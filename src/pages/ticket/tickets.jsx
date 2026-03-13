@@ -271,7 +271,7 @@ export const TicketList = () => {
                                                 <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.buyer) }</TableCell>
                                                 <TableCell flex="4" mobileHide>{ User.getFullName(ticket.seater) }</TableCell>
-                                                <TableCell flex="2" mobileFlex="2">{ ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "" }</TableCell>
+                                                <TableCell flex="2" mobileFlex="2">{ ticket.ticket_type.seatable ? ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke bestemt" : "N/A"}</TableCell>
                                                 <TableCell flex="3" mobileHide>{ TimestampToDateTime(ticket.created, "DD_MM_YYYY_HH_MM") }</TableCell>
                                                 <TableCell flex="0 24px" center>
                                                     {(!ticket.ticket_type.grants_admission) ? <IconContainer color="#616161"><FontAwesomeIcon icon={faMinus} title="Billetten er ikke en inngangsbillett og kan ikke sjekkes inn" /></IconContainer> : null}
