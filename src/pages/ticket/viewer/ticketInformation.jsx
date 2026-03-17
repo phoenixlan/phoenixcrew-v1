@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from "react";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { captureException } from "@sentry/browser";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
-import { faCheck, faCode, faDollarSign, faGear, faLink, faLocationDot, faUserGroup, faUserTie } from "@fortawesome/free-solid-svg-icons"
+import { faCalendar, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faCheck, faCode, faDollarSign, faLocationDot } from "@fortawesome/free-solid-svg-icons"
 
 import { SelectableTableRow, Table, TableBody, TableCell, TableHead, TableRow } from "../../../components/table";
-import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerTextSuffixWarning, InputLabel, PanelButton, SpanLink } from "../../../components/dashboard"
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton, SpanLink } from "../../../components/dashboard"
 import { AuthenticationContext } from "../../../components/authentication";
 import { PageLoading } from "../../../components/pageLoading";
 import { useParams } from "react-router-dom";
@@ -15,7 +15,7 @@ import { Ticket } from "@phoenixlan/phoenix.js";
 import { Notice } from "../../../components/containers/notice";
 import { TimestampToDateTime } from "../../../components/timestampToDateTime";
 
-
+import { useTicketCheckinMutation } from "../../../hooks/useTicketCheckinMutation";
 
 
 export const TicketInformation = ({data}) => {
@@ -23,79 +23,65 @@ export const TicketInformation = ({data}) => {
     const history = useHistory();
     const { id } = useParams();
 
-    // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
-    
-    // Function availibility control:
-    let checkinStateButtonAvailibility = false;
+
+    const checkinMutation = useTicketCheckinMutation();
 
     // Ticket for event is current event check
     let ticketForCurrentEvent = data.currentEvent.uuid === data.ticket.event.uuid;
 
-    const [ ticketEventLog, setTicketEventLog ] = useState([]);
-
-    const [ error, setError ] = useState(null);
-    const [ loading, setLoading ] = useState(true);
-
-    // Function to check in ticket
-    const checkinTicket = async () => {
-        if(window.confirm("Er du sikker på at du vil sjekke inn denne billetten?")) {
-            try {
-                await Ticket.checkInTicket(data.ticket.ticket_id);
-                window.location.reload();
-            } catch(e) {
-                setError(e);
-                captureException(e);
-                console.error("An error occured while attempting to checkin ticket\n" + e);
-            } 
-        }
-    }
-
-    const createEventlog = async () => {
-        let ticketEventLog = [];
-
-        // Create log entry when ticket was created
-        if(data.ticket.payment_uuid) {
-            ticketEventLog.push({timestamp: data.ticket.created, message: "Billett opprettet med vellykket kjøpt"})
-        } else {
-            ticketEventLog.push({timestamp: data.ticket.created, message: "Billett opprettet"})
-        }
-        
-        // Create log entry when ticket was checked in
-        if(data.ticket.checked_in) {
-            ticketEventLog.push({timestamp: data.ticket.checked_in, message: "Billett sjekket inn"})
-        }
-
-        // Create log entries when ticket has been transferred
-        try {
-            let ticketTransferLog = await Ticket.getTransferLog(id);
-            ticketTransferLog.map((data) => {
-                ticketEventLog.push({timestamp: data.created, message: "Billett overført fra " + data.from_user.firstname + " " + data.from_user.lastname + " til " + data.to_user.firstname + " " + data.to_user.lastname + " " + (data.reverted ? "– Overførselen ble angret" : "")})
-            })
-        } catch(e) {
-            console.error(e)
-        }
-
-        // Sort all log entries by their timestamps
-        ticketEventLog.sort((a, b) => a.timestamp < b.timestamp)
-
-        setTicketEventLog(ticketEventLog);
-    }
-
-    // Check if user has "admin" role and make the following functions available:
+    // Check if user has appropriate role and ticket grants admission
+    let checkinStateButtonAvailibility = false;
     if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin") || authContext.roles.includes("ticket_checkin")) {
-        // Make checkin button only available for tickets that grants admission
         if(data.ticket.ticket_type.grants_admission) {
             checkinStateButtonAvailibility = true;
         }
     }
 
-    useEffect(async () => {
-        createEventlog();
-        setLoading(false);
-    }, [])
+    const [ ticketEventLog, setTicketEventLog ] = useState([]);
+    const [ loading, setLoading ] = useState(true);
 
-    console.log();
+    useEffect(() => {
+        const createEventlog = async () => {
+            const log = [];
+
+            if(data.ticket.payment_uuid) {
+                log.push({timestamp: data.ticket.created, message: "Billett opprettet med vellykket kjøpt"})
+            } else {
+                log.push({timestamp: data.ticket.created, message: "Billett opprettet"})
+            }
+
+            if(data.ticket.checked_in) {
+                log.push({timestamp: data.ticket.checked_in, message: "Billett sjekket inn"})
+            }
+
+            try {
+                let ticketTransferLog = await Ticket.getTransferLog(id);
+                ticketTransferLog.map((entry) => {
+                    log.push({timestamp: entry.created, message: "Billett overført fra " + entry.from_user.firstname + " " + entry.from_user.lastname + " til " + entry.to_user.firstname + " " + entry.to_user.lastname + " " + (entry.reverted ? "– Overførselen ble angret" : "")})
+                })
+            } catch(e) {
+                console.error(e)
+            }
+
+            log.sort((a, b) => a.timestamp < b.timestamp)
+            setTicketEventLog(log);
+            setLoading(false);
+        };
+        createEventlog();
+    }, []);
+
+    const checkinTicket = async () => {
+        if(window.confirm("Er du sikker på at du vil sjekke inn denne billetten?")) {
+            try {
+                await checkinMutation.mutateAsync(data.ticket.ticket_id);
+                window.location.reload();
+            } catch(e) {
+                captureException(e);
+                console.error("An error occured while attempting to checkin ticket\n" + e);
+            }
+        }
+    }
 
     if(loading) {
         return (<PageLoading />)
@@ -104,14 +90,14 @@ export const TicketInformation = ({data}) => {
         <>
                     <InnerContainer rowgap>
                         {
-                            !ticketForCurrentEvent && 
+                            !ticketForCurrentEvent &&
                             <InnerContainerRow>
                                 <Notice fillWidth type="info" visible>
                                     OBS! Du ser på en billett for et annet arrangement
                                 </Notice>
                             </InnerContainerRow>
                         }
-                        
+
                         <InnerContainerRow>
                             <PanelButton onClick={checkinStateButtonAvailibility ? () => checkinTicket() : null} disabled={(data.ticket.checked_in || !checkinStateButtonAvailibility)} icon={faCheck}>{data.ticket.checked_in === null ? "Sjekk inn billett" : "Billett sjekket inn"}</PanelButton>
                         </InnerContainerRow>
@@ -165,6 +151,19 @@ export const TicketInformation = ({data}) => {
                                     </CardContainerText>
                                 </CardContainer>
 
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faCalendar} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Opprettelsestidspunkt</InputLabel>
+                                        <CardContainerInnerText>{ new Date(data.ticket.created*1000).toLocaleString() }</CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+
+
                                 <CardContainer disabled={!data.ticket.ticket_type.seatable}>
                                     <CardContainerIcon>
                                         <CardContainerInnerIcon>
@@ -192,7 +191,7 @@ export const TicketInformation = ({data}) => {
                                             <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${data.ticket.owner.uuid}`)}>{data.ticket.owner.firstname}, {data.ticket.owner.lastname}</SpanLink></CardContainerInnerText>
                                         </CardContainerText>
                                     </CardContainer>
-                                    
+
                                     <CardContainer>
                                         <CardContainerIcon>
                                             <CardContainerInnerIcon>
@@ -204,7 +203,7 @@ export const TicketInformation = ({data}) => {
                                             <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${data.ticket.buyer.uuid}`)}>{data.ticket.buyer.firstname}, {data.ticket.buyer.lastname}</SpanLink></CardContainerInnerText>
                                         </CardContainerText>
                                     </CardContainer>
-                                    
+
                                     <CardContainer>
                                         <CardContainerIcon>
                                             <CardContainerInnerIcon>
@@ -241,7 +240,7 @@ export const TicketInformation = ({data}) => {
                                             )
                                         })
                                     }
-                                    
+
                                 </TableBody>
                             </Table>
                         </InnerContainer>

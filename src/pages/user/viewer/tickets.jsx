@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { User} from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, Row, IconContainer, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer, InnerContainerTitle, InnerContainerTitleS } from '../../../components/dashboard';
 
 export const UserViewerTickets = ({ user }) => {
+    let history = useHistory();
     const [ loading, setLoading ] = useState(false);
     const [ ownedTickets, setOwnedTickets ] = useState([]);
     const [ purchasedTickets, setPurchasedTickets ] = useState([]);
@@ -50,7 +52,7 @@ export const UserViewerTickets = ({ user }) => {
                         <TableBody>
                             {
                                 purchasedTickets.map(ticket => (
-                                    <SelectableTableRow>
+                                    <SelectableTableRow onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
                                         <TableCell mobileFlex="1" consolas flex="1">#{ ticket.ticket_id }</TableCell>
                                         <TableCell mobileFlex="3" flex="4">{ticket.event.name}</TableCell>
                                         <TableCell mobileFlex="3" flex="3">{ticket.owner.firstname} {ticket.seater.lastname}</TableCell>
@@ -78,7 +80,7 @@ export const UserViewerTickets = ({ user }) => {
                         <TableBody>
                             {
                                 ownedTickets.map(ticket => (
-                                    <SelectableTableRow>
+                                    <SelectableTableRow onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
                                         <TableCell mobileFlex="1" consolas flex="1">#{ ticket.ticket_id }</TableCell>
                                         <TableCell mobileFlex="3" flex="4">{ticket.event.name}</TableCell>
                                         <TableCell mobileFlex="3" flex="3">{ticket.buyer.firstname} {ticket.buyer.lastname}</TableCell>

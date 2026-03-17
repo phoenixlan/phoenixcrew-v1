@@ -1,6 +1,6 @@
 import React , { useContext, useEffect, useState } from "react";
 
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow } from '../../../components/dashboard';
 
 import { AuthenticationContext } from "../../../components/authentication";
 import { PageLoading } from "../../../components/pageLoading";
@@ -10,15 +10,21 @@ import { Notice } from "../../../components/containers/notice";
 import { getCurrentEvent, Ticket } from "@phoenixlan/phoenix.js";
 
 import { TicketInformation } from "./ticketInformation";
+import { PaymentInformation } from "./paymentInformation";
+
+const TABS = {
+    DETAILS: 1,
+    PAYMENT: 2,
+}
 
 export const ViewTicket = () => {
     const { id } = useParams();
     const [error, setError] = useState(false);
-    
+
     const [data, setData] = useState(null);
 
     const [loading, setLoading] = useState(true);
-    const [activeContent, setActiveContent] = useState(1);
+    const [activeContent, setActiveContent] = useState(TABS.DETAILS);
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
@@ -40,7 +46,7 @@ export const ViewTicket = () => {
     }
 
     useEffect(() => {
-        load().catch(e => { 
+        load().catch(e => {
             console.log(e);
         })
     }, []);
@@ -51,7 +57,7 @@ export const ViewTicket = () => {
         if(data) {
             return (
                 <>
-                    <DashboardHeader border>
+                    <DashboardHeader>
                         <DashboardTitle>
                             Billett
                         </DashboardTitle>
@@ -60,8 +66,17 @@ export const ViewTicket = () => {
                         </DashboardSubtitle>
                     </DashboardHeader>
 
-                    <DashboardContent>
+                    <DashboardBarSelector border>
+                        <DashboardBarElement active={activeContent === TABS.DETAILS} onClick={() => setActiveContent(TABS.DETAILS)}>Detaljer</DashboardBarElement>
+                        <DashboardBarElement active={activeContent === TABS.PAYMENT} onClick={() => setActiveContent(TABS.PAYMENT)}>Betalingsinformasjon</DashboardBarElement>
+                    </DashboardBarSelector>
+
+                    <DashboardContent visible={activeContent === TABS.DETAILS}>
                         <TicketInformation data={data} />
+                    </DashboardContent>
+
+                    <DashboardContent visible={activeContent === TABS.PAYMENT}>
+                        <PaymentInformation data={data} />
                     </DashboardContent>
                 </>
             )
@@ -73,7 +88,7 @@ export const ViewTicket = () => {
                             Billett
                         </DashboardTitle>
                     </DashboardHeader>
-    
+
                     <DashboardContent>
                         <Notice type="error" visible>
                             Det oppsto en feil ved henting av informasjon for denne billetten.<br />
