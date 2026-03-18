@@ -12,11 +12,11 @@ import { usePayment } from "../../../hooks/usePayment";
 import { useUser } from "../../../hooks/useUser";
 
 const PaymentState = {
-    created: 1,
-    initiated: 2,
-    paid: 3,
-    failed: 4,
-    tickets_minted: 5,
+    created: "PaymentState.created",
+    initiated: "PaymentState.initiated",
+    paid: "PaymentState.paid",
+    failed: "PaymentState.failed",
+    tickets_minted: "PaymentState.tickets_minted",
 };
 
 const paymentStateLabel = {
