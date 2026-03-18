@@ -1,4 +1,5 @@
 import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { CrewRouter } from './router';
 
@@ -15,6 +16,9 @@ import {
     Legend,
     Colors
 } from 'chart.js';
+
+const queryClient = new QueryClient();
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -30,9 +34,9 @@ ChartJS.register(
 function App() {
 
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             <CrewRouter />
-        </>
+        </QueryClientProvider>
     );
 }
 
