@@ -39,7 +39,7 @@ export const PaymentInformation = ({data}) => {
     const { data: payment, isLoading, error } = usePayment(data.ticket.payment_uuid);
     const { data: paymentUser } = useUser(payment?.user_uuid);
 
-    const otherTickets = (payment?.tickets ?? []).filter(t => t.ticket_id === data.ticket.ticket_id);
+    const otherTickets = (payment?.tickets ?? []).filter(t => t.ticket_id !== data.ticket.ticket_id);
 
     if(!data.ticket.payment_uuid) {
         return (
