@@ -1,18 +1,50 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton } from "../../../components/dashboard"
-import { faArrowDownUpLock,faBan,faCode, faLocationDot, faTicket, faUserGroup, faUserPen } from "@fortawesome/free-solid-svg-icons"
+import { faArrowDownUpLock,faBan,faCircleHalfStroke,faCode, faHeading, faLocationDot, faPlay, faTicket, faUserGroup, faUserPen } from "@fortawesome/free-solid-svg-icons"
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { useEffect, useState } from "react";
 import { PageLoading } from "../../../components/pageLoading";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { TimestampToDateTime } from "../../../components/timestampToDateTime";
 import { Notice } from "../../../components/containers/notice";
+import { modifyEvent } from "@phoenixlan/phoenix.js";
 
-export const EventDetails = ({event}) => {
+export const EventDetails = ({event, refresh}) => {
 
     let history = useHistory();
 
     const [ loading, setLoading ] = useState(true);
+
+    const cancelEvent = async (event) => {
+        if(!event.cancellation_reason) {
+            event.cancellation_reason = window.prompt("Er du sikker på at du vil kansellere dette arrangementet?\nOppgi en begrunnelse for kanselleringen under, og trykk ok for å kansellere.");
+            console.log(event.cancellation_reason);
+
+            if (event.cancellation_reason) {
+                try {
+                    setLoading(true);
+                    await modifyEvent(event.uuid, event);
+                    await refresh();
+                } catch(e) {
+                    console.error("Failed" + e)   
+                }
+            }
+        } else {
+            let revoke_cancellation = window.confirm("Er du sikker på at du vil oppheve kanselleringen for dette arrangementet?")
+            if (revoke_cancellation) {
+                event.cancellation_reason = null;
+
+                try {
+                    setLoading(true);
+                    await modifyEvent(event.uuid, event);
+                    await refresh();
+                } catch(e) {
+                    console.error("Failed" + e)   
+                }
+            }
+        }
+        setLoading(false);
+    }
 
     useEffect(async () => {
         setLoading(false);
@@ -36,7 +68,7 @@ export const EventDetails = ({event}) => {
 
                 <InnerContainerRow>
                     <PanelButton onClick={() => history.push("/event/" + event.uuid + "/edit")} icon={faUserPen}>Rediger arrangement</PanelButton>
-                    <PanelButton onClick={() => history.push("/event/" + event.uuid + "/cancel")} icon={faBan}>Kanseller arrangement</PanelButton>
+                    {event.cancellation_reason ? <PanelButton onClick={() => cancelEvent(event)} icon={faPlay}>Opphev kansellert arrangement</PanelButton> : <PanelButton onClick={() => cancelEvent(event)} icon={faBan}>Kanseller arrangement</PanelButton>}
                 </InnerContainerRow>
             </InnerContainer>
 
@@ -61,7 +93,7 @@ export const EventDetails = ({event}) => {
                             <CardContainer>
                                 <CardContainerIcon>
                                     <CardContainerInnerIcon>
-                                        <FontAwesomeIcon icon={faUserGroup} />
+                                        <FontAwesomeIcon icon={faHeading} />
                                     </CardContainerInnerIcon>
                                 </CardContainerIcon>
                                 <CardContainerText>
@@ -73,7 +105,9 @@ export const EventDetails = ({event}) => {
                         <InnerContainerRow nopadding mobileNoGap>
                             <CardContainer>
                                 <CardContainerIcon>
-                                    <CardContainerInnerIcon />
+                                    <CardContainerInnerIcon>
+                                        <FontAwesomeIcon icon={faCircleHalfStroke} />
+                                    </CardContainerInnerIcon>
                                 </CardContainerIcon>
                                 <CardContainerText>
                                     <InputLabel small>Tema</InputLabel>
@@ -216,139 +250,3 @@ export const EventDetails = ({event}) => {
         </>
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-/*
-<InnerContainer border extramargin>
-                    <InputCheckbox label="Kanseller arrangementet" value={cancelEventCheck} onChange={() => changeCancelEventCheck()} disabled />
-                </InnerContainer>
-
-                <InnerContainer>
-                    <form>
-                        <InnerContainerRow>
-                            <InnerContainer flex="1">
-                                <InnerContainerTitle>Generelle innstillinger for arrangementet</InnerContainerTitle>
-                                <InnerContainerRow nopadding nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Navn</InputLabel>
-                                        <InputElement type="text" value={event.name} disabled />
-                                    </InputContainer>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Sted</InputLabel>
-                                        <InputElement type="text" value={event.location ? event.location.name : ""} disabled />
-                                    </InputContainer>
-                                </InnerContainerRow>
-
-                                <InnerContainerRow nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Tema</InputLabel>
-                                        <InputElement type="text" value={event.theme} disabled />
-                                    </InputContainer>
-                                    <InputContainer mobileHide />
-                                </InnerContainerRow>
-                                
-                                <InnerContainerTitle>Billetter og øvre aldersgrense</InnerContainerTitle>
-                                <InnerContainerRow nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Antall plasser</InputLabel>
-                                        <InputElement type="number" value={event.max_participants} disabled />
-                                    </InputContainer>
-                                </InnerContainerRow>
-                                <InnerContainerRow nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Øvre aldersgrense for crew</InputLabel>
-                                        <InputElement type="number" value={event.crew_age_limit_inclusive} disabled />
-                                    </InputContainer>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Øvre aldersgrense for deltakere</InputLabel>
-                                        <InputElement type="number" value={event.participant_age_limit_inclusive} disabled />
-                                    </InputContainer>
-                                </InnerContainerRow>
-                                
-                                <InnerContainerTitle>Arrangementstid og booking</InnerContainerTitle>
-                                <InnerContainerRow nopadding nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Arrangementstid Start</InputLabel>
-                                        <InputElement type="datetime-local" value={new Date(event.start_time*1000).toISOString().slice(0, -8)} disabled />
-                                    </InputContainer>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Arrangementstid Slutt</InputLabel>
-                                        <InputElement type="datetime-local" value={new Date(event.end_time*1000).toISOString().slice(0, -8)} disabled />
-                                    </InputContainer>
-                                </InnerContainerRow>
-
-                                <InnerContainerRow nopadding nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Billettslipp</InputLabel>
-                                        <InputElement type="datetime-local" value={new Date(event.booking_time*1000).toISOString().slice(0, -8)} disabled />
-                                    </InputContainer>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Prioritert seating</InputLabel>
-                                        <InputElement type="datetime-local" value={new Date(event.booking_time*1000+event.priority_seating_time_delta*1000).toISOString().slice(0, -8)} disabled />
-                                    </InputContainer>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Normal seating</InputLabel>
-                                        <InputElement type="datetime-local" value={new Date((event.booking_time*1000)+(event.seating_time_delta*1000)).toISOString().slice(0, -8)} disabled />
-                                    </InputContainer>
-                                </InnerContainerRow>
-
-                                <InnerContainerRow nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Setekart</InputLabel>
-                                        <InputSelect disabled>
-                                            <option>...</option>
-                                        </InputSelect>
-                                    </InputContainer>
-                                    <InputContainer mobileHide />
-                                </InnerContainerRow>
-                                
-                            </InnerContainer>
-                            <InnerContainer flex="1">
-                                <InnerContainerTitle>Kansellering av arrangementet</InnerContainerTitle>
-                                <InnerContainerRow nopadding nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Begrunnelse for kansellering <LabelWarning 
-                                            title="'Kansellering av arrangementet' er huket av!&#10;Dersom du lagrer vil arrangementet vises som kansellert." 
-                                            visible={cancelEventCheck}><FontAwesomeIcon icon={faExclamationTriangle} /></LabelWarning></InputLabel>
-                                        <InputElement type="text" defaultValue={cancelEventReason} disabled={!cancelEventCheck} />
-                                    </InputContainer>
-                                </InnerContainerRow>
-                                <InnerContainerTitle>Billett-typer som kan kjøpes</InnerContainerTitle>
-                                <InnerContainerRow nowrap>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Legg til billett-type</InputLabel>
-                                        <InputSelect value={selectedTicketTypeUuid} onChange={changeSelectedTicketType}>
-                                            {
-                                                ticketTypes.map((type) => (
-                                                    <option value={type.uuid}>{type.name} ({type.price},-)</option>
-                                                ))
-                                            }
-                                        </InputSelect>
-                                    </InputContainer>
-                                    <InputContainer>
-                                        <FormButton onClick={addTicketType}>Legg til billett-type</FormButton>
-                                    </InputContainer>
-                                </InnerContainerRow>
-                                <InnerContainerTitle>Billett-typer som allerede kan kjøpes</InnerContainerTitle>
-                                <InnerContainerRow>
-                                    {
-                                        eventTicketTypes.map((ticketType) => (
-                                            <p>{ticketType.name} ({ticketType.price},-)</p>
-                                        ))
-                                    }
-
-                                </InnerContainerRow>
-                            </InnerContainer>
-                        </InnerContainerRow>
-                    </form>
-                </InnerContainer>
-                */
