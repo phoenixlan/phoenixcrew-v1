@@ -1,6 +1,6 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton } from "../../../components/dashboard"
-import { faArrowDownUpLock,faBan,faCircleHalfStroke,faCode, faHeading, faLocationDot, faPlay, faTicket, faUserGroup, faUserPen } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton } from "../../../components/dashboard";
+import { faArrowDownUpLock, faBan, faCircleHalfStroke, faCode, faHeading, faLocationDot, faPlay, faTicket, faUserPen } from "@fortawesome/free-solid-svg-icons";
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { useEffect, useState } from "react";
 import { PageLoading } from "../../../components/pageLoading";
@@ -17,29 +17,27 @@ export const EventDetails = ({event, refresh}) => {
 
     const cancelEvent = async (event) => {
         if(!event.cancellation_reason) {
-            event.cancellation_reason = window.prompt("Er du sikker på at du vil kansellere dette arrangementet?\nOppgi en begrunnelse for kanselleringen under, og trykk ok for å kansellere.");
-            console.log(event.cancellation_reason);
-
-            if (event.cancellation_reason) {
+            let cancellation_reason_prompt = window.prompt("Er du sikker på at du vil kansellere dette arrangementet?\nOppgi en begrunnelse for kanselleringen under, og trykk ok for å kansellere.");
+            if (cancellation_reason_prompt) {
                 try {
                     setLoading(true);
-                    await modifyEvent(event.uuid, event);
+                    await modifyEvent(event.uuid, {"cancellation_reason": cancellation_reason_prompt});
                     await refresh();
                 } catch(e) {
-                    console.error("Failed" + e)   
+                    console.error("An error occured when trying to cancel this event:\n" + e)   
                 }
             }
         } else {
-            let revoke_cancellation = window.confirm("Er du sikker på at du vil oppheve kanselleringen for dette arrangementet?")
+            const revoke_cancellation = window.confirm("Er du sikker på at du vil oppheve kanselleringen for dette arrangementet?")
             if (revoke_cancellation) {
                 event.cancellation_reason = null;
 
                 try {
                     setLoading(true);
-                    await modifyEvent(event.uuid, event);
+                    await modifyEvent(event.uuid, {"cancellation_reason": null});
                     await refresh();
                 } catch(e) {
-                    console.error("Failed" + e)   
+                    console.error("An error occured when trying to resume this event:\n" + e)   
                 }
             }
         }
