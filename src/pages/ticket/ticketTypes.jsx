@@ -1,28 +1,23 @@
-import React , { useEffect, useState } from "react";
-import { TicketType, getCurrentEvent, getEventTicketTypes } from "@phoenixlan/phoenix.js";
+import React , { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight, faCheck, faCircleCheck }  from '@fortawesome/free-solid-svg-icons'
 import { PageLoading } from "../../components/pageLoading"
 import { Table, TableRow, TableCell, TableHead, IconContainer, TableBody, SelectableTableRow } from "../../components/table";
 import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, SpanLink } from "../../components/dashboard";
 
+import { useTicketTypes } from "../../hooks/tickets/useTicketTypes";
+import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
+import { useEventTicketTypes } from "../../hooks/tickets/useEventTicketTypes";
+
 export const TicketTypeList = () => {
-    const [ticketTypes, setTicketTypes] = useState([]);
-    const [eventTicketTypeUuids, setEventTicketTypeUuids] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [ visibleUUID, setVisibleUUID ] = useState(false);
 
-    useEffect(async () => {
-        setLoading(true);
-        const [ticketTypes, currentEvent] = await Promise.all([
-            TicketType.getTicketTypes(),
-            getCurrentEvent(),
-        ]);
-        const eventTicketTypes = await getEventTicketTypes(currentEvent.uuid);
-        setTicketTypes(ticketTypes);
-        setEventTicketTypeUuids(eventTicketTypes.map(tt => tt.uuid));
-        setLoading(false);
-    }, []);
+    const { data: ticketTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes();
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent();
+    const { data: eventTicketTypes = [], isLoading: isLoadingEventTicketTypes } = useEventTicketTypes(currentEvent?.uuid);
+
+    const eventTicketTypeUuids = eventTicketTypes.map(tt => tt.uuid);
+    const loading = isLoadingTicketTypes || isLoadingCurrentEvent || (currentEvent && isLoadingEventTicketTypes);
 
     if(loading) {
         return (<PageLoading />)
