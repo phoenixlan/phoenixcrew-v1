@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { captureException } from "@sentry/browser";
 
@@ -11,11 +11,11 @@ import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainer
 import { AuthenticationContext } from "../../../components/authentication";
 import { PageLoading } from "../../../components/pageLoading";
 import { useParams } from "react-router-dom";
-import { Ticket } from "@phoenixlan/phoenix.js";
 import { Notice } from "../../../components/containers/notice";
 import { TimestampToDateTime } from "../../../components/timestampToDateTime";
 
 import { useTicketCheckinMutation } from "../../../hooks/useTicketCheckinMutation";
+import { useTicketTransferLog } from "../../../hooks/tickets/useTicketTransferLog";
 
 
 export const TicketInformation = ({data}) => {
@@ -38,38 +38,28 @@ export const TicketInformation = ({data}) => {
         }
     }
 
-    const [ ticketEventLog, setTicketEventLog ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
+    const { data: ticketTransferLog, isLoading: loading } = useTicketTransferLog(id);
 
-    useEffect(() => {
-        const createEventlog = async () => {
-            const log = [];
+    const ticketEventLog = useMemo(() => {
+        const log = [];
 
-            if(data.ticket.payment_uuid) {
-                log.push({timestamp: data.ticket.created, message: "Billett opprettet med vellykket kjøpt"})
-            } else {
-                log.push({timestamp: data.ticket.created, message: "Billett opprettet"})
-            }
+        if(data.ticket.payment_uuid) {
+            log.push({timestamp: data.ticket.created, message: "Billett opprettet med vellykket kjøpt"})
+        } else {
+            log.push({timestamp: data.ticket.created, message: "Billett opprettet"})
+        }
 
-            if(data.ticket.checked_in) {
-                log.push({timestamp: data.ticket.checked_in, message: "Billett sjekket inn"})
-            }
+        if(data.ticket.checked_in) {
+            log.push({timestamp: data.ticket.checked_in, message: "Billett sjekket inn"})
+        }
 
-            try {
-                let ticketTransferLog = await Ticket.getTransferLog(id);
-                ticketTransferLog.map((entry) => {
-                    log.push({timestamp: entry.created, message: "Billett overført fra " + entry.from_user.firstname + " " + entry.from_user.lastname + " til " + entry.to_user.firstname + " " + entry.to_user.lastname + " " + (entry.reverted ? "– Overførselen ble angret" : "")})
-                })
-            } catch(e) {
-                console.error(e)
-            }
+        (ticketTransferLog ?? []).map((entry) => {
+            log.push({timestamp: entry.created, message: "Billett overført fra " + entry.from_user.firstname + " " + entry.from_user.lastname + " til " + entry.to_user.firstname + " " + entry.to_user.lastname + " " + (entry.reverted ? "– Overførselen ble angret" : "")})
+        })
 
-            log.sort((a, b) => a.timestamp < b.timestamp)
-            setTicketEventLog(log);
-            setLoading(false);
-        };
-        createEventlog();
-    }, []);
+        log.sort((a, b) => a.timestamp < b.timestamp)
+        return log;
+    }, [data.ticket, ticketTransferLog]);
 
     const checkinTicket = async () => {
         if(window.confirm("Er du sikker på at du vil sjekke inn denne billetten?")) {

@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useHistory } from 'react-router-dom';
-import { TicketType, getCurrentEvent, getEventTickets, Ticket, User } from "@phoenixlan/phoenix.js";
+import { User } from "@phoenixlan/phoenix.js";
 import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, DropdownCardContainer, DropdownCardContent, DropdownCardHeader, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, InputSelect, PanelButton, RowBorder } from "../../components/dashboard";
 import { UserSearch } from '../../components/userSearch';
 import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
@@ -10,6 +10,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Notice } from "../../components/containers/notice";
 import { TimestampToDateTime } from "../../components/timestampToDateTime";
 import { AuthenticationContext } from "../../components/authentication";
+
+import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
+import { useTicketTypes } from "../../hooks/tickets/useTicketTypes";
+import { useEventTickets } from "../../hooks/tickets/useEventTickets";
+import { useTicketCreateMutation } from "../../hooks/tickets/useTicketCreateMutation";
 
 const commonText = {
     "freeTicket.giveTicketTitle": "Opprett gratis- eller avtalebillett",
@@ -27,51 +32,32 @@ export const FreeTicketManagement = () => {
     // Function availibility control:
     let viewFreeTicketManagement = false;
 
-    const [ ticketTypes, setTicketTypes ] = useState([]);
-    const [ tickets, setTickets ] = useState([]);
-    const [ allTickets, setAllTickets ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
     const [ selectedUser, setSelectedUser ] = useState("");
     const [ selectedTicketType, setSelectedTicketType ] = useState(undefined);
 
-    const [ isGivingFreeTicket, setIsGivingFreeTicket] = useState(false);
     const [ giveFreeTicketDropdownState, setGiveFreeTicketDropdownState ] = useState(false);
-
-    const [ currentEvent, setCurrentEvent ] = useState();
 
     // Check if user has "admin" role and make the following functions available:
     if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
         viewFreeTicketManagement = true;
     }
 
-    const load = async () => {
-        if(viewFreeTicketManagement) {
-            const [ currentEvent, types ] = await Promise.all([
-                getCurrentEvent(),
-                TicketType.getTicketTypes()
-            ])
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent();
+    const { data: allTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes();
+    const { data: allTickets = [], isLoading: isLoadingTickets } = useEventTickets(viewFreeTicketManagement ? currentEvent?.uuid : undefined);
 
-            if(currentEvent) {
-                setCurrentEvent(currentEvent);
+    const createTicketMutation = useTicketCreateMutation();
 
-                const tickets = await getEventTickets(currentEvent.uuid);
+    const ticketTypes = allTypes.filter(type => type.price === 0);
+    // TODO filter
+    const validTypeUuids = ticketTypes.map(type => type.uuid);
+    const tickets = allTickets.filter(ticket => validTypeUuids.indexOf(ticket.ticket_type.uuid) !== -1);
 
-                const validTypes = types.filter(type => type.price === 0);
-                setTicketTypes(validTypes);
-
-                // TODO filter
-                const validTypeUuids = validTypes.map(type => type.uuid);
-                setAllTickets(tickets);
-                setTickets(tickets.filter(ticket => validTypeUuids.indexOf(ticket.ticket_type.uuid) !== -1));
-            }
-        }
-
-        setLoading(false);
-    }
-
-    useEffect(async () => {
-        await load();
-    }, [])
+    const loading = viewFreeTicketManagement && (
+        isLoadingCurrentEvent ||
+        isLoadingTicketTypes ||
+        (currentEvent && isLoadingTickets)
+    );
 
     const onUserSelected = (uuid) => {
         setSelectedUser(uuid);
@@ -87,14 +73,10 @@ export const FreeTicketManagement = () => {
                 alert("No user is selected");
             } else {
                 try {
-                    setIsGivingFreeTicket(true);
-                    await Ticket.createTicket(selectedUser, selectedTicketType);
-                    await load();
+                    await createTicketMutation.mutateAsync({ userUuid: selectedUser, ticketTypeUuid: selectedTicketType });
                 } catch(e) {
                     alert("An error occured when giving free ticket to this user.\n\n" + e)
                     console.error("An error occured when creating a new ticket (" + selectedTicketType + ") to user (" + selectedUser + ")\n" + e)
-                } finally {
-                    setIsGivingFreeTicket(false);
                 }
             }
         }
@@ -112,7 +94,7 @@ export const FreeTicketManagement = () => {
                     <DashboardTitle>
                         Gratisbilletter
                     </DashboardTitle>
-                    {   
+                    {
                         // Check: If there exists a tickettype which is free or not
                         ticketTypes.length === 0 ?
                             null
@@ -127,13 +109,13 @@ export const FreeTicketManagement = () => {
                                     {allTickets.length} billetter registrert for dette arrangementet hvorav {tickets.length} er gratisbilletter
                                 </DashboardSubtitle>
                         //:
-                    } 
+                    }
 
                 </DashboardHeader>
 
                 <DashboardContent>
 
-                    
+
                     <InnerContainer visible={!currentEvent}>
                         <InnerContainerRow>
                             <Notice fillWidth type="warning" visible={!currentEvent}>
@@ -150,7 +132,7 @@ export const FreeTicketManagement = () => {
                             <DropdownCardHeader title={commonText["freeTicket.giveTicketTitle"]} dropdownState={giveFreeTicketDropdownState} onClick={() => setGiveFreeTicketDropdownState(!giveFreeTicketDropdownState)} />
                             <DropdownCardContent dropdownState={giveFreeTicketDropdownState}>
                                 {commonText["freeTicket.giveTicketDescription"]}
-                                
+
                                 <InputContainer column>
                                     <InputLabel small>Billett-type</InputLabel>
                                     <InputSelect disabled={!currentEvent} value={selectedTicketType} onChange={updateTicketType}>
@@ -163,7 +145,7 @@ export const FreeTicketManagement = () => {
 
                                 <UserSearch disabled={!currentEvent} onUserSelected={onUserSelected} onChange={() => onUserSelected(null)} />
                                 {
-                                    isGivingFreeTicket ? (
+                                    createTicketMutation.isLoading ? (
                                         <PageLoading />
                                     ) : (
                                         <PanelButton fillWidth disabled={(!selectedUser || !selectedTicketType)} type="submit" onClick={() => giveTicket()}>Opprett billett</PanelButton>
@@ -194,7 +176,7 @@ export const FreeTicketManagement = () => {
                                             </InputSelect>
                                         </InputContainer>
                                     </CardContainer>
-                                    
+
                                     <CardContainer showOverflow>
                                         <InputContainer column>
                                             <UserSearch disabled={!currentEvent} onUserSelected={onUserSelected} />
@@ -203,7 +185,7 @@ export const FreeTicketManagement = () => {
                                 </InnerContainer>
                                 <InnerContainer flex="1" nopadding>
                                     {
-                                        isGivingFreeTicket ? (
+                                        createTicketMutation.isLoading ? (
                                             <PageLoading />
                                         ) : (
                                             <PanelButton fillWidth disabled={(!selectedUser || !selectedTicketType)} type="submit" onClick={() => giveTicket()}>Opprett billett</PanelButton>
@@ -250,7 +232,7 @@ export const FreeTicketManagement = () => {
                     </InnerContainer>
                 </DashboardContent>
             </>
-            
+
         )
     } else {
         return (

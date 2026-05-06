@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from "react"
 import { useHistory } from 'react-router-dom';
-import { getEventNewMembers, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { dateOfBirthToAge } from "../../utils/user";
@@ -10,13 +9,13 @@ import { PageLoading } from "../../components/pageLoading";
 import { InnerContainerRow, InputContainer, InputLabel, InputSelect, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { FormButton } from '../../components/form';
 
+import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
+import { useEvents } from "../../hooks/events/useEvents";
+import { useEventNewMembers } from "../../hooks/events/useEventNewMembers";
+
 export const MembershipList = () => {
-    const [ users, setUsers] = useState([]);
-    const [ currentEvent, setCurrentEvent ] = useState();
-    const [ events, setEvents ] = useState();
-    const [ loading, setLoading ] = useState(true);
     const [ visibleUUID, setVisibleUUID ] = useState(false);
-    
+
     let history = useHistory();
 
     const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
@@ -26,24 +25,18 @@ export const MembershipList = () => {
         setCurrentViewingEvent(event.target.value)
     }
 
-    const load = async () => {
-        setLoading(true);
-        const [ currentEvent, events ] = await Promise.all([
-            getCurrentEvent(),
-            getEvents()
-        ])
-        setCurrentEvent(currentEvent)
-        const lookupEvent = (currentViewingEvent) ?? currentEvent.uuid;
-        console.log("Lookup event: " + lookupEvent + `(${currentViewingEvent})`)
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent();
+    const { data: events, isLoading: isLoadingEvents } = useEvents();
+    const lookupEvent = (currentViewingEvent) ?? currentEvent?.uuid;
+    const { data: users = [], isLoading: isLoadingUsers } = useEventNewMembers(lookupEvent);
 
-        const users = await getEventNewMembers(lookupEvent);
-        setUsers(users)
-        if(!currentViewingEvent) {
+    const loading = isLoadingCurrentEvent || isLoadingEvents || (lookupEvent && isLoadingUsers);
+
+    useEffect(() => {
+        if(!currentViewingEvent && currentEvent) {
             setCurrentViewingEvent(currentEvent.uuid);
         }
-        setEvents(events)
-        setLoading(false)
-    }
+    }, [currentEvent, currentViewingEvent]);
 
     const downloadTextFile = (filename, text) => {
         console.log(text);
@@ -73,10 +66,6 @@ export const MembershipList = () => {
     const makeCsv = () => {
         makeCsvFromUsers(users)
     }
-
-    useEffect(async () => {
-        await load();
-    }, [currentViewingEvent]);
 
     if(loading) {
         return (

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useHistory } from 'react-router-dom';
-import { TicketType, getEvents, getEventTickets, Ticket, User, TicketVoucher} from "@phoenixlan/phoenix.js";
 import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, DropdownCardContainer, DropdownCardContent, DropdownCardHeader, InnerContainer, InnerContainerRow, InnerContainerTextBody, InnerContainerTitle, InputContainer, InputLabel, InputSelect, PanelButton, RowBorder, SpanLink } from "../../components/dashboard";
 import { FormContainer, FormEntry, FormLabel, FormSelect, FormButton } from '../../components/form';
 import { UserSearch } from '../../components/userSearch';
@@ -11,6 +10,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Notice } from "../../components/containers/notice";
 import { AuthenticationContext } from "../../components/authentication";
 import { TimestampToDateTime } from "../../components/timestampToDateTime";
+
+import { useTicketTypes } from "../../hooks/tickets/useTicketTypes";
+import { useEvents } from "../../hooks/events/useEvents";
+import { useTicketVouchers } from "../../hooks/tickets/useTicketVouchers";
+import { useTicketVoucherCreateMutation } from "../../hooks/tickets/useTicketVoucherCreateMutation";
 
 const commonText = {
     "voucherManagement.giveVoucherTitle": "Opprett gavekort",
@@ -26,47 +30,29 @@ export const TicketVoucherManagement = () => {
 
     // Function availibility control:
     const viewVoucherManagement = authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin");
-    
+
     const [ visibleUUID, setVisibleUUID ] = useState(false);
-    const [ ticketTypes, setTicketTypes ] = useState([]);
-    const [ vouchers, setVouchers ] = useState([]);
-    const [ events, setEvents] = useState([]);
-    const [ loading, setLoading ] = useState(true);
     const [ selectedUser, setSelectedUser ] = useState("");
     const [ selectedTicketType, setSelectedTicketType ] = useState("");
     const [ selectedEvent, setSelectedEvent ] = useState("");
 
-    const [ isGivingVoucher, setIsGivingVoucher] = useState(false);
     const [ giveVoucherDropdownState, setGiveVoucherDropdownState ] = useState(false);
 
-    const load = async () => {
-        if(viewVoucherManagement) {
+    // TODO do we want more freedom?
 
-            // TODO do we want more freedom?
+    const { data: types = [], isLoading: isLoadingTypes } = useTicketTypes();
+    const { data: allEvents = [], isLoading: isLoadingEvents } = useEvents();
+    const { data: vouchers = [], isLoading: isLoadingVouchers } = useTicketVouchers();
 
-            const [ types, events, vouchers ] = await Promise.all([
-                await TicketType.getTicketTypes(),
-                await getEvents(),
-                await TicketVoucher.getAllTicketVouchers()
-            ])
+    const createVoucherMutation = useTicketVoucherCreateMutation();
 
-            // Only show ticket types that has a price equal to 0, aka. free tickets
-            const validTypes = types.filter(type => type.price === 0);
+    // Only show ticket types that has a price equal to 0, aka. free tickets
+    const ticketTypes = types.filter(type => type.price === 0);
 
-            // Only show events in the future
-            const validEvents = events.filter(event => event.start_time >= Math.floor(Date.now() / 1000))
+    // Only show events in the future
+    const events = allEvents.filter(event => event.start_time >= Math.floor(Date.now() / 1000))
 
-            setTicketTypes(validTypes);
-            setEvents(validEvents);
-            setVouchers(vouchers);
-        }
-
-        setLoading(false);
-    }
-
-    useEffect(async () => {
-        await load();
-    }, [])
+    const loading = viewVoucherManagement && (isLoadingTypes || isLoadingEvents || isLoadingVouchers);
 
     // Update selected user
     const onUserSelected = (uuid) => {
@@ -88,14 +74,10 @@ export const TicketVoucherManagement = () => {
             alert("No user is selected")
         } else {
             try {
-                setIsGivingVoucher(true);
-                await TicketVoucher.createTicketVoucher(selectedUser, selectedTicketType, selectedEvent);
-                await load();
+                await createVoucherMutation.mutateAsync({ userUuid: selectedUser, ticketTypeUuid: selectedTicketType, eventUuid: selectedEvent });
             } catch(e) {
                 alert("An error occured when giving voucher to this user.\n\n" + e);
                 console.error("An error occured when creating a new voucher with ticket type (" + selectedTicketType + ") with expiring event (" + selectedEvent + ") to user (" + selectedUser + ")\n" + e);
-            } finally {
-                setIsGivingVoucher(false);
             }
             console.log(`giving ${selectedTicketType} to ${selectedUser}`);
 
@@ -114,7 +96,7 @@ export const TicketVoucherManagement = () => {
                     <DashboardTitle>
                         Billett-gavekort
                     </DashboardTitle>
-                    {   
+                    {
                         // Check: If there exists a tickettype which is free or not
                         ticketTypes.length === 0 ?
                             null
@@ -129,7 +111,7 @@ export const TicketVoucherManagement = () => {
                                     {vouchers.length} gavekort eksisterer, hvorav {vouchers.filter((voucher) => voucher.is_used).length} er brukt
                                 </DashboardSubtitle>
                         //:
-                    } 
+                    }
 
                 </DashboardHeader>
 
@@ -140,9 +122,9 @@ export const TicketVoucherManagement = () => {
                             <DropdownCardHeader title={commonText["voucherManagement.giveVoucherTitle"]} dropdownState={giveVoucherDropdownState} onClick={() => setGiveVoucherDropdownState(!giveVoucherDropdownState)} />
                             <DropdownCardContent dropdownState={giveVoucherDropdownState}>
                                 {commonText["voucherManagement.giveVoucherDescription"].map(entry => (<span>{entry}</span>))}
-                                
+
                                 <InputContainer column>
-                                    <InputLabel small>Billett-type</InputLabel> 
+                                    <InputLabel small>Billett-type</InputLabel>
                                     <InputSelect value={selectedTicketType} onChange={updateTicketType}>
                                         <option value={""} label="Ikke valgt" />
                                         {
@@ -152,7 +134,7 @@ export const TicketVoucherManagement = () => {
                                 </InputContainer>
 
                                 <InputContainer column>
-                                    <InputLabel small>Siste arrangement for bruk</InputLabel> 
+                                    <InputLabel small>Siste arrangement for bruk</InputLabel>
                                     <InputSelect disabled={!events.length} value={selectedEvent} onChange={updateEvent}>
                                         <option value={""} label="Ikke valgt" />
                                         {
@@ -163,7 +145,7 @@ export const TicketVoucherManagement = () => {
 
                                 <UserSearch onUserSelected={onUserSelected} onChange={() => onUserSelected(null)} />
                                     {
-                                        isGivingVoucher ? (
+                                        createVoucherMutation.isLoading ? (
                                             <PageLoading />
                                         ) : (
                                             <PanelButton fillWidth disabled={(!selectedUser || !selectedTicketType || !selectedEvent)} type="submit" onClick={() => giveVoucher()}>Opprett gavekort</PanelButton>
@@ -183,13 +165,13 @@ export const TicketVoucherManagement = () => {
                                         {commonText["voucherManagement.giveVoucherDescription"].map(entry => (<span>{entry}</span>))}
                                     </InnerContainerTextBody>
                                 </InnerContainer>
-                                
+
                                 <RowBorder />
 
                                 <InnerContainer flex="2" nopadding>
                                     <CardContainer>
                                         <InputContainer column>
-                                            <InputLabel small>Billett-type</InputLabel> 
+                                            <InputLabel small>Billett-type</InputLabel>
                                             <InputSelect value={selectedTicketType} onChange={updateTicketType}>
                                                 <option value={""} label="Ikke valgt" />
                                                 {
@@ -201,7 +183,7 @@ export const TicketVoucherManagement = () => {
 
                                     <CardContainer>
                                         <InputContainer column>
-                                            <InputLabel small>Siste arrangement for bruk</InputLabel> 
+                                            <InputLabel small>Siste arrangement for bruk</InputLabel>
                                             <InputSelect disabled={!events.length} value={selectedEvent} onChange={updateEvent}>
                                                 <option value={""} label="Ikke valgt" />
                                                 {
@@ -210,7 +192,7 @@ export const TicketVoucherManagement = () => {
                                             </InputSelect>
                                         </InputContainer>
                                     </CardContainer>
-                                    
+
                                     <CardContainer showOverflow>
                                         <InputContainer column>
                                             <UserSearch onUserSelected={onUserSelected} />
@@ -220,7 +202,7 @@ export const TicketVoucherManagement = () => {
 
                                 <InnerContainer flex="1" nopadding>
                                     {
-                                        isGivingVoucher ? (
+                                        createVoucherMutation.isLoading ? (
                                             <PageLoading />
                                         ) : (
                                             <PanelButton fillWidth disabled={(!selectedUser || !selectedTicketType || !selectedEvent)} type="submit" onClick={() => giveVoucher()}>Opprett gavekort</PanelButton>
@@ -254,9 +236,9 @@ export const TicketVoucherManagement = () => {
                                                 <TableCell flex="3" mobileHide>{ voucher.last_use_event.name } ({ TimestampToDateTime(voucher.last_use_event.start_time, "DD_MM_YYYY")})</TableCell>
                                                 <TableCell flex="2" mobileHide>{ TimestampToDateTime(voucher.created, "DD_MM_YYYY_HH_MM_SS") }</TableCell>
                                                 <TableCell flex="3" mobileFlex="3">
-                                                    { 
-                                                        voucher.used 
-                                                        ? <span>Brukt {TimestampToDateTime(voucher.used, "DD_MM_YYYY_HH_MM")} - <SpanLink onClick={() => history.push(`/ticket/${voucher.ticket.ticket_id}`)}>#{voucher.ticket.ticket_id}</SpanLink></span> 
+                                                    {
+                                                        voucher.used
+                                                        ? <span>Brukt {TimestampToDateTime(voucher.used, "DD_MM_YYYY_HH_MM")} - <SpanLink onClick={() => history.push(`/ticket/${voucher.ticket.ticket_id}`)}>#{voucher.ticket.ticket_id}</SpanLink></span>
                                                         : voucher.is_expired
                                                           ? <span>Utløpt</span>
                                                           : <span>Ikke brukt</span>
@@ -271,7 +253,7 @@ export const TicketVoucherManagement = () => {
                     </InnerContainer>
                 </DashboardContent>
             </>
-            
+
         )
     } else {
         return (
