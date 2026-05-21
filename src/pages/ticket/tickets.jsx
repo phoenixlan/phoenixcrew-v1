@@ -3,9 +3,9 @@ import { useHistory } from 'react-router-dom';
 import { User } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
-import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, RowBorder } from "../../components/dashboard";
+import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, RowBorder, PanelButton } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faCheck, faMinus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCheck, faMinus, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { BarElement, FlexBar } from "../../components/bar";
 import { AuthenticationContext } from "../../components/authentication";
 import { Notice } from "../../components/containers/notice";
@@ -51,6 +51,23 @@ export const TicketList = () => {
     const { data: tickets = [], isLoading: isLoadingTickets } = useEventTickets(viewTickets ? currentEvent?.uuid : undefined);
     const { data: storeSessions = [], isLoading: isLoadingStoreSessions } = useActiveStoreSessions();
     const { data: allTicketTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes();
+
+    const exportCsv = () => {
+        const headers = ["ID", "Owner", "Ticket Type"];
+        const rows = processedTicketList.map((ticket) => [
+            ticket.ticket_id,
+            User.getFullName(ticket.owner),
+            ticket.ticket_type.name
+        ]);
+        const csvContent = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "tickets.csv";
+        link.click();
+        URL.revokeObjectURL(url);
+    };
 
     const loading = viewTickets && (
         isLoadingCurrentEvent ||
@@ -170,6 +187,12 @@ export const TicketList = () => {
                             <Notice fillWidth type="warning" visible={!currentEvent}>
                                 Det eksisterer for øyeblikket ingen aktive arrangementer.<br/>
                             </Notice>
+                        </InnerContainerRow>
+                    </InnerContainer>
+
+                    <InnerContainer>
+                        <InnerContainerRow mobileNoGap>
+                            <PanelButton onClick={exportCsv} icon={faDownload} disabled={!tickets.length}>Eksporter CSV</PanelButton>
                         </InnerContainerRow>
                     </InnerContainer>
 
