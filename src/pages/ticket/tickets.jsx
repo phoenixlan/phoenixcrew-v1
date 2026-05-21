@@ -190,6 +190,12 @@ export const TicketList = () => {
                         </InnerContainerRow>
                     </InnerContainer>
 
+                    <InnerContainer>
+                        <InnerContainerRow mobileNoGap>
+                            <PanelButton onClick={exportCsv} icon={faDownload} disabled={!tickets.length}>Eksporter CSV</PanelButton>
+                        </InnerContainerRow>
+                    </InnerContainer>
+
                     <InnerContainer rowgap>
                         <InnerContainerRow>
                             <InnerContainer flex="1" floattop>
@@ -214,11 +220,6 @@ export const TicketList = () => {
                                                     <option value={SORTING_METHODS.TICKET_OWNER}>Billett eier</option>
                                                     <option value={SORTING_METHODS.TICKED_CHECKED_IN}>Innsjekket</option>
                                                 </InputSelect>
-                                            </InputContainer>
-                                        </CardContainer>
-                                        <CardContainer>
-                                            <InputContainer column extramargin>
-                                                <PanelButton onClick={exportCsv} icon={faDownload} disabled={!tickets.length}>Export CSV</PanelButton>
                                             </InputContainer>
                                         </CardContainer>
                                     </InnerContainer>
