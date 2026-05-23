@@ -1,4 +1,4 @@
-FROM node:current as build
+FROM node:24-alpine as build
 
 ARG REACT_APP_API_URL
 ARG REACT_APP_HOST
