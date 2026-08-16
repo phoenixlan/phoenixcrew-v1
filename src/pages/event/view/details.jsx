@@ -28,7 +28,7 @@ export const EventDetails = ({event, refresh}) => {
                 }
             }
         } else {
-            const revoke_cancellation = window.confirm("Er du sikker på at du vil oppheve kanselleringen for dette arrangementet?")
+            const revoke_cancellation = window.confirm("Er du sikker på at du vil oppheve kanselleringen av dette arrangementet?")
             if (revoke_cancellation) {
                 event.cancellation_reason = null;
 
