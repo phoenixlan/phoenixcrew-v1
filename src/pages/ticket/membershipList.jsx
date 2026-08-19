@@ -86,7 +86,7 @@ export const MembershipList = () => {
                 <DashboardContent>
                     <InnerContainer>
                         <InnerContainerRow mobileNoGap>
-                            <PanelButton onClick={() => makeCsv()} icon={faDownload}>Eksporter</PanelButton>
+                            <PanelButton onClick={() => makeCsv()} icon={faDownload}>Eksporter CSV</PanelButton>
                         </InnerContainerRow>
                     </InnerContainer>
 
