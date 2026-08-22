@@ -5,6 +5,13 @@ export const Table = styled.table`
     display: flex;
     flex-flow: column;
 `
+
+export const InnerTable = styled.table`
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+`
+
 export const TableHead = styled.thead`
     display: flex;
     font-size: 12px;
@@ -17,6 +24,7 @@ export const TableBody = styled.tbody`
     display: flex;
     flex-flow: ${props => props.columnReverse ? "column-reverse" : "column"};
     flex: 1;
+    row-gap: ${props => props.rowgap ? ".55rem" : "0"};
 `
 
 const TableCellHeader = styled.th`
@@ -36,6 +44,7 @@ const StyledCell = styled.td`
     text-transform: ${props => props.uppercase ? "uppercase" : "inherit"};
     font-weight: ${props => props.bold ? "700" : "400"};
     font-style: ${props => props.italic ? "italic" : "normal"};
+    font-size: ${props => props.small ? ".85em" : "1em"};
     overflow: hidden;
     background-color: ${props => props.fillGray ? "rgb(235, 235, 235)" : null};
 
@@ -61,6 +70,11 @@ export const TableCell = (props) => {
         </StyledCell>
     )
 }
+
+export const TableCellSpacer = styled.span`
+    display: inline-flex;
+    width: 2rem;
+`
 
 export const CrewColorBox = styled.div`
     background-color: ${props => props.hex ? props.hex : "black"};
@@ -103,6 +117,22 @@ export const TableRow = styled.tr`
     flex-flow: row;
     flex-wrap: wrap;
     min-height: 2.25em;
+    column-gap: ${props => props.nocolumngap ? "0rem" : ".35rem"};
+    row-gap: ${props => props.norowgap ? "0rem" : ".35rem"};
+    color: ${props => props.active ? "rgb(150, 150, 150)" : "inherit"};
+    width: 100%;
+
+    @media screen and (max-width: 480px) {
+        display: ${props => props.mobileHide ? "none" : ""};
+    }
+`
+
+export const InnerTableRow = styled.tr`
+    display: flex;
+    flex-direction: row;
+    flex-flow: row;
+    flex-wrap: wrap;
+    min-height: 2em;
     gap: .35rem;
     color: ${props => props.active ? "rgb(150, 150, 150)" : "inherit"};
     width: 100%;
