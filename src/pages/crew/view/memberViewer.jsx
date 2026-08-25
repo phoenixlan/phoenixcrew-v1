@@ -51,47 +51,40 @@ export const CrewViewMemberViewer = ({ crew }) => {
                     }
                 })
             }
-            position.position_mappings.filter(currentEventFilter).forEach((mapping) => {
-                const user = mapping.user
-                if(!memberMap.has(user.uuid)) {
-                    memberMap.set(user.uuid, user);
-                }
-            })
+            else {
+                position.position_mappings.filter(currentEventFilter).forEach((mapping) => {
+                    const user = mapping.user
+                    if(!memberMap.has(user.uuid)) {
+                        memberMap.set(user.uuid, user);
+                    }
+                })
+            }
+
         })
         const leaders = Array.from(chiefMap.values());
         const members = Array.from(memberMap.values());
 
         return (<>
-            <InnerContainer extramargin border>
+            <InnerContainer>
                 <InnerContainerRow nopadding>
                     <InnerContainer flex="1">
-                        <InnerContainerRow nopadding nowrap>
-                            <InputContainer column mobileNoMargin>
-                                <InputLabel small>Arrangement</InputLabel>
-                                <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
-                                    {
-                                        events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
-                                    }
-                                </InputSelect>
-                            </InputContainer>
-                        </InnerContainerRow>
+                        <InputLabel small>Arrangement</InputLabel>
+                        <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                            {
+                                events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
+                            }
+                        </InputSelect>
                     </InnerContainer>
-                    <InnerContainer flex="1" mobileHide />
-                    <InnerContainer flex="1" mobileHide />
+                    <InnerContainer flex="2" />
                 </InnerContainerRow>
             </InnerContainer>
 
             <InnerContainer>
                 <InnerContainerTitle nopadding>Medlemmer</InnerContainerTitle>
-                <InnerContainerTitleS nopadding>Gruppeledere ({leaders.length})</InnerContainerTitleS>
                 <InnerContainerRow>
                     {
-                        leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
+                        leaders.map(user => (<SimpleUserCard user={user} key={user.uuid} groupleader />))
                     }
-                </InnerContainerRow>
-
-                <InnerContainerTitleS nopadding>Crew medlemmer ({members.length})</InnerContainerTitleS>
-                <InnerContainerRow>
                     {
                         members.map(user => (<SimpleUserCard user={user} key={user.uuid} />))
                     }
