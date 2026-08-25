@@ -2,7 +2,7 @@ import React , { useEffect, useState } from "react";
 import { Crew } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../components/pageLoading"
 import { faArrowRight, faCheck, faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox, SpanLink } from "../../components/dashboard";
 import { Table, TableCell, CrewColorBox, IconContainer, SelectableTableRow, TableHead, TableRow } from "../../components/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
@@ -40,17 +40,13 @@ export const CrewList= () => {
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
-                <InnerContainer mobileHide>
-                    <InputCheckbox label="Vis crew UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
-                </InnerContainer>
-
                 <InnerContainer>
                     <Table>
                         <TableHead border>
                             <TableRow>
-                                <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
+                                <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
                                 <TableCell as="th" flex="0 42px" mobileHide>Farge</TableCell>
-                                <TableCell as="th" flex="6" mobileFlex="3">Navn</TableCell>
+                                <TableCell as="th" flex="6" mobileFlex="3">Navn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
                                 <TableCell as="th" flex="10" mobileHide>Beskrivelse</TableCell>
                                 <TableCell as="th" flex="3" mobileFlex="1">Antall<br/>brukere</TableCell>
                                 <TableCell as="th" center flex="0 24px" mobileHide title="Statusikon: Ikon vises om crewet kan søkes til eller ikke"><IconContainer>...</IconContainer></TableCell>
