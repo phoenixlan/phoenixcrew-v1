@@ -482,6 +482,7 @@ export const CardContainerInnerText = styled.div`
     width: 100%;
     overflow: hidden;
     white-space: ${props => props.nowrap ? "nowrap" : "initial"};
+    white-space: ${props => props.displaynewline ? "pre-line" : "initial"};
     line-height: 1.15rem;
 `
 
