@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from "react"
 import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faDownload }  from '@fortawesome/free-solid-svg-icons'
 import { dateOfBirthToAge } from "../../utils/user";
 import { Table, SelectableTableRow, Row, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
-import { InnerContainerRow, InputContainer, InputLabel, InputSelect, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
+import { InnerContainerRow, InputContainer, InputLabel, InputSelect, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox, InnerContainerTitle, RowBorder, DropdownCardHeader, DropdownCardContent, DropdownCardContainer, PanelButton, CardContainer, SpanLink } from "../../components/dashboard";
 import { FormButton } from '../../components/form';
 
 import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
@@ -60,7 +60,7 @@ export const MembershipList = () => {
             return `${user.firstname} ${user.lastname},${dateOfBirthToAge(user.birthdate)},${birthdate},${user.address},${user.postal_code}`
         }).join("\n")
         const header = "Navn,Alder,Fødselsdag,Addresse,Postnummer\n"
-        downloadTextFile(`lan-medlemmer-${currentEvent.name.replace(" ", "-")}.csv`, header+csv)
+        downloadTextFile(`lan-medlemmer-${currentEvent.name.replace(" ", "-")}.csv`, header+csv);
     }
 
     const makeCsv = () => {
@@ -77,42 +77,48 @@ export const MembershipList = () => {
             <>
                 <DashboardHeader border>
                     <DashboardTitle>
-                        Nye medlemsskap
+                        Medlemsskap
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {users.length} nye medlemsskap fra dette arrangementet
+                        {users.length} medlemsskap fra dette arrangementet
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
-                    <InnerContainer extramargin border>
-                        <InnerContainerRow nopadding>
-                            <InnerContainer flex="1">
-                                <InnerContainerRow nopadding nowrap>
-                                    <InputContainer column mobileNoMargin>
-                                        <InputLabel small>Arrangement</InputLabel>
-                                        <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
-                                            {
-                                                events.map((event) => (<option value={event.uuid}>{event.name} {event.uuid == currentEvent.uuid ? "(Nåværende)" : null}</option>))
-                                            }
-                                        </InputSelect>
-                                    </InputContainer>
-                                </InnerContainerRow>
-                            </InnerContainer>
-                            <InnerContainer flex="1" >
-                                <FormButton type="submit" onClick={() => makeCsv()}>Generer CSV</FormButton>
-                            </InnerContainer>
-                            <InnerContainer flex="1" mobileHide />
+                    <InnerContainer>
+                        <InnerContainerRow mobileNoGap>
+                            <PanelButton onClick={() => makeCsv()} icon={faDownload}>Eksporter CSV</PanelButton>
                         </InnerContainerRow>
                     </InnerContainer>
-                    <InnerContainer mobileHide>
-                        <InputCheckbox label="Vis bruker UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
+
+                    <InnerContainer>
+                        <InnerContainerRow>
+                            Systemet støtter oversikt over medlemsskap.<br/>
+                            En bruker får medlemsskap og vises i listen under når det kjøpes en billett som gir medlemsskap.<br />
+                            Informasjon om medlemmer kan hentes ut fra systemet ved å velge et arrangement, og trykke eksporter.<br />
+                            Systemet vil opprette en .csv fil som inneholder informasjonen til alle medlemmene.
+                        </InnerContainerRow>
                     </InnerContainer>
+
+                    <InnerContainer>
+                        <InnerContainerRow>
+                            <InnerContainer flex="1">
+                                <InputLabel small>Vis medlemsskap fra</InputLabel>
+                                <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
+                                    {
+                                        events.map((event) => (<option value={event.uuid}>{event.name} {currentEvent ? event.uuid == currentEvent.uuid ? "(Nåværende)" : null : null}</option>))
+                                    }
+                                </InputSelect>
+                            </InnerContainer>
+                            <InnerContainer flex="2" />
+                        </InnerContainerRow>
+                    </InnerContainer>
+
                     <InnerContainer>
                         <Table>
                             <TableHead border>
                                 <TableRow>
-                                    <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID</TableCell>
-                                    <TableCell as="th" flex="6" mobileFlex="3">Navn</TableCell>
+                                    <TableCell as="th" flex="10" mobileHide visible={!visibleUUID}>UUID <SpanLink onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? "(Skjul UUID)" : null}</SpanLink></TableCell>
+                                    <TableCell as="th" flex="6" mobileFlex="3">Navn <SpanLink mobileHide onClick={() => setVisibleUUID(!visibleUUID)}>{visibleUUID ? null : "(Vis UUID)"}</SpanLink></TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="1">Alder</TableCell>
                                     <TableCell as="th" flex="4" mobileHide>Fødselsdato</TableCell>
                                     <TableCell as="th" flex="4" mobileHide>Telefonnummer</TableCell>
