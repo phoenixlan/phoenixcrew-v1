@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { getCurrentEvent, getEvents, getApplicationsByEvent } from "@phoenixlan/phoenix.js";
+import { getApplicationsByEvent } from "@phoenixlan/phoenix.js";
+import { useBrand } from "../../contexts/brand";
+import { useEvents } from "../../hooks/events/useEvents";
 
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow } from "../../components/table";
 
@@ -15,7 +17,7 @@ export const ApplicationCrewLabel = ({ application_crew_mapping }) => {
     return (<>{application_crew_mapping.crew.name} {application_crew_mapping.accepted ? (<b>Godkjent!</b>) : null}</>)
 }
 
-const ApplicationTableEntry = ({ application, showProcessedBy }) => {
+const ApplicationTableEntry = ({ application, showProcessedBy, path }) => {
     let history = useHistory();
 
     const stateToString = (state) => {
@@ -28,7 +30,7 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     }
     
     return (
-        <SelectableTableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
+        <SelectableTableRow key={application.uuid} onClick={() => history.push(path(`/application/${application.uuid}`))}>
             <TableCell flex="4" mobileFlex="3">{application.user.firstname} {application.user.lastname}</TableCell>
             <TableCell flex="3" mobileFlex="2"><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></TableCell>
             <TableCell flex="3" mobileHide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : (<i>Ingen</i>)}</TableCell>
@@ -52,7 +54,7 @@ const ApplicationTableEntry = ({ application, showProcessedBy }) => {
     )
 }
 
-const ApplicationTable = ({ applications, showProcessedBy }) => {
+const ApplicationTable = ({ applications, showProcessedBy, path }) => {
     return (
         <Table>
             <TableHead border>
@@ -81,7 +83,7 @@ const ApplicationTable = ({ applications, showProcessedBy }) => {
             </TableHead>
             <tbody>
             {
-                applications.map((application) => <ApplicationTableEntry key={application.uuid} showProcessedBy={showProcessedBy} application={application}/>)
+                applications.map((application) => <ApplicationTableEntry key={application.uuid} showProcessedBy={showProcessedBy} application={application} path={path}/>)
             }
             </tbody>
         </Table>
@@ -116,14 +118,14 @@ SORT_TYPES[SORTING_METHODS.SURNAME] = (a, b) => a.user.lastname.localeCompare(b.
 SORT_TYPES[SORTING_METHODS.DATE] = (a, b) => a.created - b.created
 
 export const ListApplications = (props) => {
+    const { currentEvent, brandUuid, path } = useBrand();
+    const { data: events = [] } = useEvents(brandUuid);
     const [applicationList, setApplicationList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState(1);
     const [activeSortingMethod, setActiveSortingMethod] = useState(1);
 
     // Used for the event selector
-    const [ currentEvent, setCurrentEvent ] = useState();
-    const [ events, setEvents ] = useState();
     const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
 
     const updateViewingEvent = (event) => {
@@ -145,16 +147,10 @@ export const ListApplications = (props) => {
 
     useEffect(() => {
         const asyncInner = async () => {
-            const [ currentEvent, events ] = await Promise.all([
-                getCurrentEvent(),
-                getEvents()
-            ])
-            setCurrentEvent(currentEvent);
-            setCurrentViewingEvent(currentEvent.uuid);
-            setEvents(events)
+            if(currentEvent) setCurrentViewingEvent(currentEvent.uuid);
         }
         asyncInner();
-    }, [])
+    }, [currentEvent])
 
     useEffect(() => {
         const asyncInner = async () => {
@@ -229,7 +225,7 @@ export const ListApplications = (props) => {
 
             <DashboardContent >
                 <InnerContainer>
-                    <ApplicationTable showProcessedBy applications={processedApplicationList} />
+                    <ApplicationTable showProcessedBy applications={processedApplicationList} path={path} />
                 </InnerContainer>
             </DashboardContent>
         </>

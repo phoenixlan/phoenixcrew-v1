@@ -10,8 +10,10 @@ import { FormButton } from '../../components/form';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { TableLabels } from "./tableLabels";
+import { useBrand } from "../../contexts/brand";
 
 export const SeatmapList = () => {
+    const { brandUuid, currentEvent, path } = useBrand();
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const printRef = useRef();
     const [seatmaps, setSeatmaps] = useState([]);
@@ -21,7 +23,7 @@ export const SeatmapList = () => {
     const [printUuid, setPrintUuid] = useState(null);
 
     const loadSeatmaps = async () => {
-        const seatmapList = await Seatmap.getSeatmaps();
+        const seatmapList = await Seatmap.getBrandSeatmaps(brandUuid);
         setSeatmaps(seatmapList);
     }
 
@@ -31,7 +33,7 @@ export const SeatmapList = () => {
     }, []);
 
     const onSubmit = async (data) => {
-        if(!await Seatmap.createSeatmap(data.name, data.description)) {
+        if(!await Seatmap.createSeatmap(brandUuid, data.name, data.description)) {
             console.log("Fucked up");
         }
         await loadSeatmaps();
@@ -65,7 +67,7 @@ export const SeatmapList = () => {
                         Det inneholder en visuell/skjematisk plan av deltakerområdet med seteplasser som brukere kan reservere.
                     </InnerContainer>
                     { printUuid ? (
-                        <TableLabels ref={printRef} uuid={printUuid}/>
+                        <TableLabels ref={printRef} uuid={printUuid} eventUuid={currentEvent?.uuid}/>
                     ) : null}
                     <InnerContainer>
                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -110,7 +112,7 @@ export const SeatmapList = () => {
                                     seatmaps.map((seatmap) => {
                                         return (
                                             <>
-                                                <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/seatmap/${seatmap.uuid}`)}}>
+                                                <SelectableTableRow title="Trykk for å åpne" onClick={() => history.push(path(`/seatmap/${seatmap.uuid}`))}>
                                                     <TableCell consolas flex="4" mobileHide visible={!visibleUUID}>{ seatmap.uuid }</TableCell>
                                                     <TableCell flex="4" mobileFlex="4">{ seatmap.name }</TableCell>
                                                     <TableCell flex="5" mobileFlex="3">{ seatmap.description }</TableCell>

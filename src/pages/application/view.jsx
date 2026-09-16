@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
+import { Crew } from "@phoenixlan/phoenix.js";
+import { useBrand } from "../../contexts/brand";
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputLabel, InputSelect, LabelWarning } from "../../components/dashboard";
 
 import { PageContainer } from "../../components/blocks"
@@ -68,23 +69,19 @@ const AnswerApplication = (props) => {
 }
 
 export const ViewApplication = (props) => {
+    const { currentEvent } = useBrand();
     const { uuid } = useParams();
     const [application, setApplication] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [ currentEvent, setCurrentEvent ] = useState();
 
     const reload = async () => {
         setLoading(true);
-        const [ application, currentEvent ] = await Promise.all([
-            Crew.Applications.getApplication(uuid),
-            getCurrentEvent()
-        ])
+        const application = await Crew.Applications.getApplication(uuid)
         if(application) {
             console.log("Fetched application:")
             console.log(application);
 
             setApplication(application)
-            setCurrentEvent(currentEvent)
             setLoading(false);
 
         } else {

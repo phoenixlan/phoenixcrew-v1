@@ -1,20 +1,15 @@
-import React, { useEffect } from "react";
-
-import { User } from "@phoenixlan/phoenix.js";
+import React from "react";
+import { useBrand } from "../contexts/brand";
 
 export const Dashboard = () => {
-    
-    useEffect(async () => {
-        const asyncFunction = async () => {
-            const user = await User.getAuthenticatedUser();
-            console.log(user);
-        }
-        asyncFunction();
-    })
+    const brandContext = useBrand();
 
     return (
         <>
-
+            <h1>{brandContext ? brandContext.brand.name : "Phoenix EMS"}</h1>
+            {brandContext
+                ? <p>{brandContext.currentEvent ? `Aktivt arrangement: ${brandContext.currentEvent.name}` : "Denne merkevaren har ikke et aktivt arrangement."}</p>
+                : <p>Velg en merkevare i menyen for å administrere et arrangement.</p>}
         </>
     )
 }

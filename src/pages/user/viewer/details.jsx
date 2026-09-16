@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { User, Avatar } from "@phoenixlan/phoenix.js";
+import { User, Avatar, getEventCrewCard } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
-import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton } from '../../../components/dashboard';
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, InputSelect, PanelButton } from '../../../components/dashboard';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarRegular, faAddressCard, faCalendar, faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
@@ -14,6 +14,8 @@ import { AuthenticationContext } from '../../../components/authentication';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { captureException } from "@sentry/browser";
 import { Notice } from '../../../components/containers/notice';
+import { EventBrandsContext } from '../../../contexts/eventBrands';
+import { isGlobalAdmin } from '../../../utils/roles';
 
 const S = {
     Avatar: styled.img`
@@ -34,6 +36,8 @@ export const UserViewerDetails = ({ user }) => {
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
+    const { activeEvents } = useContext(EventBrandsContext);
+    const [crewCardEventUuid, setCrewCardEventUuid] = useState("");
 
     // Function availibility control:
     let activationStateButtonAvailibility = false;
@@ -51,7 +55,7 @@ export const UserViewerDetails = ({ user }) => {
     const [ error, setError ] = useState(null);
 
     // Check if user has "admin" role and make the following functions available:
-    if (authContext.roles.includes("admin")) {
+    if (isGlobalAdmin(authContext.roles)) {
         activationStateButtonAvailibility = true;
         activationStateAccess = true;
         modifyUserStateButtonAvailibility = true;
@@ -59,15 +63,10 @@ export const UserViewerDetails = ({ user }) => {
     }
 
     // Check if user has "hr_admin" role and make the following functions available:
-    if (authContext.roles.includes("hr_admin")) {
-        activationStateButtonAvailibility = true;
-        membershipStateAccess = true;
-    }
-
     // Avatar button availability logic, check if the user is him/herself or is admin or hr_admin, and check if the user has an avatar to make the button available:
     if (user.avatar_uuid) {
         printCrewCardButtonAvailibility = true;
-        if((authContext.roles.includes("admin") || authContext.roles.includes("hr_admin")) || authContext.authUser.uuid === user.uuid) {
+        if(isGlobalAdmin(authContext.roles) || authContext.authUser.uuid === user.uuid) {
             deleteAvatarButtonAvailibility = true;
         }
     }
@@ -123,7 +122,8 @@ export const UserViewerDetails = ({ user }) => {
 
     // Print crew card
     const downloadCard = async () => {
-        const result = await User.getCrewCard(user.uuid);
+        if(!crewCardEventUuid) return;
+        const result = await getEventCrewCard(crewCardEventUuid, user.uuid);
         const href = window.URL.createObjectURL(await result.blob());
 
         const link = document.createElement('a');
@@ -148,7 +148,13 @@ export const UserViewerDetails = ({ user }) => {
                 <InnerContainerRow>
                     <PanelButton onClick={modifyUserStateButtonAvailibility ? () => history.push("/user/" + user.uuid + "/edit") : null} disabled={!modifyUserStateButtonAvailibility} icon={faUserPen}>Rediger personalia</PanelButton>
                     {activationStateAccess ? <PanelButton onClick={activationStateButtonAvailibility ? () => activateUser() : null} disabled={(activationState || !activationStateButtonAvailibility)} icon={faCheck}>{activationState !== null ? (activationState ? "Konto aktivert" : "Aktiver konto") : "Aktiver konto"}</PanelButton> : null}
-                    <PanelButton onClick={printCrewCardButtonAvailibility ? downloadCard : null} disabled={!printCrewCardButtonAvailibility} icon={faPrint}>Print crewkort</PanelButton>
+                    <InputSelect value={crewCardEventUuid} onChange={event => setCrewCardEventUuid(event.target.value)}>
+                        <option value="">Velg aktivt arrangement</option>
+                        {activeEvents.filter(({ event }) => user.position_mappings.some(mapping => !mapping.event_uuid || mapping.event_uuid === event.uuid)).map(({ brand, event }) => (
+                            <option key={event.uuid} value={event.uuid}>{brand.name}: {event.name}</option>
+                        ))}
+                    </InputSelect>
+                    <PanelButton onClick={printCrewCardButtonAvailibility && crewCardEventUuid ? downloadCard : null} disabled={!printCrewCardButtonAvailibility || !crewCardEventUuid} icon={faPrint}>Print crewkort</PanelButton>
                 </InnerContainerRow>
             </InnerContainer>
 

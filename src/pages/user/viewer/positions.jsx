@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getCurrentEvent, User, Crew, getEvents, PositionMapping } from "@phoenixlan/phoenix.js";
+import React, { useState, useEffect, useContext } from 'react';
+import { User, Crew, getEvents, PositionMapping } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, IconContainer, TableRow, TableBody, InnerColumnCenter } from "../../../components/table";
 
 import { PageLoading } from '../../../components/pageLoading';
@@ -7,6 +7,7 @@ import { InnerContainer, InnerContainerTitle } from '../../../components/dashboa
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { position_mapping_to_string } from '../../../utils/user';
 import { faCircleCheck, faLock } from '@fortawesome/free-solid-svg-icons';
+import { EventBrandsContext } from '../../../contexts/eventBrands';
 
 export const Position = ({ position, func, positionName }) => {
 
@@ -28,6 +29,7 @@ export const Position = ({ position, func, positionName }) => {
 
 
 export const UserPositions = ({ inheritUser }) => {
+    const { activeEvents } = useContext(EventBrandsContext);
 
     const [ loading, setLoading ] = useState(true);
     const [ user, setUser ] = useState(inheritUser);
@@ -35,7 +37,6 @@ export const UserPositions = ({ inheritUser }) => {
     const reloadPositionList = async () => {
         setLoading(true);
         try {
-            let currentEvent = await getCurrentEvent();
             let allEvents = await getEvents();
             let user = await User.getUser(inheritUser.uuid);
 
@@ -44,7 +45,7 @@ export const UserPositions = ({ inheritUser }) => {
 
                 // Create a boolean inside position_mapping which tells if the position is active for the current event, or not. 
                 position_mapping.active_position = 
-                    position_mapping.event_uuid === currentEvent.uuid ||
+                    activeEvents.some(({ event }) => position_mapping.event_uuid === event.uuid) ||
                     !position_mapping.event_uuid;
 
                 // Create a variable inside position_mapping which tells what event the position was inherited from. (Inherited from event name)
@@ -83,7 +84,7 @@ export const UserPositions = ({ inheritUser }) => {
 
     useEffect(async () => {
         reloadPositionList();
-    }, [])
+    }, [activeEvents])
 
     if(loading) {
         return (<PageLoading />)

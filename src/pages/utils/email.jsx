@@ -8,6 +8,7 @@ import { Email } from "@phoenixlan/phoenix.js";
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel, InputSelect, InputElement } from "../../components/dashboard";
 import { FormContainer, FormEntry, FormLabel, FormSelect, FormButton } from '../../components/form';
 import { PageLoading } from "../../components/pageLoading";
+import { useBrand } from "../../contexts/brand";
 
 const EditorWrapper = styled.div`
 width: 100%;`
@@ -27,6 +28,7 @@ const MailBody = styled.div`
 `
 
 export const EmailForm = () => {
+    const { brandUuid } = useBrand();
     const [ subject, setSubject ] = useState("")
     const [ body, setBody ] = useState("")
     const [ selectedGroup, setSelectedGroup ] = useState("crew_info")
@@ -42,7 +44,7 @@ export const EmailForm = () => {
 
     const preview = async () => {
         setIsLoadingPreview(true);
-        const resp = await Email.emailDryrun(selectedGroup, subject, body)
+        const resp = await Email.emailDryrun(brandUuid, selectedGroup, subject, body)
 
         setTargetCount(resp.count);
 
@@ -54,7 +56,7 @@ export const EmailForm = () => {
     
     const send = async () => {
         setLoading(true)
-        const resp = await Email.sendEmails(selectedGroup, subject, body)
+        await Email.sendEmails(brandUuid, selectedGroup, subject, body)
         setLoading(false)
         setHasSent(true)
     }

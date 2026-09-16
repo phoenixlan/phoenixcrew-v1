@@ -1,6 +1,7 @@
 import React , { useEffect, useRef, useState } from "react";
 
-import { Position, Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
+import { Position, Crew } from "@phoenixlan/phoenix.js";
+import { useBrand } from "../../contexts/brand";
 
 import { TableCell, IconContainer, SelectableTableRow, Table, TableBody, TableHead, TableRow } from '../../components/table';
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InputCheckbox, PanelButton, SpanLink } from '../../components/dashboard';
@@ -10,37 +11,19 @@ import { faArrowRight, faAward, faCheck, faPlus } from "@fortawesome/free-solid-
 import { faAddressCard } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
+import { useBrandCrews } from "../../hooks/eventBrand/useBrandCrews";
+import { useBrandPositions } from "../../hooks/eventBrand/useBrandPositions";
 
 export const PositionList = () => {
-    const [roles, setRoles] = useState([]);
-    const [crews, setCrews] = useState([]);
-    const [ currentEvent, setCurrentEvent ] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { brand, currentEvent, path } = useBrand();
     const [visibleUUID, setVisibleUUID] = useState(false);
 
+    const { data: positions, isLoading: isPositionsLoading} = useBrandPositions(brand.uuid);
+    const { data: crews, isLoading: isCrewsLoading } = useBrandPositions(brand.uuid);
+
+    const loading = isPositionsLoading || isCrewsLoading;
+
     const history = useHistory();
-
-    useEffect(async () => {
-        const [ positions, crews, currentEvent ] = await Promise.all([
-            Promise.all(
-                (await Position.getPositions()).map(position => Position.getPosition(position.uuid))
-            ),
-            Promise.all(
-                (await Crew.getCrews()).map(crew => Crew.getCrew(crew.uuid))
-            ),
-            getCurrentEvent()
-        ])
-
-        setCrews(crews);
-        setRoles(positions);
-        if(currentEvent) {
-            setCurrentEvent(currentEvent);
-        }
-
-
-        setLoading(false);
-    }, []);
-
 
     if(loading) {
         return (
@@ -52,16 +35,16 @@ export const PositionList = () => {
             <>
                 <DashboardHeader border>
                     <DashboardTitle>
-                        Stillinger og rettigheter
+                        Stillinger og rettigheter for { brand.name }
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {roles.length} stillinger er aktive
+                        {positions.length} stillinger
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
                     <InnerContainer>
                         <InnerContainerRow mobileNoGap>
-                            <PanelButton onClick={true ? () => history.push("/position/create") : null} disabled={false} icon={faPlus}>Opprett ny stilling</PanelButton>
+                            <PanelButton onClick={() => history.push(path("/position/create"))} disabled={false} icon={faPlus}>Opprett ny stilling</PanelButton>
                         </InnerContainerRow>
                     </InnerContainer>
 
@@ -87,24 +70,24 @@ export const PositionList = () => {
                             </TableHead>
                             <TableBody>            
                                 {
-                                    roles
-                                    .map((role) => {
-                                        const roleCrew = crews.find((crew) => crew.uuid == role.crew_uuid)
-                                        const roleTeam = roleCrew?.teams.find((team) => team.uuid == role.team_uuid)
+                                    positions
+                                    .map((position) => {
+                                        const positionCrew = crews.find((crew) => crew.uuid == position.crew_uuid)
+                                        const positionTeam = positionCrew?.teams.find((team) => team.uuid == position.team_uuid)
         
-                                        let name = (role.chief ? "Gruppeleder for " : "Medlemmer av ") + (roleTeam ? ` ${roleTeam.name} i ` : " ") + (roleCrew?.name ?? "Ukjent crew");
-                                        if(role.name) {
-                                            name = `${role.name}${roleCrew ? " (" + name + ")":""}`
+                                        let name = (position.chief ? "Gruppeleder for " : "Medlemmer av ") + (positionTeam ? ` ${positionTeam.name} i ` : " ") + (positionCrew?.name ?? "Ukjent crew");
+                                        if(position.name) {
+                                            name = `${position.name}${positionCrew ? " (" + name + ")":""}`
                                         }
                                         
                                         return (
-                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/positions/${role.uuid}`)}} key={role.uuid}>
-                                                <TableCell mobileHide consolas flex="9" visible={!visibleUUID}>{role.uuid}</TableCell>
-                                                <TableCell flex="9" mobileFlex="3" italic={!role.name}>{name}</TableCell>
-                                                <TableCell flex="4" mobileHide>{(roleCrew?.name ?? "-")}</TableCell>
-                                                <TableCell flex="2" mobileFlex="1">{currentEvent ? role.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
-                                                <TableCell flex="2" mobileHide>{role.permissions.length}</TableCell>
-                                                <TableCell flex="2" mobileHide>{role.is_vanity ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null}</TableCell>
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={() => history.push(path(`/positions/${position.uuid}`))} key={position.uuid}>
+                                                <TableCell mobileHide consolas flex="9" visible={!visibleUUID}>{position.uuid}</TableCell>
+                                                <TableCell flex="9" mobileFlex="3" italic={!position.name}>{name}</TableCell>
+                                                <TableCell flex="4" mobileHide>{(positionCrew?.name ?? "-")}</TableCell>
+                                                <TableCell flex="2" mobileFlex="1">{currentEvent ? position.position_mappings.filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid).length : 0}</TableCell>
+                                                <TableCell flex="2" mobileHide>{position.permissions.length}</TableCell>
+                                                <TableCell flex="2" mobileHide>{position.is_vanity ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null}</TableCell>
                                                 <TableCell flex="0 24px" mobileHide><IconContainer><FontAwesomeIcon icon={faArrowRight}/></IconContainer></TableCell>
                                             </SelectableTableRow>
                                         )

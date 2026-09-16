@@ -8,12 +8,14 @@ import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, Span
 import { useTicketTypes } from "../../hooks/tickets/useTicketTypes";
 import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
 import { useEventTicketTypes } from "../../hooks/tickets/useEventTicketTypes";
+import { useBrand } from "../../contexts/brand";
 
 export const TicketTypeList = () => {
+    const { brandUuid } = useBrand();
     const [ visibleUUID, setVisibleUUID ] = useState(false);
 
     const { data: ticketTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes();
-    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent();
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
     const { data: eventTicketTypes = [], isLoading: isLoadingEventTicketTypes } = useEventTicketTypes(currentEvent?.uuid);
 
     const eventTicketTypeUuids = eventTicketTypes.map(tt => tt.uuid);
