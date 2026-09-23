@@ -182,7 +182,7 @@ export const UserViewerDetails = ({ user }) => {
 
                     <InnerContainer flex="5" floattop rowgap nopadding>
                         <InnerContainer>
-                            <InnerContainerTitle>Personalia og kontaktinformasjon</InnerContainerTitle>
+                            <InnerContainerTitle>Grunnleggende informasjon</InnerContainerTitle>
                             <InnerContainerRow>
                                 <CardContainer>
                                     <CardContainerIcon>
@@ -209,28 +209,6 @@ export const UserViewerDetails = ({ user }) => {
                                         <CardContainerInnerText>{user.firstname}, {user.lastname}</CardContainerInnerText>
                                     </CardContainerText>
                                 </CardContainer>
-                                <CardContainer>
-                                    <CardContainerIcon>
-                                        <CardContainerInnerIcon>
-                                            <FontAwesomeIcon icon={faAddressCard} />
-                                        </CardContainerInnerIcon>
-                                    </CardContainerIcon>
-                                    <CardContainerText>
-                                    <InputLabel small>Brukernavn / visningsnavn</InputLabel>
-                                        <CardContainerInnerText>{user.username}</CardContainerInnerText>
-                                    </CardContainerText>
-                                </CardContainer>
-                                <CardContainer>
-                                    <CardContainerIcon>
-                                        <CardContainerInnerIcon>
-                                            <FontAwesomeIcon icon={faMapPin} />
-                                        </CardContainerInnerIcon>
-                                    </CardContainerIcon>
-                                    <CardContainerText>
-                                    <InputLabel small>Adresse</InputLabel>
-                                        <CardContainerInnerText>{user.address}, {user.postal_code}</CardContainerInnerText>
-                                    </CardContainerText>
-                                </CardContainer>
                             </InnerContainerRow>
 
                             <InnerContainerRow nopadding mobileNoGap>
@@ -243,17 +221,6 @@ export const UserViewerDetails = ({ user }) => {
                                     <CardContainerText>
                                     <InputLabel small>Epost</InputLabel>
                                         <CardContainerInnerText title={"Epost: " + user.email}><a href={"mailto:" + user.email}>{user.email}</a></CardContainerInnerText>
-                                    </CardContainerText>
-                                </CardContainer>
-                                <CardContainer>
-                                    <CardContainerIcon>
-                                        <CardContainerInnerIcon>
-                                            <FontAwesomeIcon icon={faPhone} />
-                                        </CardContainerInnerIcon>
-                                    </CardContainerIcon>
-                                    <CardContainerText>
-                                    <InputLabel small>Telefon</InputLabel>
-                                        <CardContainerInnerText title={"Telefon: " + user.phone}><a href={"tel:" + user.phone}>{user.phone}</a></CardContainerInnerText>
                                     </CardContainerText>
                                 </CardContainer>
                                 <CardContainer>
@@ -295,7 +262,6 @@ export const UserViewerDetails = ({ user }) => {
                                 <CardContainer mobileHide />
                             </InnerContainerRow>
                         </InnerContainer>
-
                         <InnerContainer>
                             <InnerContainerRow>
                                 {

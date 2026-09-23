@@ -7,6 +7,7 @@ import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardH
 import { UserViewerDetails } from './details';
 import { UserViewerExternalConnections } from './externalConnections';
 import { UserViewerTickets } from './tickets';
+import { UserViewerMemberPersonalia } from './member_personalia';
 import { UserPositions, UserViewerPositions } from './positions';
 import { Notice } from '../../../components/containers/notice';
 import { UserViewerApplications } from './applications';
@@ -16,7 +17,8 @@ const TABS = {
     POSITIONS: 2,
     TICKETS: 3,
     INTEGRATIONS: 4,
-    APPLICATIONS: 5
+    APPLICATIONS: 5,
+    MEMBER_PERSONALIA: 6
 }
 
 export const ViewUser = (props) => {
@@ -88,6 +90,7 @@ export const ViewUser = (props) => {
                     <DashboardBarElement active={activeContent === TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.MEMBER_PERSONALIA} onClick={() => setActiveContent(TABS.MEMBER_PERSONALIA)}>Medlemsinformasjon</DashboardBarElement>
                 </DashboardBarSelector>
                 
                 <DashboardContent visible={activeContent === TABS.USER_DETAILS}>
@@ -104,6 +107,10 @@ export const ViewUser = (props) => {
 
                 <DashboardContent visible={activeContent === TABS.INTEGRATIONS}>
                     <UserViewerExternalConnections user={user} />
+                </DashboardContent>
+
+                <DashboardContent visible={activeContent === TABS.MEMBER_PERSONALIA}>
+                    <UserViewerMemberPersonalia user={user} />
                 </DashboardContent>
             </>
         )
