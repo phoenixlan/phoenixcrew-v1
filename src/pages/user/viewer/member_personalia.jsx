@@ -17,7 +17,7 @@ export const UserViewerMemberPersonalia = ({ user }) => {
     if(isLoading) {
         return (<PageLoading />)
     }
-    return isGlobalAdmin(authContext.roles) ? (
+    return isGlobalAdmin(authContext.roles) ? ( data ? (
             <InnerContainer>
                 <InnerContainerRow>
                     <InnerContainer flex="1">
@@ -62,6 +62,14 @@ export const UserViewerMemberPersonalia = ({ user }) => {
                 </InnerContainerRow>
             </InnerContainer>
             ) : (
+                <InnerContainer>
+                    <InnerContainerRow>
+                        <Notice fillWidth type="info" visible={true}>
+                            Denne brukeren har enten ikke lagt inn medlemsinformasjon, eller så har den blitt slettet pga. inaktivitet
+                        </Notice>
+                    </InnerContainerRow>
+                </InnerContainer>
+            ) ) : (
             <InnerContainer>
                 <InnerContainerRow>
                     <Notice fillWidth type="warning" visible={true}>
