@@ -44,6 +44,7 @@ import { ViewTicket } from '../pages/ticket/viewer';
 import { TicketTypeList } from '../pages/ticket/ticketTypes';
 import { CreateAgendaEntry } from '../pages/information/agenda/create';
 import { EditAgendaEntry } from '../pages/information/agenda/view';
+import { EditEvent } from '../pages/event/view/editEvent';
 
 const RouterInner = () => {
     const auth = useContext(AuthenticationContext);
@@ -102,6 +103,9 @@ const RouterInner = () => {
                         </PrivateRoute>
                         <PrivateRoute exact path="/event/:uuid">
                             <EventViewer />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/event/:uuid/edit">
+                            <EditEvent />
                         </PrivateRoute>
                         <PrivateRoute exact path="/events/">
                             <EventList />
