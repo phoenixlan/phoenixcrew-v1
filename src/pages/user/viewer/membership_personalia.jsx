@@ -3,15 +3,15 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { PageLoading } from '../../../components/pageLoading';
 import { Notice } from "../../../components/containers/notice";
-import { useUserMemberPersonalia } from '../../../hooks/useUserMemberPersonalia';
+import { useUserMembershipPersonalia } from '../../../hooks/useUserMembershipPersonalia';
 import { AuthenticationContext } from '../../../components/authentication';
 import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputLabel } from '../../../components/dashboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapPin, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { isGlobalAdmin } from '../../../utils/roles';
 
-export const UserViewerMemberPersonalia = ({ user }) => {
-    const {data, isLoading } = useUserMemberPersonalia(user.uuid)
+export const UserViewerMembershipPersonalia = ({ user }) => {
+    const {data, isLoading } = useUserMembershipPersonalia(user.uuid)
     const authContext = useContext(AuthenticationContext);
 
     if(isLoading) {
@@ -32,19 +32,6 @@ export const UserViewerMemberPersonalia = ({ user }) => {
                                 <CardContainerText>
                                 <InputLabel small>Adresse</InputLabel>
                                     <CardContainerInnerText>{data.address}, {data.postal_code}</CardContainerInnerText>
-                                </CardContainerText>
-                            </CardContainer>
-                        </InnerContainerRow>
-                        <InnerContainerRow>
-                            <CardContainer>
-                                <CardContainerIcon>
-                                    <CardContainerInnerIcon>
-                                        <FontAwesomeIcon icon={faPhone} />
-                                    </CardContainerInnerIcon>
-                                </CardContainerIcon>
-                                <CardContainerText>
-                                <InputLabel small>Telefon</InputLabel>
-                                    <CardContainerInnerText title={"Telefon: " + data.phone}><a href={"tel:" + data.phone}>{data.phone}</a></CardContainerInnerText>
                                 </CardContainerText>
                             </CardContainer>
                         </InnerContainerRow>

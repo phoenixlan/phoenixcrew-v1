@@ -10,7 +10,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
-    "@phoenixlan/phoenix.js": "^4.0.2",
+    "@phoenixlan/phoenix.js": "^4.0.5",
     "@sentry/react": "^7.32.1",
     "@tanstack/react-query": "4",
     "@testing-library/jest-dom": "^5.11.9",
