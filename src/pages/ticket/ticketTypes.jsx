@@ -21,6 +21,7 @@ const ticketTypeFlags = [
     { name: "grants_admission", label: "Gir adgang" },
     { name: "grants_membership", label: "Gir medlemskap" },
     { name: "requires_membership", label: "Krever medlemskap" },
+    { name: "transferable", label: "Overførbar" },
 ];
 
 // Split the flags into rows of two checkboxes each
@@ -49,6 +50,7 @@ export const TicketTypeList = () => {
             grants_admission: false,
             grants_membership: false,
             requires_membership: false,
+            transferable: true,
         }
     });
 
@@ -172,6 +174,7 @@ export const TicketTypeList = () => {
                                 <TableCell as="th" flex="2" mobileHide center>Gir<br/>adgang</TableCell>
                                 <TableCell as="th" flex="2" mobileHide center>Gir<br/>plass</TableCell>
                                 <TableCell as="th" flex="2" mobileHide center>Gir<br/>medlemskap</TableCell>
+                                <TableCell as="th" flex="2" mobileHide center>Overførbar</TableCell>
                                 <TableCell as="th" flex="2" mobileHide center>I bruk</TableCell>
                             </TableRow>
                         </TableHead>
@@ -189,6 +192,7 @@ export const TicketTypeList = () => {
                                             <TableCell flex="2" mobileHide center>{ ticketType.grants_admission ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null }</TableCell>
                                             <TableCell flex="2" mobileHide center>{ ticketType.seatable ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null }</TableCell>
                                             <TableCell flex="2" mobileHide center>{ ticketType.grants_membership ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null }</TableCell>
+                                            <TableCell flex="2" mobileHide center>{ ticketType.transferable ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null }</TableCell>
                                             <TableCell flex="2" mobileHide center>{ eventTicketTypeUuids.includes(ticketType.uuid) ? <IconContainer color="#388e3c"><FontAwesomeIcon icon={faCircleCheck}/></IconContainer> : null }</TableCell>
                                         </TableRow>
                                     )

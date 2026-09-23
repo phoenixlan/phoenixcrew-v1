@@ -226,6 +226,17 @@ export const UserViewerDetails = ({ user }) => {
                                 <CardContainer>
                                     <CardContainerIcon>
                                         <CardContainerInnerIcon>
+                                            <FontAwesomeIcon icon={faPhone} />
+                                        </CardContainerInnerIcon>
+                                    </CardContainerIcon>
+                                    <CardContainerText>
+                                    <InputLabel small>Telefon</InputLabel>
+                                        <CardContainerInnerText title={"Telefon: " + user.phone}><a href={"tel:" + user.phone}>{user.phone}</a></CardContainerInnerText>
+                                    </CardContainerText>
+                                </CardContainer>
+                                <CardContainer>
+                                    <CardContainerIcon>
+                                        <CardContainerInnerIcon>
                                             <FontAwesomeIcon icon={user.guardian_phone ? faPhone : faPhoneSlash} />
                                         </CardContainerInnerIcon>
                                     </CardContainerIcon>
