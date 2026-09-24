@@ -34,7 +34,6 @@ const S = {
             position: fixed;
             top: 0;
             width: 100%;
-            height: max-content;
             margin-top: 60px;
             border-bottom: 1px solid rgb(235, 235, 235);
         }
@@ -165,6 +164,7 @@ const S = {
             flex-flow: column;
             overflow-y: scroll;
             height: 100%;
+            padding-bottom: 120px;
         `,
             GroupTitle: styled.div`
                 padding: 12px 16px 8px;

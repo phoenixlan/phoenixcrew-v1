@@ -114,6 +114,6 @@ export const ViewPosition = (props) => {
                     </InnerContainer>
                 </DashboardContent>
             </>
-            )
+        )
     }
 }
