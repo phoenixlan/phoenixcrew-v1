@@ -26,6 +26,7 @@ import { SeatmapList } from "../pages/seatmap/listSeatmaps";
 import { SeatmapEditor } from "../pages/seatmap/seatmapEditor";
 import { FreeTicketManagement } from "../pages/ticket/freeTicketManagement";
 import { TicketList } from "../pages/ticket/tickets";
+import { TicketSalesStatus } from "../pages/ticket/ticketSalesStatus";
 import { MembershipList } from "../pages/ticket/membershipList";
 import { TicketVoucherManagement } from "../pages/ticket/ticketVoucherManagement";
 import { ViewTicket } from "../pages/ticket/viewer";
@@ -77,6 +78,7 @@ const BrandRoutes = () => (
             <Route exact path="/brand/:brandUuid/stats/userbase"><UserbaseStats /></Route>
             <Route exact path="/brand/:brandUuid/stats/age_distribution"><AgeDistributionStats /></Route>
             <Route exact path="/brand/:brandUuid/tickets/"><TicketList /></Route>
+            <Route exact path="/brand/:brandUuid/tickets/sales-status/"><TicketSalesStatus /></Route>
             <Route exact path="/brand/:brandUuid/tickets/memberships/"><MembershipList /></Route>
             <Route exact path="/brand/:brandUuid/tickets/free/"><FreeTicketManagement /></Route>
             <Route exact path="/brand/:brandUuid/tickets/vouchers/"><TicketVoucherManagement /></Route>

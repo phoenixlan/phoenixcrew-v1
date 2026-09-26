@@ -11,7 +11,7 @@ import { AuthenticationContext } from "../../components/authentication";
 import { useTicketTypes } from "../../hooks/tickets/useTicketTypes";
 import { useTicketTypeCreateMutation } from "../../hooks/tickets/useTicketTypeCreateMutation";
 import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
-import { useEventTicketTypes } from "../../hooks/tickets/useEventTicketTypes";
+import { useEventTicketTypeMappings } from "../../hooks/tickets/useEventTicketTypeMappings";
 import { useBrand } from "../../contexts/brand";
 import { hasAnyBrandPermission } from "../../utils/roles";
 
@@ -56,11 +56,11 @@ export const TicketTypeList = () => {
 
     const { data: ticketTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes();
     const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
-    const { data: eventTicketTypes = [], isLoading: isLoadingEventTicketTypes } = useEventTicketTypes(currentEvent?.uuid);
+    const { data: eventTicketTypeMappings = [], isLoading: isLoadingEventTicketTypes } = useEventTicketTypeMappings(currentEvent?.uuid);
 
     const createTicketTypeMutation = useTicketTypeCreateMutation();
 
-    const eventTicketTypeUuids = eventTicketTypes.map(tt => tt.uuid);
+    const eventTicketTypeUuids = eventTicketTypeMappings.map(mapping => mapping.ticket_type.uuid);
     const loading = isLoadingTicketTypes || isLoadingCurrentEvent || (currentEvent && isLoadingEventTicketTypes);
 
     const createError = createTicketTypeMutation.error?.message;

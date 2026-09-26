@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
+import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { AuthenticationContext } from "../../../components/authentication";
 import { Notice } from "../../../components/containers/notice";
@@ -15,6 +16,7 @@ import {
     InnerContainerTitle,
     InputContainer,
     InputElement,
+    InputElementDescription,
     InputLabel,
     InputSelect,
     PanelButton,
@@ -37,6 +39,7 @@ export const CreateEvent = () => {
     const createEventMutation = useCreateEventMutation(brandUuid);
     const {
         register,
+        control,
         handleSubmit,
         getValues,
         watch,
@@ -50,12 +53,13 @@ export const CreateEvent = () => {
             booking_time: "",
             priority_seating_delay: "",
             seating_delay: "",
-            max_participants: "",
+            ticket_sales_caps: [],
             participant_age_limit_inclusive: "",
             crew_age_limit_inclusive: "",
             seatmap_uuid: "",
         },
     });
+    const ticketSalesCaps = useFieldArray({ control, name: "ticket_sales_caps" });
 
     if(!canCreateEvent) {
         return (
@@ -138,20 +142,47 @@ export const CreateEvent = () => {
 
                             <InnerContainerTitle>Billetter og aldersgrenser</InnerContainerTitle>
                             <InnerContainerRow nowrap>
+                                <InputElementDescription>
+                                    Salgsgrenser er maks antall billetter som kan selges per gruppe. Grupper uten salgsgrense er ubegrenset.
+                                </InputElementDescription>
+                            </InnerContainerRow>
+                            {ticketSalesCaps.fields.map((field, index) => (
+                                <InnerContainerRow nowrap key={field.id}>
+                                    <CardContainer>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Gruppe</InputLabel>
+                                            <InputElement
+                                                type="text"
+                                                {...register(`ticket_sales_caps.${index}.group`, {
+                                                    required: true,
+                                                    validate: value => !!value.trim() && getValues("ticket_sales_caps").filter(row => row.group.trim() === value.trim()).length === 1,
+                                                })}
+                                            />
+                                        </InputContainer>
+                                    </CardContainer>
+                                    <CardContainer>
+                                        <InputContainer column extramargin>
+                                            <InputLabel small>Salgsgrense</InputLabel>
+                                            <InputElement
+                                                type="number"
+                                                min="0"
+                                                step="1"
+                                                {...register(`ticket_sales_caps.${index}.cap`, {
+                                                    required: true,
+                                                    min: 0,
+                                                    validate: integerValidation,
+                                                })}
+                                            />
+                                        </InputContainer>
+                                    </CardContainer>
+                                    <CardContainer>
+                                        <PanelButton type="button" icon={faTrash} onClick={() => ticketSalesCaps.remove(index)}>Fjern</PanelButton>
+                                    </CardContainer>
+                                </InnerContainerRow>
+                            ))}
+                            <InnerContainerRow nowrap>
                                 <CardContainer>
-                                    <InputContainer column extramargin>
-                                        <InputLabel small>Antall plasser</InputLabel>
-                                        <InputElement
-                                            type="number"
-                                            min="1"
-                                            step="1"
-                                            {...register("max_participants", {
-                                                required: true,
-                                                min: 1,
-                                                validate: integerValidation,
-                                            })}
-                                        />
-                                    </InputContainer>
+                                    <PanelButton type="button" icon={faPlus} onClick={() => ticketSalesCaps.append({ group: "", cap: "" })}>Legg til salgsgrense</PanelButton>
                                 </CardContainer>
                             </InnerContainerRow>
                             <InnerContainerRow nowrap>

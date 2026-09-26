@@ -358,6 +358,11 @@ export const options = [
                 url: "/tickets/"
             },
             {
+                title: "Billettsalg-status",
+                icon: faChartBar,
+                url: "/tickets/sales-status"
+            },
+            {
                 title: "Gratisbilletter",
                 icon: faTicket,
                 url: "/tickets/free"
