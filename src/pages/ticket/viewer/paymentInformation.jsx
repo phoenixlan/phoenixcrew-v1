@@ -10,6 +10,7 @@ import { useHistory } from "react-router-dom";
 
 import { usePayment } from "../../../hooks/usePayment";
 import { useUser } from "../../../hooks/useUser";
+import { useBrand } from "../../../contexts/brand";
 
 const PaymentState = {
     created: "PaymentState.created",
@@ -34,6 +35,7 @@ const getStateIcon = (state) => {
 };
 
 export const PaymentInformation = ({data}) => {
+    const { path } = useBrand();
 
     const history = useHistory();
     const { data: payment, isLoading, error } = usePayment(data.ticket.payment_uuid);
@@ -169,7 +171,7 @@ export const PaymentInformation = ({data}) => {
                     </TableHead>
                     <TableBody>
                         {otherTickets.map(ticket => (
-                            <SelectableTableRow key={ticket.ticket_id} onClick={() => history.push(`/ticket/${ticket.ticket_id}`)}>
+                            <SelectableTableRow key={ticket.ticket_id} onClick={() => history.push(path(`/ticket/${ticket.ticket_id}`))}>
                                 <TableCell consolas flex="1">#{ticket.ticket_id}</TableCell>
                                 <TableCell flex="3">{ticket.ticket_type.name}</TableCell>
                                 <TableCell flex="2">{ticket.event.name}</TableCell>

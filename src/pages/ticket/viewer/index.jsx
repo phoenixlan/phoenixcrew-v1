@@ -12,6 +12,8 @@ import { useCurrentEvent } from "../../../hooks/events/useCurrentEvent";
 
 import { TicketInformation } from "./ticketInformation";
 import { PaymentInformation } from "./paymentInformation";
+import { useBrand } from "../../../contexts/brand";
+import { hasAnyBrandPermission } from "../../../utils/roles";
 
 const TABS = {
     DETAILS: 1,
@@ -19,6 +21,7 @@ const TABS = {
 }
 
 export const ViewTicket = () => {
+    const { brandUuid } = useBrand();
     const { id } = useParams();
 
     const [activeContent, setActiveContent] = useState(TABS.DETAILS);
@@ -27,14 +30,14 @@ export const ViewTicket = () => {
     const authContext = useContext(AuthenticationContext);
 
     const { data: ticket, isLoading: isLoadingTicket, error } = useTicket(id);
-    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent();
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
 
     const loading = isLoadingTicket || isLoadingCurrentEvent;
     const data = (ticket && currentEvent) ? { ticket, currentEvent } : null;
 
     if(loading) {
         return (<PageLoading />)
-    } else if(authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
+    } else if(hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"])) {
         if(data) {
             return (
                 <>

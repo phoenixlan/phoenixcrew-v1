@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import jwt_decode from "jwt-decode";
+import { useQueryClient } from '@tanstack/react-query';
 
 import { User } from "@phoenixlan/phoenix.js";
 
@@ -8,6 +9,7 @@ export const AuthenticationContext = React.createContext({});
 
 /// Authentication function
 export const Authentication = (props) => {
+    const queryClient = useQueryClient();
 
     /// States
     const [errorMessage, setErrorMessage]               = useState(null);
@@ -22,6 +24,7 @@ export const Authentication = (props) => {
     /// User Management
     let [authUser, setAuthUser] = useState(null);
     let [roles, setRoles] = useState(null);
+    let [tokenPayload, setTokenPayload] = useState(null);
 
     /// Functions for user management
         /// Set an error message and show the error container (E)
@@ -35,6 +38,9 @@ export const Authentication = (props) => {
         /// Logout function, used with the Authentication Context
         function logout() {
             setAuthUser(null);
+            setRoles(null);
+            setTokenPayload(null);
+            queryClient.clear();
             window.localStorage.removeItem("auth");
         }
         
@@ -44,10 +50,13 @@ export const Authentication = (props) => {
     useEffect(() => {
         // Give PhoenixJS a callback that will be used to notify when the refesh token changed from within
         User.Oauth.setTokensUpdateCallback((new_token, new_refresh_token) => {
+            const payload = jwt_decode(new_token);
             window.localStorage.setItem("auth", JSON.stringify({
                 token: new_token,
                 refreshToken: new_refresh_token,
             }));
+            setTokenPayload(payload);
+            setRoles(payload.roles);
         })
 
         /// Check if the user is already authenticated or is requesting to be authenticated.
@@ -66,6 +75,7 @@ export const Authentication = (props) => {
                         await User.Oauth.authenticateByCode(code);
                         
                         let Token = await User.Oauth.getToken();
+                        const payload = jwt_decode(Token);
                         setAuthUser(await User.getAuthenticatedUser());
                         //let RefreshToken = await User.Oauth.getRefreshToken();
 
@@ -76,7 +86,8 @@ export const Authentication = (props) => {
                             refreshToken: RefreshToken,
                         }));
                         */
-                        setRoles(jwt_decode(Token).roles);
+                        setTokenPayload(payload);
+                        setRoles(payload.roles);
                         setLoadingFinished(true);
                     } 
                     catch (e) {
@@ -105,7 +116,10 @@ export const Authentication = (props) => {
                         const authenticatedUser = await User.getAuthenticatedUser();                        
                         setAuthUser(authenticatedUser);
 
-                        setRoles(jwt_decode(object.token).roles);
+                        const token = await User.Oauth.getToken();
+                        const payload = jwt_decode(token);
+                        setTokenPayload(payload);
+                        setRoles(payload.roles);
                         setLoadingFinished(true);
                     }
                     catch (e) {
@@ -144,7 +158,7 @@ export const Authentication = (props) => {
 
     return(
         <>
-            <AuthenticationContext.Provider value={{authUser, logout, roles, shouldDisplayError, errorMessage, loadingFinished}}>
+            <AuthenticationContext.Provider value={{authUser, logout, roles, tokenPayload, shouldDisplayError, errorMessage, loadingFinished}}>
                 {props.children}
             </AuthenticationContext.Provider>
         </>

@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { Agenda, getCurrentEvent } from "@phoenixlan/phoenix.js";
+import { Agenda } from "@phoenixlan/phoenix.js";
 import { CardContainer, CardContainerDescriptiveText, CardContainerText, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, PanelButton } from '../../../../components/dashboard';
 
 import { AuthenticationContext } from '../../../../components/authentication';
@@ -7,8 +7,11 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
 import { Notice } from '../../../../components/containers/notice';
 import { PageLoading } from '../../../../components/pageLoading';
+import { useBrand } from '../../../../contexts/brand';
+import { hasAnyBrandPermission } from '../../../../utils/roles';
 
 export const CreateAgendaEntry = () => {
+    const { brandUuid, currentEvent, path } = useBrand();
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -16,7 +19,7 @@ export const CreateAgendaEntry = () => {
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
-    const agendaManagement = authContext.roles.includes("admin" || "evemt_admin" || "info_admin" || "compo_admin");
+    const agendaManagement = hasAnyBrandPermission(authContext.roles, brandUuid, ["event_admin", "info_admin", "compo_admin"]);
 
     const [ title, setTitle ] = useState(null);
     const [ description, setDescription ] = useState(null);
@@ -38,13 +41,12 @@ export const CreateAgendaEntry = () => {
     })
 
     const createAgendaEntry = async (data) => {
-        const event = await getCurrentEvent();
         const datetimeUnixTime = new Date(data.time).getTime()/1000;
         const duration = Number(data.duration);
 
         try {
-            let response = await Agenda.createAgendaEntry(event.uuid, data.title, data.description, data.location, datetimeUnixTime, duration, data.pinned);
-            history.push('/information/schedule/' + response.uuid)
+            let response = await Agenda.createAgendaEntry(currentEvent.uuid, data.title, data.description, data.location, datetimeUnixTime, duration, data.pinned);
+            history.push(path('/information/schedule/' + response.uuid))
         } catch(e) {
             setError(e.message);
             console.error("An error occured while attempting to create the agenda entry.\n" + e);
@@ -164,7 +166,7 @@ export const CreateAgendaEntry = () => {
                                     <PanelButton fillWidth type="submit" onClick={handleSubmit(createAgendaEntry)}>Opprett</PanelButton>
                                 </CardContainer>
                                 <CardContainer>
-                                    <PanelButton fillWidth type="submit" onClick={() => history.push("/information/schedule/")}>Avbryt</PanelButton>
+                                    <PanelButton fillWidth type="submit" onClick={() => history.push(path("/information/schedule/"))}>Avbryt</PanelButton>
                                 </CardContainer>
                             </InnerContainer>
                             <InnerContainer flex="1" />

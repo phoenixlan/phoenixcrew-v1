@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { User} from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, SelectableTableRow, Row, IconContainer, TableRow, TableBody } from "../../../components/table";
 import { PageLoading } from '../../../components/pageLoading';
 import { InnerContainer, InnerContainerTitle, InnerContainerTitleS } from '../../../components/dashboard';
+import { EventBrandsContext } from '../../../contexts/eventBrands';
 
 export const UserViewerTickets = ({ user }) => {
+    const { activeEvents } = useContext(EventBrandsContext);
+    const ticketPath = ticket => {
+        const brandUuid = ticket.event_brand_uuid || activeEvents.find(({ event }) => event.uuid === ticket.event.uuid)?.brand.uuid;
+        return brandUuid ? `/brand/${brandUuid}/ticket/${ticket.ticket_id}` : null;
+    };
     let history = useHistory();
     const [ loading, setLoading ] = useState(false);
     const [ ownedTickets, setOwnedTickets ] = useState([]);
@@ -52,7 +58,7 @@ export const UserViewerTickets = ({ user }) => {
                         <TableBody>
                             {
                                 purchasedTickets.map(ticket => (
-                                    <SelectableTableRow onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
+                                    <SelectableTableRow key={ticket.ticket_id} onClick={() => ticketPath(ticket) && history.push(ticketPath(ticket))}>
                                         <TableCell mobileFlex="1" consolas flex="1">#{ ticket.ticket_id }</TableCell>
                                         <TableCell mobileFlex="3" flex="4">{ticket.event.name}</TableCell>
                                         <TableCell mobileFlex="3" flex="3">{ticket.owner.firstname} {ticket.seater.lastname}</TableCell>
@@ -80,7 +86,7 @@ export const UserViewerTickets = ({ user }) => {
                         <TableBody>
                             {
                                 ownedTickets.map(ticket => (
-                                    <SelectableTableRow onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
+                                    <SelectableTableRow key={ticket.ticket_id} onClick={() => ticketPath(ticket) && history.push(ticketPath(ticket))}>
                                         <TableCell mobileFlex="1" consolas flex="1">#{ ticket.ticket_id }</TableCell>
                                         <TableCell mobileFlex="3" flex="4">{ticket.event.name}</TableCell>
                                         <TableCell mobileFlex="3" flex="3">{ticket.buyer.firstname} {ticket.buyer.lastname}</TableCell>

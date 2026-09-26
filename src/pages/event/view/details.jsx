@@ -7,7 +7,7 @@ import { PageLoading } from "../../../components/pageLoading";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { TimestampToDateTime } from "../../../components/timestampToDateTime";
 import { Notice } from "../../../components/containers/notice";
-import { modifyEvent } from "@phoenixlan/phoenix.js";
+import { updateEvent } from "@phoenixlan/phoenix.js";
 
 export const EventDetails = ({event, refresh}) => {
 
@@ -21,7 +21,7 @@ export const EventDetails = ({event, refresh}) => {
             if (cancellation_reason_prompt) {
                 try {
                     setLoading(true);
-                    await modifyEvent(event.uuid, {"cancellation_reason": cancellation_reason_prompt});
+                    await updateEvent(event.uuid, {"cancellation_reason": cancellation_reason_prompt});
                     await refresh();
                 } catch(e) {
                     console.error("An error occured when trying to cancel this event:\n" + e)   
@@ -34,7 +34,7 @@ export const EventDetails = ({event, refresh}) => {
 
                 try {
                     setLoading(true);
-                    await modifyEvent(event.uuid, {"cancellation_reason": null});
+                    await updateEvent(event.uuid, {"cancellation_reason": null});
                     await refresh();
                 } catch(e) {
                     console.error("An error occured when trying to resume this event:\n" + e)   
@@ -51,6 +51,9 @@ export const EventDetails = ({event, refresh}) => {
     if(loading) {
         return (<PageLoading />)
     }
+
+    const ticketSalesCaps = Object.entries(event.ticket_sales_caps ?? {});
+
     return (
         <>
             <InnerContainer rowgap>
@@ -208,8 +211,8 @@ export const EventDetails = ({event, refresh}) => {
                                                 </CardContainerInnerIcon>
                                             </CardContainerIcon>
                                             <CardContainerText>
-                                                <InputLabel small>Antall plasser</InputLabel>
-                                                <CardContainerInnerText>{ event.max_participants }</CardContainerInnerText>
+                                                <InputLabel small>Salgsgrenser</InputLabel>
+                                                <CardContainerInnerText>{ ticketSalesCaps.length ? ticketSalesCaps.map(([group, cap]) => `${group}: ${cap}`).join(", ") : "Ingen" }</CardContainerInnerText>
                                             </CardContainerText>
                                         </CardContainer>
                                     </InnerContainerRow>

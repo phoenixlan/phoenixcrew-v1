@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 
-import { Agenda, getCurrentEvent } from '@phoenixlan/phoenix.js'
+import { Agenda } from '@phoenixlan/phoenix.js'
 
 import { PageLoading } from "../../../components/pageLoading"
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbtack, faPlay, faMinus, faPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AuthenticationContext } from '../../../components/authentication';
 import { TimestampToDateTime } from "../../../components/timestampToDateTime";
+import { useBrand } from '../../../contexts/brand';
+import { hasAnyBrandPermission } from '../../../utils/roles';
 
 const AgendaEntry = ({ entry }) => {
     const [ active, setActive ] = useState(false);
@@ -52,6 +54,7 @@ const AgendaEntry = ({ entry }) => {
 }
 
 export const AgendaList = () => {
+    const { brandUuid, currentEvent, path } = useBrand();
 
     let history = useHistory();
     
@@ -61,10 +64,11 @@ export const AgendaList = () => {
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
-    const agendaManagement = authContext.roles.includes("admin" || "evemt_admin" || "info_admin" || "compo_admin");
+    const agendaManagement = hasAnyBrandPermission(authContext.roles, brandUuid, ["event_admin", "info_admin", "compo_admin"]);
 
     const reloadAgendaList = async () => {
-        const getAgendaList = await Agenda.getAgenda();
+        if(!currentEvent) return setLoading(false);
+        const getAgendaList = await Agenda.getAgenda(currentEvent.uuid);
         if (getAgendaList) {
             setAgendaList(getAgendaList);
             setLoading(false);
@@ -75,7 +79,7 @@ export const AgendaList = () => {
         reloadAgendaList().catch((e) => {
             console.log(e);
         })
-    }, []);
+    }, [currentEvent]);
 
     if(loading) {
         return (
@@ -98,7 +102,7 @@ export const AgendaList = () => {
                 <DashboardContent visible={activeContent == 1}>
                     <InnerContainerRow nopadding>
                         <InnerContainer flex="1">
-                            <PanelButton onClick={() => history.push('/information/schedule/create')} icon={faPlus} disabled={!agendaManagement}>Opprett programpost</PanelButton>
+                            <PanelButton onClick={() => history.push(path('/information/schedule/create'))} icon={faPlus} disabled={!agendaManagement}>Opprett programpost</PanelButton>
                         </InnerContainer>
                     </InnerContainerRow>
 
@@ -126,7 +130,7 @@ export const AgendaList = () => {
                                 {
                                     agendaList.map(entry => {
                                         return (
-                                            <SelectableTableRow onClick={() => history.push("/information/schedule/" + entry.uuid)}>
+                                            <SelectableTableRow onClick={() => history.push(path("/information/schedule/" + entry.uuid))}>
                                                 <AgendaEntry reloadAgendaList={reloadAgendaList} entry={entry} key={entry.uuid} />
                                             </SelectableTableRow>
                                             
@@ -142,4 +146,3 @@ export const AgendaList = () => {
         )
     }
 };
-

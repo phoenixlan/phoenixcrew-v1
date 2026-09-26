@@ -36,14 +36,15 @@ const S = {
     `
 }
 
-export const TableLabels = React.forwardRef(({uuid}, ref) => {
+export const TableLabels = React.forwardRef(({uuid, eventUuid}, ref) => {
     const [ availability, setAvailability ] = useState(null)
 
     useEffect(async () => {
-        const availability = await Seatmap.getSeatmapAvailability(uuid);
+        if(!eventUuid) return;
+        const availability = await Seatmap.getSeatmapAvailability(uuid, eventUuid);
         console.log(availability);
         setAvailability(availability)
-    }, [uuid])
+    }, [uuid, eventUuid])
     console.log(uuid)
 
     return (<S.PrintWrapper ref={ref}>

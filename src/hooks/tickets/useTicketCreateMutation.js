@@ -3,10 +3,10 @@ import { Ticket } from "@phoenixlan/phoenix.js";
 
 import { eventTicketsQueryKey } from "./useEventTickets";
 
-export const useTicketCreateMutation = () => {
+export const useTicketCreateMutation = (eventUuid) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ userUuid, ticketTypeUuid }) => Ticket.createTicket(userUuid, ticketTypeUuid),
+        mutationFn: ({ userUuid, ticketTypeUuid }) => Ticket.createTicket(eventUuid, userUuid, ticketTypeUuid),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: eventTicketsQueryKey });
         },

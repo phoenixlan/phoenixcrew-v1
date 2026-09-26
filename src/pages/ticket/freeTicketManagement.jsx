@@ -15,6 +15,8 @@ import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
 import { useTicketTypes } from "../../hooks/tickets/useTicketTypes";
 import { useEventTickets } from "../../hooks/tickets/useEventTickets";
 import { useTicketCreateMutation } from "../../hooks/tickets/useTicketCreateMutation";
+import { useBrand } from "../../contexts/brand";
+import { hasAnyBrandPermission } from "../../utils/roles";
 
 const commonText = {
     "freeTicket.giveTicketTitle": "Opprett gratis- eller avtalebillett",
@@ -23,6 +25,7 @@ const commonText = {
 
 
 export const FreeTicketManagement = () => {
+    const { brandUuid, path } = useBrand();
 
     let history = useHistory();
 
@@ -38,15 +41,15 @@ export const FreeTicketManagement = () => {
     const [ giveFreeTicketDropdownState, setGiveFreeTicketDropdownState ] = useState(false);
 
     // Check if user has "admin" role and make the following functions available:
-    if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
+    if (hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"])) {
         viewFreeTicketManagement = true;
     }
 
-    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent();
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
     const { data: allTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes();
     const { data: allTickets = [], isLoading: isLoadingTickets } = useEventTickets(viewFreeTicketManagement ? currentEvent?.uuid : undefined);
 
-    const createTicketMutation = useTicketCreateMutation();
+    const createTicketMutation = useTicketCreateMutation(currentEvent?.uuid);
 
     const ticketTypes = allTypes.filter(type => type.price === 0);
     // TODO filter
@@ -214,7 +217,7 @@ export const FreeTicketManagement = () => {
                                 {
                                     tickets.map((ticket) => {
                                         return (
-                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}}>
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={() => history.push(path(`/ticket/${ticket.ticket_id}`))}>
                                                 <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
                                                 <TableCell flex="2" mobileFlex="3">{ ticket.ticket_type.name }</TableCell>
                                                 <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>

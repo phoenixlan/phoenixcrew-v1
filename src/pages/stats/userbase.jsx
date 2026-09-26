@@ -4,6 +4,7 @@ import { Bar } from 'react-chartjs-2';
 
 import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { PageLoading } from "../../components/pageLoading";
+import { useBrand } from "../../contexts/brand";
 
 import { useUserbaseStatistics } from "../../hooks/stats/useUserbaseStatistics";
 
@@ -66,7 +67,8 @@ const generate_stat_data = (userbaseStats, event_count_callback) => {
 }
 
 export const UserbaseStats = () => {
-    const { data: userbaseStats, isLoading } = useUserbaseStatistics();
+    const { brand } = useBrand();
+    const { data: userbaseStats, isLoading } = useUserbaseStatistics(brand.uuid);
 
     const userStats = useMemo(
         () => userbaseStats
