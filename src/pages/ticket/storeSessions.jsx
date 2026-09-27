@@ -7,9 +7,16 @@ import { useHistory } from "react-router-dom";
 import { PageLoading } from "../../components/pageLoading";
 
 import { useActiveStoreSessions } from "../../hooks/storeSessions/useActiveStoreSessions";
+import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
+import { useBrand } from "../../contexts/brand";
 
 export const StoreSessionList = () => {
-    const { data: storeSessions = [], isLoading: loading } = useActiveStoreSessions({ refetchInterval: 5000 });
+    const { brandUuid } = useBrand();
+
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
+    const { data: storeSessions = [], isLoading: isLoadingStoreSessions } = useActiveStoreSessions(currentEvent?.uuid, { refetchInterval: 5000 });
+
+    const loading = isLoadingCurrentEvent || (currentEvent && isLoadingStoreSessions);
 
     const [visibleUUID, setVisibleUUID] = useState(false);
 

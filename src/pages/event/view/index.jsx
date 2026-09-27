@@ -40,7 +40,7 @@ export const EventViewer = () => {
             )
 
             const legalTicketTypes = ticketTypes.filter(ticketType => {
-                return ticketType.price !== 0 && ticketType.event_brand_uuid === event.event_brand_uuid;
+                return ticketType.event_brand_uuid === event.event_brand_uuid;
             });
 
             if(legalTicketTypes.length > 0) {

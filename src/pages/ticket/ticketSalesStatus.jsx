@@ -4,6 +4,7 @@ import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, Inne
 import { BarElement, FlexBar } from "../../components/bar";
 import { AuthenticationContext } from "../../components/authentication";
 import { Notice } from "../../components/containers/notice";
+import { TimestampToDateTime } from "../../components/timestampToDateTime";
 
 import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
 import { useEventTickets } from "../../hooks/tickets/useEventTickets";
@@ -29,7 +30,7 @@ export const TicketSalesStatus = () => {
 
     const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
     const { data: tickets = [], isLoading: isLoadingTickets } = useEventTickets(viewTickets ? currentEvent?.uuid : undefined);
-    const { data: storeSessions = [], isLoading: isLoadingStoreSessions } = useActiveStoreSessions();
+    const { data: storeSessions = [], isLoading: isLoadingStoreSessions } = useActiveStoreSessions(viewTickets ? currentEvent?.uuid : undefined);
     const { data: mappings = [], isLoading: isLoadingMappings } = useEventTicketTypeMappings(viewTickets ? currentEvent?.uuid : undefined);
     const { data: salesData, isLoading: isLoadingSalesData } = useTicketSaleData(viewTickets ? brandUuid : undefined, true);
 
@@ -45,13 +46,11 @@ export const TicketSalesStatus = () => {
 
         // Count tickets held in store sessions for this event, per ticket type
         const heldTickets = {};
-        storeSessions
-            .filter((storeSession) => storeSession.event_uuid === currentEvent.uuid)
-            .forEach((storeSession) => {
-                storeSession.entries.forEach((entry) => {
-                    heldTickets[entry.ticket_type.uuid] = (heldTickets[entry.ticket_type.uuid] ?? 0) + entry.amount;
-                })
+        storeSessions.forEach((storeSession) => {
+            storeSession.entries.forEach((entry) => {
+                heldTickets[entry.ticket_type.uuid] = (heldTickets[entry.ticket_type.uuid] ?? 0) + entry.amount;
             })
+        })
 
         const ticketsByType = {};
         tickets.forEach((ticket) => {
@@ -140,14 +139,56 @@ export const TicketSalesStatus = () => {
         return { groupBars, ticketTypeBars };
     }, [currentEvent, tickets, storeSessions, mappings]);
 
-    const forecast = useMemo(() => {
-        if (!currentEvent) {
+    const salesNotStarted = !!currentEvent && Date.now() / 1000 < currentEvent.booking_time;
+
+    // Predicts the rest of the ticket sale by extrapolating the tickets sold so far in each group linearly
+    const prediction = useMemo(() => {
+        if (!currentEvent || salesNotStarted) {
             return null;
         }
 
+        if (!groupBars.length) {
+            return { type: "info", title: "Kan ikke forutsi billettsalget", detail: "Arrangementet har ingen salgsgrenser å sammenligne salget med" };
+        }
+
+        if (groupBars.every((bar) => bar.sold >= bar.cap)) {
+            return { type: "success", title: "Arrangementet er utsolgt" };
+        }
+
         const now = Date.now() / 1000;
-        if (now < currentEvent.booking_time) {
-            return { type: "info", title: "Billettsalget har ikke startet enda" };
+        const elapsed = Math.max(Math.min(now, currentEvent.start_time) - currentEvent.booking_time, 1);
+        const duration = currentEvent.start_time - currentEvent.booking_time;
+
+        // The event is sold out when every group is, so it sells out when the last group does
+        const soldOutTimes = groupBars.map((bar) => bar.sold > 0 ? currentEvent.booking_time + bar.cap / (bar.sold / elapsed) : Infinity);
+        const soldOutTime = Math.max(...soldOutTimes);
+        if (soldOutTime <= currentEvent.start_time) {
+            return {
+                type: "success",
+                title: "Arrangementet ligger an til å bli utsolgt",
+                detail: `Forventet utsolgt ${TimestampToDateTime(soldOutTime, "DD_MM_YYYY_HH_MM")}`
+            };
+        }
+
+        const remainingByGroup = groupBars.map((bar) => ({
+            group: bar.title,
+            remaining: Math.max(Math.round(bar.cap - bar.sold / elapsed * duration), 0),
+        }));
+        const remaining = remainingByGroup.reduce((sum, entry) => sum + entry.remaining, 0);
+        return {
+            type: "error",
+            title: "Arrangementet ligger ikke an til å bli utsolgt",
+            detail: remainingByGroup.length > 1
+                ? `Forventet ${remaining} ledige billetter ved arrangementstart (${remainingByGroup.map((entry) => `${entry.group}: ${entry.remaining}`).join(", ")})`
+                : `Forventet ${remaining} ledige billetter ved arrangementstart`
+        };
+    }, [currentEvent, salesNotStarted, groupBars]);
+
+    // Compares the tickets sold so far with previous events at the same day of their ticket sale.
+    // Days are calendar days, where the day the ticket sale starts is day 1
+    const comparison = useMemo(() => {
+        if (!currentEvent || salesNotStarted) {
+            return null;
         }
 
         const previousSales = (salesData ?? []).filter((salesEvent) => salesEvent.event.uuid !== currentEvent.uuid);
@@ -155,15 +196,6 @@ export const TicketSalesStatus = () => {
             return { type: "info", title: "Informasjon om hvor bra billettsalget går vil komme her når det finnes historisk data" };
         }
 
-        // Extrapolate the tickets sold so far in each group linearly over the whole ticket sale
-        const elapsed = Math.max(now - currentEvent.booking_time, 1);
-        const duration = currentEvent.start_time - currentEvent.booking_time;
-        const isProjectedSoldOut = (bar) => bar.sold / elapsed * duration >= bar.cap;
-        // The event is sold out when every group is
-        const soldOut = groupBars.length > 0 && groupBars.every(isProjectedSoldOut);
-
-        // Compare the tickets sold so far with previous events at the same day of their ticket sale.
-        // Days are calendar days, where the day the ticket sale starts is day 1
         const bookingDate = new Date(currentEvent.booking_time * 1000);
         bookingDate.setHours(0, 0, 0, 0);
         const today = new Date();
@@ -172,16 +204,18 @@ export const TicketSalesStatus = () => {
         const currentSales = (salesData ?? []).find((salesEvent) => salesEvent.event.uuid === currentEvent.uuid);
         const currentSold = currentSales ? getSoldByDay(currentSales, day) : 0;
         const averageSold = previousSales.reduce((sum, salesEvent) => sum + getSoldByDay(salesEvent, day), 0) / previousSales.length;
-        const comparison = averageSold > 0
-            ? `${Math.round(Math.abs(currentSold - averageSold) / averageSold * 100)}% ${currentSold >= averageSold ? "bedre" : "dårligere"} enn gjennomsnittet for dag ${day} i billettsalget`
-            : null;
 
+        if (averageSold <= 0) {
+            return { type: "info", title: `Tidligere arrangementer hadde ingen salg innen dag ${day} i billettsalget` };
+        }
+
+        const better = currentSold >= averageSold;
         return {
-            type: soldOut ? "success" : "error",
-            title: soldOut ? "Arrangementet ligger an til å bli utsolgt" : "Arrangementet ligger ikke an til å bli utsolgt",
-            detail: comparison
+            type: better ? "success" : "warning",
+            title: `${Math.round(Math.abs(currentSold - averageSold) / averageSold * 100)}% ${better ? "bedre" : "dårligere"} enn gjennomsnittet`,
+            detail: `${currentSold} billetter solgt mot et snitt på ${Math.round(averageSold)} for dag ${day} i billettsalget`
         };
-    }, [currentEvent, salesData, groupBars]);
+    }, [currentEvent, salesNotStarted, salesData]);
 
     if(loading) {
         return (
@@ -213,12 +247,22 @@ export const TicketSalesStatus = () => {
                     </InnerContainerRow>
                 </InnerContainer>
 
-                <InnerContainer visible={viewTickets && !!forecast}>
+                <InnerContainer visible={viewTickets && salesNotStarted}>
                     <InnerContainerRow>
-                        <Notice large fillWidth type={forecast?.type} visible={!!forecast}>
-                            <InnerContainerTitleS nopadding={!forecast?.detail}>{forecast?.title}</InnerContainerTitleS>
-                            {forecast?.detail}
+                        <Notice large fillWidth type="info" visible={salesNotStarted}>
+                            <InnerContainerTitleS nopadding>Billettsalget har ikke startet enda</InnerContainerTitleS>
                         </Notice>
+                    </InnerContainerRow>
+                </InnerContainer>
+
+                <InnerContainer visible={viewTickets && !!prediction && !!comparison}>
+                    <InnerContainerRow>
+                        {[prediction, comparison].map((notice, index) => (
+                            <Notice large fillWidth type={notice?.type} visible={!!notice} key={index}>
+                                <InnerContainerTitleS nopadding={!notice?.detail}>{notice?.title}</InnerContainerTitleS>
+                                {notice?.detail}
+                            </Notice>
+                        ))}
                     </InnerContainerRow>
                 </InnerContainer>
 
