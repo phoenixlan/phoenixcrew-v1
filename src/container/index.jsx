@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Sidebar } from "./sidebar"
 import { DashboardBlock } from "../components/dashboard";
 import { MobileNavigation } from './mobileNavigation';
+import { BrandBar } from './brandBar';
 
 const S = {
     DocumentRoot: styled.div`
@@ -46,6 +47,7 @@ export const Container = ({ children }) => {
                     <Sidebar />
                 </S.SidebarRoot>
                 <S.DashboardRoot>
+                    <BrandBar />
                     <DashboardBlock>
                         {children}
                     </DashboardBlock>
