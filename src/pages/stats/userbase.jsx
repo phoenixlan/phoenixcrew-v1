@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 
 import { Bar } from 'react-chartjs-2';
 
 import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { PageLoading } from "../../components/pageLoading";
+import { useBrand } from "../../contexts/brand";
 
-import { Statistics } from "@phoenixlan/phoenix.js"
+import { useUserbaseStatistics } from "../../hooks/stats/useUserbaseStatistics";
 
 export const user_participation_options = {
     responsive: true,
@@ -48,9 +49,7 @@ const mostest = (list, callback) => {
 }
 
 const generate_stat_data = (userbaseStats, event_count_callback) => {
-    console.log(userbaseStats);
     const mostest_labels = mostest(userbaseStats.map(event_count_callback), l => l.length)
-    console.log(mostest_labels)
 
     const labels = Array.from(mostest_labels.keys())
 
@@ -60,7 +59,6 @@ const generate_stat_data = (userbaseStats, event_count_callback) => {
             data: event_count_callback(salesEvent)
         }
     })
-    console.log(datasets);
 
     return {
         labels,
@@ -69,26 +67,22 @@ const generate_stat_data = (userbaseStats, event_count_callback) => {
 }
 
 export const UserbaseStats = () => {
+    const { brand } = useBrand();
+    const { data: userbaseStats, isLoading } = useUserbaseStatistics(brand.uuid);
 
-    const [ userStats, setUserStats ] = useState({ datasets: [] })
-    const [ crewStats, setCrewStats ] = useState({ datasets: [] })
-    const [ loading, setLoading] = useState(true);
+    const userStats = useMemo(
+        () => userbaseStats
+            ? generate_stat_data(userbaseStats, (salesEvent) => salesEvent.counts)
+            : { datasets: [] },
+        [userbaseStats]
+    );
 
-    useEffect(() => {
-        const inner = async () => {
-            setLoading(true)
-            const userbaseStats = await Statistics.getUserbaseStatistics();
-
-            const user_stats = generate_stat_data(userbaseStats, (salesEvent) => salesEvent.counts);
-            const crew_stats = generate_stat_data(userbaseStats, (salesEvent) => salesEvent.crew_counts);
-
-            setUserStats(user_stats)
-            setCrewStats(crew_stats)
-
-            setLoading(false)
-        }
-        inner();
-    }, []);
+    const crewStats = useMemo(
+        () => userbaseStats
+            ? generate_stat_data(userbaseStats, (salesEvent) => salesEvent.crew_counts)
+            : { datasets: [] },
+        [userbaseStats]
+    );
 
     return (
         <>
@@ -102,7 +96,7 @@ export const UserbaseStats = () => {
             </DashboardHeader>
             <DashboardContent>
                 {
-                    loading ? (<PageLoading />) : (<>
+                    isLoading ? (<PageLoading />) : (<>
                         <Bar options={user_participation_options} data={userStats} />
                         <Bar options={crew_participation_options} data={crewStats} />
                     </>)

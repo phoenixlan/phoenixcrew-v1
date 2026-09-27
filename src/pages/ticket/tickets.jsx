@@ -1,15 +1,19 @@
-import { useState, useEffect, useContext } from "react"
+import { useState, useContext } from "react"
 import { useHistory } from 'react-router-dom';
-import { getActiveStoreSessions, getEventTickets, getCurrentEvent, User, TicketType } from "@phoenixlan/phoenix.js";
+import { User } from "@phoenixlan/phoenix.js";
 import { Table, TableCell, TableHead, IconContainer, SelectableTableRow, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
-import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, RowBorder } from "../../components/dashboard";
+import { CardContainer, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, InputSelect, RowBorder, PanelButton } from "../../components/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faCheck, faMinus } from "@fortawesome/free-solid-svg-icons";
-import { BarElement, FlexBar } from "../../components/bar";
+import { faArrowRight, faCheck, faMinus, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { AuthenticationContext } from "../../components/authentication";
 import { Notice } from "../../components/containers/notice";
 import { TimestampToDateTime } from "../../components/timestampToDateTime";
+
+import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
+import { useEventTickets } from "../../hooks/tickets/useEventTickets";
+import { useBrand } from "../../contexts/brand";
+import { hasAnyBrandPermission } from "../../utils/roles";
 
 const SORTING_METHODS = {
     TICKET_ID: 1,
@@ -25,6 +29,7 @@ SORTING_TYPES[SORTING_METHODS.TICKET_OWNER] = (a, b) => a.owner.firstname.locale
 SORTING_TYPES[SORTING_METHODS.TICKED_CHECKED_IN] = (a, b) => b.checked_in - a.checked_in;
 
 export const TicketList = () => {
+    const { brandUuid, path } = useBrand();
 
     let history = useHistory();
 
@@ -34,118 +39,38 @@ export const TicketList = () => {
     // Function availibility control:
     let viewTickets = false;
 
-    const [ tickets, setTickets ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
-
     const [ activeSortingMethod, setActiveSortingMethod] = useState(1);
     const [ search, setSearch ] = useState("");
 
-    const [ ticketsProgressBar, setTicketsProgressBar ] = useState(undefined);
-    const [ checkedinTicketsProgressBar, setCheckedinTicketsProgressBar] = useState(undefined);
-
-    const [ currentEvent, setCurrentEvent ] = useState();
-
     // Check if user has "admin" or "ticket_admin" role and make the following functions available:
-    if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
+    if (hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"])) {
         viewTickets = true;
     }
 
-    const reload = async () => {
-        if(viewTickets) {
-            const currentEvent = await getCurrentEvent();
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
+    const { data: tickets = [], isLoading: isLoadingTickets } = useEventTickets(viewTickets ? currentEvent?.uuid : undefined);
 
-            if(currentEvent) {
-                const [ tickets, storeSessions, allTicketTypes ] = await Promise.all([
-                    getEventTickets(currentEvent.uuid),
-                    getActiveStoreSessions(),
-                    TicketType.getTicketTypes()
-                ])
+    const exportCsv = () => {
+        const headers = ["ID", "Owner", "Ticket Type"];
+        const rows = processedTicketList.map((ticket) => [
+            ticket.ticket_id,
+            User.getFullName(ticket.owner),
+            ticket.ticket_type.name
+        ]);
+        const csvContent = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "tickets.csv";
+        link.click();
+        URL.revokeObjectURL(url);
+    };
 
-                // Count all tickets which is held in store sessions
-                let heldTickets = 0; 
-                storeSessions.map((storeSession) => {
-                    storeSession.entries.map((entry) => {
-                        if(entry.ticket_type.grants_admission) {
-                            heldTickets += entry.amount;
-                        }  
-                    })
-                })
-
-                // Logic to create progressbars for tickets and checked in tickets
-                let ticketsProgressBar = [];
-                let checkedinTicketsProgressBar = [];
-
-                let availableTickets = currentEvent.max_participants - tickets.filter((ticket) => ticket.ticket_type.grants_admission == true).length - heldTickets; 
-
-                let ticketsCheckedinCount = 0;
-                let ticketsNotCheckedinCount = 0;
-
-                // Go through all tickets, filter out tickets that does not grant admission, sort after price, count tickets for each type and if they are checked in or not.
-                // Logic for creating the tickets progressbar
-                allTicketTypes
-                    .filter((ticketType) => ticketType.grants_admission == true)
-                    .sort((a, b) => a.price < b.price)
-                    .map((ticketType) => {
-                        let countedTicketsForTicketType = 0;
-            
-                        tickets
-                        .filter((ticket) => ticket.ticket_type.uuid == ticketType.uuid && ticket.ticket_type.grants_admission == true)
-                        .map((ticket) => {
-                            countedTicketsForTicketType++;
-                            ticket.checked_in ? ticketsCheckedinCount++ : ticketsNotCheckedinCount++;
-                        })
-            
-                        ticketsProgressBar.push({
-                            key: ticketType.uuid,
-                            color: ticketType.price ? "green" : "stripedGreen",
-                            title: ticketType.name,
-                            count: countedTicketsForTicketType
-                        })
-                    })
-                ticketsProgressBar.push({
-                    key: "availableTickets",
-                    color: "gray",
-                    title: "Tilgjengelige billetter",
-                    count: availableTickets
-                })
-                ticketsProgressBar.push({
-                    key: "reservedTickets",
-                    color: "stripedOrange",
-                    title: "Billetter reservert i kjøp",
-                    count: heldTickets
-                })
-                setTicketsProgressBar(ticketsProgressBar);
-
-                // Logic for creating the checkedintickets progressbar
-                checkedinTicketsProgressBar.push({
-                    key: "ceckedinTickets",
-                    color: "green",
-                    title: "Billetter sjekket inn",
-                    count: ticketsCheckedinCount
-                })
-                checkedinTicketsProgressBar.push({
-                    key: "notCheckedinTickets",
-                    color: "gray",
-                    title: "Billetter ikke sjekket inn",
-                    count: ticketsNotCheckedinCount,
-                    fillOnEmpty: !ticketsCheckedinCount
-                })
-                setCheckedinTicketsProgressBar(checkedinTicketsProgressBar);
-
-                setCurrentEvent(currentEvent)
-                setTickets(tickets);
-            } else {
-                setTicketsProgressBar([]);
-                setCheckedinTicketsProgressBar([])
-            }
-        }
-
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        reload();
-    }, []);
+    const loading = viewTickets && (
+        isLoadingCurrentEvent ||
+        (currentEvent && isLoadingTickets)
+    );
 
     if(loading) {
         return (
@@ -155,8 +80,8 @@ export const TicketList = () => {
 
     // Ticket sorting and filtering
     let processedTicketList = tickets
-    .filter((ticket) => 
-        ticket.owner.firstname.toLowerCase().includes(search) || 
+    .filter((ticket) =>
+        ticket.owner.firstname.toLowerCase().includes(search) ||
         ticket.owner.lastname.toLowerCase().includes(search) ||
         ticket.owner.username.toLowerCase().includes(search) ||
         ticket.ticket_id == search
@@ -171,7 +96,7 @@ export const TicketList = () => {
                         Billetter
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        { search 
+                        { search
                             ? "Viser " + processedTicketList.length + " av " + tickets.length + " salg for dette arrangementet"
                             : tickets.length + " salg for dette arrangementet"
                         }
@@ -218,32 +143,11 @@ export const TicketList = () => {
 
                             <InnerContainer flex="1" floattop>
                                 <InnerContainer>
-                                    <InnerContainerTitle>Billettfordeling</InnerContainerTitle>
-                                    <InnerContainer column extramargin>
-                                        <FlexBar>
-                                            {ticketsProgressBar.map((object) => {
-                                                return (<BarElement color={object.color} title={object.title} count={object.count} key={object.key} />)
-                                            })}
-                                        </FlexBar>
-                                    </InnerContainer>
-                                </InnerContainer>
-                            </InnerContainer>
-                            
-                            <InnerContainer flex="1" floattop>
-                                <InnerContainer>
-                                    <InnerContainerTitle>Innsjekkede billetter</InnerContainerTitle>
-                                    <InnerContainerRow>
-                                        <FlexBar>
-                                            {checkedinTicketsProgressBar.map((object) => {
-                                                return (<BarElement color={object.color} title={object.title} count={object.count} fillOnEmpty={object.fillOnEmpty} key={object.key} />)
-                                            })}
-                                        </FlexBar>
-                                    </InnerContainerRow>
+                                    <PanelButton onClick={exportCsv} icon={faDownload} disabled={!tickets.length}>Eksporter CSV</PanelButton>
                                 </InnerContainer>
                             </InnerContainer>
                         </InnerContainerRow>
                     </InnerContainer>
-                    
 
                     <InnerContainer>
                         <Table>
@@ -256,7 +160,7 @@ export const TicketList = () => {
                                     <TableCell as="th" flex="4" mobileHide>Seates av bruker</TableCell>
                                     <TableCell as="th" flex="2" mobileFlex="2">Sete</TableCell>
                                     <TableCell as="th" flex="3" mobileHide>Kjøpetid</TableCell>
-                                    
+
                                     <TableCell as="th" center flex="0 24px" title="Statusikon: Ikon vises dersom billetten har blitt sjekket inn"><IconContainer>...</IconContainer></TableCell>
                                     <TableCell as="th" center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
                                 </TableRow>
@@ -265,7 +169,7 @@ export const TicketList = () => {
                                 {
                                     processedTicketList.map((ticket) => {
                                         return (
-                                            <SelectableTableRow title="Trykk for å åpne" onClick={e => {history.push(`/ticket/${ticket.ticket_id}`)}} key={ticket.ticket_id}>
+                                            <SelectableTableRow title="Trykk for å åpne" onClick={() => history.push(path(`/ticket/${ticket.ticket_id}`))} key={ticket.ticket_id}>
                                                 <TableCell consolas flex="1" mobileFlex="2">#{ ticket.ticket_id }</TableCell>
                                                 <TableCell flex="2" mobileHide>{ ticket.ticket_type.name }</TableCell>
                                                 <TableCell flex="4" mobileFlex="7">{ User.getFullName(ticket.owner) }</TableCell>

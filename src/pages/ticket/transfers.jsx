@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { Event } from '@phoenixlan/phoenix.js';
+import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer } from "../../components/table";
@@ -7,30 +6,14 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 import { PageLoading } from "../../components/pageLoading";
 
+import { useTicketTransfers } from "../../hooks/tickets/useTicketTransfers";
+
 export const TicketTransferList = () => {
-    const [ ticketTransfers, setTicketTransfers ] = useState([]);
-    const [ loading, setLoading ] = useState(true)
+    const { data: ticketTransfers = [], isLoading: loading } = useTicketTransfers();
 
     const [visibleUUID, setVisibleUUID] = useState(false);
 
     let history = useHistory();
-
-    useEffect(() => {
-        const inner = async () => {
-            setTicketTransfers(await Event.getTicketTransfers());
-            setLoading(false);
-        }
-
-        inner();
-
-        const interval = setInterval(() => {
-            inner();
-        }, 5000);
-
-        return () => {
-            clearInterval(interval);
-        }
-    }, []);
 
 
     if(loading) {
@@ -38,7 +21,7 @@ export const TicketTransferList = () => {
             <PageLoading />
         )
     }
-    
+
     else {
         return (
             <>
@@ -66,7 +49,7 @@ export const TicketTransferList = () => {
                                 <TableCell center flex="0 24px" title="Trykk for å åpne"><IconContainer>...</IconContainer></TableCell>
                             </TableHead>
                         </Table>
-                        
+
                         {
                             ticketTransfers.map((session) => (
                                 <SelectableTableRow onClick={e => {history.push(`/user/${session.user_uuid}`)}}>

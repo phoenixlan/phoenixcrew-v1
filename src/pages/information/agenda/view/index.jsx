@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { Agenda, getCurrentEvent } from "@phoenixlan/phoenix.js";
+import { Agenda } from "@phoenixlan/phoenix.js";
 import { CardContainer, CardContainerDescriptiveText, CardContainerText, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InputContainer, InputElement, InputLabel, LabelWarning, PanelButton } from '../../../../components/dashboard';
 
 import { AuthenticationContext } from '../../../../components/authentication';
@@ -9,15 +9,18 @@ import { Notice } from '../../../../components/containers/notice';
 import { PageLoading } from '../../../../components/pageLoading';
 import { useParams } from 'react-router-dom/cjs/react-router-dom';
 import { captureException } from "@sentry/browser";
+import { useBrand } from '../../../../contexts/brand';
+import { hasAnyBrandPermission } from '../../../../utils/roles';
 
 export const EditAgendaEntry = () => {
+    const { brandUuid, currentEvent, path } = useBrand();
 
     const history = useHistory();
     const { uuid } = useParams();
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
-    const agendaManagement = authContext.roles.includes("admin" || "evemt_admin" || "info_admin" || "compo_admin");
+    const agendaManagement = hasAnyBrandPermission(authContext.roles, brandUuid, ["event_admin", "info_admin", "compo_admin"]);
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
     const [ title, setTitle ] = useState(null);
@@ -74,7 +77,6 @@ export const EditAgendaEntry = () => {
     }
 
     const editAgendaEntry = async (data) => {
-        const event = await getCurrentEvent();
         const duration = Number(data.duration);
 
         // If stateDeviatingControl is set to false, prevent the following variables to submit data.
@@ -86,7 +88,7 @@ export const EditAgendaEntry = () => {
 		const datetimeUnixDeviatingTime = data.deviating_time ? new Date(data.deviating_time).getTime()/1000 : null;
 
         try {
-            await Agenda.modifyAgendaEntry(uuid, event.uuid, data.title, data.description, datetimeUnixTime, duration, data.location, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled, datetimeUnixDeviatingTime);
+            await Agenda.modifyAgendaEntry(uuid, currentEvent.uuid, data.title, data.description, datetimeUnixTime, duration, data.location, data.deviating_time_unknown, data.deviating_location, data.deviating_information, data.pinned, data.cancelled, datetimeUnixDeviatingTime);
         } catch(e) {
             setError(e.message);
             console.error("An error occured while attempting to edit the agenda entry.\n" + e);
@@ -103,7 +105,7 @@ export const EditAgendaEntry = () => {
                 setError(e.message);
                 console.error("An error occured while attempting to delete the agenda entry.\n" + e);
             } finally {
-                history.push('/information/schedule');
+                history.push(path('/information/schedule'));
             }
         }
     }
@@ -313,7 +315,7 @@ export const EditAgendaEntry = () => {
                                     <PanelButton fillWidth type="submit" onClick={handleSubmit(deleteAgendaEntry)}>Slett programpost</PanelButton>
                                 </CardContainer>
                                 <CardContainer>
-                                    <PanelButton fillWidth type="submit" onClick={() => history.push("/information/schedule/")}>Tilbake</PanelButton>
+                                    <PanelButton fillWidth type="submit" onClick={() => history.push(path("/information/schedule/"))}>Tilbake</PanelButton>
                                 </CardContainer>
                             </InnerContainer>
                             <InnerContainer flex="1" />

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { getActiveStoreSessions } from '@phoenixlan/phoenix.js';
+import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableBody, TableRow } from "../../components/table";
@@ -7,30 +6,14 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 import { PageLoading } from "../../components/pageLoading";
 
+import { useActiveStoreSessions } from "../../hooks/storeSessions/useActiveStoreSessions";
+
 export const StoreSessionList = () => {
-    const [ storeSessions, setStoreSessions ] = useState([]);
-    const [ loading, setLoading ] = useState(true)
+    const { data: storeSessions = [], isLoading: loading } = useActiveStoreSessions({ refetchInterval: 5000 });
 
     const [visibleUUID, setVisibleUUID] = useState(false);
 
     let history = useHistory();
-
-    useEffect(() => {
-        const inner = async () => {
-            setStoreSessions(await getActiveStoreSessions());
-            setLoading(false);
-        }
-
-        inner();
-
-        const interval = setInterval(() => {
-            inner();
-        }, 5000);
-
-        return () => {
-            clearInterval(interval);
-        }
-    }, []);
 
 
     if(loading) {
@@ -38,7 +21,7 @@ export const StoreSessionList = () => {
             <PageLoading />
         )
     }
-    
+
     else {
         return (
             <>

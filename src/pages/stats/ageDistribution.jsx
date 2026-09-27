@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 
 import { Bar } from 'react-chartjs-2';
 
 import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { PageLoading } from "../../components/pageLoading";
+import { useBrand } from "../../contexts/brand";
 
-import { Statistics } from "@phoenixlan/phoenix.js"
+import { useAgeDistributionStats } from "../../hooks/stats/useAgeDistributionStats";
 
 export const user_distribution_options = {
     responsive: true,
@@ -48,9 +49,7 @@ const mostest = (list, callback) => {
 }
 
 const generate_stat_data = (userbaseStats, event_count_callback) => {
-    console.log(userbaseStats);
     const mostest_labels = mostest(userbaseStats.map(event_count_callback), l => l.length)
-    console.log(mostest_labels)
 
     const labels = Array.from(mostest_labels.keys())
 
@@ -60,7 +59,6 @@ const generate_stat_data = (userbaseStats, event_count_callback) => {
             data: event_count_callback(salesEvent)
         }
     })
-    console.log(datasets);
 
     return {
         labels,
@@ -68,27 +66,23 @@ const generate_stat_data = (userbaseStats, event_count_callback) => {
     };
 }
 
-export const AgeDistributionStats= () => {
+export const AgeDistributionStats = () => {
+    const { brand } = useBrand();
+    const { data: ageDistributionStats, isLoading } = useAgeDistributionStats(brand.uuid);
 
-    const [ userStats, setUserStats ] = useState({ datasets: [] })
-    const [ crewStats, setCrewStats ] = useState({ datasets: [] })
-    const [ loading, setLoading] = useState(true);
+    const userStats = useMemo(
+        () => ageDistributionStats
+            ? generate_stat_data(ageDistributionStats, (salesEvent) => salesEvent.age_distribution)
+            : { datasets: [] },
+        [ageDistributionStats]
+    );
 
-    useEffect(() => {
-        const inner = async () => {
-            setLoading(true)
-            const age_distribution_stats = await Statistics.getAgeDistributionStats();
-
-            const user_stats = generate_stat_data(age_distribution_stats, (salesEvent) => salesEvent.age_distribution);
-            const crew_stats = generate_stat_data(age_distribution_stats, (salesEvent) => salesEvent.crew_age_distribution);
-
-            setUserStats(user_stats)
-            setCrewStats(crew_stats)
-
-            setLoading(false)
-        }
-        inner();
-    }, []);
+    const crewStats = useMemo(
+        () => ageDistributionStats
+            ? generate_stat_data(ageDistributionStats, (salesEvent) => salesEvent.crew_age_distribution)
+            : { datasets: [] },
+        [ageDistributionStats]
+    );
 
     return (
         <>
@@ -102,7 +96,7 @@ export const AgeDistributionStats= () => {
             </DashboardHeader>
             <DashboardContent>
                 {
-                    loading ? (<PageLoading />) : (<>
+                    isLoading ? (<PageLoading />) : (<>
                         <Bar options={user_distribution_options} data={userStats} />
                         <Bar options={crew_distribution_options} data={crewStats} />
                     </>)

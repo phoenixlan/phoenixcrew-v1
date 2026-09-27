@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { User } from "@phoenixlan/phoenix.js";
@@ -8,6 +8,7 @@ import { InnerContainer } from '../../../components/dashboard';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
 import { ApplicationCrewLabel } from '../../application/list';
+import { EventBrandsContext } from '../../../contexts/eventBrands';
 
 const stateToString = (state) => {
     if(state == "ApplicationState.rejected") {
@@ -22,11 +23,11 @@ const stateToString = (state) => {
     return "Ukjent"
 }
     
-const ApplicationTableEntry = ({ application }) => {
+const ApplicationTableEntry = ({ application, brandUuid }) => {
     let history = useHistory();
 
     return (
-        <SelectableTableRow key={application.uuid} onClick={e => {history.push(`/application/${application.uuid}`)}}>
+        <SelectableTableRow key={application.uuid} onClick={() => brandUuid && history.push(`/brand/${brandUuid}/application/${application.uuid}`)}>
             <TableCell flex="2" mobileHide>{application.event.name}</TableCell>
             <TableCell flex="3" ><ApplicationCrewLabel application_crew_mapping={application.crews[0]} /></TableCell>
             <TableCell flex="3" mobileHide>{application.crews.length > 1 ? (<ApplicationCrewLabel application_crew_mapping={application.crews[1]} />) : (<i>Ingen</i>)}</TableCell>
@@ -38,6 +39,8 @@ const ApplicationTableEntry = ({ application }) => {
 }
 
 export const UserViewerApplications = ({ user, reload: reloadUser }) => {
+    const { activeEvents } = useContext(EventBrandsContext);
+    const brandForEvent = eventUuid => activeEvents.find(({ event }) => event.uuid === eventUuid)?.brand.uuid;
     const [ loading, setLoading ] = useState(false);
 
     const [ applications, setApplications ] = useState([]);
@@ -72,7 +75,7 @@ export const UserViewerApplications = ({ user, reload: reloadUser }) => {
                     </TableHead>
                     <tbody>
                     {
-                        applications.map((application) => <ApplicationTableEntry key={application.uuid} application={application}/>)
+                        applications.map((application) => <ApplicationTableEntry key={application.uuid} application={application} brandUuid={application.event_brand_uuid || brandForEvent(application.event.uuid)}/>)
                     }
                     </tbody>
                 </Table>

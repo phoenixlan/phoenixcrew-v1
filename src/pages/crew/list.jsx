@@ -6,9 +6,11 @@ import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, I
 import { Table, TableCell, CrewColorBox, IconContainer, SelectableTableRow, TableHead, TableRow } from "../../components/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
+import { useBrand } from "../../contexts/brand";
 
 
 export const CrewList= () => {
+    const { path } = useBrand();
     const [crews, setCrews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
@@ -33,7 +35,7 @@ export const CrewList= () => {
         <>
             <DashboardHeader border>
                 <DashboardTitle>
-                    Crew
+                    Crew for {}
                 </DashboardTitle>
                 <DashboardSubtitle>
                     {crews.length} crew registrert
@@ -73,7 +75,7 @@ export const CrewList= () => {
                                 const crewMembers = Array.from(crewMembersMap.values());
 
                                 return (
-                                    <SelectableTableRow onClick={e => {history.push(`/crew/${crew.uuid}`)}} active={!crew.active}>
+                                    <SelectableTableRow key={crew.uuid} onClick={() => history.push(path(`/crew/${crew.uuid}`))} active={!crew.active}>
                                         <TableCell consolas flex="10" mobileHide visible={!visibleUUID}>{ crew.uuid }</TableCell>
                                         <TableCell flex="0 42px" mobileHide><CrewColorBox hex={crew.hex_color} /></TableCell>
                                         <TableCell flex="6" mobileFlex="3">{ crew.name }</TableCell>

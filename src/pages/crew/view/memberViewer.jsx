@@ -3,11 +3,12 @@ import { PageLoading } from "../../../components/pageLoading"
 import { SimpleUserCard } from "../../../components/simpleUserCard";
 
 import { InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputLabel, InputSelect, InnerContainerTitleS } from "../../../components/dashboard";
-import { getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
+import { useBrand } from "../../../contexts/brand";
+import { useEvents } from "../../../hooks/events/useEvents";
 
 export const CrewViewMemberViewer = ({ crew }) => {
-    const [ currentEvent, setCurrentEvent ] = useState();
-    const [ events, setEvents ] = useState();
+    const { brandUuid, currentEvent } = useBrand();
+    const { data: events = [], isLoading: eventsLoading } = useEvents(brandUuid);
     const [ loading, setLoading ] = useState(true);
 
     const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
@@ -20,21 +21,15 @@ export const CrewViewMemberViewer = ({ crew }) => {
 
     const load = async () => {
         setLoading(true)
-        const [ currentEvent, events ] = await Promise.all([
-            getCurrentEvent(),
-            getEvents()
-        ])
-        setCurrentEvent(currentEvent);
-        setCurrentViewingEvent(currentEvent.uuid);
-        setEvents(events)
+        setCurrentViewingEvent(currentEvent?.uuid ?? events[0]?.uuid ?? null);
         setLoading(false);
     }
 
     useEffect(async () => {
         await load();
-    }, [])
+    }, [currentEvent, events])
 
-    if(loading) {
+    if(loading || eventsLoading) {
         return (
             <PageLoading />
         )

@@ -1,57 +1,47 @@
-import React , { useContext, useEffect, useState } from "react";
+import React , { useContext, useState } from "react";
 
-import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
+import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow } from '../../../components/dashboard';
 
 import { AuthenticationContext } from "../../../components/authentication";
 import { PageLoading } from "../../../components/pageLoading";
 import { useParams } from "react-router-dom";
 import { Notice } from "../../../components/containers/notice";
 
-import { getCurrentEvent, Ticket } from "@phoenixlan/phoenix.js";
+import { useTicket } from "../../../hooks/tickets/useTicket";
+import { useCurrentEvent } from "../../../hooks/events/useCurrentEvent";
 
 import { TicketInformation } from "./ticketInformation";
+import { PaymentInformation } from "./paymentInformation";
+import { useBrand } from "../../../contexts/brand";
+import { hasAnyBrandPermission } from "../../../utils/roles";
+
+const TABS = {
+    DETAILS: 1,
+    PAYMENT: 2,
+}
 
 export const ViewTicket = () => {
+    const { brandUuid } = useBrand();
     const { id } = useParams();
-    const [error, setError] = useState(false);
-    
-    const [data, setData] = useState(null);
 
-    const [loading, setLoading] = useState(true);
-    const [activeContent, setActiveContent] = useState(1);
+    const [activeContent, setActiveContent] = useState(TABS.DETAILS);
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
 
-    const load = async () => {
-        setLoading(true);
+    const { data: ticket, isLoading: isLoadingTicket, error } = useTicket(id);
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
 
-        // Get position based on UUID and return error if something fails.
-        try {
-            const ticket = await Ticket.getTicket(id);
-            const currentEvent = await getCurrentEvent();
-
-            setData({ticket, currentEvent});
-        } catch(e) {
-            setError(e);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        load().catch(e => { 
-            console.log(e);
-        })
-    }, []);
+    const loading = isLoadingTicket || isLoadingCurrentEvent;
+    const data = (ticket && currentEvent) ? { ticket, currentEvent } : null;
 
     if(loading) {
         return (<PageLoading />)
-    } else if(authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin")) {
+    } else if(hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"])) {
         if(data) {
             return (
                 <>
-                    <DashboardHeader border>
+                    <DashboardHeader>
                         <DashboardTitle>
                             Billett
                         </DashboardTitle>
@@ -60,8 +50,17 @@ export const ViewTicket = () => {
                         </DashboardSubtitle>
                     </DashboardHeader>
 
-                    <DashboardContent>
+                    <DashboardBarSelector border>
+                        <DashboardBarElement active={activeContent === TABS.DETAILS} onClick={() => setActiveContent(TABS.DETAILS)}>Detaljer</DashboardBarElement>
+                        <DashboardBarElement active={activeContent === TABS.PAYMENT} onClick={() => setActiveContent(TABS.PAYMENT)}>Betalingsinformasjon</DashboardBarElement>
+                    </DashboardBarSelector>
+
+                    <DashboardContent visible={activeContent === TABS.DETAILS}>
                         <TicketInformation data={data} />
+                    </DashboardContent>
+
+                    <DashboardContent visible={activeContent === TABS.PAYMENT}>
+                        <PaymentInformation data={data} />
                     </DashboardContent>
                 </>
             )
@@ -73,11 +72,11 @@ export const ViewTicket = () => {
                             Billett
                         </DashboardTitle>
                     </DashboardHeader>
-    
+
                     <DashboardContent>
                         <Notice type="error" visible>
                             Det oppsto en feil ved henting av informasjon for denne billetten.<br />
-                            {error.message}
+                            {error?.message}
                         </Notice>
                     </DashboardContent>
                 </>

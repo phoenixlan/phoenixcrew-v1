@@ -17,7 +17,7 @@ export const DashboardBlock = styled.div`
 `
 
 export const DashboardHeader = styled.div`
-    padding: ${props => props.border ? "3rem 0" : "1.5rem 0"};
+    padding: ${props => props.border ? "3rem 0" : "3rem 0 1.15rem"};
     border-bottom: ${props => props.border ? ".05rem solid rgb(235, 235, 235)" : "0"};
 `
 export const DashboardBarSelector = styled.div`
