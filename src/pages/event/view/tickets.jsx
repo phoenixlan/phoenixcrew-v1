@@ -3,7 +3,7 @@ import { PageLoading } from "../../../components/pageLoading";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CardContainer, CardContainerText, DropdownCardContainer, DropdownCardContent, DropdownCardHeader, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputElement, InputElementDescription, InputLabel, InputSelect, PanelButton, RowBorder } from "../../../components/dashboard";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsRotate, faCheck, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { IconContainer, Table, TableBody, TableCell, TableHead, TableRow } from "../../../components/table";
 import { Notice } from "../../../components/containers/notice";
 import { useEventTicketTypeMappings } from "../../../hooks/tickets/useEventTicketTypeMappings";
@@ -317,9 +317,6 @@ export const EventTickets = ({event, ticketTypes, seatMaps, refresh}) => {
                                 <TableCell as="th" flex="4" mobileHide>Grupper</TableCell>
                                 <TableCell as="th" flex="2">Gjenstående</TableCell>
                                 <TableCell as="th" flex="3" mobileHide>Tilgangskode</TableCell>
-                                <TableCell as="th" flex="2" mobileHide center>Gir<br/>adgang</TableCell>
-                                <TableCell as="th" flex="2" mobileHide center>Gir<br/>plass</TableCell>
-                                <TableCell as="th" flex="2" mobileHide center>Gir<br/>medlemskap</TableCell>
                                 <TableCell as="th" center flex="0 24px"><IconContainer>...</IconContainer></TableCell>
                                 <TableCell as="th" center flex="0 24px"><IconContainer>...</IconContainer></TableCell>
                             </TableRow>
@@ -337,9 +334,6 @@ export const EventTickets = ({event, ticketTypes, seatMaps, refresh}) => {
                                             <TableCell flex="4" mobileHide>{ mapping.sales_cap_groups.length ? mapping.sales_cap_groups.join(", ") : "-" }</TableCell>
                                             <TableCell flex="2">{ remaining === undefined ? "-" : remaining === null ? "Ubegrenset" : remaining }</TableCell>
                                             <TableCell flex="3" mobileHide>{ mapping.access_code ? (showAccessCodes ? <code>{mapping.access_code}</code> : <i>Skjult</i>) : null }</TableCell>
-                                            <TableCell flex="2" mobileHide center>{ ticketType.grants_admission ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null }</TableCell>
-                                            <TableCell flex="2" mobileHide center>{ ticketType.seatable ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null }</TableCell>
-                                            <TableCell flex="2" mobileHide center>{ ticketType.grants_membership ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null }</TableCell>
                                             <TableCell flex="0 24px" center title={ mapping.access_code ? "Lag ny tilgangskode" : undefined }>{ mapping.access_code ? <IconContainer clickable onClick={() => rotateAccessCode(mapping)}><FontAwesomeIcon icon={faArrowsRotate}/></IconContainer> : null }</TableCell>
                                             <TableCell flex="0 24px" center title="Fjern billettypen fra arrangementet"><IconContainer clickable onClick={() => deleteMapping(mapping)}><FontAwesomeIcon icon={faTrash}/></IconContainer></TableCell>
                                         </TableRow>
