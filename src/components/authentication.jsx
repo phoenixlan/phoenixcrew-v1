@@ -24,7 +24,6 @@ export const Authentication = (props) => {
     /// User Management
     let [authUser, setAuthUser] = useState(null);
     let [roles, setRoles] = useState(null);
-    let [tokenPayload, setTokenPayload] = useState(null);
 
     /// Functions for user management
         /// Set an error message and show the error container (E)
@@ -39,7 +38,6 @@ export const Authentication = (props) => {
         function logout() {
             setAuthUser(null);
             setRoles(null);
-            setTokenPayload(null);
             queryClient.clear();
             window.localStorage.removeItem("auth");
         }
@@ -55,7 +53,6 @@ export const Authentication = (props) => {
                 token: new_token,
                 refreshToken: new_refresh_token,
             }));
-            setTokenPayload(payload);
             setRoles(payload.roles);
         })
 
@@ -86,7 +83,6 @@ export const Authentication = (props) => {
                             refreshToken: RefreshToken,
                         }));
                         */
-                        setTokenPayload(payload);
                         setRoles(payload.roles);
                         setLoadingFinished(true);
                     } 
@@ -118,7 +114,6 @@ export const Authentication = (props) => {
 
                         const token = await User.Oauth.getToken();
                         const payload = jwt_decode(token);
-                        setTokenPayload(payload);
                         setRoles(payload.roles);
                         setLoadingFinished(true);
                     }
@@ -158,7 +153,7 @@ export const Authentication = (props) => {
 
     return(
         <>
-            <AuthenticationContext.Provider value={{authUser, logout, roles, tokenPayload, shouldDisplayError, errorMessage, loadingFinished}}>
+            <AuthenticationContext.Provider value={{authUser, logout, roles, shouldDisplayError, errorMessage, loadingFinished}}>
                 {props.children}
             </AuthenticationContext.Provider>
         </>
