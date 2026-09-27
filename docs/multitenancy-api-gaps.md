@@ -9,6 +9,3 @@ Phoenix Crew is prepared for PhoenixJS 4.0 and brand-prefixed application URLs. 
 - PhoenixJS 4 removed the ticket transfer-log operation without a replacement. The ticket page therefore only shows events available directly on the ticket object.
 - Permission changes in JWTs are not reflected until the access token is refreshed. A server/client strategy for eagerly refreshing permissions is still pending.
 
-## Unreleased dependency
-
-`package.json` temporarily remains on the published `@phoenixlan/phoenix.js` `^3.5.3` release so Docker Compose installs continue to work. Until 4.0.0 is published, multitenancy builds must use the locally built `../phoenixjs` package (for example through `yarn link`). Update both `package.json` and the Yarn lock entry after publication.
