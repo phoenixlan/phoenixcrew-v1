@@ -30,7 +30,7 @@ export const TicketSalesStatus = () => {
 
     const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
     const { data: tickets = [], isLoading: isLoadingTickets } = useEventTickets(viewTickets ? currentEvent?.uuid : undefined);
-    const { data: storeSessions = [], isLoading: isLoadingStoreSessions } = useActiveStoreSessions();
+    const { data: storeSessions = [], isLoading: isLoadingStoreSessions } = useActiveStoreSessions(viewTickets ? currentEvent?.uuid : undefined);
     const { data: mappings = [], isLoading: isLoadingMappings } = useEventTicketTypeMappings(viewTickets ? currentEvent?.uuid : undefined);
     const { data: salesData, isLoading: isLoadingSalesData } = useTicketSaleData(viewTickets ? brandUuid : undefined, true);
 
@@ -46,13 +46,11 @@ export const TicketSalesStatus = () => {
 
         // Count tickets held in store sessions for this event, per ticket type
         const heldTickets = {};
-        storeSessions
-            .filter((storeSession) => storeSession.event_uuid === currentEvent.uuid)
-            .forEach((storeSession) => {
-                storeSession.entries.forEach((entry) => {
-                    heldTickets[entry.ticket_type.uuid] = (heldTickets[entry.ticket_type.uuid] ?? 0) + entry.amount;
-                })
+        storeSessions.forEach((storeSession) => {
+            storeSession.entries.forEach((entry) => {
+                heldTickets[entry.ticket_type.uuid] = (heldTickets[entry.ticket_type.uuid] ?? 0) + entry.amount;
             })
+        })
 
         const ticketsByType = {};
         tickets.forEach((ticket) => {
