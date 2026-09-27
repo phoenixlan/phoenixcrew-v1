@@ -15,6 +15,8 @@ import { useTicketTypes } from "../../hooks/tickets/useTicketTypes";
 import { useEvents } from "../../hooks/events/useEvents";
 import { useTicketVouchers } from "../../hooks/tickets/useTicketVouchers";
 import { useTicketVoucherCreateMutation } from "../../hooks/tickets/useTicketVoucherCreateMutation";
+import { useBrand } from "../../contexts/brand";
+import { hasAnyBrandPermission } from "../../utils/roles";
 
 const commonText = {
     "voucherManagement.giveVoucherTitle": "Opprett gavekort",
@@ -22,6 +24,7 @@ const commonText = {
 }
 
 export const TicketVoucherManagement = () => {
+    const { brandUuid, path } = useBrand();
 
     let history = useHistory();
 
@@ -29,7 +32,7 @@ export const TicketVoucherManagement = () => {
     const authContext = useContext(AuthenticationContext);
 
     // Function availibility control:
-    const viewVoucherManagement = authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin");
+    const viewVoucherManagement = hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"]);
 
     const [ visibleUUID, setVisibleUUID ] = useState(false);
     const [ selectedUser, setSelectedUser ] = useState("");
@@ -41,7 +44,7 @@ export const TicketVoucherManagement = () => {
     // TODO do we want more freedom?
 
     const { data: types = [], isLoading: isLoadingTypes } = useTicketTypes();
-    const { data: allEvents = [], isLoading: isLoadingEvents } = useEvents();
+    const { data: allEvents = [], isLoading: isLoadingEvents } = useEvents(brandUuid);
     const { data: vouchers = [], isLoading: isLoadingVouchers } = useTicketVouchers();
 
     const createVoucherMutation = useTicketVoucherCreateMutation();
@@ -238,7 +241,7 @@ export const TicketVoucherManagement = () => {
                                                 <TableCell flex="3" mobileFlex="3">
                                                     {
                                                         voucher.used
-                                                        ? <span>Brukt {TimestampToDateTime(voucher.used, "DD_MM_YYYY_HH_MM")} - <SpanLink onClick={() => history.push(`/ticket/${voucher.ticket.ticket_id}`)}>#{voucher.ticket.ticket_id}</SpanLink></span>
+                                                        ? <span>Brukt {TimestampToDateTime(voucher.used, "DD_MM_YYYY_HH_MM")} - <SpanLink onClick={() => history.push(path(`/ticket/${voucher.ticket.ticket_id}`))}>#{voucher.ticket.ticket_id}</SpanLink></span>
                                                         : voucher.is_expired
                                                           ? <span>Utløpt</span>
                                                           : <span>Ikke brukt</span>

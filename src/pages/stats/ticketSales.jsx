@@ -4,6 +4,7 @@ import { Line } from 'react-chartjs-2';
 
 import { DashboardSubtitle, DashboardHeader, DashboardTitle, DashboardContent, InnerContainer, InputCheckbox } from "../../components/dashboard";
 import { PageLoading } from "../../components/pageLoading";
+import { useBrand } from "../../contexts/brand";
 
 import { useTicketSaleData } from "../../hooks/stats/useTicketSaleData";
 
@@ -36,8 +37,9 @@ const mostest = (list, callback) => {
 }
 
 export const TicketSalesStats = () => {
+    const { brand } = useBrand();
     const [ showFree, setShowFree ] = useState(false);
-    const { data: salesData, isLoading } = useTicketSaleData(showFree);
+    const { data: salesData, isLoading } = useTicketSaleData(brand.uuid, showFree);
 
     const stats = useMemo(() => {
         if (!salesData) {

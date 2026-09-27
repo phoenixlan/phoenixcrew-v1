@@ -3,8 +3,10 @@ import { useHistory } from 'react-router-dom';
 import { User } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
+import { Notice } from "../../components/containers/notice";
 import { PageLoading } from "../../components/pageLoading"
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableBody, TableRow } from "../../components/table";
+import { useUserSearch } from "../../hooks/useUserSearch";
 import { dateOfBirthToAge } from '../../utils/user';
 import { DashboardHeader, DashboardContent, DashboardTitle, DashboardSubtitle, InnerContainer, InputCheckbox, SpanLink, InnerContainerRow, InputContainer, InputLabel, InputSelect, InputElement, CardContainer } from "../../components/dashboard";
 
@@ -21,51 +23,45 @@ SORTING_TYPES[SORTING_METHODS.USERNAME] = (a, b) => a.username.localeCompare(b.u
 SORTING_TYPES[SORTING_METHODS.CREATED] = (a, b) => a.created - b.created;
 SORTING_TYPES[SORTING_METHODS.AGE] = (a, b) => dateOfBirthToAge(a.birthdate) - dateOfBirthToAge(b.birthdate);
 
-export const UserList= () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+export const UserSearch = () => {
     const [activeSortingMethod, setActiveSortingMethod] = useState(1);
     const [search, setSearch] = useState("");
     const [visibleUUID, setVisibleUUID] = useState(false);
 
     let history = useHistory();
 
-    useEffect(async () => {
-        setLoading(true);
-        const users = await User.getUsers();
-        setUsers(users);
-        setLoading(false);
-    }, []);
+    const { data: users, loading } = useUserSearch(search);
 
     if(loading) {
         return (<PageLoading />)
     }
 
-    let processedUserList = users
-    .filter((user) => 
-        user.uuid.toLowerCase().includes(search) ||
-        user.firstname.toLowerCase().includes(search) || 
-        user.lastname.toLowerCase().includes(search) ||
-        user.username.toLowerCase().includes(search) ||
-        user.email.toLowerCase().includes(search) ||
-        user.phone.includes(search)
-    )
+    let processedUserList = users??[]
     .sort(SORTING_TYPES[activeSortingMethod])
 
     return (
         <>
             <DashboardHeader border>
                 <DashboardTitle>
-                    Brukeradministrasjon
+                    Søk i brukere
                 </DashboardTitle>
                 <DashboardSubtitle>
-                    { search 
-                      ? "Viser " + processedUserList.length + " av " + users.length + " brukere registrert"
-                      : users.length + " brukere registrert"
-                    }
+                    { "Viser " + processedUserList.length + " brukere" }
                 </DashboardSubtitle>
             </DashboardHeader>
             <DashboardContent>
+                <InnerContainer>
+                    <InnerContainerRow>
+                        <Notice fillWidth type="info" visible={true}>
+                            <p>Hvorfor kan jeg ikke se alle brukerne?</p>
+                            <p>Phoenix-systemet lar deg kun hente ut lister over brukere som er aktivt involvert i nåværende arrangementer. Dette betyr at dersom noen deltok på et arrangement for et par år siden er de i praksis ikke innvolvert med oss, fram til de selv velger å delta igjen.</p>
+                            <p>Søkemuligheten gir spesielt tillitsvalgte administratorer mulighet til å hente informasjon om gamle brukere de har kjennskap til, skulle dette være nødvendig for kundestøtte eller andre grunner.</p>
+                            <p>Merk: Systemet viser max 10 brukere om gangen, og du må søke med minst 4 tegn. Dette for å gjøre det vanskelig å bruke søkefunksjonen for å hente ut brukerlisten.</p>
+
+                            <p>Les mer <a href="https://www.datatilsynet.no/rettigheter-og-plikter/virksomhetenes-plikter/">her</a></p>
+                        </Notice>
+                    </InnerContainerRow>
+                </InnerContainer>
                 <InnerContainer>
                     <InnerContainerRow>
                         <InnerContainer flex="1">

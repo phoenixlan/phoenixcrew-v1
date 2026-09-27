@@ -18,7 +18,7 @@ const S = {
         min-height: 2rem;
         flex: 1;
         font-size: .85rem;
-        padding: .5em calc(1em - .25rem);
+        padding: ${props => props.large ? "1em calc(1.25em - .25rem)" : ".5em calc(1em - .25rem)"};
         background-color: ${props => props.secondary};
         border-left: .25rem solid ${props => props.primary};
         color: ${props => props.primary};
@@ -54,7 +54,7 @@ const S = {
 export const Notice = (props) => {
     return ( 
         <>
-            <S.RootContainer primary={types[props.type]?.primary || types['default'].primary} secondary={types[props.type]?.secondary || types['default'].secondary} visible={props.visible} fillWidth={props.fillWidth}>
+            <S.RootContainer primary={types[props.type]?.primary || types['default'].primary} secondary={types[props.type]?.secondary || types['default'].secondary} visible={props.visible} fillWidth={props.fillWidth} large={props.large}>
                 <S.IconContainer hide={props.hideIcon}>
                     <S.Icon>
                         <FontAwesomeIcon icon={types[props.type]?.icon || types['default'].icon} />

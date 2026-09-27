@@ -30,38 +30,27 @@ const S = {
         width: 100%;
         height: 2em;
     `,
-    BarElementInfoContainer: styled.div`
+    BarTitle: styled.span`
+        font-weight: 600;
+        margin-bottom: .35rem;
+    `,
+    BarLegendContainer: styled.div`
         display: flex;
         flex-flow: column;
-        margin: 1em 0;
-        width: 100%;
+        margin: .35rem 0 1em 0;
         gap: .35rem;
     `,
-    InfoContainer: styled.div`
+    LegendEntry: styled.div`
         display: flex;
         flex-flow: row;
-        height: max-content;
         gap: 1em;
-        align-items: stretch;
+        align-items: center;
     `,
-    BarElementIconContainer: styled.div`
-        
-    `,
-        BarElementColorIcon: styled.div`
-            border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
-            background: ${props => colors[props.color]?.background || colors["gray"].background};
-            width: 1rem;
-            height: 1rem;
-        `,
-    BarElementCountSeparator: styled.div`
-        font-size: 1em;
-        display: flex;
-        flex: 0 1.5rem;
-    `,
-    BarElementInfoTitle: styled.span`
-        font-size: 1em;
-        display: flex;
-        flex: 1;
+    LegendColorIcon: styled.div`
+        border: 1px solid ${props => colors[props.color]?.border || colors["gray"].border};
+        background: ${props => colors[props.color]?.background || colors["gray"].background};
+        width: 1rem;
+        height: 1rem;
     `,
 
     ElementRootContainer: styled.div`
@@ -88,34 +77,23 @@ export const BarElement = (props) => {
     )
 }
 
-export const FlexBar = ({children}) => {
+// legend is a list of { color, text } shown with a color box under the bar
+export const FlexBar = ({title, legend = [], children}) => {
     return (
         <>
             <S.FlexBarRootContainer>
+                {title ? <S.BarTitle>{title}</S.BarTitle> : null}
                 <S.BarElementContainer>
                     {children}
                 </S.BarElementContainer>
-                <S.BarElementInfoContainer>
-                    {
-                        children.filter(element => element.props.title && element.props.count).map((element) => {
-                            return (
-                                <S.InfoContainer key={element.key}>
-                                    <S.BarElementIconContainer>
-                                        <S.BarElementColorIcon color={element.props.color} />
-                                    </S.BarElementIconContainer>
-
-                                    <S.BarElementCountSeparator>
-                                        {element.props.count}
-                                    </S.BarElementCountSeparator>
-                                    
-                                    <S.BarElementInfoTitle>
-                                        {element.props.title}
-                                    </S.BarElementInfoTitle>
-                                </S.InfoContainer>
-                            )
-                        })
-                    }
-                </S.BarElementInfoContainer>
+                <S.BarLegendContainer>
+                    {legend.map((entry) => (
+                        <S.LegendEntry key={entry.text}>
+                            <S.LegendColorIcon color={entry.color} />
+                            <span>{entry.text}</span>
+                        </S.LegendEntry>
+                    ))}
+                </S.BarLegendContainer>
             </S.FlexBarRootContainer>
         </>
     )

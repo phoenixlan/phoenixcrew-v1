@@ -28,8 +28,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           build-args: |
-            REACT_APP_API_URL=https://api.test.phoenixlan.no
-            REACT_APP_HOST=crew.test.phoenixlan.no
+            REACT_APP_API_URL=https://api.test.radarevent.no
+            REACT_APP_HOST=admin.test.radarevent.no
             REACT_APP_PROTOCOL=https
             REACT_APP_OAUTH_CLIENT_ID=phoenix-crew-test
             REACT_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN_TEST }}

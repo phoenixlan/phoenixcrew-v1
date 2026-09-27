@@ -10,6 +10,8 @@ import { faGavel, faUser, faTicketAlt, faMoneyBill, faChartBar, faMap, faCircle,
 import { SidebarAvatar } from '../components/sidebarAvatar';
 import { Link, useHistory } from 'react-router-dom';
 import { mobileContext } from './mobileNavigation';
+import { EventBrandsContext } from '../contexts/eventBrands';
+import { hasAnyBrandPermission, isGlobalAdmin } from '../utils/roles';
 
 export const CategoryContext = React.createContext({});
 
@@ -164,6 +166,15 @@ const S = {
             height: 100%;
             padding-bottom: 120px;
         `,
+            GroupTitle: styled.div`
+                padding: 12px 16px 8px;
+                color: rgb(95, 95, 95);
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+                border-top: 1px solid rgb(225, 225, 225);
+            `,
             CrewManagementCategory: styled.div`
                 display: flex;
                 flex-flow: row;
@@ -276,11 +287,6 @@ const S = {
 
 export const options = [
     {
-        title: "My crew",
-        icon: faUser,
-        entries: []
-    },
-    {
         title: "Administrasjon",
         icon: faGavel,
         roles: ["admin"],
@@ -289,11 +295,6 @@ export const options = [
                 title: "Stillinger og rettigheter",
                 icon: faKey,
                 url: "/positions/"
-            },
-            {
-                title: "Brukere",
-                icon: faCircle,
-                url: "/users/"
             },
             {
                 title: "Arrangementer",
@@ -340,11 +341,6 @@ export const options = [
                 url: "/crews/members/"
             },
             {
-                title: "Godkjenning av avatarer",
-                icon: faPortrait,
-                url: "/avatar/approval"
-            },
-            {
                 title: "Søknader",
                 icon: faFileSignature,
                 url: "/application"
@@ -360,6 +356,11 @@ export const options = [
                 title: "Alle billetter",
                 icon: faTicket,
                 url: "/tickets/"
+            },
+            {
+                title: "Billettsalg-status",
+                icon: faChartBar,
+                url: "/tickets/sales-status"
             },
             {
                 title: "Gratisbilletter",
@@ -412,9 +413,28 @@ export const options = [
     }
 ]
 
+export const siteOptions = [
+    {
+        title: "Administrasjon",
+        icon: faGavel,
+        roles: ["admin"],
+        entries: [
+            { title: "Søk i brukere", icon: faUser, url: "/user_search/" },
+            { title: "Event brands", icon: faCalendar, url: "/event-brands/" },
+        ],
+    },
+    {
+        title: "Gruppeleder",
+        icon: faUserFriends,
+        roles: ["admin"],
+        entries: [{ title: "Godkjenning av avatarer", icon: faPortrait, url: "/avatar/approval/" }],
+    },
+];
+
 
 export const Sidebar = () => {
     const auth = useContext(AuthenticationContext);
+    const { brands } = useContext(EventBrandsContext);
     const [searchText, setSearchText] = useState("");
     const searchTextLower = searchText.toLowerCase();
 
@@ -424,37 +444,29 @@ export const Sidebar = () => {
         setSearchText(event.target.value);
     }
 
-    console.log(auth)
-
-    //Search among menu options
-    const availableOptions = options.map(option => {
+    const filterOptions = (menuOptions, brandUuid = null) => menuOptions.map(option => {
         return {
             ...option,
             entries: option.entries.filter(entry => {
-                if(searchTextLower.length != 0 && entry.title.toLowerCase().indexOf(searchTextLower) === -1) {
+                if(searchTextLower.length !== 0 && entry.title.toLowerCase().indexOf(searchTextLower) === -1) {
                     return false;
                 }
-                let valid = false;
-                for(let role of option.roles) {
-                    if(auth.roles.indexOf(role) !== -1) {
-                        valid = true;
-                        break;
-                    }
-                }
-                if(!valid && entry.roles) {
-                    for(let role of entry.roles) {
-                        if(auth.roles.indexOf(role) !== -1) {
-                            valid = true;
-                            break;
-                        }
-                    }
-                }
-
-                return valid
+                if(!brandUuid) return isGlobalAdmin(auth.roles);
+                return hasAnyBrandPermission(auth.roles, brandUuid, entry.roles || option.roles || []);
             })
         }
-    
-    })
+    });
+
+    const groups = [
+        ...(isGlobalAdmin(auth.roles) ? [{ title: "Site admin", options: filterOptions(siteOptions) }] : []),
+        ...brands.map(brand => ({
+            title: brand.name,
+            options: filterOptions(options, brand.uuid).map(option => ({
+                ...option,
+                entries: option.entries.map(entry => ({ ...entry, url: `/brand/${brand.uuid}${entry.url}` })),
+            })),
+        })),
+    ];
 
     const CrewManagementElementContent = (entry) => {
         const menu = useContext(mobileContext);
@@ -517,8 +529,8 @@ export const Sidebar = () => {
                     <S.Logo src={Logo} />
                 </S.LogoIcon>
                 <S.LogoTitle>
-                    <S.PhoenixTitle>Phoenix LAN</S.PhoenixTitle>
-                    <S.PhoenixSiteTitle>Crew Management</S.PhoenixSiteTitle>
+                    <S.PhoenixTitle>Phoenix EMS</S.PhoenixTitle>
+                    <S.PhoenixSiteTitle>Event Management System</S.PhoenixSiteTitle>
                 </S.LogoTitle>
             </S.SidebarLogoContainer>
 
@@ -545,8 +557,11 @@ export const Sidebar = () => {
 
             <S.SidebarCrewManagementContainer>
                 {
-                    availableOptions.map(entry => {
-                        return entry.entries.length == 0 ? null : (
+                    groups.map(group => (
+                        <React.Fragment key={group.title}>
+                            <S.GroupTitle>{group.title}</S.GroupTitle>
+                            {group.options.map(entry => {
+                        return entry.entries.length === 0 ? null : (
                             <S.CrewManagementCategory key={entry.title}>
                                 <S.SidebarCrewManagementMenuIcon id="menuIcon">
                                     <S.ElementIconContainer id="iconContainer">
@@ -566,7 +581,9 @@ export const Sidebar = () => {
                                 </S.CrewManagementElements>
                             </S.CrewManagementCategory>
                         )
-                    })
+                            })}
+                        </React.Fragment>
+                    ))
                 }
                 
             </S.SidebarCrewManagementContainer>

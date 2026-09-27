@@ -79,6 +79,7 @@ export const IconContainer = styled.span`
     text-align: center;
     font-size: .75rem;
     visibility: ${props => props.hidden ? "hidden" : "visible"};
+    cursor: ${props => props.clickable ? "pointer" : "inherit"};
 `
 
 export const SelectableTableRow = styled.tr`

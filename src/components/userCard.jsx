@@ -4,12 +4,13 @@ import styled from "styled-components";
 import { BASE_URL } from "../"
 
 import { Avatar } from "./avatar";
-import { getCurrentEvent, getEvent, Crew } from "@phoenixlan/phoenix.js";
+import { getEvent, Crew } from "@phoenixlan/phoenix.js";
 
 import { dateOfBirthToAge, position_mapping_to_string } from '../utils/user';
 
 import { PageLoading } from './pageLoading';
 import { Link } from 'react-router-dom';
+import { useBrand } from '../contexts/brand';
 
 const S = {
     Container: styled.div`
@@ -26,12 +27,11 @@ const S = {
 
 
 export const UserCard = ({ user }) => {
-    const [ currentEvent, setCurrentEvent ] = useState(null);
+    const { currentEvent } = useBrand();
     const [ positionMappings, setPositionMappings ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     useEffect(async () => {
-        const [ positionMappings, currentEvent] = await Promise.all([
-            Promise.all(user.position_mappings.map(async (position_mapping) => {
+        const positionMappings = await Promise.all(user.position_mappings.map(async (position_mapping) => {
                 position_mapping.event = position_mapping.event_uuid ? await getEvent(position_mapping.event_uuid) : null;
                 const position = position_mapping.position;
                 if(position.crew_uuid) {
@@ -41,10 +41,7 @@ export const UserCard = ({ user }) => {
                     }
                 }
                 return position_mapping
-            })),
-            await getCurrentEvent()
-        ])
-        setCurrentEvent(currentEvent)
+            }))
         setPositionMappings(positionMappings)
         setLoading(false);
     }, []);
@@ -74,7 +71,7 @@ export const UserCard = ({ user }) => {
                     <ul>
                     {
                         positionMappings
-                            .filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent.uuid)
+                            .filter(mapping => !mapping.event_uuid || mapping.event_uuid === currentEvent?.uuid)
                             .map(mapping => (<li>{position_mapping_to_string(mapping)} {!mapping.event ? (<>(<b>Permanent</b>)</>) : null}</li>))
                     }
                     </ul>
@@ -82,7 +79,7 @@ export const UserCard = ({ user }) => {
                     <ul>
                     {
                         positionMappings
-                            .filter(mapping => mapping.event_uuid && mapping.event_uuid !== currentEvent.uuid)
+                            .filter(mapping => mapping.event_uuid && mapping.event_uuid !== currentEvent?.uuid)
                             .map(mapping => (<li>{position_mapping_to_string(mapping)} {mapping.event ? mapping.event.name : (<b>Permanent</b>)}</li>))
                     }
                     </ul>

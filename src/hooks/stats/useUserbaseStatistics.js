@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { Statistics } from "@phoenixlan/phoenix.js";
+import { EventBrand } from "@phoenixlan/phoenix.js";
 
-export const useUserbaseStatistics = () => {
+export const useUserbaseStatistics = (event_brand_uuid) => {
     return useQuery({
-        queryKey: ["userbaseStatistics"],
-        queryFn: () => Statistics.getUserbaseStatistics(),
+        queryKey: ["userbaseStatistics", event_brand_uuid],
+        queryFn: () => EventBrand.Statistics.getUserbaseStatistics(event_brand_uuid),
+        enabled: !!event_brand_uuid,
     });
 };

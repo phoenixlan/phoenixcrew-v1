@@ -1,5 +1,6 @@
 import React , { useEffect, useState } from "react";
-import { Crew, getCurrentEvent } from "@phoenixlan/phoenix.js";
+import { Crew } from "@phoenixlan/phoenix.js";
+import { useBrand } from "../../contexts/brand";
 import { PageLoading } from "../../components/pageLoading"
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle } from "../../components/dashboard";
 import { Button } from "../../components/button"
@@ -25,6 +26,7 @@ const S = {
 }
 
 export const CrewMemberList= () => {
+    const { currentEvent: event, path } = useBrand();
     const [crews, setCrews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
@@ -32,7 +34,6 @@ export const CrewMemberList= () => {
     let history = useHistory();
 
     useEffect(async () => {
-        const event = await getCurrentEvent();
         const crews = await Promise.all((await Crew.getCrews())
             .filter(crew => crew.active)
             .map(async (base_crew) => {
@@ -90,7 +91,7 @@ export const CrewMemberList= () => {
                                             crew.members.map(member => (<SimpleUserCard user={member} key={member.uuid} />))
                                         }
                                     </InnerContainerRow>
-                                        <Button color={Theme.Passive} onClick={e => {history.push(`/crew/${crew.uuid}`)}}>Se crew</Button>
+                                        <Button color={Theme.Passive} onClick={() => history.push(path(`/crew/${crew.uuid}`))}>Se crew</Button>
                                 </>
                             )
                         })

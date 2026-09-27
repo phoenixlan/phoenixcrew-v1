@@ -12,8 +12,10 @@ import { FormButton } from '../../components/form';
 import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
 import { useEvents } from "../../hooks/events/useEvents";
 import { useEventNewMembers } from "../../hooks/events/useEventNewMembers";
+import { useBrand } from "../../contexts/brand";
 
 export const MembershipList = () => {
+    const { brandUuid } = useBrand();
     const [ visibleUUID, setVisibleUUID ] = useState(false);
 
     let history = useHistory();
@@ -25,8 +27,8 @@ export const MembershipList = () => {
         setCurrentViewingEvent(event.target.value)
     }
 
-    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent();
-    const { data: events, isLoading: isLoadingEvents } = useEvents();
+    const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
+    const { data: events = [], isLoading: isLoadingEvents } = useEvents(brandUuid);
     const lookupEvent = (currentViewingEvent) ?? currentEvent?.uuid;
     const { data: users = [], isLoading: isLoadingUsers } = useEventNewMembers(lookupEvent);
 

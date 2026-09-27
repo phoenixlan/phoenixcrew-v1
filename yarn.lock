@@ -1728,10 +1728,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@phoenixlan/phoenix.js@^3.5.3":
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/@phoenixlan/phoenix.js/-/phoenix.js-3.5.3.tgz#7660e0aa50e2917bb785256f323efaa0763a04fa"
-  integrity sha512-fQG9uB9TTwKyD9zd2qzK0N7WYMHgxeRKJJwLWVxW5LU6BseqhHxsAEVN2ucmTHwFGfUpOf9C+T1GMt+GnZRtdQ==
+"@phoenixlan/phoenix.js@^4.0.7":
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/@phoenixlan/phoenix.js/-/phoenix.js-4.0.7.tgz#f5fe7614b4da2c5b4cab2f36cb9545df9bdc1e91"
+  integrity sha512-s1NKsP5zJBJP2SxTtnBgAu48AYvKuX2Z/Ng+T+kc7zV4D3usJYkP85Y8UPPZzR9hOuD+fYj11vurvaXxEEdPMQ==
   dependencies:
     jwt-decode "^3.1.2"
 
@@ -8612,6 +8612,11 @@ react-chartjs-2@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/react-chartjs-2/-/react-chartjs-2-5.2.0.tgz#43c1e3549071c00a1a083ecbd26c1ad34d385f5d"
   integrity sha512-98iN5aguJyVSxp5U3CblRLH67J8gkfyGNbiK3c+l1QI/G4irHMPQw44aEPmjVag+YKTyQ260NcF82GTQ3bdscA==
+
+react-colorful@5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.6.1.tgz#7dc2aed2d7c72fac89694e834d179e32f3da563b"
+  integrity sha512-1exovf0uGTGyq5mXQT0zgQ80uvj2PCwvF8zY1RN9/vbJVSjSo3fsB/4L3ObbF7u70NduSiK4xu4Y6q1MHoUGEw==
 
 react-dev-utils@^12.0.1:
   version "12.0.1"

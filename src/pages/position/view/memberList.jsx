@@ -5,13 +5,15 @@ import { CardContainerText, DropdownCardContainer, DropdownCardContent, Dropdown
 import { UserSearch } from "../../../components/userSearch";
 import { FormButton } from '../../../components/form';
 
-import { PositionMapping, getCurrentEvent, getEvents } from "@phoenixlan/phoenix.js";
+import { PositionMapping } from "@phoenixlan/phoenix.js";
 
 import { faArrowRight, faLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 import { PageLoading } from "../../../components/pageLoading";
 import { Notice } from "../../../components/containers/notice";
+import { useBrand } from "../../../contexts/brand";
+import { useEvents } from "../../../hooks/events/useEvents";
 
 const messages = {
     "position.addUserTitle": "Legg til bruker",
@@ -21,6 +23,8 @@ const messages = {
 
 
 export const PositionMemberList = ({ position, refresh }) => {
+    const { brandUuid, currentEvent } = useBrand();
+    const { data: events = [], isLoading: loadingEvents } = useEvents(brandUuid);
     const [ loading, setLoading ] = useState(true);
     const [ visibleUUID, setVisibleUUID ] = useState(false);
     const [ member, setNewMember ] = useState(null);
@@ -28,8 +32,6 @@ export const PositionMemberList = ({ position, refresh }) => {
     const [ addUserDropdownState, setAddUserDropdownState ] = useState(false);
     const [ filterEventDropdownState, setFilterEventDropdownState ] = useState(false);
 
-    const [ currentEvent, setCurrentEvent ] = useState();
-    const [ events, setEvents ] = useState();
     const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
     const [ error, setError ] = useState(null);
 
@@ -48,7 +50,7 @@ export const PositionMemberList = ({ position, refresh }) => {
             } else {
                 try {
                     setIsAddingMember(true);
-                    await PositionMapping.createPositionMapping(member, position.uuid);
+                    await PositionMapping.createPositionMapping(currentEvent.uuid, member, position.uuid);
                     await refresh();
                 } catch(e) {
                     alert("An error occured when adding the selected to this position.\n\n" + e)
@@ -65,19 +67,9 @@ export const PositionMemberList = ({ position, refresh }) => {
 
     const load = async () => {
         setLoading(true)
-        const [ currentEvent, events ] = await Promise.all([
-            getCurrentEvent(),
-            getEvents()
-        ])
-
-        if(events) {
-            setEvents(events);
-        }
-
         if(currentEvent) {
-            setCurrentEvent(currentEvent);
             setCurrentViewingEvent(currentEvent.uuid);
-        } else {
+        } else if(events.length) {
             setCurrentViewingEvent(events[0].uuid);
         }
         
@@ -86,9 +78,9 @@ export const PositionMemberList = ({ position, refresh }) => {
 
     useEffect(async () => {
         await load();
-    }, [])
+    }, [currentEvent, events])
 
-    if(loading) {  
+    if(loading || loadingEvents) {
         return (
             <PageLoading />
         )

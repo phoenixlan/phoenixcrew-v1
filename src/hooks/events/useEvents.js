@@ -1,9 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { getEvents } from "@phoenixlan/phoenix.js";
 
-export const useEvents = () => {
+export const eventsQueryKey = ["events"];
+
+export const useEvents = (brandUuid) => {
     return useQuery({
-        queryKey: ["events"],
+        queryKey: eventsQueryKey,
         queryFn: () => getEvents(),
+        select: events => brandUuid
+            ? events.filter(event => event.event_brand_uuid === brandUuid)
+            : events,
     });
 };

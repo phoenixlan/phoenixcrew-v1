@@ -1,26 +1,24 @@
-import React , { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from 'react-router-dom';
-import { getEvents } from "@phoenixlan/phoenix.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight }  from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faPlus }  from '@fortawesome/free-solid-svg-icons'
+import { AuthenticationContext } from "../../components/authentication";
 import { PageLoading } from "../../components/pageLoading"
 import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
-import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InputCheckbox } from "../../components/dashboard"; 
+import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InnerContainerRow, InputCheckbox, PanelButton } from "../../components/dashboard";
+import { useBrand } from "../../contexts/brand";
+import { useEvents } from "../../hooks/events/useEvents";
+import { hasBrandPermission } from "../../utils/roles";
 
 export const EventList = () => {
-    const [events, setEvents] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const auth = useContext(AuthenticationContext);
+    const { brandUuid, path } = useBrand();
+    const { data: events = [], isLoading: loading } = useEvents(brandUuid);
+    const canCreateEvent = hasBrandPermission(auth.roles, brandUuid, "admin");
 
     const [visibleUUID, setVisibleUUID] = useState(false);
 
     let history = useHistory();
-
-    useEffect(async () => {
-        setLoading(true);
-        const events = await getEvents();
-        setEvents(events);
-        setLoading(false);
-    }, []);
 
     if(loading) {
         return (<PageLoading />)
@@ -37,6 +35,18 @@ export const EventList = () => {
             
 
             <DashboardContent>
+                <InnerContainer>
+                    <InnerContainerRow mobileNoGap>
+                        <PanelButton
+                            onClick={() => history.push(path("/event/create"))}
+                            disabled={!canCreateEvent}
+                            icon={faPlus}
+                        >
+                            Opprett nytt arrangement
+                        </PanelButton>
+                    </InnerContainerRow>
+                </InnerContainer>
+
                 <InnerContainer mobileHide>
                     <InputCheckbox label="Vis arrangement UUID" value={visibleUUID} onChange={() => setVisibleUUID(!visibleUUID)} />
                 </InnerContainer>
@@ -59,7 +69,7 @@ export const EventList = () => {
                             {
                                 events.map((event) => {
                                     return (
-                                    <SelectableTableRow onClick={e => {history.push(`/event/${event.uuid}`)}}>
+                                    <SelectableTableRow key={event.uuid} onClick={() => history.push(path(`/event/${event.uuid}`))}>
                                         <TableCell consolas flex="14" visible={!visibleUUID} mobileHide>{ event.uuid }</TableCell>
                                         <TableCell flex="8">{ event.name}</TableCell>
                                         <TableCell flex="5" mobileHide>{ new Date(event.booking_time * 1000).toLocaleString('no-NO', {hour: '2-digit', minute: '2-digit', year: '2-digit', month: '2-digit', day: '2-digit'}) }</TableCell>

@@ -154,7 +154,7 @@ export const Login = () => {
                     ) : null}
                     <S.Container>
                         <S.TitleBox>
-                            <h4>Phoenix crew</h4>
+                            <h4>Phoenix EMS</h4>
                         </S.TitleBox>
                         <S.ContentBox>
                             <p>Denne siden krever at du er innlogget med en Phoenix-konto for å kunne bruke siden. Vennligst logg inn under.</p>

@@ -1,6 +1,6 @@
 import React , { useContext, useEffect, useState } from "react";
 
-import { Position, getCurrentEvent } from "@phoenixlan/phoenix.js";
+import { Position } from "@phoenixlan/phoenix.js";
 
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, IFrameContainer, InnerTableCell, InnerContainer, InnerContainerRow, InnerContainerTitle, InputCheckbox, InputContainer, InputDate, InputElement, InputLabel, InputText } from '../../../components/dashboard';
 
@@ -11,12 +11,14 @@ import { PositionDetails } from "./details";
 import { AuthenticationContext } from "../../../components/authentication";
 import { Notice } from "../../../components/containers/notice";
 import { PageLoading } from "../../../components/pageLoading";
+import { useBrand } from "../../../contexts/brand";
+import { hasAnyBrandPermission } from "../../../utils/roles";
 
 
 export const ViewPosition = (props) => {
+    const { brandUuid, currentEvent } = useBrand();
     const { uuid } = useParams();
     const [error, setError] = useState(false);
-    const [currentEvent, setCurrentEvent] = useState(null);
     const [position, setPosition] = useState(null);
     const [usersForCurrentEvent, setUsersForCurrentEvent] = useState([])
     const [loading, setLoading] = useState(true);
@@ -30,11 +32,9 @@ export const ViewPosition = (props) => {
 
         // Get position based on UUID and return error if something fails.
         try {
-            const currentEvent = await getCurrentEvent();
             const position = await Position.getPosition(uuid);
 
             setUsersForCurrentEvent(position.position_mappings.filter((user) => (!user.event_uuid || user.event_uuid == currentEvent.uuid)))
-            setCurrentEvent(currentEvent);
             setPosition(position);
         } catch(e) {
             setError(e);
@@ -51,7 +51,7 @@ export const ViewPosition = (props) => {
 
     if(loading) {
         return (<PageLoading />)
-    } else if(authContext.roles.includes("admin") || authContext.roles.includes("hr_admin")) {
+    } else if(hasAnyBrandPermission(authContext.roles, brandUuid, ["hr_admin"])) {
         if(position) {
             return (
                 <>

@@ -20,12 +20,8 @@ export const EditUser = () => {
     // Variables to keep track of changes in input components
     const [ firstname, setFirstname ] = useState(null);
     const [ lastname, setLastname ]	= useState(null);
-    const [ username, setUsername ]	= useState(null);
     const [ email, setEmail ] = useState(null);
-    const [ phone, setPhone ] = useState(null);
     const [ guardianPhone, setGuardianPhone ] = useState(null);
-    const [ address, setAddress ] = useState(null);
-    const [ postalCode, setPostalCode ]	= useState(null);
     const [ birthdate, setBirthdate ] = useState(null);
     const [ gender, setGender ]	= useState(null);
 
@@ -62,12 +58,8 @@ export const EditUser = () => {
 
             setFirstname(user.firstname);
             setLastname(user.lastname);
-            setUsername(user.username);
             setEmail(user.email);
-            setPhone(user.phone);
             setGuardianPhone(user.guardian_phone);
-            setAddress(user.address);
-            setPostalCode(user.postal_code);
             setBirthdate(user.birthdate)
             setGender(user.gender);
         } catch(e) {
@@ -97,7 +89,7 @@ export const EditUser = () => {
             <>
                 <DashboardHeader border >
                     <DashboardTitle>
-                        Rediger personalia
+                        Rediger grunnleggende informasjon
                     </DashboardTitle>
                     <DashboardSubtitle>
                         {user.firstname} {user.lastname}
@@ -136,16 +128,6 @@ export const EditUser = () => {
 
                                     <InnerContainerRow nopadding nowrap mobileNoGap>
                                         <CardContainer>
-                                            <InputContainer column>
-                                                <InputLabel small>Brukernavn / visningsnavn</InputLabel>
-                                                <InputElement {...register("username")} type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-                                            </InputContainer>
-                                        </CardContainer>
-                                        <CardContainer mobileHide />
-                                    </InnerContainerRow>
-
-                                    <InnerContainerRow nopadding nowrap mobileNoGap>
-                                        <CardContainer>
                                             <InputContainer column extramargin>
                                                 <InputLabel small>Epost</InputLabel>
                                                 <InputElement {...register("email")} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -156,30 +138,8 @@ export const EditUser = () => {
                                     <InnerContainerRow nowrap mobileNoGap>
                                         <CardContainer>
                                             <InputContainer column extramargin>
-                                                <InputLabel small>Telefon</InputLabel>
-                                                <InputElement {...register("phone")} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                                            </InputContainer>
-                                        </CardContainer>
-
-                                        <CardContainer>
-                                            <InputContainer column extramargin>
                                                 <InputLabel small>Foresattes telefon</InputLabel>
                                                 <InputElement {...register("guardian_phone")} type="tel" value={guardianPhone} onChange={(e) => setGuardianPhone(e.target.value)} />
-                                            </InputContainer>
-                                        </CardContainer>
-                                    </InnerContainerRow>
-
-                                    <InnerContainerRow nowrap mobileNoGap>
-                                        <CardContainer>
-                                            <InputContainer column extramargin>
-                                                <InputLabel small>Adresse</InputLabel>
-                                                <InputElement {...register("address")} type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
-                                            </InputContainer>
-                                        </CardContainer>
-                                        <CardContainer>
-                                            <InputContainer column extramargin>
-                                                <InputLabel small>Postkode</InputLabel>
-                                                <InputElement {...register("postal_code")} type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
                                             </InputContainer>
                                         </CardContainer>
                                     </InnerContainerRow>

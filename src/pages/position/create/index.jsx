@@ -7,8 +7,11 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
 import { Notice } from '../../../components/containers/notice';
 import { PageLoading } from '../../../components/pageLoading';
+import { useBrand } from '../../../contexts/brand';
+import { hasBrandPermission } from '../../../utils/roles';
 
 export const CreatePosition = () => {
+    const { brandUuid, path } = useBrand();
 
     const { register, handleSubmit, formState: { errors } } = useForm({defaultValues: {crew_uuid: null, team_uuid: null}});
 
@@ -50,8 +53,8 @@ export const CreatePosition = () => {
         if(!attachedCrew || !data.chief) { data.chief = false; }
 
         try { 
-            let response = await Position.createPosition(data.name, data.description, data.chief, data.is_vanity, data.crew_uuid, data.team_uuid);
-            history.push("/positions/" + response.uuid);
+            let response = await Position.createPosition(data.name, data.description, data.chief, data.is_vanity, data.crew_uuid, data.team_uuid, brandUuid);
+            history.push(path("/positions/" + response.uuid));
         } catch(e) {
             setError(e.message);
             console.error("An error occured while attempting to create the position.\n" + e)
@@ -63,7 +66,7 @@ export const CreatePosition = () => {
     if(loading) {
         return(<PageLoading />)
     }
-    if(loggedinUser.roles.includes("admin")) {
+    if(hasBrandPermission(loggedinUser.roles, brandUuid, "admin")) {
         return (
             <>
                 <DashboardHeader border >
@@ -154,7 +157,7 @@ export const CreatePosition = () => {
                                     <PanelButton fillWidth type="submit" onClick={handleSubmit(onSubmit)}>Bekreft</PanelButton>
                                 </CardContainer>
                                 <CardContainer>
-                                    <PanelButton fillWidth type="submit" onClick={() => history.push("/positions/")}>Avbryt</PanelButton>
+                                    <PanelButton fillWidth type="submit" onClick={() => history.push(path("/positions/"))}>Avbryt</PanelButton>
                                 </CardContainer>
                             </InnerContainer>
                             <InnerContainer flex="1" />

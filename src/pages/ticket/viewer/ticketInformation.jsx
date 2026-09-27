@@ -15,10 +15,12 @@ import { Notice } from "../../../components/containers/notice";
 import { TimestampToDateTime } from "../../../components/timestampToDateTime";
 
 import { useTicketCheckinMutation } from "../../../hooks/useTicketCheckinMutation";
-import { useTicketTransferLog } from "../../../hooks/tickets/useTicketTransferLog";
+import { useBrand } from "../../../contexts/brand";
+import { hasAnyBrandPermission } from "../../../utils/roles";
 
 
 export const TicketInformation = ({data}) => {
+    const { brandUuid, path } = useBrand();
 
     const history = useHistory();
     const { id } = useParams();
@@ -32,13 +34,11 @@ export const TicketInformation = ({data}) => {
 
     // Check if user has appropriate role and ticket grants admission
     let checkinStateButtonAvailibility = false;
-    if (authContext.roles.includes("admin") || authContext.roles.includes("ticket_admin") || authContext.roles.includes("ticket_checkin")) {
+    if (hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin", "ticket_checkin"])) {
         if(data.ticket.ticket_type.grants_admission) {
             checkinStateButtonAvailibility = true;
         }
     }
-
-    const { data: ticketTransferLog, isLoading: loading } = useTicketTransferLog(id);
 
     const ticketEventLog = useMemo(() => {
         const log = [];
@@ -53,13 +53,9 @@ export const TicketInformation = ({data}) => {
             log.push({timestamp: data.ticket.checked_in, message: "Billett sjekket inn"})
         }
 
-        (ticketTransferLog ?? []).map((entry) => {
-            log.push({timestamp: entry.created, message: "Billett overført fra " + entry.from_user.firstname + " " + entry.from_user.lastname + " til " + entry.to_user.firstname + " " + entry.to_user.lastname + " " + (entry.reverted ? "– Overførselen ble angret" : "")})
-        })
-
         log.sort((a, b) => a.timestamp < b.timestamp)
         return log;
-    }, [data.ticket, ticketTransferLog]);
+    }, [data.ticket]);
 
     const checkinTicket = async () => {
         if(window.confirm("Er du sikker på at du vil sjekke inn denne billetten?")) {
@@ -73,9 +69,6 @@ export const TicketInformation = ({data}) => {
         }
     }
 
-    if(loading) {
-        return (<PageLoading />)
-    }
     return (
         <>
                     <InnerContainer rowgap>
@@ -137,7 +130,7 @@ export const TicketInformation = ({data}) => {
                                     </CardContainerIcon>
                                     <CardContainerText>
                                     <InputLabel small>Gjelder for arrangement</InputLabel>
-                                        <CardContainerInnerText italic={!ticketForCurrentEvent}><SpanLink onClick={() => history.push(`/event/${data.ticket.event.uuid}`)}>{data.ticket.event.name}</SpanLink></CardContainerInnerText>
+                                        <CardContainerInnerText italic={!ticketForCurrentEvent}><SpanLink onClick={() => history.push(path(`/event/${data.ticket.event.uuid}`))}>{data.ticket.event.name}</SpanLink></CardContainerInnerText>
                                     </CardContainerText>
                                 </CardContainer>
 

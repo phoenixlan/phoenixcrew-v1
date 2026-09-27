@@ -1,24 +1,26 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
-import { getEvent, getEventTicketTypes, TicketType, Seatmap } from "@phoenixlan/phoenix.js";
+import { getEvent, TicketType, Seatmap } from "@phoenixlan/phoenix.js";
 import { PageLoading } from "../../../components/pageLoading";
 import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow } from "../../../components/dashboard";
 import { EventDetails } from "./details";
 import { EventTickets } from "./tickets";
 import { AuthenticationContext } from "../../../components/authentication";
 import { Notice } from "../../../components/containers/notice";
+import { useBrand } from "../../../contexts/brand";
+import { hasAnyBrandPermission } from "../../../utils/roles";
 
 export const EventViewer = () => {
+    const { brandUuid } = useBrand();
 
     // Import the following React contexts:
     const authContext = useContext(AuthenticationContext);
 
     // Function availibility control:
-    const viewEvent = authContext.roles.includes("admin") || authContext.roles.includes("event_admin");
+    const viewEvent = hasAnyBrandPermission(authContext.roles, brandUuid, ["event_admin", "ticket_admin"]);
     const [error, setError] = useState(false);
     const [event, setEvent] = useState(null);
     const [ticketTypes, setTicketTypes] = useState([]);
-    const [eventTicketTypes, setEventTicketTypes] = useState([]);
     const [seatMaps, setSeatmaps] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -30,16 +32,15 @@ export const EventViewer = () => {
 
     const load = async () => {
         if(viewEvent) {
-            const [ event, ticketTypes, seatMaps, eventTicketTypes ] = await Promise.all([
+            const [ event, ticketTypes, seatMaps ] = await Promise.all([
                     getEvent(uuid),
                     TicketType.getTicketTypes(),
-                    Seatmap.getSeatmaps(),
-                    getEventTicketTypes(uuid)
+                    Seatmap.getSeatmaps()
                 ]
             )
 
             const legalTicketTypes = ticketTypes.filter(ticketType => {
-                return ticketType.price !== 0 && eventTicketTypes.filter((type) => type.uuid === ticketType.uuid).length === 0;
+                return ticketType.price !== 0 && ticketType.event_brand_uuid === event.event_brand_uuid;
             });
 
             if(legalTicketTypes.length > 0) {
@@ -50,7 +51,6 @@ export const EventViewer = () => {
 
             setTicketTypes(legalTicketTypes);
             setEvent(event);
-            setEventTicketTypes(eventTicketTypes); 
             setSeatmaps(seatMaps);
         }
     }
@@ -89,7 +89,7 @@ export const EventViewer = () => {
                     </DashboardContent>
 
                     <DashboardContent visible={activeContent == 2}>
-                        <EventTickets event={event} ticketTypes={ticketTypes} eventTicketTypes={eventTicketTypes} seatMaps={seatMaps} refresh={load} />
+                        <EventTickets event={event} ticketTypes={ticketTypes} seatMaps={seatMaps} refresh={load} />
                     </DashboardContent>
                 </>
             )
