@@ -19,10 +19,10 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           build-args: |
-            REACT_APP_API_URL=https://api.phoenixlan.no
-            REACT_APP_HOST=crew.phoenixlan.no
+            REACT_APP_API_URL=https://api.radarevent.no
+            REACT_APP_HOST=admin.radarevent.no
             REACT_APP_PROTOCOL=https
-            REACT_APP_OAUTH_CLIENT_ID=phoenix-crew
+            REACT_APP_OAUTH_CLIENT_ID=radarevent-crew
             REACT_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN_PROD }}
           file: "docker/production/Dockerfile"
           context: .
