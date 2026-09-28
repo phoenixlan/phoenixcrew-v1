@@ -7,6 +7,7 @@ import Spinner from "react-svg-spinner";
 import { Seatmap, Entrance, TicketType, Row } from '@phoenixlan/phoenix.js'
 
 import { ContentContainer } from "../../components/content";
+import { useBrand } from "../../contexts/brand";
 
 const S = {
     SeatmapCanvas: styled.div`
@@ -88,6 +89,7 @@ const RowElement = ({ row, setActiveRow, active }) => {
 
 export const SeatmapEditor = () => {
     const { uuid } = useParams();
+    const { brandUuid } = useBrand();
     const [ seatmap, setSeatmap ] = useState(null);
     const [ entrances, setEntrances ] = useState([]);
     const [ ticketTypes, setTicketTypes ] = useState([]);
@@ -135,7 +137,7 @@ export const SeatmapEditor = () => {
         setEntrances(entrances);
     }
     const loadTicketTypes = async () => {
-        const ticketTypes = await TicketType.getTicketTypes();
+        const ticketTypes = await TicketType.getEventBrandTicketTypes(brandUuid);
         setTicketTypes(ticketTypes);
     }
 

@@ -3,9 +3,10 @@ import { TicketType } from "@phoenixlan/phoenix.js";
 
 export const ticketTypesQueryKey = ["ticketTypes"];
 
-export const useTicketTypes = () => {
+export const useTicketTypes = (eventBrandUuid) => {
     return useQuery({
-        queryKey: ticketTypesQueryKey,
-        queryFn: () => TicketType.getTicketTypes(),
+        queryKey: [...ticketTypesQueryKey, eventBrandUuid],
+        queryFn: () => TicketType.getEventBrandTicketTypes(eventBrandUuid),
+        enabled: !!eventBrandUuid,
     });
 };

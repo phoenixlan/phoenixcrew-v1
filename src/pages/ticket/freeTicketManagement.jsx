@@ -46,7 +46,7 @@ export const FreeTicketManagement = () => {
     }
 
     const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
-    const { data: allTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes();
+    const { data: allTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes(brandUuid);
     const { data: allTickets = [], isLoading: isLoadingTickets } = useEventTickets(viewFreeTicketManagement ? currentEvent?.uuid : undefined);
 
     const createTicketMutation = useTicketCreateMutation(currentEvent?.uuid);

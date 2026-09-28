@@ -43,7 +43,7 @@ export const TicketVoucherManagement = () => {
 
     // TODO do we want more freedom?
 
-    const { data: types = [], isLoading: isLoadingTypes } = useTicketTypes();
+    const { data: types = [], isLoading: isLoadingTypes } = useTicketTypes(brandUuid);
     const { data: allEvents = [], isLoading: isLoadingEvents } = useEvents(brandUuid);
     const { data: vouchers = [], isLoading: isLoadingVouchers } = useTicketVouchers();
 

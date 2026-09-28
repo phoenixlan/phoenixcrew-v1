@@ -34,7 +34,7 @@ export const EventViewer = () => {
         if(viewEvent) {
             const [ event, ticketTypes, seatMaps ] = await Promise.all([
                     getEvent(uuid),
-                    TicketType.getTicketTypes(),
+                    TicketType.getEventBrandTicketTypes(brandUuid),
                     Seatmap.getSeatmaps()
                 ]
             )

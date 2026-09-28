@@ -45,6 +45,7 @@ export const TicketTypeList = () => {
             name: "",
             price: 0,
             description: "",
+            disclaimer: "",
             refundable: true,
             seatable: false,
             grants_admission: false,
@@ -54,7 +55,7 @@ export const TicketTypeList = () => {
         }
     });
 
-    const { data: ticketTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes();
+    const { data: ticketTypes = [], isLoading: isLoadingTicketTypes } = useTicketTypes(brandUuid);
     const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
     const { data: eventTicketTypeMappings = [], isLoading: isLoadingEventTicketTypes } = useEventTicketTypeMappings(currentEvent?.uuid);
 
@@ -118,6 +119,16 @@ export const TicketTypeList = () => {
                                                 <InputContainer column extramargin>
                                                     <InputLabel small>Beskrivelse</InputLabel>
                                                     <InputTextArea {...register("description")} />
+                                                </InputContainer>
+                                            </CardContainer>
+                                        </InnerContainerRow>
+
+                                        <InnerContainerRow nowrap mobileNoGap>
+                                            <CardContainer>
+                                                <InputContainer column extramargin>
+                                                    <InputLabel small>Spesielle vilkår (valgfritt)</InputLabel>
+                                                    <InputTextArea {...register("disclaimer")} />
+                                                    <CardContainerDescriptiveText>Vises for kjøperen, som må bekrefte at de har lest dem før kjøp.</CardContainerDescriptiveText>
                                                 </InputContainer>
                                             </CardContainer>
                                         </InnerContainerRow>
@@ -187,6 +198,7 @@ export const TicketTypeList = () => {
                                             <TableCell flex="7">
                                                 { ticketType.name }
                                                 { ticketType.description ? <CardContainerDescriptiveText>{ ticketType.description }</CardContainerDescriptiveText> : null }
+                                                { ticketType.disclaimer ? <CardContainerDescriptiveText><i>{ ticketType.disclaimer }</i></CardContainerDescriptiveText> : null }
                                             </TableCell>
                                             <TableCell flex="2" mobileHide>{ ticketType.price } ,-</TableCell>
                                             <TableCell flex="2" mobileHide center>{ ticketType.grants_admission ? <IconContainer><FontAwesomeIcon icon={faCheck}/></IconContainer> : null }</TableCell>
