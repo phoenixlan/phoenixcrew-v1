@@ -3,9 +3,10 @@ import { TicketVoucher } from "@phoenixlan/phoenix.js";
 
 export const ticketVouchersQueryKey = ["ticketVouchers"];
 
-export const useTicketVouchers = () => {
+export const useTicketVouchers = (eventBrandUuid) => {
     return useQuery({
-        queryKey: ticketVouchersQueryKey,
-        queryFn: () => TicketVoucher.getAllTicketVouchers(),
+        queryKey: [...ticketVouchersQueryKey, eventBrandUuid],
+        queryFn: () => TicketVoucher.getEventBrandTicketVouchers(eventBrandUuid),
+        enabled: !!eventBrandUuid,
     });
 };

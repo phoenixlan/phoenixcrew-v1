@@ -45,7 +45,7 @@ export const TicketVoucherManagement = () => {
 
     const { data: types = [], isLoading: isLoadingTypes } = useTicketTypes(brandUuid);
     const { data: allEvents = [], isLoading: isLoadingEvents } = useEvents(brandUuid);
-    const { data: vouchers = [], isLoading: isLoadingVouchers } = useTicketVouchers();
+    const { data: vouchers = [], isLoading: isLoadingVouchers } = useTicketVouchers(brandUuid);
 
     const createVoucherMutation = useTicketVoucherCreateMutation();
 
@@ -124,7 +124,7 @@ export const TicketVoucherManagement = () => {
                         <DropdownCardContainer>
                             <DropdownCardHeader title={commonText["voucherManagement.giveVoucherTitle"]} dropdownState={giveVoucherDropdownState} onClick={() => setGiveVoucherDropdownState(!giveVoucherDropdownState)} />
                             <DropdownCardContent dropdownState={giveVoucherDropdownState}>
-                                {commonText["voucherManagement.giveVoucherDescription"].map(entry => (<span>{entry}</span>))}
+                                {commonText["voucherManagement.giveVoucherDescription"].map((entry, index) => (<span key={index}>{entry}</span>))}
 
                                 <InputContainer column>
                                     <InputLabel small>Billett-type</InputLabel>
@@ -165,7 +165,7 @@ export const TicketVoucherManagement = () => {
                                 <InnerContainer flex="4" nopadding>
                                     <InnerContainerTitle>{commonText["voucherManagement.giveVoucherTitle"]}</InnerContainerTitle>
                                     <InnerContainerTextBody>
-                                        {commonText["voucherManagement.giveVoucherDescription"].map(entry => (<span>{entry}</span>))}
+                                        {commonText["voucherManagement.giveVoucherDescription"].map((entry, index) => (<span key={index}>{entry}</span>))}
                                     </InnerContainerTextBody>
                                 </InnerContainer>
 
@@ -232,7 +232,7 @@ export const TicketVoucherManagement = () => {
                                 {
                                     vouchers.map((voucher) => {
                                         return (
-                                            <TableRow active={voucher.is_expired}>
+                                            <TableRow key={voucher.uuid} active={voucher.is_expired}>
                                                 <TableCell consolas flex="6" mobileHide visible={!visibleUUID}>{ voucher.uuid }</TableCell>
                                                 <TableCell flex="3" mobileFlex="4">{ voucher.recipient_user.firstname + " " + voucher.recipient_user.lastname }</TableCell>
                                                 <TableCell flex="2" mobileHide>{ voucher.ticket_type.name }</TableCell>
