@@ -6,6 +6,7 @@ import { AuthenticationContext } from '../../../components/authentication';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
 import { Notice } from '../../../components/containers/notice';
+import { useBrandFullCrews } from "../../../hooks/eventBrand/useBrandFullCrews";
 import { PageLoading } from '../../../components/pageLoading';
 import { useBrand } from '../../../contexts/brand';
 import { hasBrandPermission } from '../../../utils/roles';
@@ -25,25 +26,13 @@ export const CreatePosition = () => {
     const [ description, setDescription ]	        = useState(null);
     const [ attachedCrew, setAttachedCrew ]         = useState(undefined);
     const [ groupLeader, setGroupLeader ]           = useState(false);
-    const [ crewList, setCrewList ]                 = useState(null);
-    const [ loading, setLoading ]                   = useState(true);
+
+    const { data: crews, isLoading: loading} = useBrandFullCrews(brandUuid);
+
+    const crewList = crews?.filter((crew) => crew.active) ?? []
 
     // States for error, used when attempting to create the position
     const [ error, setError ] = useState(false);
-
-    const getCrews = async () => {
-        try {
-            setLoading(true);
-            setCrewList(await Crew.getCrews());
-        } catch(e) {
-            setError(e);
-        } finally {
-            setLoading(false);
-        }
-    }
-    useEffect(() => {
-        getCrews();
-    }, [])
 
     const onSubmit = async (data) => {
         data.team_uuid = null;
