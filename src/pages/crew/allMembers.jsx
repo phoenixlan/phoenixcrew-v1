@@ -1,5 +1,5 @@
 import React , { useEffect, useState } from "react";
-import { Crew } from "@phoenixlan/phoenix.js";
+import { Crew, EventBrand } from "@phoenixlan/phoenix.js";
 import { useBrand } from "../../contexts/brand";
 import { PageLoading } from "../../components/pageLoading"
 import { DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle } from "../../components/dashboard";
@@ -26,7 +26,7 @@ const S = {
 }
 
 export const CrewMemberList= () => {
-    const { currentEvent: event, path } = useBrand();
+    const { brand, currentEvent: event, path } = useBrand();
     const [crews, setCrews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visibleUUID, setVisibleUUID] = useState(false);
@@ -34,7 +34,7 @@ export const CrewMemberList= () => {
     let history = useHistory();
 
     useEffect(async () => {
-        const crews = await Promise.all((await Crew.getCrews())
+        const crews = await Promise.all((await EventBrand.getCrews(brand.uuid))
             .filter(crew => crew.active)
             .map(async (base_crew) => {
                 const crew = await Crew.getCrew(base_crew.uuid);
