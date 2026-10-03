@@ -1,6 +1,7 @@
-import { useContext, useMemo } from "react"
+import { useContext, useMemo, useState } from "react"
+import { Line } from "react-chartjs-2";
 import { PageLoading } from "../../components/pageLoading";
-import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS } from "../../components/dashboard";
+import { DashboardContent, DashboardHeader, DashboardTitle, InnerContainer, InnerContainerRow, InnerContainerTitle, InnerContainerTitleS, InputCheckbox } from "../../components/dashboard";
 import { BarElement, FlexBar } from "../../components/bar";
 import { AuthenticationContext } from "../../components/authentication";
 import { Notice } from "../../components/containers/notice";
@@ -20,6 +21,188 @@ const SECONDS_PER_DAY = 24 * 60 * 60;
 const getSoldByDay = (salesEvent, day) => salesEvent.days
     .filter((entry) => entry.idx <= day)
     .reduce((sum, entry) => sum + entry.count, 0);
+
+const PREDICTION_COLORS =["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(75, 192, 192)", "rgb(255, 159, 64)", "rgb(153, 102, 255)"];
+
+const predictionChartOptions = {
+    responsive: true,
+    interaction: {
+        mode: "index",
+        intersect: false,
+    },
+    elements: {
+        point: {
+            radius: 0,
+        },
+    },
+    plugins: {
+        legend: {
+            position: "top",
+        },
+        title: {
+            display: true,
+            text: "Forventet billettsalg",
+        },
+    },
+};
+
+// Predicts the rest of the ticket sale by extrapolating the sales rate of each group linearly.
+// The sales rate is measured over the whole ticket sale, optionally leaving out the first day or only looking at the last week
+const SalesPrediction = ({ event, tickets, mappings }) => {
+    const [ignoreFirstDay, setIgnoreFirstDay] = useState(true);
+    const [lastWeekOnly, setLastWeekOnly] = useState(false);
+
+    const { notice, chart } = useMemo(() => {
+        if (!event || Date.now() / 1000 < event.booking_time) {
+            return { notice: null, chart: null };
+        }
+
+        const groups = Object.entries(event.ticket_sales_caps ?? {}).map(([group, cap]) => {
+            const groupTicketTypes = mappings
+                .filter((mapping) => mapping.sales_cap_groups.includes(group))
+                .map((mapping) => mapping.ticket_type.uuid);
+
+            return {
+                group,
+                cap,
+                created: tickets
+                    .filter((ticket) => groupTicketTypes.includes(ticket.ticket_type.uuid))
+                    .map((ticket) => ticket.created),
+            };
+        });
+
+        if (!groups.length) {
+            return {
+                notice: { type: "info", title: "Kan ikke forutsi billettsalget", detail: "Arrangementet har ingen salgsgrenser å sammenligne salget med" },
+                chart: null
+            };
+        }
+
+        // Calendar days of the ticket sale, as the timestamp each day ends at
+        const dayEnds = [];
+        const date = new Date(event.booking_time * 1000);
+        date.setHours(0, 0, 0, 0);
+        do {
+            date.setDate(date.getDate() + 1);
+            dayEnds.push(date.getTime() / 1000);
+        } while (date.getTime() / 1000 < event.start_time);
+
+        const now = Math.min(Date.now() / 1000, event.start_time);
+
+        let rateStart = event.booking_time;
+        if (ignoreFirstDay) {
+            rateStart = Math.max(rateStart, dayEnds[0]);
+        }
+        if (lastWeekOnly) {
+            rateStart = Math.max(rateStart, now - 7 * SECONDS_PER_DAY);
+        }
+
+        // rate is tickets per second, or null if there is no time to measure it over
+        const predictions = groups.map((group) => ({
+            ...group,
+            sold: group.created.length,
+            rate: now > rateStart ? group.created.filter((created) => created >= rateStart).length / (now - rateStart) : null,
+        }));
+
+        let notice;
+        if (predictions.every((group) => group.sold >= group.cap)) {
+            notice = { type: "success", title: "Arrangementet er utsolgt" };
+        } else if (predictions.some((group) => group.rate === null)) {
+            notice = { type: "info", title: "Kan ikke forutsi billettsalget", detail: "Det finnes ikke nok salgsdata med valgte innstillinger" };
+        } else {
+            // The event is sold out when every group is, so it sells out when the last group does
+            const soldOutTimes = predictions.map((group) => {
+                if (group.sold >= group.cap) {
+                    return now;
+                }
+                return group.rate > 0 ? now + (group.cap - group.sold) / group.rate : Infinity;
+            });
+            const soldOutTime = Math.max(...soldOutTimes);
+
+            if (soldOutTime <= event.start_time) {
+                notice = {
+                    type: "success",
+                    title: "Arrangementet ligger an til å bli utsolgt",
+                    detail: `Forventet utsolgt ${TimestampToDateTime(soldOutTime, "DD_MM_YYYY_HH_MM")}`
+                };
+            } else {
+                const remainingByGroup = predictions.map((group) => ({
+                    group: group.group,
+                    remaining: Math.max(Math.round(group.cap - group.sold - group.rate * (event.start_time - now)), 0),
+                }));
+                const remaining = remainingByGroup.reduce((sum, entry) => sum + entry.remaining, 0);
+                notice = {
+                    type: "error",
+                    title: "Arrangementet ligger ikke an til å bli utsolgt",
+                    detail: remainingByGroup.length > 1
+                        ? `Forventet ${remaining} ledige billetter ved arrangementstart (${remainingByGroup.map((entry) => `${entry.group}: ${entry.remaining}`).join(", ")})`
+                        : `Forventet ${remaining} ledige billetter ved arrangementstart`
+                };
+            }
+        }
+
+        // Each group gets a line for the tickets sold so far, the predicted sales from today and its cap
+        const todayIndex = dayEnds.findIndex((dayEnd) => dayEnd >= now);
+        const chart = {
+            labels: dayEnds.map((dayEnd) => TimestampToDateTime(dayEnd - 1, "DD_MM_YYYY")),
+            datasets: predictions.flatMap((group, index) => {
+                const color = PREDICTION_COLORS[index % PREDICTION_COLORS.length];
+
+                return [
+                    {
+                        label: `${group.group} solgt`,
+                        borderColor: color,
+                        backgroundColor: color,
+                        data: dayEnds.map((dayEnd, dayIndex) => dayIndex > todayIndex ? null : group.created.filter((created) => created < dayEnd).length),
+                    },
+                    ...(group.rate === null ? [] : [{
+                        label: `${group.group} forventet`,
+                        borderColor: color,
+                        backgroundColor: color,
+                        borderDash: [6, 4],
+                        data: dayEnds.map((dayEnd, dayIndex) => {
+                            if (dayIndex < todayIndex) {
+                                return null;
+                            }
+                            if (dayIndex === todayIndex) {
+                                return group.sold;
+                            }
+                            const predicted = Math.round(group.sold + group.rate * (Math.min(dayEnd, event.start_time) - now));
+                            return Math.max(Math.min(predicted, group.cap), group.sold);
+                        }),
+                    }]),
+                    {
+                        label: `${group.group} grense`,
+                        borderColor: color,
+                        backgroundColor: color,
+                        borderWidth: 1,
+                        borderDash: [2, 4],
+                        data: dayEnds.map(() => group.cap),
+                    },
+                ];
+            }),
+        };
+
+        return { notice, chart };
+    }, [event, tickets, mappings, ignoreFirstDay, lastWeekOnly]);
+
+    return (
+        <InnerContainer flex="1" floattop visible={!!notice}>
+            <InnerContainerTitle>Salgsprognose</InnerContainerTitle>
+            <InnerContainer floattop rowgap>
+                <InnerContainerRow>
+                    <InputCheckbox label="Ignorer første dag" value={ignoreFirstDay} onChange={() => setIgnoreFirstDay(!ignoreFirstDay)} />
+                    <InputCheckbox label="Bare siste uken" value={lastWeekOnly} onChange={() => setLastWeekOnly(!lastWeekOnly)} />
+                </InnerContainerRow>
+                <Notice large fillWidth type={notice?.type} visible={!!notice}>
+                    <InnerContainerTitleS nopadding={!notice?.detail}>{notice?.title}</InnerContainerTitleS>
+                    {notice?.detail}
+                </Notice>
+                {chart && <Line options={predictionChartOptions} data={chart} />}
+            </InnerContainer>
+        </InnerContainer>
+    );
+};
 
 export const TicketSalesStatus = () => {
     const { brandUuid } = useBrand();
@@ -141,49 +324,6 @@ export const TicketSalesStatus = () => {
 
     const salesNotStarted = !!currentEvent && Date.now() / 1000 < currentEvent.booking_time;
 
-    // Predicts the rest of the ticket sale by extrapolating the tickets sold so far in each group linearly
-    const prediction = useMemo(() => {
-        if (!currentEvent || salesNotStarted) {
-            return null;
-        }
-
-        if (!groupBars.length) {
-            return { type: "info", title: "Kan ikke forutsi billettsalget", detail: "Arrangementet har ingen salgsgrenser å sammenligne salget med" };
-        }
-
-        if (groupBars.every((bar) => bar.sold >= bar.cap)) {
-            return { type: "success", title: "Arrangementet er utsolgt" };
-        }
-
-        const now = Date.now() / 1000;
-        const elapsed = Math.max(Math.min(now, currentEvent.start_time) - currentEvent.booking_time, 1);
-        const duration = currentEvent.start_time - currentEvent.booking_time;
-
-        // The event is sold out when every group is, so it sells out when the last group does
-        const soldOutTimes = groupBars.map((bar) => bar.sold > 0 ? currentEvent.booking_time + bar.cap / (bar.sold / elapsed) : Infinity);
-        const soldOutTime = Math.max(...soldOutTimes);
-        if (soldOutTime <= currentEvent.start_time) {
-            return {
-                type: "success",
-                title: "Arrangementet ligger an til å bli utsolgt",
-                detail: `Forventet utsolgt ${TimestampToDateTime(soldOutTime, "DD_MM_YYYY_HH_MM")}`
-            };
-        }
-
-        const remainingByGroup = groupBars.map((bar) => ({
-            group: bar.title,
-            remaining: Math.max(Math.round(bar.cap - bar.sold / elapsed * duration), 0),
-        }));
-        const remaining = remainingByGroup.reduce((sum, entry) => sum + entry.remaining, 0);
-        return {
-            type: "error",
-            title: "Arrangementet ligger ikke an til å bli utsolgt",
-            detail: remainingByGroup.length > 1
-                ? `Forventet ${remaining} ledige billetter ved arrangementstart (${remainingByGroup.map((entry) => `${entry.group}: ${entry.remaining}`).join(", ")})`
-                : `Forventet ${remaining} ledige billetter ved arrangementstart`
-        };
-    }, [currentEvent, salesNotStarted, groupBars]);
-
     // Compares the tickets sold so far with previous events at the same day of their ticket sale.
     // Days are calendar days, where the day the ticket sale starts is day 1
     const comparison = useMemo(() => {
@@ -255,14 +395,18 @@ export const TicketSalesStatus = () => {
                     </InnerContainerRow>
                 </InnerContainer>
 
-                <InnerContainer visible={viewTickets && !!prediction && !!comparison}>
+                <InnerContainer visible={viewTickets && !!comparison}>
                     <InnerContainerRow>
-                        {[prediction, comparison].map((notice, index) => (
-                            <Notice large fillWidth type={notice?.type} visible={!!notice} key={index}>
-                                <InnerContainerTitleS nopadding={!notice?.detail}>{notice?.title}</InnerContainerTitleS>
-                                {notice?.detail}
-                            </Notice>
-                        ))}
+                        <SalesPrediction event={currentEvent} tickets={tickets} mappings={mappings} />
+                    </InnerContainerRow>
+                </InnerContainer>
+
+                <InnerContainer visible={viewTickets && !!comparison}>
+                    <InnerContainerRow>
+                        <Notice large fillWidth type={comparison?.type} visible={!!comparison}>
+                            <InnerContainerTitleS nopadding={!comparison?.detail}>{comparison?.title}</InnerContainerTitleS>
+                            {comparison?.detail}
+                        </Notice>
                     </InnerContainerRow>
                 </InnerContainer>
 
