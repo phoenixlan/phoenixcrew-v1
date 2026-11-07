@@ -6,7 +6,7 @@ export const eventsQueryKey = ["events"];
 export const useEvents = (brandUuid) => {
     return useQuery({
         queryKey: eventsQueryKey,
-        queryFn: () => getEvents(),
+        queryFn: () => getEvents(brandUuid),
         select: events => brandUuid
             ? events.filter(event => event.event_brand_uuid === brandUuid)
             : events,

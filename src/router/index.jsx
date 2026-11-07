@@ -30,6 +30,7 @@ import { TicketSalesStatus } from "../pages/ticket/ticketSalesStatus";
 import { MembershipList } from "../pages/ticket/membershipList";
 import { TicketVoucherManagement } from "../pages/ticket/ticketVoucherManagement";
 import { ViewTicket } from "../pages/ticket/viewer";
+import { ViewPayment } from "../pages/payment/viewer";
 import { TicketTypeList } from "../pages/ticket/ticketTypes";
 import { StoreSessionList } from "../pages/ticket/storeSessions";
 import { EventList } from "../pages/event/list";
@@ -104,6 +105,7 @@ const AuthenticatedApp = () => {
                 <Route exact path="/user_search/">{isGlobalAdmin(auth.roles) ? <UserSearch/> : <NotFound />}</Route>
                 <Route exact path="/user/:uuid/edit"><EditUser /></Route>
                 <Route exact path="/user/:uuid"><ViewUser /></Route>
+                <Route exact path="/payment/:uuid"><ViewPayment /></Route>
                 <Route exact path="/avatar/approval/">{isGlobalAdmin(auth.roles) ? <AvatarApproval /> : <NotFound />}</Route>
                 <Route exact path="/event-brands/">{isGlobalAdmin(auth.roles) ? <EventBrandList /> : <NotFound />}</Route>
                 <Route path="/brand/:brandUuid" render={({ match }) => (
