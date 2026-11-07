@@ -1,4 +1,4 @@
-import React , { useEffect, useState, useRef } from "react";
+import React , { useEffect, useState, useRef, useContext } from "react";
 import { useReactToPrint } from 'react-to-print';
 import { useForm } from "react-hook-form";
 import { useHistory } from 'react-router-dom';
@@ -11,9 +11,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { TableLabels } from "./tableLabels";
 import { useBrand } from "../../contexts/brand";
+import { AuthenticationContext } from "../../components/authentication";
+import { hasAnyBrandPermission } from "../../utils/roles";
+import { Notice } from "../../components/containers/notice";
 
 export const SeatmapList = () => {
     const { brandUuid, currentEvent, path } = useBrand();
+
+    // Import the following React contexts:
+    const authContext = useContext(AuthenticationContext);
+
+    // Function availibility control:
+    let viewSeatmaps = false;
+
+    // Check if user has "admin" role and make the following functions available:
+    if (hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"])) {
+        viewSeatmaps = true;
+    }
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const printRef = useRef();
     const [seatmaps, setSeatmaps] = useState([]);
@@ -43,14 +58,30 @@ export const SeatmapList = () => {
         content: () => printRef.current,
     });
 
-
-    if(loading) {
+    if(!viewSeatmaps) {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Setekart
+                    </DashboardTitle>
+                </DashboardHeader>
+                <DashboardContent>
+                    <InnerContainer rowgap>
+                        <InnerContainerRow>
+                            <Notice type="error" visible>
+                                Du har ikke tilgang til å se eller administrere setekart.
+                            </Notice>
+                        </InnerContainerRow>
+                    </InnerContainer>
+                </DashboardContent>
+            </>
+        )
+    } else if(loading) {
         return (
             <PageLoading />
         )
-    }
-
-    else {
+    } else {
         return (
             <>
                 <DashboardHeader border>

@@ -43,7 +43,7 @@ export const TicketList = () => {
     const [ search, setSearch ] = useState("");
 
     // Check if user has "admin" or "ticket_admin" role and make the following functions available:
-    if (hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"])) {
+    if (hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin", "ticket_checkin", "ticket_audit"])) {
         viewTickets = true;
     }
 
@@ -83,7 +83,6 @@ export const TicketList = () => {
     .filter((ticket) =>
         ticket.owner.firstname.toLowerCase().includes(search) ||
         ticket.owner.lastname.toLowerCase().includes(search) ||
-        ticket.owner.username.toLowerCase().includes(search) ||
         ticket.ticket_id == search
     )
     .sort(SORTING_TYPES[activeSortingMethod]);

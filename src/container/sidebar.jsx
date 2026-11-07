@@ -350,7 +350,7 @@ export const options = [
     {
         title: "Billett administrasjon",
         icon: faTicket,
-        roles: ["ticket_admin", "admin", "ticket_checkin"],
+        roles: ["ticket_admin", "admin", "ticket_checkin", "ticket_audit"],
         entries: [
             {
                 title: "Alle billetter",
