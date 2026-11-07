@@ -1,24 +1,37 @@
 
-import React, { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight, faDownload }  from '@fortawesome/free-solid-svg-icons'
 import { dateOfBirthToAge } from "../../utils/user";
-import { Table, SelectableTableRow, Row, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
+import { Table, SelectableTableRow, TableCell, TableHead, IconContainer, TableRow, TableBody } from "../../components/table";
 import { PageLoading } from "../../components/pageLoading";
-import { InnerContainerRow, InputContainer, InputLabel, InputSelect, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox, InnerContainerTitle, RowBorder, DropdownCardHeader, DropdownCardContent, DropdownCardContainer, PanelButton, CardContainer, SpanLink } from "../../components/dashboard";
-import { FormButton } from '../../components/form';
+import { InnerContainerRow, InputLabel, InputSelect, DashboardContent, DashboardHeader, DashboardSubtitle, DashboardTitle, InnerContainer, InputCheckbox, InnerContainerTitle, RowBorder, DropdownCardHeader, DropdownCardContent, DropdownCardContainer, PanelButton, CardContainer, SpanLink } from "../../components/dashboard";
 
 import { useCurrentEvent } from "../../hooks/events/useCurrentEvent";
 import { useEvents } from "../../hooks/events/useEvents";
 import { useEventNewMembers } from "../../hooks/events/useEventNewMembers";
 import { useBrand } from "../../contexts/brand";
+import { AuthenticationContext } from "../../components/authentication";
+import { hasAnyBrandPermission } from "../../utils/roles";
+import { Notice } from "../../components/containers/notice";
 
 export const MembershipList = () => {
     const { brandUuid } = useBrand();
     const [ visibleUUID, setVisibleUUID ] = useState(false);
 
     let history = useHistory();
+
+    // Import the following React contexts:
+    const authContext = useContext(AuthenticationContext);
+
+    // Function availibility control:
+    let viewMembershipInformation = false;
+
+    // Check if user has a relevant role and give access to the following functions:
+    if (hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"])) {
+        viewMembershipInformation = true;
+    }
 
     const [ currentViewingEvent, setCurrentViewingEvent ] = useState(null);
 
@@ -69,20 +82,39 @@ export const MembershipList = () => {
         makeCsvFromUsers(users)
     }
 
-    if(loading) {
-        return (
-            <PageLoading />
-        )
-    }
-    else {
+
+    if(!viewMembershipInformation) {
         return (
             <>
                 <DashboardHeader border>
                     <DashboardTitle>
-                        Medlemsskap
+                        Medlemskap
+                    </DashboardTitle>
+                </DashboardHeader>
+                <DashboardContent>
+                    <InnerContainer rowgap>
+                        <InnerContainerRow>
+                            <Notice type="error" visible>
+                                Du har ikke tilgang til å se eller administrere medlemskap.
+                            </Notice>
+                        </InnerContainerRow>
+                    </InnerContainer>
+                </DashboardContent>
+            </>
+        )
+    } else if(loading) {
+        return (
+            <PageLoading />
+        )
+    } else {
+        return (
+            <>
+                <DashboardHeader border>
+                    <DashboardTitle>
+                        Medlemskap
                     </DashboardTitle>
                     <DashboardSubtitle>
-                        {users.length} medlemsskap fra dette arrangementet
+                        {users.length} medlemskap fra dette arrangementet
                     </DashboardSubtitle>
                 </DashboardHeader>
                 <DashboardContent>
@@ -94,8 +126,8 @@ export const MembershipList = () => {
 
                     <InnerContainer>
                         <InnerContainerRow>
-                            Systemet støtter oversikt over medlemsskap.<br/>
-                            En bruker får medlemsskap og vises i listen under når det kjøpes en billett som gir medlemsskap.<br />
+                            Systemet støtter oversikt over medlemskap.<br/>
+                            En bruker får medlemskap og vises i listen under når det kjøpes en billett som gir medlemskap.<br />
                             Informasjon om medlemmer kan hentes ut fra systemet ved å velge et arrangement, og trykke eksporter.<br />
                             Systemet vil opprette en .csv fil som inneholder informasjonen til alle medlemmene.
                         </InnerContainerRow>
@@ -104,7 +136,7 @@ export const MembershipList = () => {
                     <InnerContainer>
                         <InnerContainerRow>
                             <InnerContainer flex="1">
-                                <InputLabel small>Vis medlemsskap fra</InputLabel>
+                                <InputLabel small>Vis medlemskap fra</InputLabel>
                                 <InputSelect value={currentViewingEvent} onChange={updateViewingEvent}>
                                     {
                                         events.map((event) => (<option value={event.uuid}>{event.name} {currentEvent ? event.uuid == currentEvent.uuid ? "(Nåværende)" : null : null}</option>))
