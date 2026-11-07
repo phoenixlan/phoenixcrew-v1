@@ -209,7 +209,7 @@ export const TicketSalesStatus = () => {
 
     const authContext = useContext(AuthenticationContext);
 
-    const viewTickets = hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"]);
+    const viewTickets = hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin", "ticket_audit"]);
 
     const { data: currentEvent, isLoading: isLoadingCurrentEvent } = useCurrentEvent(brandUuid);
     const { data: tickets = [], isLoading: isLoadingTickets } = useEventTickets(viewTickets ? currentEvent?.uuid : undefined);

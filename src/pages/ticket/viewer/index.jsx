@@ -37,7 +37,7 @@ export const ViewTicket = () => {
 
     if(loading) {
         return (<PageLoading />)
-    } else if(hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin"])) {
+    } else if(hasAnyBrandPermission(authContext.roles, brandUuid, ["ticket_admin", "ticket_audit"])) {
         if(data) {
             return (
                 <>
