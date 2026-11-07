@@ -205,8 +205,8 @@ export const UserViewerDetails = ({ user }) => {
                                         </CardContainerInnerIcon>
                                     </CardContainerIcon>
                                     <CardContainerText>
-                                    <InputLabel small>Fornavn, etternavn</InputLabel>
-                                        <CardContainerInnerText>{user.firstname}, {user.lastname}</CardContainerInnerText>
+                                    <InputLabel small>Etternavn, fornavn</InputLabel>
+                                        <CardContainerInnerText>{user.lastname}, {user.firstname}</CardContainerInnerText>
                                     </CardContainerText>
                                 </CardContainer>
                             </InnerContainerRow>

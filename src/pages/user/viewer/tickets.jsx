@@ -63,7 +63,7 @@ export const UserViewerTickets = ({ user }) => {
                                         <TableCell mobileFlex="1" consolas flex="1">#{ ticket.ticket_id }</TableCell>
                                         <TableCell mobileFlex="3" flex="4">{ticket.event.name}</TableCell>
                                         <TableCell mobileHide flex="3">{ticket.ticket_type.name}</TableCell>
-                                        <TableCell mobileFlex="3" flex="3">{ticket.owner.firstname} {ticket.seater.lastname}</TableCell>
+                                        <TableCell mobileFlex="3" flex="3">{ticket.owner.firstname} {ticket.owner.lastname}</TableCell>
                                         <TableCell mobileHide flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
                                         <TableCell mobileHide flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
                                     </SelectableTableRow>

@@ -171,7 +171,7 @@ export const TicketInformation = ({data}) => {
                                         </CardContainerIcon>
                                         <CardContainerText>
                                         <InputLabel small>Eier</InputLabel>
-                                            <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${data.ticket.owner.uuid}`)}>{data.ticket.owner.firstname}, {data.ticket.owner.lastname}</SpanLink></CardContainerInnerText>
+                                            <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${data.ticket.owner.uuid}`)}>{data.ticket.owner.lastname}, {data.ticket.owner.firstname}</SpanLink></CardContainerInnerText>
                                         </CardContainerText>
                                     </CardContainer>
 
@@ -183,7 +183,7 @@ export const TicketInformation = ({data}) => {
                                         </CardContainerIcon>
                                         <CardContainerText>
                                         <InputLabel small>Kjøper</InputLabel>
-                                            <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${data.ticket.buyer.uuid}`)}>{data.ticket.buyer.firstname}, {data.ticket.buyer.lastname}</SpanLink></CardContainerInnerText>
+                                            <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${data.ticket.buyer.uuid}`)}>{data.ticket.buyer.lastname}, {data.ticket.buyer.firstname}</SpanLink></CardContainerInnerText>
                                         </CardContainerText>
                                     </CardContainer>
 
@@ -195,7 +195,7 @@ export const TicketInformation = ({data}) => {
                                         </CardContainerIcon>
                                         <CardContainerText>
                                         <InputLabel small>Seater</InputLabel>
-                                            <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${data.ticket.seater.uuid}`)}>{data.ticket.seater.firstname}, {data.ticket.seater.lastname}</SpanLink></CardContainerInnerText>
+                                            <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${data.ticket.seater.uuid}`)}>{data.ticket.seater.lastname}, {data.ticket.seater.firstname}</SpanLink></CardContainerInnerText>
                                         </CardContainerText>
                                     </CardContainer>
                                 </InnerContainer>

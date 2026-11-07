@@ -158,7 +158,7 @@ export const ViewPayment = () => {
                             </CardContainerIcon>
                             <CardContainerText>
                                 <InputLabel small>Betaler</InputLabel>
-                                <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${paymentUser.uuid}`)}>{paymentUser.firstname}, {paymentUser.lastname}</SpanLink></CardContainerInnerText>
+                                <CardContainerInnerText><SpanLink onClick={() => history.push(`/user/${paymentUser.uuid}`)}>{paymentUser.lastname}, {paymentUser.firstname}</SpanLink></CardContainerInnerText>
                             </CardContainerText>
                         </CardContainer>
                     )}
