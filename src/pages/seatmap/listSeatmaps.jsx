@@ -63,7 +63,7 @@ export const SeatmapList = () => {
             <>
                 <DashboardHeader border>
                     <DashboardTitle>
-                        Gratisbilletter
+                        Setekart
                     </DashboardTitle>
                 </DashboardHeader>
                 <DashboardContent>
