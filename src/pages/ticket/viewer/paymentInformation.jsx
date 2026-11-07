@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCalendar, faUser } from '@fortawesome/free-regular-svg-icons';
-import { faCircleCheck, faCode, faDollarSign, faGear, faHourglass, faXmark } from "@fortawesome/free-solid-svg-icons"
+import { faArrowRight, faCode, faDollarSign, faGear } from "@fortawesome/free-solid-svg-icons"
 
 import { SelectableTableRow, Table, TableBody, TableCell, TableHead, TableRow } from "../../../components/table";
-import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerTitle, InputLabel, SpanLink } from "../../../components/dashboard"
+import { CardContainer, CardContainerIcon, CardContainerInnerIcon, CardContainerInnerText, CardContainerText, InnerContainer, InnerContainerRow, InnerContainerTitle, InputLabel, PanelButton, SpanLink } from "../../../components/dashboard"
 import { PageLoading } from "../../../components/pageLoading";
 import { Notice } from "../../../components/containers/notice";
 import { useHistory } from "react-router-dom";
@@ -11,28 +11,7 @@ import { useHistory } from "react-router-dom";
 import { usePayment } from "../../../hooks/usePayment";
 import { useUser } from "../../../hooks/useUser";
 import { useBrand } from "../../../contexts/brand";
-
-const PaymentState = {
-    created: "PaymentState.created",
-    initiated: "PaymentState.initiated",
-    paid: "PaymentState.paid",
-    failed: "PaymentState.failed",
-    tickets_minted: "PaymentState.tickets_minted",
-};
-
-const paymentStateLabel = {
-    [PaymentState.created]: "Opprettet",
-    [PaymentState.initiated]: "Startet",
-    [PaymentState.paid]: "Betalt",
-    [PaymentState.failed]: "Feilet",
-    [PaymentState.tickets_minted]: "Fullført",
-};
-
-const getStateIcon = (state) => {
-    if(state === PaymentState.tickets_minted) return { icon: faCircleCheck, color: "#388e3c" };
-    if(state === PaymentState.failed) return { icon: faXmark, color: "#c2185b" };
-    return { icon: faHourglass, color: "#f57c00" };
-};
+import { getStateIcon, paymentStateLabel } from "../../../utils/payment";
 
 export const PaymentInformation = ({data}) => {
     const { path } = useBrand();
@@ -156,6 +135,10 @@ export const PaymentInformation = ({data}) => {
                     </CardContainerText>
                 </CardContainer>
             )}
+
+            <InnerContainerRow>
+                <PanelButton onClick={() => history.push(`/payment/${payment.uuid}`)} icon={faArrowRight}>Mer informasjon</PanelButton>
+            </InnerContainerRow>
         </InnerContainer>
 
         {otherTickets.length > 0 && (

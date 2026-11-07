@@ -7,6 +7,7 @@ import { DashboardBarElement, DashboardBarSelector, DashboardContent, DashboardH
 import { UserViewerDetails } from './details';
 import { UserViewerExternalConnections } from './externalConnections';
 import { UserViewerTickets } from './tickets';
+import { UserViewerPayments } from './payments';
 import { UserViewerMembershipPersonalia } from './membership_personalia';
 import { UserPositions, UserViewerPositions } from './positions';
 import { Notice } from '../../../components/containers/notice';
@@ -18,7 +19,8 @@ const TABS = {
     TICKETS: 3,
     INTEGRATIONS: 4,
     APPLICATIONS: 5,
-    MEMBERSHIP_PERSONALIA: 6
+    MEMBERSHIP_PERSONALIA: 6,
+    PAYMENTS: 7
 }
 
 export const ViewUser = (props) => {
@@ -89,6 +91,7 @@ export const ViewUser = (props) => {
                     <DashboardBarElement active={activeContent === TABS.USER_DETAILS} onClick={() => setActiveContent(TABS.USER_DETAILS)}>Brukerinformasjon</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.POSITIONS} onClick={() => setActiveContent(TABS.POSITIONS)}>Stillinger</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.TICKETS} onClick={() => setActiveContent(TABS.TICKETS)}>Billetter</DashboardBarElement>
+                    <DashboardBarElement active={activeContent === TABS.PAYMENTS} onClick={() => setActiveContent(TABS.PAYMENTS)}>Betalinger</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.INTEGRATIONS} onClick={() => setActiveContent(TABS.INTEGRATIONS)}>Eksterne tilkoblinger</DashboardBarElement>
                     <DashboardBarElement active={activeContent === TABS.MEMBERSHIP_PERSONALIA} onClick={() => setActiveContent(TABS.MEMBERSHIP_PERSONALIA)}>Medlemsinformasjon</DashboardBarElement>
                 </DashboardBarSelector>
@@ -103,6 +106,10 @@ export const ViewUser = (props) => {
 
                 <DashboardContent visible={activeContent === TABS.TICKETS}>
                     <UserViewerTickets user={user} />
+                </DashboardContent>
+
+                <DashboardContent visible={activeContent === TABS.PAYMENTS}>
+                    <UserViewerPayments user={user} />
                 </DashboardContent>
 
                 <DashboardContent visible={activeContent === TABS.INTEGRATIONS}>
