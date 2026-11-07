@@ -50,6 +50,7 @@ export const UserViewerTickets = ({ user }) => {
                             <TableRow>
                                 <TableCell mobileFlex="1" flex="1">ID</TableCell>
                                 <TableCell mobileFlex="3" flex="4">Arrangement</TableCell>
+                                <TableCell mobileHide flex="3">Billettype</TableCell>
                                 <TableCell mobileFlex="3" flex="3">Eies av bruker</TableCell>
                                 <TableCell mobileHide flex="3">Seates av bruker</TableCell>
                                 <TableCell mobileHide flex="1">Seteplass</TableCell>
@@ -61,6 +62,7 @@ export const UserViewerTickets = ({ user }) => {
                                     <SelectableTableRow key={ticket.ticket_id} onClick={() => ticketPath(ticket) && history.push(ticketPath(ticket))}>
                                         <TableCell mobileFlex="1" consolas flex="1">#{ ticket.ticket_id }</TableCell>
                                         <TableCell mobileFlex="3" flex="4">{ticket.event.name}</TableCell>
+                                        <TableCell mobileHide flex="3">{ticket.ticket_type.name}</TableCell>
                                         <TableCell mobileFlex="3" flex="3">{ticket.owner.firstname} {ticket.seater.lastname}</TableCell>
                                         <TableCell mobileHide flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
                                         <TableCell mobileHide flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
@@ -78,6 +80,7 @@ export const UserViewerTickets = ({ user }) => {
                             <TableRow>
                                 <TableCell mobileFlex="1" flex="1">ID</TableCell>
                                 <TableCell mobileFlex="3" flex="4">Arrangement</TableCell>
+                                <TableCell mobileHide flex="3">Billettype</TableCell>
                                 <TableCell mobileFlex="3" flex="3">Kjøpt av bruker</TableCell>
                                 <TableCell mobileHide flex="3">Seates av bruker</TableCell>
                                 <TableCell mobileHide flex="1">Seteplass</TableCell>
@@ -89,6 +92,7 @@ export const UserViewerTickets = ({ user }) => {
                                     <SelectableTableRow key={ticket.ticket_id} onClick={() => ticketPath(ticket) && history.push(ticketPath(ticket))}>
                                         <TableCell mobileFlex="1" consolas flex="1">#{ ticket.ticket_id }</TableCell>
                                         <TableCell mobileFlex="3" flex="4">{ticket.event.name}</TableCell>
+                                        <TableCell mobileHide flex="3">{ticket.ticket_type.name}</TableCell>
                                         <TableCell mobileFlex="3" flex="3">{ticket.buyer.firstname} {ticket.buyer.lastname}</TableCell>
                                         <TableCell mobileHide flex="3">{ticket.seater.firstname} {ticket.seater.lastname}</TableCell>
                                         <TableCell mobileHide flex="1">{ticket.seat ? `R${ticket.seat.row.row_number} S${ticket.seat.number}` : "Ikke seatet"}</TableCell>
